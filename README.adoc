@@ -36,7 +36,7 @@ Please read and apply the following rules to contribute to this project:
     *** script/bash usage must be documented in detail (why you are using this?)
     *** the Ansible role must be able to handle bash command errors
 * Bug handling
-  ** For each Bug open an Issue at the github project page
+  ** For each Bug open an Issue at the gitlab project page
   ** Bugs will be tracked by the project board
 * Feature requests
   ** Feature requests can be requestes by creating an Issue
