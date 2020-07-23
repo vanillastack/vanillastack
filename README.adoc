@@ -1,0 +1,46 @@
+= VanillaStack
+
+
+
+== Contribute
+Please read and apply the following rules to contribute to this project:
+
+* One git repository for all automation code (THIS REPOSITORY ONLY!)
+* How to contribute to this repository?
+  ** Keep it modular - write Ansible roles! each feature should be one role
+  ** documentation for
+  ** Work with branches
+    *** master branch = production branch, used for all production setups
+    *** feature branch = personal branches to work on a new feature (based on master branch)
+  ** Make it understandable for other persons
+    *** Comment your code
+    *** Each role needs a description
+      *** What is the role doing?
+      *** What is required for usage?
+    ** Make usefull commits
+      *** Use Tags: NEW / FIX / CHG in front of your commits
+      *** Use Comment tag for deeper information at bigger changes
+  ** No hardcoding
+    *** use variables
+    *** variables must be defined outsite of the role (vars, group_vars, host_vars, etc)
+  ** New features needs to merged into the master branch by using pull-requests
+    *** the code needs to be review and approved by 2 team members
+    *** the approvement needs to be documented!
+    *** all new features merges needs the documentation part in the merge request!
+  ** NEVER commit keys, credentials, usernames, passwords, etc to the git repository!!!
+    *** all keys and credentials must be stored in AWX
+  ** using shell scripts / bash commands is the last option
+    *** only if there is no Ansible module available
+    *** single commands can be used by command/shell module
+    *** multiline commands needs to be stored in an script
+    *** script/bash usage must be documented in detail (why you are using this?)
+    *** the Ansible role must be able to handle bash command errors
+* Bug handling
+  ** For each Bug open an Issue at the github project page
+  ** Bugs will be tracked by the project board
+* Feature requests
+  ** Feature requests can be requestes by creating an Issue
+  ** Feature requests will be tracked by the project board
+* Playbooks don't execute any tasks, they are used to call roles.
+  ** Every Role is used for one part and should include multiple tasks
+  ** tasks should not be to complex, f.e. you do not provision a bastion host and install kubernetes on top in one task
