@@ -16,3 +16,7 @@
     - rabbitmq
     - memcached
     - keystone
+    - horizon
+    - glance
+    - heat
+    - openvswitch

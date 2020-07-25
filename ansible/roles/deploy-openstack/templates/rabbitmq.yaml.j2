@@ -1,4 +1,7 @@
 ---
+pod:
+  replicas:
+    server: {{openstack.rabbitmq.replicas}}
 {% if openstack.rabbitmq.persistence.enabled %}
 volume:
   class_name: {{openstack.rabbitmq.persistence.storageClass}}

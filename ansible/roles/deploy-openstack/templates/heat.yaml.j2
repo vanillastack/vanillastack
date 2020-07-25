@@ -1,0 +1,17 @@
+---
+pod:
+  replicas:
+    api: {{openstack.heat.api.replicas}}
+    cfn: {{openstack.heat.cfn.replicas}}
+    cloudwatch: {{openstack.heat.cloudwatch.replicas}}
+    engine: {{openstack.heat.engine.replicas}}
+endpoints:
+  orchestration:
+    host_fqdn_override:
+      public:
+        host: {{openstack.heat.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+  cloudformation:
+    host_fqdn_override:
+      public:
+        host: {{openstack.heat.endpoints.cfPublicURLPrefix}}.{{openstack.publicDomain}}
+

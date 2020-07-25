@@ -10,7 +10,7 @@ openstack:
     replicas: 3
     persistence:
       enabled: true
-      storageClass: ""
+      storageClass: "rook-ceph-block"
       diskSize: 30Gi
   rabbitmq:
     enabled: true
@@ -19,12 +19,13 @@ openstack:
     replicas: 3
     persistence:
       enabled: true
-      storageClass: ""
+      storageClass: "rook-ceph-block"
       diskSize: 20Gi
   memcached:
     enabled: true
     chartName: memcached
     chartVersion: 0.1.0
+    replicas: 1
   cinder:
     enabled: true
     chartName: cinder
@@ -33,6 +34,36 @@ openstack:
     enabled: true
     chartName: glance
     chartVersion: 0.1.0
+    defaultBackend: rbd
+    rbd:
+      enabled: true
+      cephAppName: glance
+      cephMonitors: "[rook-ceph-mon-a.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-b.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-c.rook-ceph.svc.cluster.local:6789]"
+      rbdPool: glance.images
+      rbdUser: glance
+    api:
+      replicas: 2
+      v1Enabled: false
+    registry:
+      replicas: 2
+      v2Enabled: true
+    endpoints:
+      publicURLPrefix: "glance"
+  heat:
+    enabled: true
+    chartName: horizon
+    chartVersion: 0.1.0
+    api:
+      replicas: 2
+    cdn:
+      replicas: 2
+    cloudwatch:
+      replicas: 2
+    engine:
+      replicas: 2
+    endpoints:
+      publicURLPrefiix: "heat"
+      cfPublicURLPrefix: "heat-cfn"
   horizon:
     enabled: true
     chartName: horizon
@@ -48,19 +79,19 @@ openstack:
     admin:
       username: admin
       password: geheim123
+  libvirtd:
+    enabled: true
+    chartName: libvirtd
+    chartVersion: 0.1.0
   neutron:
     enabled: true
     chartName: neutron
     chartVersion: 0.1.0
-    ovs:
-      enabled: true
-      chartName: openvswitch
-      chartVersion: 0.1.0
   nova:
     enabled: true
     chartName: nova
     chartVersion: 0.1.0
-    libvirtd: 
-      enabled: true
-      chartName: libvirtd
-      chartVersion: 0.1.0
+  openvswitch:
+    enabled: true
+    chartName: openvswitch
+    chartVersion: 0.1.0

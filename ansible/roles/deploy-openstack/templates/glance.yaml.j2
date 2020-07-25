@@ -1,0 +1,35 @@
+---
+storage: {{openstack.glance.defaultBackend}}
+pod:
+  replicas:
+    api: {{openstack.glance.api.replicas}}
+    registry: {{openstack.glance.registry.replicas}}
+conf:
+  software:
+    rbd:
+      rbd_store_pool_app_name: {{openstack.glance.rbd.cephAppName}}
+  ceph:
+    monitors: {{openstack.glance.rbd.cephMonitors}}
+  glance:
+    DEFAULT:
+      enable_v1_api: {{openstack.glance.api.v1Enabled}}
+      enable_v2_registry: {{openstack.glance.registry.v2Enabled}}
+    glance_store:
+      rbd_store_pool: {{openstack.glance.rbd.rbdPool}} 
+      rbd_store_user: {{openstack.glance.rbd.rbdUser}}
+secrets:
+  rbd: images-rbd-keyring
+manifests:
+  deployment_registry: true
+  ingress_registry: true
+  pdb_registry: true
+  service_ingress_registry: true
+endpoints:
+  image:
+    host_fqdn_override:
+      public:
+        host: {{openstack.keystone.endpoints.publicURLPrefix}}.{{openstack.publicDomain}} 
+  identity:
+    hosts:
+      default: keystone-api
+      internal: keystone-api

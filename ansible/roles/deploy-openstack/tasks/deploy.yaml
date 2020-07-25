@@ -9,6 +9,13 @@
   shell: helm upgrade --install {{item}} vanilla-openstack/{{ openstack[item]['chartName'] }} --version "{{ openstack[item]['chartVersion'] }}" --namespace "{{openstack.namespace}}" -f /tmp/openstack_{{item}}.yaml
   when: openstack[item]['enabled']
 
+- name: wait for pods to come up
+  shell: kubectl get pods -o json -n "{{openstack.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  retries: 60
+  delay: 10
+
 - name: "{{item}} | cleanup"
   file:
     path: "/tmp/openstack_{{item}}.yaml"
