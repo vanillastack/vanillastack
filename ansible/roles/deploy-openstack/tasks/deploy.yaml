@@ -1,0 +1,16 @@
+---
+- name: "{{item}} | generate config"
+  template:
+    src: "./templates/{{item}}.yaml.j2"
+    dest: "/tmp/openstack_{{item}}.yaml"
+  when: openstack[item]['enabled']
+
+- name: "{{item}} | deploy helm chart"
+  shell: helm upgrade --install {{item}} vanilla-openstack/{{ openstack[item]['chartName'] }} --version "{{ openstack[item]['chartVersion'] }}" --namespace "{{openstack.namespace}}" -f /tmp/openstack_{{item}}.yaml
+  when: openstack[item]['enabled']
+
+- name: "{{item}} | cleanup"
+  file:
+    path: "/tmp/openstack_{{item}}.yaml"
+    state: absent
+  when: openstack[item]['enabled']

@@ -1,9 +1,10 @@
 ---
 openstack:
   namespace: openstack
-  chartRepo: {{repository}}/chartrepo/vanillastack
+  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
+  publicDomain: "alderaan.cop.cloudical.net"
   mariadb:
-    enable: true
+    enabled: true
     chartName: mariadb
     chartVersion: 0.1.0
     replicas: 3
@@ -40,6 +41,13 @@ openstack:
     enabled: true
     chartName: keystone
     chartVersion: 0.1.0
+    endpoints:
+      publicURLPrefix: "keystone"
+    api:
+      replicas: 2
+    admin:
+      username: admin
+      password: geheim123
   neutron:
     enabled: true
     chartName: neutron

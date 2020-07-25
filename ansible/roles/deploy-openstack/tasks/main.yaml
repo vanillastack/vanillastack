@@ -1,0 +1,18 @@
+---
+- name: Add repo
+  shell: helm repo add vanilla-openstack {{openstack.chartRepo}}
+
+- name: Create namespace
+  k8s:
+    name: "{{openstack.namespace}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Deploy OpenStack
+  include_tasks: deploy.yaml
+  with_items:
+    - mariadb
+    - rabbitmq
+    - memcached
+    - keystone

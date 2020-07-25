@@ -41,11 +41,27 @@
   when: openstack.memcached.enabled
 
 - name: Memcached | deploy helm chart
-  shell: helm upgrade --install memcached vanilla-openstack/{{openstack.memcached.chartName}} --version {{openstack.memcached.chartVersion}} --namespace {{openstack.namespace}} -f /tmp/openstack_mmcached.yaml
-  when: openstack.memcachd.enabled
+  shell: helm upgrade --install memcached vanilla-openstack/{{openstack.memcached.chartName}} --version {{openstack.memcached.chartVersion}} --namespace {{openstack.namespace}} -f /tmp/openstack_memcached.yaml
+  when: openstack.memcached.enabled
 
 - name Memcached | cleanup
   file:
     path: /tmp/openstack_memcached.yaml
     state: absent
   when: openstack.memcached.enabled
+
+- name: Keystone | generate config
+  templates:
+    src: ./templates/keystone.yaml.j2
+    dest: /tmp/openstack_keystone.yaml
+  when: openstack.keystone.enabled
+
+- name: Keystone | deploy helm chart
+  shell: helm upgrade --install keystone vanilla-openstack/{{openstack.keystone.chartName}} --version {{openstack.keystone.chartVersion}} --namespace {{openstack.namespace}} -f /tmp/openstack_keystone.yaml
+  when: openstack.keystone.enabled
+
+- name Keystone | cleanup
+  file:
+    path: /tmp/openstack_keystone.yaml
+    state: absent
+  when: openstack.keystone.enabled

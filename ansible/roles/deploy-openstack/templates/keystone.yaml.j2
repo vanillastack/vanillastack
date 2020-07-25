@@ -1,0 +1,13 @@
+---
+pod:
+  replicas:
+    api: {{openstack.keystone.api.replicas}}
+endpoints:
+  identity:
+    host_fqdn_override:
+      public:
+       host: {{openstack.keystone.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+    auth:
+      admin:
+        username: {{openstack.keystone.admin.username}}
+        password: {{openstack.keystone.admin.password}}

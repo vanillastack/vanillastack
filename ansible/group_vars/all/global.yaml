@@ -1,2 +1,3 @@
 ---
-registry: registry.cloudical.net
+global:
+  registry: registry.cloudical.net
