@@ -1,0 +1,58 @@
+---
+openstack:
+  namespace: openstack
+  chartRepo: {{repository}}/chartrepo/vanillastack
+  mariadb:
+    enable: true
+    chartName: mariadb
+    chartVersion: 0.1.0
+    replicas: 3
+    persistence:
+      enabled: true
+      storageClass: ""
+      diskSize: 30Gi
+  rabbitmq:
+    enabled: true
+    chartName: rabbitmq
+    chartVersion: 0.1.0
+    replicas: 3
+    persistence:
+      enabled: true
+      storageClass: ""
+      diskSize: 20Gi
+  memcached:
+    enabled: true
+    chartName: memcached
+    chartVersion: 0.1.0
+  cinder:
+    enabled: true
+    chartName: cinder
+    chartVersion: 0.1.0
+  glance:
+    enabled: true
+    chartName: glance
+    chartVersion: 0.1.0
+  horizon:
+    enabled: true
+    chartName: horizon
+    chartVersion: 0.1.0
+  keystone:
+    enabled: true
+    chartName: keystone
+    chartVersion: 0.1.0
+  neutron:
+    enabled: true
+    chartName: neutron
+    chartVersion: 0.1.0
+    ovs:
+      enabled: true
+      chartName: openvswitch
+      chartVersion: 0.1.0
+  nova:
+    enabled: true
+    chartName: nova
+    chartVersion: 0.1.0
+    libvirtd: 
+      enabled: true
+      chartName: libvirtd
+      chartVersion: 0.1.0

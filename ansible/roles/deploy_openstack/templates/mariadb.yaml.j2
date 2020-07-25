@@ -1,0 +1,9 @@
+---
+pod:
+  replicas:
+    server: {{openstack.mariadb.replicas}}
+{% if openstack.mariadb.persistence.enabled %}
+volume:
+  class_name: {{openstack.mariadb.persistence.storageClass}}
+  size: {{openstack.mariadb.persistence.diskSize}}
+{% endif %}

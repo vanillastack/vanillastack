@@ -1,0 +1,51 @@
+---
+- name: Add repo
+  shell: helm repo add vanilla-openstack {{openstack.chartRepo}}
+
+- name: MariaDB | generate config
+  templates:
+    src: ./templates/mariadb.yaml.j2
+    dest: /tmp/openstack_mariadb.yaml
+  when: openstack.mariadb.enabled
+
+- name: MariaDB | deploy helm chart
+  shell: helm upgrade --install mariadb vanilla-openstack/{{openstack.mariadb.chartName}} --version {{openstack.mariadb.chartVersion}} --namespace {{openstack.namespace}} -f /tmp/openstack_mariadb.yaml
+  when: openstack.mariadb.enabled
+
+- name MariaDB | cleanup
+  file:
+    path: /tmp/openstack_mariadb.yaml
+    state: absent
+  when: openstack.mariadb.enabled
+
+- name: RabbitMQ-Server | generate config
+  templates: 
+    src: ./templates/rabbitmq.yaml.j2
+    dest: /tmp/openstack_rabbitmq.yaml
+  when: openstack.rabbitmq.enabled
+
+- name: RabbitMQ-Server | deploy helm chart
+  shell: helm upgrade --install rabbitmq vanilla-openstack/{{openstack.rabbitmq.chartName}} --version {{openstack.rabbitmq.chartVersion}} --namespace {{openstack.namespace}} -f /tmp/openstack_rabbitmq.yaml
+  when: openstack.rabbitmq.enabled
+
+- name RabbitMQ Server | cleanup
+  file:
+    path: /tmp/openstack_rabbitmq.yaml
+    state: absent
+  when: openstack.rabbitmq.enabled
+
+- name: Memcached | generate config
+  templates: 
+    src: ./templates/memcached.yaml.j2
+    dest: /tmp/openstack_memcached.yaml
+  when: openstack.memcached.enabled
+
+- name: Memcached | deploy helm chart
+  shell: helm upgrade --install memcached vanilla-openstack/{{openstack.memcached.chartName}} --version {{openstack.memcached.chartVersion}} --namespace {{openstack.namespace}} -f /tmp/openstack_mmcached.yaml
+  when: openstack.memcachd.enabled
+
+- name Memcached | cleanup
+  file:
+    path: /tmp/openstack_memcached.yaml
+    state: absent
+  when: openstack.memcached.enabled

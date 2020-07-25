@@ -1,0 +1,6 @@
+---
+{% {{openstack.rabbitmq.persistence.enabled}}
+volume:
+  class_name: {{openstack.rabbitmq.persistence.storageClass}}
+  size: {{openstack.rabbitmq.persistence.diskSize}}
+{% endif %}
