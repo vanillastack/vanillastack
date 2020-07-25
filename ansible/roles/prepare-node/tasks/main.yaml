@@ -1,0 +1,13 @@
+---
+- name: install required packages
+  apt:
+    pkg:
+      - python3-pip
+      - ansible
+      - git
+      - jq
+      - python3-passlib
+
+- name: install pip modules
+  pip:
+    name: openshift
