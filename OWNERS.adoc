@@ -1,0 +1,25 @@
+# VanillaStack Contributors
+
+This page lists all active contributors and their areas of expertise. This can be used for routing PRs, questions, etc. to the right place.
+
+* See [CONTRIBUTING.md](CONTRIBUTING.md) for general contribution guidelines.
+* See [GOVERNANCE.md](GOVERNANCE.md) for governance guidelines and steering committee and maintainer responsibilities.
+
+## Steering Committee
+
+Steering committee members will be added according to the [process for adding a steering committee member](GOVERNANCE.md#becoming-a-steering-committee-member) in the [governance](GOVERNANCE.md).
+
+| Name                                            | Represents  | Github                                  |
+| ----------------------------------------------- | ----------- | --------------------------------------- |
+| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>  | Cloudical   | [kisahm](https://github.com/kisahm)     |
+
+## Maintainers
+
+Maintainers will be added according to the [process for adding a maintainer](GOVERNANCE.md#becoming-a-maintainer) in the [governance](GOVERNANCE.md).
+
+* Kim-Norman Sahm <kim-norman.sahm@cloudical.io>
+
+## Code Owners
+
+Code owners, as described in the [change approval process](GOVERNANCE.md#change-approval) of the governance, can be found in [`CODE-OWNERS`](CODE-OWNERS) files.
+
