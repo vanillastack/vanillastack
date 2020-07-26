@@ -1,0 +1,89 @@
+---
+pod:
+  replicas:
+    api: {{openstack.cinder.api.replicas}}
+    volume: {{openstack.cinder.volume.replicas}}
+    scheduler: {{openstack.cinder.scheduler.replicas}}
+    backup: {{openstack.cinder.backup.replicas}}
+conf:
+  cinder:
+    DEFAULT:
+      resource_query_filters_file: /etc/cinder/resource_filters.json
+      log_config_append: /etc/cinder/logging.conf
+      use_syslog: false
+      use_stderr: true
+      enable_v1_api: {{openstack.cinder.api.v1Enabled}}
+      volume_name_template: "%s"
+      osapi_volume_workers: {{openstack.cinder.volume.osapiVolumeWorkers}}
+      glance_api_version: {{openstack.glance.api.version}}
+      os_region_name: {{openstack.region}}
+      host: cinder-volume-worker
+      # NOTE(portdirect): the bind port should not be defined, and is manipulated
+      # via the endpoints section.
+      osapi_volume_listen_port: null
+{% if openstack.cinder.rbd.enabled %}
+      enabled_backends: "rbd1"
+      default_volume_type: "rbd1"
+{% if openstack.cinder.backup.enabled %}
+      backup_driver: "cinder.backup.drivers.swift.SwiftBackupDriver"
+      # Backup: Ceph RBD options
+      backup_ceph_conf: "/etc/ceph/ceph.conf"
+      backup_ceph_user: {{openstack.cinder.rbd.rbdBackupUser}}
+      backup_ceph_pool: {{openstack.cinder.rbd.rbdBackupPool}}
+      # Backup: Posix options
+      backup_posix_path: /var/lib/cinder/backup
+{% endif %}
+{% endif %}
+      auth_strategy: keystone
+      # Internal tenant id
+      internal_project_name: internal_cinder
+      internal_user_name: internal_cinder
+  backends:
+    # Those options will be written to backends.conf as-is.
+{% if openstack.cinder.rbd.enabled %}
+    rbd1:
+      volume_driver: cinder.volume.drivers.rbd.RBDDriver
+      volume_backend_name: rbd1
+      rbd_pool: {{openstack.cinder.rbd.rbdPool}}
+      rbd_ceph_conf: "/etc/ceph/ceph.conf"
+      rbd_flatten_volume_from_snapshot: false
+      report_discard_supported: true
+      rbd_max_clone_depth: 5
+      rbd_store_chunk_size: 4
+      rados_connect_timeout: -1
+      rbd_user: {{openstack.cinder.rbd.rbdPool}}
+      image_volume_cache_enabled: True
+      image_volume_cache_max_size_gb: 200
+      image_volume_cache_max_count: 50
+{% if openstack.ceph.enabled %}
+  ceph:
+    override:
+    append:
+    admin_keyring: null
+    monitors: {{openstack.ceph.rook.cephMonitors}}
+    pools:
+      {{openstack.cinder.rbd.rbdBackupPool}}:
+        replication: 3
+        crush_rule: replicated_rule
+        chunk_size: 8
+        app_name: cinder-backup
+      {{openstack.cinder.rbd.rbdPool}}
+        replication: 3
+        crush_rule: replicated_rule
+        chunk_size: 8
+        app_name: cinder-volume
+{% endif %}
+{% endif %}
+endpoints:
+  volume:
+    host_fqdn_override:
+      public:
+        host: {{openstack.cinder.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+  volumev2:
+    host_fqdn_override:
+      public:
+        host: {{openstack.cinder.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+  volumev3:
+    host_fqdn_override:
+      public:
+        host: {{openstack.cinder.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}

@@ -9,6 +9,9 @@
     kind: Namespace
     state: present
 
+- name: Deploy ceph connnector
+  include_tasks: ceph-connector.yaml
+
 - name: Deploy OpenStack
   include_tasks: deploy.yaml
   with_items:
@@ -18,5 +21,9 @@
     - keystone
     - horizon
     - glance
-    - heat
     - openvswitch
+    - neutron
+    - nova
+    - cinder
+    - libvirt
+    - heat

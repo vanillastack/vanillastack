@@ -1,0 +1,44 @@
+---
+network:
+  interface:
+    tunnel: {{openstack.neutron.tunnelInterface}}
+labels:
+  agent:
+    dhcp:
+      node_selector_key: openstack-helm-node-class
+      node_selector_value: primary
+    l3:
+      node_selector_key: openstack-helm-node-class
+      node_selector_value: primary
+    metadata:
+      node_selector_key: openstack-helm-node-class
+      node_selector_value: primary
+pod:
+  replicas:
+    server: {{openstack.neutron.server.replicas}}
+conf:
+  neutron:
+    DEFAULT:
+      l3_ha: {{openstack.neutron.l3.ha}}
+      max_l3_agents_per_router: {{openstack.neutron.l3.maxAgentsPerRouter}}
+      l3_ha_network_type: {{openstack.neutron.l3.haNetworkType}}
+      dhcp_agents_per_network: {{openstack.neutron.l3.dhcpAgents}}
+  plugins:
+    ml2_conf:
+      ml2_type_flat:
+        flat_networks: public
+    openvswitch_agent:
+      agent:
+        tunnel_types: {{openstack.neutron.l3.haNetworkType}}
+      ovs:
+        bridge_mappings: public:br-ex
+### WORKAROUND
+    tungstenfabric:
+      - dummy: true
+    tf_vnc_api_lib:
+      - dummy: true
+### WORKAROUND END
+endpoints:
+  network:
+    host_fqdn_override:
+      public: {{openstack.neutron.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}

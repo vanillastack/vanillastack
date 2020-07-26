@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: ceph-etc
+ namespace: {{openstack.namespace}}
+data:
+ ceph.conf: |
+  [client]
+  rbd_default_features = 3
+  [global]
+  cluster network = 10.0.0.0/8
+  fsid = {{openstack.ceph.rook.fsid}}
+  mon host = {{openstack.ceph.rook.cephMonitors | list | join (',')}}
+  osd pool default crush rule = -1
+  public network = 10.0.0.0/8
+  [osd]
+  osd memory target = 8582398600

@@ -3,6 +3,7 @@ openstack:
   namespace: openstack
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
   publicDomain: "alderaan.cop.cloudical.net"
+  region: RegionOne
   mariadb:
     enabled: true
     chartName: mariadb
@@ -26,24 +27,49 @@ openstack:
     chartName: memcached
     chartVersion: 0.1.0
     replicas: 1
+  ceph:
+    enabled: true
+    rook:
+      cephMonitors: [rook-ceph-mon-a.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-b.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-c.rook-ceph.svc.cluster.local:6789]
+      namespace: "rook-ceph"
+      fsid: "0f546d9f-19e4-4e9f-b916-e9e8b9c302c6" 
   cinder:
     enabled: true
     chartName: cinder
-    chartVersion: 0.1.0
+    chartVersion: 20200726
+    rbd:
+      enabled: true
+      rbdPool: cinder.volumes
+      rbdUser: cinder
+      rbdBackupUser: cinder-backup
+      rbdBackupPool: cinder.backups
+    api:
+      replicas: 2
+      v1Enabled: false
+    volume:
+      replicas: 1
+      osapiVolumeWorkers: 1
+    scheduler:
+      replicas: 1
+    backup:
+      enabled: true
+      replicas: 1
+    endpoints:
+      publicURLPrefix: "cinder"
   glance:
     enabled: true
     chartName: glance
-    chartVersion: 0.1.0
+    chartVersion: 20200726
     defaultBackend: rbd
     rbd:
       enabled: true
       cephAppName: glance
-      cephMonitors: "[rook-ceph-mon-a.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-b.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-c.rook-ceph.svc.cluster.local:6789]"
       rbdPool: glance.images
       rbdUser: glance
     api:
       replicas: 2
       v1Enabled: false
+      version: 2
     registry:
       replicas: 2
       v2Enabled: true
@@ -51,46 +77,73 @@ openstack:
       publicURLPrefix: "glance"
   heat:
     enabled: true
-    chartName: horizon
-    chartVersion: 0.1.0
+    chartName: heat
+    chartVersion: 20200726
     api:
       replicas: 2
-    cdn:
+    cfn:
       replicas: 2
     cloudwatch:
       replicas: 2
     engine:
       replicas: 2
     endpoints:
-      publicURLPrefiix: "heat"
+      publicURLPrefix: "heat"
       cfPublicURLPrefix: "heat-cfn"
   horizon:
     enabled: true
     chartName: horizon
-    chartVersion: 0.1.0
+    chartVersion: 20200726
   keystone:
     enabled: true
     chartName: keystone
-    chartVersion: 0.1.0
+    chartVersion: 20200726
     endpoints:
       publicURLPrefix: "keystone"
     api:
       replicas: 2
     admin:
       username: admin
-      password: geheim123
-  libvirtd:
+      password: password
+  libvirt:
     enabled: true
-    chartName: libvirtd
+    chartName: libvirt
     chartVersion: 0.1.0
   neutron:
     enabled: true
     chartName: neutron
-    chartVersion: 0.1.0
+    chartVersion: 20200726
+    tunnelInterface: "ens224"
+    server:
+      replicas: 2
+    l3:
+      ha: false
+      maxAgentsPerRouter: 1
+      haNetworkType: vxlan
+      dhcpAgents: 2
+    endpoints:
+      publicURLPrefix: "neutron"
   nova:
     enabled: true
     chartName: nova
-    chartVersion: 0.1.0
+    chartVersion: 20200726
+    apiMetadata:
+      replicas: 1
+    placement:
+      replicas: 2
+    osapi:
+      replicas: 2
+    conductor:
+      replicas: 2
+    consoleauth:
+      replicas: 2
+    scheduler:
+      replicas: 1
+    novncproxy:
+      replicas: 1
+    endpoints:
+      publicURLPrefix: "nova"
+      novncURLPrefix: "novnc"
   openvswitch:
     enabled: true
     chartName: openvswitch

@@ -1,0 +1,36 @@
+labels:
+  api_metadata:
+    node_selector_key: openstack-compute-node
+    node_selector_value: enabled
+pod:
+  replicas:
+    api_metadata: {{openstack.nova.apiMetadata.replicas}}
+    placement: {{openstack.nova.placement.replicas}}
+    osapi: {{openstack.nova.osapi.replicas}}
+    conductor: {{openstack.nova.conductor.replicas}}
+    consoleauth: {{openstack.nova.consoleauth.replicas}}
+    scheduler: {{openstack.nova.scheduler.replicas}}
+    novncproxy: {{openstack.nova.novncproxy.replicas}}
+endpoints:
+  compute:
+    host_fqdn_override:
+      public: {{openstack.nova.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+  compute_novnc_proxy:
+    host_fqdn_override:
+      public: {{openstack.nova.endpoints.novncURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.ceph.enabled %}
+conf:
+  ceph:
+    enabled: {{openstack.ceph.enabled}}
+    admin_keyring: null
+    cinder:
+      user:  {{openstack.cinder.rbd.rbdUser}}
+      keyring: "cinder-keyring" 
+ceph_client:
+  user_secret_name: cinder-volume-rbd-keyring 
+{% endif %}
+images:
+  pull_policy: IfNotPresent
+  tags:
+    db_drop: docker.io/openstackhelm/nova:stein-ubuntu_bionic
+    db_init: docker.io/openstackhelm/nova:stein-ubuntu_bionic
