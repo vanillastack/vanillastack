@@ -15,15 +15,15 @@
 - name: Deploy OpenStack
   include_tasks: deploy.yaml
   with_items:
-    - mariadb
-    - rabbitmq
-    - memcached
-    - keystone
-    - horizon
-    - glance
-    - openvswitch
-    - neutron
-    - nova
-    - cinder
-    - libvirt
-    - heat
+    - { name: mariadb, wait: true}
+    - { name: rabbitmq, wait: true}
+    - { name: memcached, wait: true}
+    - { name: keystone, wait: true}
+    - { name: horizon, wait: true}
+    - { name: glance, wait: true}
+    - { name: openvswitch, wait: true}
+    - { name: neutron, wait: true}
+    - { name: nova, wait: false}
+    - { name: libvirt, wait: false}
+    - { name: cinder, wait: true}
+    - { name: heat, wait: true}

@@ -1,13 +1,13 @@
 ---
-- name: "{{item}} | generate config"
+- name: "{{item.name}} | generate config"
   template:
-    src: "./templates/{{item}}.yaml.j2"
-    dest: "/tmp/openstack_{{item}}.yaml"
-  when: openstack[item]['enabled']
+    src: "./templates/{{item.name}}.yaml.j2"
+    dest: "/tmp/openstack_{{item.name}}.yaml"
+  when: openstack[item.name]['enabled']
 
-- name: "{{item}} | deploy helm chart"
-  shell: helm upgrade --install {{item}} vanilla-openstack/{{ openstack[item]['chartName'] }} --version "{{ openstack[item]['chartVersion'] }}" --namespace "{{openstack.namespace}}" -f /tmp/openstack_{{item}}.yaml
-  when: openstack[item]['enabled']
+- name: "{{item.name}} | deploy helm chart"
+  shell: helm upgrade --install {{item.name}} vanilla-openstack/{{ openstack[item.name]['chartName'] }} --version "{{ openstack[item.name]['chartVersion'] }}" --namespace "{{openstack.namespace}}" -f /tmp/openstack_{{item.name}}.yaml
+  when: openstack[item.name]['enabled']
 
 - name: wait for pods to come up
   shell: kubectl get pods -o json -n "{{openstack.namespace}}" --field-selector=status.phase!=Succeeded
@@ -15,9 +15,10 @@
   until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
   retries: 60
   delay: 10
+  when: item.wait
 
-- name: "{{item}} | cleanup"
+- name: "{{item.name}} | cleanup"
   file:
-    path: "/tmp/openstack_{{item}}.yaml"
+    path: "/tmp/openstack_{{item.name}}.yaml"
     state: absent
-  when: openstack[item]['enabled']
+  when: openstack[item.name]['enabled']

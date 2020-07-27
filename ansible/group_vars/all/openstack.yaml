@@ -3,6 +3,7 @@ openstack:
   namespace: openstack
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
   publicDomain: "alderaan.cop.cloudical.net"
+  publicProto: "http"
   region: RegionOne
   mariadb:
     enabled: true
