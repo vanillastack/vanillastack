@@ -79,8 +79,3 @@ conf:
 ceph_client:
   user_secret_name: cinder-volume-rbd-keyring 
 {% endif %}
-images:
-  pull_policy: IfNotPresent
-  tags:
-    db_drop: docker.io/openstackhelm/nova:stein-ubuntu_bionic
-    db_init: docker.io/openstackhelm/nova:stein-ubuntu_bionic
