@@ -5,6 +5,7 @@ openstack:
   publicDomain: "alderaan.cop.cloudical.net"
   publicProto: "http"
   region: RegionOne
+  release: "train"
   mariadb:
     enabled: true
     chartName: mariadb
@@ -18,7 +19,7 @@ openstack:
     enabled: true
     chartName: rabbitmq
     chartVersion: 0.1.0
-    replicas: 3
+    replicas: 2
     persistence:
       enabled: true
       storageClass: "rook-ceph-block"
@@ -37,7 +38,7 @@ openstack:
   cinder:
     enabled: true
     chartName: cinder
-    chartVersion: 20200726
+    chartVersion: 20200728
     rbd:
       enabled: true
       rbdPool: cinder.volumes
@@ -60,7 +61,7 @@ openstack:
   glance:
     enabled: true
     chartName: glance
-    chartVersion: 20200726
+    chartVersion: 20200728
     defaultBackend: rbd
     rbd:
       enabled: true
@@ -79,7 +80,7 @@ openstack:
   heat:
     enabled: true
     chartName: heat
-    chartVersion: 20200726
+    chartVersion: 20200728
     api:
       replicas: 2
     cfn:
@@ -94,11 +95,11 @@ openstack:
   horizon:
     enabled: true
     chartName: horizon
-    chartVersion: 20200726
+    chartVersion: 20200728
   keystone:
     enabled: true
     chartName: keystone
-    chartVersion: 20200726
+    chartVersion: 20200728
     endpoints:
       publicURLPrefix: "keystone"
     api:
@@ -113,7 +114,7 @@ openstack:
   neutron:
     enabled: true
     chartName: neutron
-    chartVersion: 20200726
+    chartVersion: 20200728
     tunnelInterface: "ens224"
     server:
       replicas: 2
@@ -127,7 +128,7 @@ openstack:
   nova:
     enabled: true
     chartName: nova
-    chartVersion: 20200726
+    chartVersion: 20200728
     apiMetadata:
       replicas: 1
     placement:
