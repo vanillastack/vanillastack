@@ -7,6 +7,14 @@ images:
     horizon_db_sync: docker.io/openstackhelm/horizon:train-ubuntu_bionic
     horizon: docker.io/openstackhelm/horizon:train-ubuntu_bionic
 {% endif %}
+{% if openstack.release == "ussuri" %}
+images:
+  tags:
+    db_init: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    horizon_db_sync: docker.io/openstackhelm/horizon:ussuri-ubuntu_bionic
+    horizon: docker.io/openstackhelm/horizon:ussuri-ubuntu_bionic
+{% endif %}
 
 endpoints:
   dashboard:
