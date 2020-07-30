@@ -1,0 +1,2 @@
+[all]
+cop-1.cop.cloudical.net ansible_user=kisahm ansible_become=true

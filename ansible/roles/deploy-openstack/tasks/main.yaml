@@ -21,9 +21,9 @@
     - { name: keystone, wait: true}
     - { name: horizon, wait: true}
     - { name: glance, wait: true}
+    - { name: cinder, wait: true}
     - { name: openvswitch, wait: true}
     - { name: neutron, wait: true}
-    - { name: nova, wait: false}
     - { name: libvirt, wait: false}
-    - { name: cinder, wait: true}
+    - { name: nova, wait: true}
     - { name: heat, wait: true}

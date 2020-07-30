@@ -5,7 +5,10 @@ openstack:
   publicDomain: "alderaan.cop.cloudical.net"
   publicProto: "http"
   region: RegionOne
-  release: "train"
+  # releases available:
+  # - train
+  # - ussuri (not tested)
+  release: "stein"
   mariadb:
     enabled: true
     chartName: mariadb
@@ -115,7 +118,7 @@ openstack:
     enabled: true
     chartName: neutron
     chartVersion: 20200728
-    tunnelInterface: "ens224"
+    tunnelInterface: "ens256"
     server:
       replicas: 2
     l3:
