@@ -17,10 +17,10 @@ https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
 For filing bugs, suggesting improvements, or requesting new features, please open an issue.
 
 
-==Contact
+== Contact
 Please use the following to reach members of the community:
 
-Rocketchat: Join our #vaninllastack public channel at rocketchat.cloudical.net
+Rocketchat: Join our #vanillastack public channel at rocketchat.cloudical.net
 
 
 == Contribute
