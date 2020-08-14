@@ -28,9 +28,11 @@
     state: present
     src: "{{ ansible_env.HOME }}/{{ clustername }}/calico.yaml"
 
+- pause:
+    seconds: 60
+
 - name: Wait for control-plane pods become ready
   shell: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
-  register: control_plane_pods_ready
 
 - pause:
     seconds: 60
