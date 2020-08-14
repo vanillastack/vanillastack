@@ -1,0 +1,40 @@
+---
+- name: Install basic packages
+  apt: 
+    state: present 
+    update_cache: yes
+    pkg:
+     - haproxy
+
+
+- name: create bridge traffic config
+  sysctl:
+    name: "{{ item }}"
+    value: '1'
+    sysctl_file: /etc/sysctl.d/ipbind.conf
+    reload: yes
+  with_items:
+    "net.ipv4.ip_nonlocal_bind"
+
+#- name: Start reading wildcard certificate
+#  include_vars: vars/wildcard_.pem.yml
+
+#- name: Copy wildcard certificate in /etc/ssl/private/
+#  copy:
+#     content: "{{ private_key_content }}"
+#     dest: /etc/ssl/private/wildcard.pem
+#     owner: root
+#     group: root
+#     mode: 0600
+
+- name: "Create haproxy config file"
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    backup: yes
+    owner: root
+    mode: 0644
+  notify:
+    - restart haproxy
+  tags:
+    - haproxy_config
