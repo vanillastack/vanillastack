@@ -1,0 +1,37 @@
+---
+- name: copy files to cluster folder
+  file:
+    src:  "{{ item }}"   
+    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    owner: {{ ansible_env.USER }}  
+    state: present
+  loop: 
+    - cf-operator.tgz
+    - kubecf_release.tgz
+
+- name: copy files to cluster folder
+  template:
+    src:  "{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    owner: {{ ansible_env.USER }}
+    state: present
+  loop:
+    - cfoperator-values.yaml
+    - kubecf-values.yaml
+
+- name: install CF Operator
+  command: >
+  helm install cf-operator \
+  --namespace cf-operator \
+  --set "global.singleNamespace.name=kubecf" \
+  "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz"
+
+- name: install Kubecf
+  command: > 
+  helm install kubecf \
+  --namespace kubecf \
+  --values "{{ ansible_env.HOME }}/{{ clustername }}/kubecf-values.yaml" \
+  "{{ ansible_env.HOME }}/{{ clustername }}/kubecf_release.tgz"
+
+helm repo add cloudfoundry https://cloudfoundry-incubator.github.io/quarks-helm/
+helm install cf-operator cloudfoundry/cf-operator

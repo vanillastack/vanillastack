@@ -1,0 +1,102 @@
+## Default values for CF-operator Helm Chart.
+## This is a YAML-formatted file.
+## Declare variables to be passed into your templates.
+
+
+# applyCRD is a boolean to control the installation of CRD's.
+applyCRD: true
+
+cluster:
+  # domain is the the Kubernetes cluster domain
+  domain: "cluster.local"
+
+# fullnameOverride overrides the release name
+fullnameOverride: ""
+
+# image is the docker image of quarks job.
+image:
+  # repository that provides the operator docker image.
+  repository: cf-operator
+  # org that provides the operator docker image.
+  org: cfcontainerization
+  # tag of the operator docker image
+  tag: foobar
+
+# logrotateInterval is the time between logrotate calls for instance groups in minutes
+logrotateInterval: 1440
+
+# logLevel defines from which level the logs should be printed (trace,debug,info,warn).
+logLevel: debug
+
+# nameOverride overrides the chart name part of the release name
+nameOverride: ""
+
+# workers are the int values for running maximum number of workers of the respective controller.
+workers:
+  boshdeployment: 1
+  quarksSecret: 1
+  quarksStatefulset: 1
+
+operator:
+  webhook:
+    # host under which the webhook server can be reached from the cluster
+    host: ~
+    # port the webhook server listens on
+    port: "2999"
+  # boshDNSDockerImage is the docker image used for emulating bosh DNS (a CoreDNS image).
+  boshDNSDockerImage: "cfcontainerization/coredns:0.1.0-1.6.7-bp152.1.8"
+
+# serviceAccount contains the configuration
+# values of the service account used by cf-operator.
+serviceAccount:
+  # create is a boolean to control the creation of service account name.
+  create: true
+  # name of the service account.
+  name:
+
+global:
+  # Context Timeout for each K8's API request in seconds.
+  contextTimeout: 300
+  # MeltdownDuration is the duration (in seconds) of the meltdown period, in which we
+  # postpone further reconciles for the same resource
+  meltdownDuration: 60
+  # MeltdownRequeueAfter is the duration (in seconds) for which we delay the requeuing of the reconcile
+  meltdownRequeueAfter: 30
+  image:
+    # pullPolicy defines the policy used for pulling docker images.
+    pullPolicy: IfNotPresent
+    # credentials is used for pulling docker images.
+    credentials: ~
+      # username:
+      # password:
+      # servername:
+  # monitoredID is a string that has to match the content of the 'monitored' label in each monitored namespace.
+  monitoredID: cfo
+  operator:
+    webhook:
+      # useServiceReference is a boolean to control the use of the
+      # service reference in the webhook spec instead of a url.
+      useServiceReference: true
+  rbac:
+    # create is a boolean to control the installation of rbac resources.
+    create: true
+  singleNamespace:
+    # create is a boolean to control the creation of resources for a simplified setup
+    create: true
+    # name is  the name of the single namespace, being watched for BOSH deployments.
+    name: staging
+
+quarks-job:
+  serviceAccount:
+    # create is a boolean to control the creation of service account name.
+    create: true
+    # name of the service account.
+    name:
+  persistOutputClusterRole:
+    # create is a boolean to control the creation of the persist output cluster role
+    create: true
+    # name of the cluster role.
+    name: qjob-persist-output
+  singleNamespace:
+    createNamespace: false
+

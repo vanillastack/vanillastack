@@ -84,6 +84,7 @@
 - name: Reset  the cluster if set
   command: kubeadm reset --force
   when: not kubeadm_ca.stat.exists or reset_cluster==true
+  ignore_errors: true
 
 - name: check if reboot is required
   command: needrestart

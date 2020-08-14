@@ -31,15 +31,14 @@
     - 93C4A3FD7BB9C367
     - 8BECF1637AD8C79D
 
-- name: Add key for kuberepo
-  apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-- name: Add key for cri-o repo
-  apt_key:
-    url: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Unstable/Release.key
 - name: Add second key for cri-o repo
   apt_key:
-    url: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/Release.key
+    url: "{{ item }}"
+  loop: 
+    - "http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/Release.key"
+    - "http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Unstable/Release.key"
+    - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    - "https://baltocdn.com/helm/signing.asc"
 
 - name: Add ansible repository
   apt_repository:
@@ -50,12 +49,14 @@
     - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
     - "deb https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/Debian_10/ /"
     - "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
+    - "deb https://baltocdn.com/helm/stable/debian/ all main"
 
 - name: Install packages
   apt:
     pkg: 
       - ansible
       - needrestart
+      - helm
     update_cache: yes
 
 - name: generate join token
