@@ -1,2 +1,2 @@
 [all]
-cop-1.cop.cloudical.net ansible_user=debian ansible_become=true
+cop-lb.cop.cloudical.net ansible_user=debian

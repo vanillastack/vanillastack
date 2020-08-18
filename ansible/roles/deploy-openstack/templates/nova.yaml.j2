@@ -70,6 +70,10 @@ endpoints:
       public: {{openstack.nova.endpoints.novncURLPrefix}}.{{openstack.publicDomain}}
 {% if openstack.ceph.enabled %}
 conf:
+  nova:
+    libvirt:
+      cpu_mode: {{openstack.nova.libvirt.cpuMode}}
+      virt_type: {{openstack.nova.libvirt.virtType}}
   ceph:
     enabled: {{openstack.ceph.enabled}}
     admin_keyring: null

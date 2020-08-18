@@ -1,7 +1,7 @@
 ---
 - name: Deploy OpenStack
   hosts: all
-  become: true
+  become: false
   gather_facts: no
   roles:
     - role: prepare-node

@@ -40,11 +40,10 @@ endpoints:
     host_fqdn_override:
       public:
        host: {{openstack.keystone.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-#    hosts:
-#      default: keystone
-#      internal: keystone-api
-#      admin: keystone-api
 #    auth:
 #      admin:
 #        username: {{openstack.keystone.admin.username}}
 #        password: {{openstack.keystone.admin.password}}
+
+service_ingress_api: false
+service_api: false
