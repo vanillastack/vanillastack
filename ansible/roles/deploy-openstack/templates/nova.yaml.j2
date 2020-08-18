@@ -79,7 +79,8 @@ conf:
     admin_keyring: null
     cinder:
       user:  {{openstack.cinder.rbd.rbdUser}}
-      keyring: "cinder-keyring" 
+      keyring: "{{ceph_cinder_keyring.stdout}}"
+      secret_uuid: 457eb676-33da-42ec-9a8c-9293d545c337
 ceph_client:
   user_secret_name: cinder-volume-rbd-keyring 
 {% endif %}

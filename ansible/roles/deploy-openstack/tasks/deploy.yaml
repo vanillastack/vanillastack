@@ -1,4 +1,9 @@
 ---
+- name: "{{item.name}} | load cinder keyring"
+  shell: "kubectl get secret -n {{openstack.namespace}} cinder-volume-rbd-keyring -o json |jq -r '.data.key'|base64 -d"
+  register: ceph_cinder_keyring
+  when: openstack[item.name]['enabled'] and "{{item.name}}" == "nova"
+
 - name: "{{item.name}} | generate config"
   template:
     src: "./templates/{{item.name}}.yaml.j2"

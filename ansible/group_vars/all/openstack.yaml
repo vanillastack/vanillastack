@@ -61,7 +61,7 @@ openstack:
     scheduler:
       replicas: 1
     backup:
-      enabled: true
+      enabled: false
       replicas: 1
     endpoints:
       publicURLPrefix: "cinder"
@@ -162,9 +162,9 @@ openstack:
       novncURLPrefix: "novnc"
     libvirt:
       # bare metal = kvm, VMs = qemu
-      virtType: qemu
+      virtType: kvm
       # bare metal = host-passthrough or host-model, vm= none
-      cpuMode: none
+      cpuMode: host-model
   openvswitch:
     enabled: true
     chartName: openvswitch
