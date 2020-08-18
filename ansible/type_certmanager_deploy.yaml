@@ -5,9 +5,3 @@
   gather_facts: true
   roles:
     - role: helm-cert-manager
-
-
-
-
-
-
