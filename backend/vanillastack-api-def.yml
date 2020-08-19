@@ -49,6 +49,15 @@ paths:
       responses:
         200:
           description: OK
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Unauthorized
+          content: {}
+        408:
+          description: Request Timeout
+          content: {}
 components:
   schemas:
     Node:
