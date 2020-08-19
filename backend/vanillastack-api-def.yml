@@ -1,0 +1,127 @@
+openapi: "3.0.2"
+info:
+  title: VanillaStack API
+  description: "This is a sample API for the communication between Front- and Backend for the VanillaStack"
+  termsOfService: http://cloudcial.io/terms/
+  contact:
+    email: apiteam@cloudical.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Just a placeholder
+  url: http://placeholder.io
+servers:
+  - url: https://backend/v1
+  - url: http://backend/v2
+paths:
+  /conn-check:
+    post:
+      summary: Check connection to existing Nodes
+      requestBody:
+        description: Node object which connection needs to be tested
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Node"
+        required: true
+      responses:
+        200:
+          description: OK
+        401:
+          description: Unauthorized
+          content: {}
+        408:
+          description: Request Timeout
+          content: {}
+  /setup:
+    post:
+      summary: Setup Kubernetes
+      requestBody:
+        description: Node object which connection needs to be tested
+        content:
+          application/json:
+            schema:
+              # type: array
+              $ref: "#/components/schemas/Cluster"
+        required: true
+      responses:
+        200:
+          description: OK
+components:
+  schemas:
+    Node:
+      required:
+        - hostname
+        - username
+        - ssh_key
+      type: object
+      properties:
+        hostname:
+          type: string
+          example: domain.io
+        username:
+          type: string
+          example: root
+        ssh_key:
+          type: string
+    Nodes:
+      # required:
+      #   - node
+      #   - role
+      type: array
+      items:
+        properties:
+          node:
+            type: object
+            $ref: "#/components/schemas/Node"
+            # items:
+            #   type: string
+          role:
+            type: string
+            example: m
+    InternalLB:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        ip:
+          type: string
+        fqdn:
+          type: string
+    ExternalLB:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        ip_fqdn:
+          type: string
+        metalLB:
+          type: boolean
+    Tag:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    Tags:
+      type: array
+      items:
+        $ref: "#/components/schemas/Tag"
+    Cluster:
+      type: object
+      properties:
+        nodes:
+          $ref: "#/components/schemas/Nodes"
+        clusterName:
+          type: string
+          example: default
+        internalLB:
+          $ref: "#/components/schemas/InternalLB"
+        externalLB:
+          $ref: "#/components/schemas/ExternalLB"
+        tags:
+          type: array
+          $ref: "#/components/schemas/Tags"
