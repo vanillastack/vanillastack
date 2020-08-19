@@ -29,6 +29,11 @@ paths:
       responses:
         200:
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Successfully connected to hostname
         401:
           description: Unauthorized
           content: {}
@@ -49,6 +54,11 @@ paths:
       responses:
         200:
           description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Successfully created clusterName
         400:
           description: Bad Request
           content: {}
@@ -76,11 +86,11 @@ components:
         ssh_key:
           type: string
     Nodes:
-      # required:
-      #   - node
-      #   - role
       type: array
       items:
+        required:
+          - node
+          - role
         properties:
           node:
             type: object
@@ -92,6 +102,8 @@ components:
             example: m
     InternalLB:
       type: object
+      required:
+        - enabled
       properties:
         enabled:
           type: boolean
@@ -101,6 +113,8 @@ components:
           type: string
     ExternalLB:
       type: object
+      required:
+        - enabled
       properties:
         enabled:
           type: boolean
@@ -121,6 +135,11 @@ components:
         $ref: "#/components/schemas/Tag"
     Cluster:
       type: object
+      required:
+        - nodes
+        - clusterName
+        - internalLB
+        - externalLB
       properties:
         nodes:
           $ref: "#/components/schemas/Nodes"
