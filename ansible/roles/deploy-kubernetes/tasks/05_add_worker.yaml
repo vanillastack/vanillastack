@@ -5,13 +5,17 @@
   when: certificate_key is not defined or certificate_key|length <1
 
 - name: Check if kubeadm has already run
+  become: true
   stat:
     path: "/etc/kubernetes/pki/ca.crt"
-  register: kubeadm_ca
+  register: kubeadm_crt
+
+- debug:
+    msg: "{{ kubeadm_crt }}"
 
 - name: join worker if not already
   block:
-  - name: reset Master Node
+  - name: reset Worker Node
     command: kubeadm reset --force
   
   - name: Join to Kubernetes cluster
@@ -19,5 +23,5 @@
       kubeadm join --token {{ token }} \
                   --discovery-token-unsafe-skip-ca-verification \
                   {{  loadbalancer_fqdn }}:6443 \
-  when: not kubeadm_ca.stat.exists or reset_cluster==true
+  when: not kubeadm_crt.stat.exists or reset_cluster==true
 

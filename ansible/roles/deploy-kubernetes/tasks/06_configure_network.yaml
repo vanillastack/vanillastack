@@ -15,6 +15,7 @@
 - name: "Install python dependencies"
   pip:
     name:
+      - pyhelm
       - openshift
     extra_args: --ignore-installed
 

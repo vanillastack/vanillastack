@@ -30,6 +30,6 @@ certificate_key: ""
 # reset_cluster: false
 
 ## Configure a Clustername
-# clustername: kube
+clustername: kube
 
 
