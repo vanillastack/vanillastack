@@ -79,6 +79,9 @@ conf:
     tf_vnc_api_lib:
       - dummy: true
 ### WORKAROUND END
+  auto_bridge_add:
+    br-ex: {{openstack.neutron.extInterface}}
+    br-tun: {{openstack.neutron.tunnelInterface}}
 endpoints:
   network:
     host_fqdn_override:
