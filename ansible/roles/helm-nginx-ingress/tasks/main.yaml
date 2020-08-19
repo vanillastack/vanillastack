@@ -1,6 +1,8 @@
 ---
 - name: "copy nginx-ingress.yaml"
-  template: src=./templates/nginx-ingress.yaml.j2  dest=/tmp/nginx-ingress.yaml
+  template: 
+    src: nginx-ingress.yaml.j2  
+    dest: /tmp/nginx-ingress.yaml
 
 - name: "create Nginx Ingress namespace"
   k8s:
