@@ -27,3 +27,8 @@
     - { name: libvirt, wait: false}
     - { name: nova, wait: true}
     - { name: heat, wait: true}
+    - { name: radosgw, wait: true}
+    - { name: barbican, wait: true}
+    - { name: senlin, wait: true}
+    - { name: mistral, wait: true}
+    - { name: congress, wait: true}

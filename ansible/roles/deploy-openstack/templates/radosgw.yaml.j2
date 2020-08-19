@@ -1,0 +1,41 @@
+---
+deployment:
+  ceph: true
+bootstrap:
+  enabled: false
+conf:
+  rgw_ks:
+    enabled: true
+network_policy:
+  ceph:
+    ingress:
+      - from:
+        - podSelector:
+            matchLabels:
+              application: glance
+        - podSelector:
+            matchLabels:
+              application: cinder
+        - podSelector:
+            matchLabels:
+              application: libvirt
+        - podSelector:
+            matchLabels:
+              application: nova
+        - podSelector:
+            matchLabels:
+              application: ceph
+        - podSelector:
+            matchLabels:
+              application: ingress
+        ports:
+        - protocol: TCP
+          port: 8088
+endpoints:
+  object_store:
+    host_fqdn_override:
+      public:
+        host: {{openstack.radosgw.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+manifests:
+  network_policy: true
+  configmap_etc: false

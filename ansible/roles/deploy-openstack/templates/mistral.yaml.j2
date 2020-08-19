@@ -1,0 +1,12 @@
+---
+pod:
+  replicas:
+    api: {{openstack.mistral.api.replicas}}
+    engine: {{openstack.mistral.engine.replicas}}
+    event_engine: {{openstack.mistral.eventEngine.replicas}}
+    executor: {{openstack.mistral.executor.replicas}}
+endpoints:
+  workflowv2:
+    host_fqdn_override:
+      public:
+        host: {{openstack.mistral.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
