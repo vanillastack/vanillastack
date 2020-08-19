@@ -38,7 +38,7 @@ openstack:
   ceph:
     enabled: true
     rook:
-      cephMonitors: [rook-ceph-mon-a.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-b.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-c.rook-ceph.svc.cluster.local:6789]
+      cephMonitors: ['rook-ceph-mon-a.rook-ceph.svc.cluster.local:6789', 'rook-ceph-mon-b.rook-ceph.svc.cluster.local:6789', 'rook-ceph-mon-c.rook-ceph.svc.cluster.local:6789']
       namespace: "rook-ceph"
       fsid: "602a7124-e4ba-43fd-a6f7-00bd574329d8"
   cinder:

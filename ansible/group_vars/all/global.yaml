@@ -3,3 +3,4 @@ global:
   registry: registry.cloudical.net
 ingress:
   namespace: nginx-ingress
+loadbalancer_virtualip: 95.217.124.41
