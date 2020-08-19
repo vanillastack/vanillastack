@@ -13,6 +13,16 @@ We will use the ASCIIDocs-Format for documentation, a reference regarding ASCII-
 https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
 
 
+== Report a Bug
+For filing bugs, suggesting improvements, or requesting new features, please open an issue.
+
+
+== Contact
+Please use the following to reach members of the community:
+
+Rocketchat: Join our #vanillastack public channel at rocketchat.cloudical.net
+
+
 == Contribute
 Please read and apply the following rules to contribute to this project:
 

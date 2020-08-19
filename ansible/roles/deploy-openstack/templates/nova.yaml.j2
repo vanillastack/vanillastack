@@ -1,0 +1,103 @@
+---
+{% if openstack.release == "train" %}
+images:
+  tags:
+    bootstrap: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    db_drop: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    db_init: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_user: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_service: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_endpoints: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    nova_api: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_cell_setup: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_cell_setup_init: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    nova_compute: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_compute_ssh: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_conductor: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_db_sync: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_novncproxy: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_novncproxy_assets: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_placement: "docker.io/openstackhelm/placement:master-ubuntu_bionic-20200207"
+    nova_scheduler: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_spiceproxy: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_spiceproxy_assets: "docker.io/openstackhelm/nova:train-ubuntu_bionic"
+    nova_service_cleaner: "docker.io/openstackhelm/ceph-config-helper:latest-ubuntu_bionic"
+{% endif %}
+{% if openstack.release == "ussuri" %}
+images:
+  tags:
+    bootstrap: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    db_drop: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    db_init: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_user: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_service: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_endpoints: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    nova_api: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_cell_setup: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_cell_setup_init: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    nova_compute: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_compute_ssh: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_conductor: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_db_sync: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_novncproxy: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_novncproxy_assets: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_placement: "docker.io/openstackhelm/placement:master-ubuntu_bionic"
+    nova_scheduler: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_spiceproxy: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_spiceproxy_assets: "docker.io/openstackhelm/nova:ussuri-ubuntu_bionic"
+    nova_service_cleaner: "docker.io/openstackhelm/ceph-config-helper:latest-ubuntu_bionic"
+{% endif %}
+
+labels:
+  api_metadata:
+    node_selector_key: openstack-compute-node
+    node_selector_value: enabled
+pod:
+  replicas:
+    api_metadata: {{openstack.nova.apiMetadata.replicas}}
+    placement: {{openstack.nova.placement.replicas}}
+    osapi: {{openstack.nova.osapi.replicas}}
+    conductor: {{openstack.nova.conductor.replicas}}
+    consoleauth: {{openstack.nova.consoleauth.replicas}}
+    scheduler: {{openstack.nova.scheduler.replicas}}
+    novncproxy: {{openstack.nova.novncproxy.replicas}}
+endpoints:
+  compute:
+    host_fqdn_override:
+      public: {{openstack.nova.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+  compute_novnc_proxy:
+    host_fqdn_override:
+      public: {{openstack.nova.endpoints.novncURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.ceph.enabled %}
+conf:
+  nova:
+    libvirt:
+      cpu_mode: {{openstack.nova.libvirt.cpuMode}}
+      virt_type: {{openstack.nova.libvirt.virtType}}
+  ceph:
+    enabled: {{openstack.ceph.enabled}}
+    admin_keyring: null
+    cinder:
+      user:  {{openstack.cinder.rbd.rbdUser}}
+      keyring: "{{ceph_cinder_keyring.stdout}}"
+      secret_uuid: 457eb676-33da-42ec-9a8c-9293d545c337
+ceph_client:
+  user_secret_name: cinder-volume-rbd-keyring 
+{% endif %}
+
+{% if openstack.release == "train" or openstack.release == "ussuri" %}
+manifests:
+  cron_job_cell_setup: false
+  cron_job_service_cleaner: false
+  statefulset_compute_ironic: false
+  deployment_placement: false
+  ingress_placement: false
+  job_db_init_placement: false
+  job_ks_placement_endpoints: false
+  job_ks_placement_service: false
+  job_ks_placement_user: false
+  pdb_placement: false
+  secret_keystone_placement: false
+  service_ingress_placement: false
+  service_placement: false
+{% endif %}

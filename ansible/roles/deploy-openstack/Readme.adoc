@@ -1,0 +1,9 @@
+= Ansible role - deploy-openstack
+
+== Requirements:
+The role require s the following K8s node labels to deploy the components:
+
+* openstack-control-plane=enabled
+* openstack-compute-node=enabled
+* openvswitch=enabled
+* linuxbridge=enabled

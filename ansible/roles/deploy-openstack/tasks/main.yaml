@@ -1,0 +1,29 @@
+---
+- name: Add repo
+  shell: helm repo add vanilla-openstack {{openstack.chartRepo}}
+
+- name: Create namespace
+  k8s:
+    name: "{{openstack.namespace}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Deploy ceph connnector
+  include_tasks: ceph-connector.yaml
+
+- name: Deploy OpenStack
+  include_tasks: deploy.yaml
+  with_items:
+    - { name: mariadb, wait: true}
+    - { name: rabbitmq, wait: true}
+    - { name: memcached, wait: true}
+    - { name: keystone, wait: true}
+    - { name: horizon, wait: true}
+    - { name: glance, wait: true}
+    - { name: cinder, wait: true}
+    - { name: openvswitch, wait: true}
+    - { name: neutron, wait: true}
+    - { name: libvirt, wait: false}
+    - { name: nova, wait: true}
+    - { name: heat, wait: true}

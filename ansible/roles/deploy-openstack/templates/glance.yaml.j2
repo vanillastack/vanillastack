@@ -1,0 +1,72 @@
+---
+{% if openstack.release == "train" %}
+images:
+  tags:
+    bootstrap: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    db_init: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    db_drop: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_user: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_service: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_endpoints: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    glance_db_sync: "docker.io/openstackhelm/glance:train-ubuntu_bionic"
+    glance_api: "docker.io/openstackhelm/glance:train-ubuntu_bionic"
+    glance_registry: "docker.io/openstackhelm/glance:train-ubuntu_bionic"
+    glance_metadefs_load: "docker.io/openstackhelm/glance:train-ubuntu_bionic"
+    glance_storage_init: "docker.io/openstackhelm/ceph-config-helper:latest-ubuntu_bionic"
+{% endif %}
+{% if openstack.release == "ussuri" %}
+images:
+  tags:
+    bootstrap: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    db_init: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    db_drop: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_user: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_service: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_endpoints: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    glance_db_sync: "docker.io/openstackhelm/glance:ussuri-ubuntu_bionic"
+    glance_api: "docker.io/openstackhelm/glance:ussuri-ubuntu_bionic"
+    glance_registry: "docker.io/openstackhelm/glance:ussuri-ubuntu_bionic"
+    glance_metadefs_load: "docker.io/openstackhelm/glance:ussuri-ubuntu_bionic"
+    glance_storage_init: "docker.io/openstackhelm/ceph-config-helper:latest-ubuntu_bionic"
+{% endif %}
+
+storage: {{openstack.glance.defaultBackend}}
+pod:
+  replicas:
+    api: {{openstack.glance.api.replicas}}
+    registry: {{openstack.glance.registry.replicas}}
+conf:
+{% if openstack.glance.rbd.enabled %}
+  software:
+    rbd:
+      rbd_store_pool_app_name: {{openstack.glance.rbd.cephAppName}}
+{% if openstack.ceph.enabled %}
+  ceph:
+    monitors: {{openstack.ceph.rook.cephMonitors}}
+{% endif %}
+{% endif %}
+  glance:
+    DEFAULT:
+      enable_v1_api: {{openstack.glance.api.v1Enabled}}
+      enable_v2_registry: {{openstack.glance.registry.v2Enabled}}
+{% if openstack.glance.rbd.enabled %}
+    glance_store:
+      rbd_store_pool: {{openstack.glance.rbd.rbdPool}} 
+      rbd_store_user: {{openstack.glance.rbd.rbdUser}}
+secrets:
+  rbd: images-rbd-keyring
+{% endif %}
+manifests:
+  deployment_registry: true
+  ingress_registry: true
+  pdb_registry: true
+  service_ingress_registry: true
+endpoints:
+  image:
+    host_fqdn_override:
+      public:
+        host: {{openstack.glance.endpoints.publicURLPrefix}}.{{openstack.publicDomain}} 
+  identity:
+    hosts:
+      default: keystone-api
+      internal: keystone-api
