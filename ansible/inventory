@@ -1,2 +1,2 @@
-[all]
+[bastion]
 cop-lb.cop.cloudical.net ansible_user=debian
