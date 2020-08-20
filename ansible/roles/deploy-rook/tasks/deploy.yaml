@@ -12,8 +12,8 @@
   when: rook[item.name]['enabled']
 
 - name: "{{item.name}} | delay"
-  wait_for:
-    timeout: "{{item.delay}}"
+  pause:
+    seconds: "{{item.delay}}"
 
 - name: wait for pods to come up
   shell: kubectl get pods -o json -n "{{rook.namespace}}" --field-selector=status.phase!=Succeeded
