@@ -1,0 +1,10 @@
+---
+pod:
+  replicas:
+    api: {{openstack.senlin.api.replicas}}
+    engine: {{openstack.senlin.engine.replicas}}
+endpoints:
+  clustering:
+    host_fqdn_override:
+      public:
+        host: {{openstack.senlin.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}

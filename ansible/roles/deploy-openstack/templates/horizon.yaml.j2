@@ -15,7 +15,9 @@ images:
     horizon_db_sync: docker.io/openstackhelm/horizon:ussuri-ubuntu_bionic
     horizon: docker.io/openstackhelm/horizon:ussuri-ubuntu_bionic
 {% endif %}
-
+pod:
+  replicas:
+    server: {{openstack.horizon.replicas}}
 endpoints:
   dashboard:
     host_fqdn_override:
