@@ -1,3 +1,0 @@
-- type: replace
-  path: /name
-  value: {{ include "kubecf.deployment-name" . }}
