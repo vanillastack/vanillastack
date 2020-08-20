@@ -1,7 +1,7 @@
 ---
 - name: Deploy Cert Manager
   hosts: bastion
-  become: true
+  become: false
   gather_facts: true
   roles:
     - role: helm-cert-manager
