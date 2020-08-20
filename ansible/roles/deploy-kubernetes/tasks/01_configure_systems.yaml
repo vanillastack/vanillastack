@@ -40,6 +40,7 @@
     - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key"
     - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
     - "https://baltocdn.com/helm/signing.asc"
+    - "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
 
 - name: Add ansible repository
   apt_repository:
@@ -51,6 +52,7 @@
     - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
     - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
     - "deb https://baltocdn.com/helm/stable/debian/ all main"
+    - "deb https://packages.cloudfoundry.org/debian stable main"
 
 - name: Install packages
   apt:
@@ -58,6 +60,7 @@
       - ansible
       - needrestart
       - helm
+      - cf-cli
     update_cache: yes
 
 - name: generate join token

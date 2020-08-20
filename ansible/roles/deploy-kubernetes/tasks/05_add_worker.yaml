@@ -1,17 +1,9 @@
 ---
-- name: Include certificate var
-  include_vars:
-    file: main.yml
-  when: certificate_key is not defined or certificate_key|length <1
-
 - name: Check if kubeadm has already run
   become: true
   stat:
     path: "/etc/kubernetes/pki/ca.crt"
   register: kubeadm_crt
-
-- debug:
-    msg: "{{ kubeadm_crt }}"
 
 - name: join worker if not already
   block:
