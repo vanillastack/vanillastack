@@ -1,7 +1,7 @@
 ---
 - name: "{{item.name}} | generate config"
   template:
-    src: "./templates/{{item.name}}.yaml.j2"
+    src: "{{item.name}}.yaml.j2"
     dest: "/tmp/rook_{{item.name}}.yaml"
   when: rook[item.name]['enabled']
 
