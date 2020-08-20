@@ -1,0 +1,13 @@
+name: route_registrar
+properties:
+  route_registrar:
+    routes:
+    - name: log-cache-reverse-proxy
+      port: 8083
+      registration_interval: 20s
+      server_cert_domain_san: log-cache.((system_domain))
+      tls_port: 8083
+      uris:
+      - log-cache.((system_domain))
+      - '*.log-cache.((system_domain))'
+release: routing

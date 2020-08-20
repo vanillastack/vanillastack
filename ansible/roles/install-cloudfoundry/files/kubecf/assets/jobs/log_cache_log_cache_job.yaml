@@ -1,0 +1,16 @@
+name: log-cache
+properties:
+  health_addr: localhost:6060
+  metrics:
+    ca_cert: ((log_cache_metrics_tls.ca))
+    cert: ((log_cache_metrics_tls.certificate))
+    key: ((log_cache_metrics_tls.private_key))
+    server_name: log_cache_metrics
+  tls:
+    ca_cert: ((log_cache.ca))
+    cert: ((log_cache.certificate))
+    key: ((log_cache.private_key))
+provides:
+  log-cache:
+    shared: true
+release: log-cache

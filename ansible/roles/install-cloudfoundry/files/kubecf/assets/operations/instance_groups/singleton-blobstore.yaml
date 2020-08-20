@@ -1,0 +1,53 @@
+{{ if eq .Values.features.blobstore.provider "singleton" }}
+- type: replace
+  path: /instance_groups/name=singleton-blobstore/persistent_disk?
+  value: 102400 # 100GB
+{{- if .Values.kube.storage_class }}
+- type: replace
+  path: /instance_groups/name=singleton-blobstore/persistent_disk_type
+  value: {{ .Values.kube.storage_class }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=singleton-blobstore/persistent_disk_type
+{{- end }}
+
+- type: replace
+  path: /instance_groups/name=singleton-blobstore/jobs/name=blobstore/properties/blobstore/internal_access_rules?
+  value: [ "allow 10.0.0.0/8;","allow 172.16.0.0/12;", "allow 192.168.0.0/16;" , "allow 100.64.0.0/10;"]
+- type: replace
+  path: /instance_groups/name=singleton-blobstore/jobs/name=blobstore/properties/quarks?
+  value:
+    ports:
+    - name: http
+      protocol: TCP
+      internal: 8080
+    - name: https
+      protocol: TCP
+      internal: 4443
+    run:
+      security_context:
+        runAsUser: 1000 # vcap
+      healthcheck:
+        nginx:
+          readiness:
+            tcpSocket:
+              port: 8080
+          liveness:
+            exec:
+              command: [pgrep, --full, 'nginx: master process']
+        url_signer:
+          readiness:
+            exec:
+              command: [test, -S, /var/vcap/data/blobstore/signer.sock]
+
+- type: replace
+  path: /instance_groups/name=singleton-blobstore/jobs/name=route_registrar/properties/quarks?/run/healthcheck/route_registrar
+  value:
+    readiness: ~
+      # The route registrar doesn't expose anything to indicate if the
+      # routes are healthy.
+
+{{- range $bytes := .Files.Glob "assets/operations/pre_render_scripts/singleton-blobstore_*" }}
+{{ $bytes | toString }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,106 @@
+# Add quarks properties.
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/quarks?
+  value:
+    ports:
+    - name: http
+      protocol: TCP
+      internal: 8080
+    - name: https
+      protocol: TCP
+      internal: &uaa_https_port 8443
+    run:
+      healthcheck:
+        uaa:
+          # UAA has a long period of cert import, so we can't set up a liveness
+          # check without killing it accidentally.
+          readiness: &uaa_readiness
+            exec:
+              command: ['sh', '-c', '/var/vcap/jobs/uaa/bin/health_check']
+    post_start:
+      condition: *uaa_readiness
+
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=route_registrar/properties/quarks?/run/healthcheck/route_registrar
+  value:
+    readiness: ~
+      # The route registrar doesn't expose anything to indicate if the
+      # routes are healthy.
+
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=statsd_injector/properties/quarks?/run/healthcheck/statsd_injector/readiness/exec/command
+  value: ["/bin/sh", "-c", "ss -nlu src localhost:8125 | grep :8125"]
+
+{{- if .Values.features.credhub.enabled }}
+
+- type: replace
+  path: /instance_groups/name=uaa/jobs/-
+  value:
+    name: cf-cli-6-linux
+    release: cf-cli
+    properties:
+      quarks:
+        bpm:
+          processes:
+          - name: uaa-internal-security-group-setup
+            ephemeral_disk: true
+            executable: /bin/bash
+            args:
+            - -c
+            - |-
+              {{- .Files.Get "assets/scripts/jobs/cf-cli-6-linux/setup_internal_security_group.sh" | nindent 14 }}
+        envs:
+        - name: CF_API
+          value: https://cloud-controller-ng.service.cf.internal:9024
+        - name: CF_API_CA_CERT
+          valueFrom:
+            secretKeyRef:
+              name: var-cc-tls
+              key: ca
+        - name: UAA_URL
+          value: https://uaa.service.cf.internal:8443
+        - name: UAA_CA_CERT
+          valueFrom:
+            secretKeyRef:
+              name: var-uaa-ssl
+              key: ca
+        - name: CF_USERNAME
+          value: uaa_setup
+        - name: CF_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: var-uaa-setup-client-secret
+              key: password
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: PORTS
+          value: *uaa_https_port
+        - name: DATA_DIR
+          value: /var/vcap/data/cf-cli-6-linux
+
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaa/clients/uaa_setup?
+  value:
+    authorities: cloud_controller.admin
+    authorized-grant-types: client_credentials
+    secret: ((uaa_setup_client_secret))
+
+- type: replace
+  path: /variables/name=uaa_setup_client_secret?
+  value:
+    name: uaa_setup_client_secret
+    type: password
+
+{{- end }}
+
+{{- range $bytes := .Files.Glob "assets/operations/pre_render_scripts/uaa_*" }}
+{{ $bytes | toString }}
+{{- end }}

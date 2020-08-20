@@ -1,0 +1,20 @@
+name: log-cache-cf-auth-proxy
+properties:
+  cc:
+    ca_cert: ((cc_tls.ca))
+    common_name: cloud-controller-ng.service.cf.internal
+  external_cert: ((logcache_ssl.certificate))
+  external_key: ((logcache_ssl.private_key))
+  metrics:
+    ca_cert: ((log_cache_cf_auth_proxy_metrics_tls.ca))
+    cert: ((log_cache_cf_auth_proxy_metrics_tls.certificate))
+    key: ((log_cache_cf_auth_proxy_metrics_tls.private_key))
+    server_name: log_cache_cf_auth_proxy_metrics
+  proxy_ca_cert: ((log_cache.ca))
+  proxy_port: 8083
+  uaa:
+    ca_cert: ((uaa_ssl.ca))
+    client_id: doppler
+    client_secret: ((uaa_clients_doppler_secret))
+    internal_addr: https://uaa.service.cf.internal:8443
+release: log-cache

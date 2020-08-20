@@ -1,0 +1,43 @@
+{{- if .Values.testing.cf_acceptance_tests.enabled }}
+
+- path: /instance_groups/-
+  type: replace
+  value:
+    azs:
+    - z1
+    env:
+      bosh:
+        agent:
+          settings:
+            disable_log_sidecar: true
+            jobBackoffLimit: 1
+    instances: 1
+    jobs:
+    - name: acceptance-tests
+      properties:
+        acceptance_tests:
+          admin_password: ((cf_admin_password))
+          admin_user: admin
+          api: api.((system_domain))
+          apps_domain: ((system_domain))
+          {{- if .Values.features.credhub.enabled }}
+          credhub_client: credhub_admin_client
+          credhub_mode: assisted
+          credhub_secret: ((credhub_admin_client_secret))
+          {{- end }}
+          include: '+docker,tasks{{ if .Values.features.routing_api.enabled }},tcp_routing{{ end }}'
+          skip_ssl_validation: true
+          timeout_scale: 3
+        bpm:
+          enabled: true
+      release: cf-acceptance-tests
+    lifecycle: errand
+    name: acceptance-tests
+    networks:
+    - name: default
+    stemcell: default
+    update:
+      serial: true
+    vm_type: minimal
+
+{{- end }}

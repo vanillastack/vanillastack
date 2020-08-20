@@ -17,12 +17,25 @@
     - cfoperator-values.yaml
     - kubecf-values.yaml
 
+- name: create necessary namespaces
+  k8s:
+    name: "{{ item }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  loop:
+  - "cf-operator"
+
+
 - name: install CF Operator
   command: >
     helm install cf-operator \
     --namespace cf-operator \
     --set "global.singleNamespace.name=kubecf" \
     "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz"
+
+- pause:
+    seconds: 20
 
 - name: install Kubecf
   command: > 

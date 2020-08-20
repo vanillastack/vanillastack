@@ -12,7 +12,7 @@
 - name: Init Cluster if not existant
   command: > 
     kubeadm init --service-cidr {{ service_cidr }} \
-                 --kubernetes-version {{ kube_version }} \
+                 --kubernetes-version v{{ kube_version }} \
                  --pod-network-cidr {{ pod_network_cidr }} \
                  --token {{ token }} \
                  --control-plane-endpoint {{ loadbalancer_fqdn }}:6443 

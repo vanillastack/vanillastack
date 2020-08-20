@@ -35,8 +35,9 @@
   apt_key:
     url: "{{ item }}"
   loop: 
-    - "http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/Release.key"
-    - "http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Unstable/Release.key"
+    - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/Release.key"
+    - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Unstable/Release.key"
+    - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key"
     - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
     - "https://baltocdn.com/helm/signing.asc"
 
@@ -45,10 +46,10 @@
     repo: "{{ item }}"
     state: present
   loop:
-    - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+    - "deb https://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
     - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-    - "deb https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/Debian_10/ /"
-    - "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
+    - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
+    - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
     - "deb https://baltocdn.com/helm/stable/debian/ all main"
 
 - name: Install packages

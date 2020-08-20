@@ -1,0 +1,14 @@
+# Add quarks properties for doppler.
+- type: replace
+  path: /instance_groups/name=doppler/jobs/name=doppler/properties/quarks?
+  value:
+    ports:
+    - name: doppler-grpc
+      protocol: TCP
+      internal: 8082
+    run:
+      healthcheck:
+        doppler:
+          readiness:
+            exec:
+              command: [sh, -c, 'ss -nlt sport = 8082 | grep "LISTEN.*:8082"']

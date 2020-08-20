@@ -1,13 +1,38 @@
 ---
+- name: get latest kube version
+  shell: apt-cache madison kubeadm | grep {{ kube_version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  register: apt_output
+
+- debug:
+    msg: "{{ apt_output }}"
+
+- name: get kubeversion
+  set_fact:
+    versions: "{{ apt_output.stdout }}"
+
+- debug:
+    msg: "{{ versions }}"
+
 - name: Install packages
   apt:
     pkg: 
-      - kubelet
-      - kubeadm
-      - kubectl
-      - cri-o
+      - "kubelet={{ versions }}"
+      - "kubeadm={{ versions }}"
+      - "kubectl={{ versions }}"
+      - "cri-o-{{ kube_version }}"
       - libgtk2.0-0
     update_cache: yes
+
+- name: mark packages as hold
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o-{{ kube_version }}"
+
 
 - name: configure crio
   lineinfile:

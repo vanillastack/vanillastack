@@ -1,0 +1,50 @@
+{{- $service := index .Values.services "tcp-router" }}
+
+{{- if .Values.features.routing_api.enabled }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/router_groups/name=default-tcp/reservable_ports
+  value: "{{ $service.port_range.start }}-{{ $service.port_range.end }}"
+
+- type: replace
+  path: /instance_groups/name=tcp-router/jobs/name=tcp_router/properties/quarks?
+  value:
+    ports:
+    - name: healthcheck
+      protocol: TCP
+      internal: 80
+    {{- range $port := until (int (add 1 (sub $service.port_range.end $service.port_range.start))) }}
+    {{- $port = add $port $service.port_range.start }}
+    - name: "tcp-route-{{ $port }}"
+      protocol: TCP
+      internal: {{ $port }}
+    {{- end }}
+    run:
+      healthcheck:
+        tcp_router:
+          readiness:
+            httpGet:
+              port: 80
+              path: /health
+
+# Add necessary labels to the tcp-router instance group so that the service can select it to create
+# the endpoint.
+- type: replace
+  path: /instance_groups/name=tcp-router/env?/bosh/agent/settings/labels/app.kubernetes.io~1component
+  value: "tcp-router"
+- type: replace
+  path: /instance_groups/name=tcp-router/env?/bosh/agent/settings/labels/app.kubernetes.io~1instance
+  value: {{ .Release.Name | quote }}
+- type: replace
+  path: /instance_groups/name=tcp-router/env?/bosh/agent/settings/labels/app.kubernetes.io~1version
+  value: {{ default .Chart.Version .Chart.AppVersion | quote }}
+{{- else }}
+# Disable the tcp-router ig, as there will be no routing-api SSE events to read from.
+- type: remove
+  path: /instance_groups/name=tcp-router
+
+- type: remove
+  path: /variables/name=uaa_clients_tcp_router_secret
+
+- type: remove
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaa/clients/tcp_router
+{{- end }}

@@ -1,0 +1,6 @@
+apiVersion: v1
+appVersion: v2.2.3
+description: A Helm chart for KubeCF
+icon: https://raw.githubusercontent.com/cloudfoundry-incubator/kubecf/master/icon/kubecf.png
+name: kubecf
+version: v2.2.3

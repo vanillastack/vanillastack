@@ -1,0 +1,499 @@
+# Remove database instance group and variables.
+- type: remove
+  path: /instance_groups/name=database
+
+# Remove the PXC release and related variables.
+- type: remove
+  path: /releases/name=pxc
+- type: remove
+  path: /variables/name=pxc_galera_ca
+- type: remove
+  path: /variables/name=pxc_server_ca
+- type: remove
+  path: /variables/name=galera_server_certificate
+- type: remove
+  path: /variables/name=mysql_server_certificate
+
+{{- if .Values.features.embedded_database.enabled }}
+
+# Add certificates for PXC.
+- type: replace
+  path: /variables/-
+  value:
+    name: pxc_ca
+    type: certificate
+    options:
+      common_name: pxc_ca
+      is_ca: true
+- type: replace
+  path: /variables/-
+  value:
+    name: pxc_tls
+    type: certificate
+    options:
+      ca: pxc_ca
+      common_name: &pxc-cluster-address {{ printf "database.%s" .Release.Namespace }}
+
+# Override the address and CA cert with the one from PXC.
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/db_host?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/ca_cert?
+  value: &pxc-cluster-ca ((pxc_tls.ca))
+
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/db_host?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/ca_cert?
+  value: *pxc-cluster-ca
+
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaadb/address?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaa?/ca_certs
+  value:
+  - *pxc-cluster-ca
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/address?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/ca_cert?
+  value: *pxc-cluster-ca
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/address?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/ca_cert?
+  value: *pxc-cluster-ca
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/address?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/ca_cert?
+  value: *pxc-cluster-ca
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/address?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/ca_cert?
+  value: *pxc-cluster-ca
+
+{{- if .Values.features.credhub.enabled }}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/host?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/tls_ca?
+  value: *pxc-cluster-ca
+{{- end }}
+
+{{- if .Values.features.routing_api.enabled }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/host?
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/ca_cert?
+  value: *pxc-cluster-ca
+{{- end }}
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/host
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/ca_cert?
+  value: *pxc-cluster-ca
+
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/host
+  value: *pxc-cluster-address
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/ca_cert?
+  value: *pxc-cluster-ca
+
+{{- else }}
+
+# Remove the database variables.
+- type: remove
+  path: /variables/name=cf_mysql_mysql_admin_password
+- type: remove
+  path: /variables/name=cf_mysql_mysql_cluster_health_password
+- type: remove
+  path: /variables/name=cf_mysql_mysql_galera_healthcheck_endpoint_password
+- type: remove
+  path: /variables/name=cf_mysql_mysql_galera_healthcheck_password
+- type: remove
+  path: /variables/name=cf_mysql_proxy_api_password
+- type: remove
+  path: /variables/name=network_policy_database_password
+- type: remove
+  path: /variables/name=network_connectivity_database_password
+- type: remove
+  path: /variables/name=routing_api_database_password
+- type: remove
+  path: /variables/name=locket_database_password
+- type: remove
+  path: /variables/name=cc_database_password
+- type: remove
+  path: /variables/name=diego_database_password
+- type: remove
+  path: /variables/name=uaa_database_password
+
+{{- if .Values.features.credhub.enabled }}
+- type: remove
+  path: /variables/name=credhub_database_password
+{{- end }}
+
+# Replace database config for the jobs.
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaadb/db_scheme
+  value: {{ .Values.features.external_database.type | quote }}
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaadb/port
+  value: {{ .Values.features.external_database.port }}
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaadb/databases/tag=uaa/name
+  value: {{ .Values.features.external_database.databases.uaa.name | quote }}
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaadb/address?
+  value: {{ .Values.features.external_database.host | quote }}
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaadb/roles/name=uaa/password
+  value: {{ .Values.features.external_database.databases.uaa.password | quote }}
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaadb/roles/name=uaa/name
+  value: {{ .Values.features.external_database.databases.uaa.username | quote }}
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaa?/ca_certs/0
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaa?/ca_certs
+{{- end }}
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaadb/tls?
+  value: {{ if .Values.features.external_database.require_ssl }}enabled{{ else }}disabled{{ end }}
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/db_scheme
+  value: &external_cc_database_scheme {{ .Values.features.external_database.type | quote }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/port
+  value: &external_cc_database_port {{ .Values.features.external_database.port }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/databases/tag=cc/name
+  value: &external_cc_database_name {{ .Values.features.external_database.databases.cc.name | quote }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/address?
+  value: &external_cc_database_address {{ .Values.features.external_database.host | quote }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/roles/name=cloud_controller/password
+  value: &external_cc_database_password {{ .Values.features.external_database.databases.cc.password | quote }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/roles/name=cloud_controller/name
+  value: &external_cc_database_username {{ .Values.features.external_database.databases.cc.username | quote }}
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/ca_cert?
+{{- end}}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/ssl_verify_hostname?
+  value: {{ .Values.features.external_database.require_ssl }}
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/db_scheme
+  value: *external_cc_database_scheme
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/port
+  value: *external_cc_database_port
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/databases/tag=cc/name
+  value: *external_cc_database_name
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/address?
+  value: *external_cc_database_address
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/roles/name=cloud_controller/password
+  value: *external_cc_database_password
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/roles/name=cloud_controller/name
+  value: *external_cc_database_username
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/ca_cert?
+{{- end }}
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/ssl_verify_hostname?
+  value: {{ .Values.features.external_database.require_ssl }}
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/db_scheme
+  value: *external_cc_database_scheme
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/port
+  value: *external_cc_database_port
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/databases/tag=cc/name
+  value: *external_cc_database_name
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/address?
+  value: *external_cc_database_address
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/roles/name=cloud_controller/password
+  value: *external_cc_database_password
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/roles/name=cloud_controller/name
+  value: *external_cc_database_username
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/ca_cert?
+{{- end }}
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/ccdb/ssl_verify_hostname?
+  value: {{ .Values.features.external_database.require_ssl }}
+
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/db_scheme
+  value: *external_cc_database_scheme
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/port
+  value: *external_cc_database_port
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/databases/tag=cc/name
+  value: *external_cc_database_name
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/address?
+  value: *external_cc_database_address
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/roles/name=cloud_controller/password
+  value: *external_cc_database_password
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/roles/name=cloud_controller/name
+  value: *external_cc_database_username
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/ca_cert?
+{{- end }}
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater/properties/ccdb/ssl_verify_hostname?
+  value: {{ .Values.features.external_database.require_ssl }}
+
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/db_driver
+  value: {{ .Values.features.external_database.type | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/db_port
+  value: {{ .Values.features.external_database.port }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/db_schema
+  value: {{ .Values.features.external_database.databases.bbs.name | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/db_host?
+  value: {{ .Values.features.external_database.host | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/db_password
+  value: {{ .Values.features.external_database.databases.bbs.password | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/db_username
+  value: {{ .Values.features.external_database.databases.bbs.username | quote }}
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/ca_cert?
+{{- end }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=bbs/properties/diego/bbs/sql/require_ssl?
+  value: {{ .Values.features.external_database.require_ssl }}
+
+{{- if .Values.features.routing_api.enabled }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/type
+  value: {{ .Values.features.external_database.type | quote }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/port
+  value: {{ .Values.features.external_database.port }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/schema
+  value: {{ .Values.features.external_database.databases.routing_api.name | quote }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/host?
+  value: {{ .Values.features.external_database.host | quote }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/password
+  value: {{ .Values.features.external_database.databases.routing_api.password | quote }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/username
+  value: {{ .Values.features.external_database.databases.routing_api.username | quote }}
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else}}
+- type: remove
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/ca_cert?
+{{- end }}
+- type: replace
+  path: /instance_groups/name=routing-api/jobs/name=routing-api/properties/routing_api/sqldb/skip_hostname_validation?
+  value: {{ if .Values.features.external_database.require_ssl }}false{{ else }}true{{ end }}
+{{- end }}
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/type
+  value: {{ .Values.features.external_database.type | quote }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/port
+  value: {{ .Values.features.external_database.port }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/name
+  value: {{ .Values.features.external_database.databases.policy_server.name | quote }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/host
+  value: {{ .Values.features.external_database.host | quote }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/password
+  value: {{ .Values.features.external_database.databases.policy_server.password | quote }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/username
+  value: {{ .Values.features.external_database.databases.policy_server.username | quote }}
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/ca_cert?
+{{- end }}
+- type: replace
+  path: /instance_groups/name=api/jobs/name=policy-server/properties/database/require_ssl?
+  value: {{ .Values.features.external_database.require_ssl }}
+
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/type
+  value: {{ .Values.features.external_database.type | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/port
+  value: {{ .Values.features.external_database.port }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/name
+  value: {{ .Values.features.external_database.databases.silk_controller.name | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/host
+  value: {{ .Values.features.external_database.host | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/password
+  value: {{ .Values.features.external_database.databases.silk_controller.password | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/username
+  value: {{ .Values.features.external_database.databases.silk_controller.username | quote }}
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/ca_cert?
+{{- end }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/require_ssl?
+  value: {{ .Values.features.external_database.require_ssl }}
+
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/db_driver
+  value: {{ .Values.features.external_database.type | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/db_port
+  value: {{ .Values.features.external_database.port }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/db_schema
+  value: {{ .Values.features.external_database.databases.locket.name | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/db_host?
+  value: {{ .Values.features.external_database.host | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/db_password
+  value: {{ .Values.features.external_database.databases.locket.password | quote }}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/db_username
+  value: {{ .Values.features.external_database.databases.locket.username | quote }}
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/ca_cert?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/ca_cert?
+{{- end}}
+- type: replace
+  path: /instance_groups/name=diego-api/jobs/name=locket/properties/diego/locket/sql/require_ssl?
+  value: {{ .Values.features.external_database.require_ssl }}
+
+{{- if .Values.features.credhub.enabled }}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/type
+  value: {{ .Values.features.external_database.type | quote }}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/port
+  value: {{ .Values.features.external_database.port }}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/database
+  value: {{ .Values.features.external_database.databases.credhub.name | quote }}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/host
+  value: {{ .Values.features.external_database.host | quote }}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/password
+  value: {{ .Values.features.external_database.databases.credhub.password | quote }}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/username
+  value: {{ .Values.features.external_database.databases.credhub.username | quote }}
+{{ if .Values.features.external_database.ca_cert -}}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/tls_ca?
+  value: |
+    {{- toYaml .Values.features.external_database.ca_cert | nindent 4 }}
+{{- else }}
+- type: remove
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/tls_ca?
+{{- end }}
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage/require_tls?
+  value: {{ .Values.features.external_database.require_ssl }}
+{{- end }}
+
+{{- end }}

@@ -1,0 +1,236 @@
+{{- $root := . }}
+{{- if .Values.features.ingress.enabled }}
+{{- if and .Values.features.ingress.tls.crt .Values.features.ingress.tls.key }}
+---
+# The certificate and key for the TLS secret are passed through ingress.tls.crt and ingress.tls.key
+# respectively. If the operator does not provide these values at installation time, the TLS secret
+# will contain empty values. The standard behaviour for NGINX ingress controller is to provide a
+# fake certificate instead. It is useful only for testing and development. It is expected that for
+# production use the operator will provide these values.
+apiVersion: "v1"
+kind: "Secret"
+type: kubernetes.io/tls
+metadata:
+  name: {{ .Release.Name }}-ingress-tls
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app.kubernetes.io/component: "ingress-tls"
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" | quote }}
+    app.kubernetes.io/version: {{ default .Chart.Version .Chart.AppVersion | quote }}
+    helm.sh/chart: {{ printf "%s-%s" .Chart.Name (.Chart.Version | replace "+" "_") | quote }}
+data:
+  tls.crt: {{ .Values.features.ingress.tls.crt | b64enc | quote }}
+  tls.key: {{ .Values.features.ingress.tls.key | b64enc | quote }}
+{{- end }}
+---
+# This ingress specifies routing and access for the cloud controller public Kubecf service, e.g.
+# "api.<domain>" and other services in that domain hierarchy.
+#
+# Note that the two other services (TCP routing and app SSH access) are not suitable to routing via
+# HTTP, and not specified. I.e. they are TCP, which is not supported by the current ingress
+# specification. Although specific controllers may do so in a custom manner.
+apiVersion: "extensions/v1beta1"
+kind: "Ingress"
+metadata:
+  name: {{ .Release.Name | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+  annotations:
+    # Inject some annotations if they don't exist in the annotations provided during deployment.
+    {{- if not (hasKey .Values.features.ingress.annotations "kubernetes.io/ingress.class") }}
+      {{ $_ := set .Values.features.ingress.annotations "kubernetes.io/ingress.class" "nginx" }}
+    {{- end }}
+    {{- if not (hasKey .Values.features.ingress.annotations "nginx.ingress.kubernetes.io/secure-backends") }}
+      {{ $_ := set .Values.features.ingress.annotations "nginx.ingress.kubernetes.io/secure-backends" "true" }}
+    {{- end }}
+    {{- if not (hasKey .Values.features.ingress.annotations "nginx.ingress.kubernetes.io/backend-protocol") }}
+      {{ $_ := set .Values.features.ingress.annotations "nginx.ingress.kubernetes.io/backend-protocol" "HTTPS" }}
+    {{- end }}
+    {{- if not (hasKey .Values.features.ingress.annotations "nginx.ingress.kubernetes.io/ssl-redirect") }}
+      {{ $_ := set .Values.features.ingress.annotations "nginx.ingress.kubernetes.io/ssl-redirect" "false" }}
+    {{- end }}
+    {{- if not (hasKey .Values.features.ingress.annotations "nginx.ingress.kubernetes.io/proxy-body-size") }}
+      {{ $_ := set .Values.features.ingress.annotations "nginx.ingress.kubernetes.io/proxy-body-size" "64m" }}
+    {{- end }}
+    {{ $_ := set .Values.features.ingress.annotations "nginx.org/websocket-services" "router" }}
+{{ toYaml .Values.features.ingress.annotations | indent 4 }}
+  labels:
+    {{ if not (hasKey .Values.features.ingress.labels "app.kubernetes.io/component") }}
+    app.kubernetes.io/component: "ingress"
+    {{- end }}
+    {{ if not (hasKey .Values.features.ingress.labels "app.kubernetes.io/instance") }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    {{- end }}
+    {{ if not (hasKey .Values.features.ingress.labels "app.kubernetes.io/managed-by") }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    {{- end }}
+    {{ if not (hasKey .Values.features.ingress.labels "app.kubernetes.io/name") }}
+    app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" | quote }}
+    {{- end }}
+    {{ if not (hasKey .Values.features.ingress.labels "app.kubernetes.io/version") }}
+    app.kubernetes.io/version: {{ default .Chart.Version .Chart.AppVersion | quote }}
+    {{- end }}
+    {{ if not (hasKey .Values.features.ingress.labels "helm.sh/chart") }}
+    helm.sh/chart: {{ printf "%s-%s" .Chart.Name (.Chart.Version | replace "+" "_") | quote }}
+    {{- end }}
+{{ if .Values.features.ingress.labels }}
+{{ toYaml .Values.features.ingress.labels | indent 4 }}
+{{ end }}
+spec:
+  tls:
+  - secretName: {{ .Release.Name }}-ingress-tls
+    hosts:
+    - "*.{{ .Values.system_domain }}"
+    - "{{ .Values.system_domain }}"
+  rules:
+    - host: "*.{{ .Values.system_domain }}"
+      http:
+        paths:
+          - path: "/"
+            backend:
+              serviceName: router
+              servicePort: 443
+    - host: "{{ .Values.system_domain }}"
+      http:
+        paths:
+          - path: "/"
+            backend:
+              serviceName: router
+              servicePort: 443
+
+{{- else }}
+# If the ingress feature (ingress-controller) is not enabled, create public services to allow
+# public ingress to the cluster.
+
+---
+{{- with $service := .Values.services.router }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: router-public
+  namespace: {{ $root.Release.Namespace | quote }}
+  {{- if $service.annotations }}
+  annotations:
+    {{- toYaml $service.annotations | nindent 4 }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/component: router
+    app.kubernetes.io/instance: {{ $root.Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $root.Release.Service | quote }}
+    app.kubernetes.io/name: {{ default $root.Chart.Name $root.Values.nameOverride | trunc 63 | trimSuffix "-" | quote }}
+    app.kubernetes.io/version: {{ default $root.Chart.Version $root.Chart.AppVersion | quote }}
+    helm.sh/chart: {{ printf "%s-%s" $root.Chart.Name ($root.Chart.Version | replace "+" "_") | quote }}
+spec:
+  selector:
+    app.kubernetes.io/component: router
+    app.kubernetes.io/instance: {{ $root.Release.Name | quote }}
+    app.kubernetes.io/version: {{ default $root.Chart.Version $root.Chart.AppVersion | quote }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 443
+  type: {{ $service.type | quote }}
+  {{- if gt (len $service.externalIPs) 0 }}
+  externalIPs: {{ $service.externalIPs | toJson }}
+  {{- end }}
+  {{- if $service.clusterIP }}
+  clusterIP: {{ $service.clusterIP | quote }}
+  {{- end }}
+  {{- if $service.loadBalancerIP }}
+  loadBalancerIP: {{ $service.loadBalancerIP | quote }}
+  {{- end }}
+{{- end }}
+{{- if not .Values.features.eirini.enabled }}
+---
+{{- with $service := index .Values.services "ssh-proxy" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: ssh-proxy-public
+  namespace: {{ $root.Release.Namespace | quote }}
+  {{- if $service.annotations }}
+  annotations:
+    {{- toYaml $service.annotations | nindent 4 }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/component: ssh-proxy
+    app.kubernetes.io/instance: {{ $root.Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $root.Release.Service | quote }}
+    app.kubernetes.io/name: {{ default $root.Chart.Name $root.Values.nameOverride | trunc 63 | trimSuffix "-" | quote }}
+    app.kubernetes.io/version: {{ default $root.Chart.Version $root.Chart.AppVersion | quote }}
+    helm.sh/chart: {{ printf "%s-%s" $root.Chart.Name ($root.Chart.Version | replace "+" "_") | quote }}
+spec:
+  selector:
+    app.kubernetes.io/component: ssh-proxy
+    app.kubernetes.io/instance: {{ $root.Release.Name | quote }}
+    app.kubernetes.io/version: {{ default $root.Chart.Version $root.Chart.AppVersion | quote }}
+  ports:
+  - name: ssh
+    protocol: TCP
+    port: 2222
+    targetPort: 2222
+  type: {{ $service.type | quote }}
+  {{- if gt (len $service.externalIPs) 0 }}
+  externalIPs: {{ $service.externalIPs | toJson }}
+  {{- end }}
+  {{- if $service.clusterIP }}
+  clusterIP: {{ $service.clusterIP | quote }}
+  {{- end }}
+  {{- if $service.loadBalancerIP }}
+  loadBalancerIP: {{ $service.loadBalancerIP | quote }}
+  {{- end }}
+{{- end }}
+{{- end }} {{/* not .features.eirini.enabled */}}
+---
+{{- with $service := index .Values.services "tcp-router" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: tcp-router-public
+  namespace: {{ $root.Release.Namespace | quote }}
+  {{- if $service.annotations }}
+  annotations:
+    {{- toYaml $service.annotations | nindent 4 }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/component: tcp-router
+    app.kubernetes.io/instance: {{ $root.Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $root.Release.Service | quote }}
+    app.kubernetes.io/name: {{ default $root.Chart.Name $root.Values.nameOverride | trunc 63 | trimSuffix "-" | quote }}
+    app.kubernetes.io/version: {{ default $root.Chart.Version $root.Chart.AppVersion | quote }}
+    helm.sh/chart: {{ printf "%s-%s" $root.Chart.Name ($root.Chart.Version | replace "+" "_") | quote }}
+spec:
+  selector:
+    app.kubernetes.io/component: tcp-router
+    app.kubernetes.io/instance: {{ $root.Release.Name | quote }}
+    app.kubernetes.io/version: {{ default $root.Chart.Version $root.Chart.AppVersion | quote }}
+  ports:
+  - name: healthcheck
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  {{- range $port := until (int (add 1 (sub $service.port_range.end $service.port_range.start))) }}
+  {{- $port = add $port $service.port_range.start }}
+  - name: "tcp-route-{{ $port }}"
+    protocol: TCP
+    port: {{ $port }}
+    targetPort: {{ $port }}
+  {{- end }}
+  type: {{ $service.type | quote }}
+  {{- if gt (len $service.externalIPs) 0 }}
+  externalIPs: {{ $service.externalIPs | toJson }}
+  {{- end }}
+  {{- if $service.clusterIP }}
+  clusterIP: {{ $service.clusterIP | quote }}
+  {{- end }}
+  {{- if $service.loadBalancerIP }}
+  loadBalancerIP: {{ $service.loadBalancerIP | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,11 @@
+name: log-cache-gateway
+properties:
+  gateway_addr: localhost:8081
+  metrics:
+    ca_cert: ((log_cache_gateway_metrics_tls.ca))
+    cert: ((log_cache_gateway_metrics_tls.certificate))
+    key: ((log_cache_gateway_metrics_tls.private_key))
+    server_name: log_cache_gateway_metrics
+  proxy_cert: ((log_cache_proxy_tls.certificate))
+  proxy_key: ((log_cache_proxy_tls.private_key))
+release: log-cache

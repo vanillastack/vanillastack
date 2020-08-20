@@ -4,3 +4,5 @@ global:
 ingress:
   namespace: nginx-ingress
 loadbalancer_virtualip: 95.217.124.41
+clustername: kube
+loadbalancer_fqdn: api.testcluster.cloudical.net

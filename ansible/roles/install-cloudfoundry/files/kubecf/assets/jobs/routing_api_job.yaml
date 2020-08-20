@@ -1,0 +1,32 @@
+name: routing-api
+properties:
+  routing_api:
+    enabled_api_endpoints: both
+    locket:
+      api_location: locket.service.cf.internal:8891
+      ca_cert: ((diego_locket_client.ca))
+      client_cert: ((diego_locket_client.certificate))
+      client_key: ((diego_locket_client.private_key))
+    mtls_ca: ((routing_api_tls_client.ca))
+    mtls_client_cert: ((routing_api_tls_client.certificate))
+    mtls_client_key: ((routing_api_tls_client.private_key))
+    mtls_server_cert: ((routing_api_tls.certificate))
+    mtls_server_key: ((routing_api_tls.private_key))
+    router_groups:
+    - name: default-tcp
+      reservable_ports: 1024-1033
+      type: tcp
+    skip_consul_lock: true
+    sqldb:
+      ca_cert: ((mysql_server_certificate.ca))
+      host: sql-db.service.cf.internal
+      password: ((routing_api_database_password))
+      port: 3306
+      schema: routing-api
+      type: mysql
+      username: routing-api
+    system_domain: ((system_domain))
+  uaa:
+    ca_cert: ((uaa_ssl.ca))
+    tls_port: 8443
+release: routing
