@@ -2,7 +2,7 @@
 - name: debug through ansible.env
   debug: var=ansible_env
 
-- name: make sure, "{{ item }}" directory exists
+- name: make sure, directories exist
   file:
     path: "/home/{{ ansible_env.SUDO_USER }}/{{ item }}"
     state: directory

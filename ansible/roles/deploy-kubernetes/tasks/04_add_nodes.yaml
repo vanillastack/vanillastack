@@ -4,25 +4,17 @@
     file: main.yml
   when: certificate_key is not defined or certificate_key|length <1
 
-#- name: Check if kubeadm has already run
-#  stat:
-#    path: "/etc/kubernetes/pki/ca.key"
-#  register: kubeadm_ca
+- name: Check if kubeadm has already run
+  stat:
+    path: "/etc/kubernetes/pki/ca.key"
+  register: kubeadm_ca
 
 - name: Join to Kubernetes cluster
   command: >
     kubeadm join --token {{ token }} \
-                --discovery-token-unsafe-skip-ca-verification \
-                {{  loadbalancer_fqdn }}:6443 \
-                --control-plane \
-                --certificate-key {{ certificate_key }} \
-                --apiserver-bind-port 8443 \
+                 --discovery-token-unsafe-skip-ca-verification \
+                 --control-plane {{  loadbalancer_fqdn }}:6443 \
+                 --certificate-key {{ certificate_key }} \
+                 --apiserver-bind-port 8443 
   when: not kubeadm_ca.stat.exists or reset_cluster==true
-#
-#- name: load calico config
-#  k8s:
-#    state: present
-#    src: "{{ item }}"
-#  with_items:
-#    - "https://docs.projectcalico.org/manifests/calico-etcd.yaml"
-#    - "https://docs.projectcalico.org/manifests/calicoctl-etcd.yaml"
+
