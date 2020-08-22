@@ -1,13 +1,13 @@
-openapi: "3.0.2"
+openapi: "3.0.3"
 info:
   title: VanillaStack API
   description: "This is a sample API for the communication between Front- and Backend for the VanillaStack"
-  termsOfService: http://cloudcial.io/terms/
+  termsOfService: https://cloudcial.io/terms/
   contact:
     email: apiteam@cloudical.io
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 externalDocs:
   description: Just a placeholder
@@ -93,7 +93,6 @@ components:
           - role
         properties:
           node:
-            type: object
             $ref: "#/components/schemas/Node"
             # items:
             #   type: string
@@ -151,5 +150,4 @@ components:
         externalLB:
           $ref: "#/components/schemas/ExternalLB"
         tags:
-          type: array
           $ref: "#/components/schemas/Tags"
