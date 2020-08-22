@@ -70,6 +70,11 @@ paths:
           content: {}
 components:
   schemas:
+    loadbalancer_virtualip:
+    loadbalancer_fqdn:
+    reset:
+    service_cidr:
+    podnet_cidr:
     Node:
       required:
         - hostname
@@ -77,6 +82,8 @@ components:
         - ssh_key
       type: object
       properties:
+        name:
+          type: string
         hostname:
           type: string
           example: domain.io
