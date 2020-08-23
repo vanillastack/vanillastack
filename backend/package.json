@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "devstart": "nodemon ./bin/www"
+    "start": "node src/bin/www",
+    "dev": "nodemon src/bin/www",
+    "dockerdev": "nodemon -L src/bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -13,6 +14,8 @@
     "morgan": "~1.9.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4"
   }
 }
