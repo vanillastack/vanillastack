@@ -14,7 +14,7 @@ redeploy_debian:
     - curl $WEBHOOK_REDEPLOY
 
 
-prepare:
+run_playbook:
   only:
     refs:
       - testing
