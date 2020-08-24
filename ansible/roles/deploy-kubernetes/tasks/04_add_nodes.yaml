@@ -1,7 +1,7 @@
 ---
 - name: Include certificate var
   include_vars:
-    file: main.yml
+    file: /tmp/cluster_vars.yml
   when: certificate_key is not defined or certificate_key|length <1
 
 - name: Check if kubeadm has already run
