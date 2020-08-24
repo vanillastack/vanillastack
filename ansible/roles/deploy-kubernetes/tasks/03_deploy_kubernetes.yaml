@@ -12,11 +12,11 @@
 
   - name: save token
     lineinfile:
-      path: /home/debian/vanillastack/ansible/roles/deploy-kubernetes/vars/main.yml
+      path: /tmp/cluster_vars.yml
       regexp: '^(.*)token:(.*)$'
       line: "token: {{ generated_token.stdout }}"
       create: true
-  run_once: true
+  delegate_to: bastion
   when: token is not defined or token|length <1
 
 - name: generate certificate key
@@ -27,16 +27,16 @@
 
   - name: save certificate key
     lineinfile:
-      path: /home/debian/vanillastack/ansible/roles/deploy-kubernetes/vars/main.yml
+      path: /tmp/cluster_vars.yml
       regexp: '^(.*)certificate_key(.*)$'
       line: "certificate_key: {{ generated_certificate_key.stdout }}"
       create: true
-  run_once: true
   when: certificate_key is not defined or certificate_key|length <1
 
 - name: Include certificate var
   include_vars:
-    file: main.yml
+    file: /tmp/cluster_vars.yml
+  delegate_to: bastion
   when: certificate_key is not defined or certificate_key|length <1
 
 - name: Init Cluster if not existant
