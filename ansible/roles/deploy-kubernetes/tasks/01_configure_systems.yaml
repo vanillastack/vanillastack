@@ -63,36 +63,6 @@
       - cf-cli
     update_cache: yes
 
-- name: generate join token
-  block:
-  - name: create join token
-    command: kubeadm token generate
-    register: generated_token
-  
-  - name: save token
-    lineinfile:
-      path: /home/debian/vanillastack/ansible/roles/deploy-kubernetes/vars/main.yml
-      regexp: '^(.*)token:(.*)$'
-      line: "token: {{ generated_token.stdout }}"
-      create: true
-  run_once: true
-  when: token is not defined or token|length <1
-
-- name: generate certificate key
-  block:
-  - name: create certificate key
-    command: kubeadm alpha certs certificate-key
-    register: generated_certificate_key
-  
-  - name: save certificate key
-    lineinfile:
-      path: /home/debian/vanillastack/ansible/roles/deploy-kubernetes/vars/main.yml
-      regexp: '^(.*)certificate_key(.*)$'
-      line: "certificate_key: {{ generated_certificate_key.stdout }}"
-      create: true
-  run_once: true
-  when: certificate_key is not defined or certificate_key|length <1
-
 - name: add hosts entry
   lineinfile:
     regexp: '^(.*){{ loadbalancer_fqdn }}(.*)$'
