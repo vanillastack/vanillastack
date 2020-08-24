@@ -2,7 +2,7 @@
 - name: create join token
   command: kubeadm token generate
   register: generated_token
-  delegate_to: "{{ groups['master'] }}"
+  delegate_to: "{{ groups.master[0] }}"
   run_once: true
   
 - name: save token
@@ -15,7 +15,7 @@
 - name: create certificate key
   command: kubeadm alpha certs certificate-key
   register: generated_certificate_key
-  delegate_to: "{{ groups['master'] }}"
+  delegate_to: "{{ groups.master[0] }}"
   run_once: true
 
 - name: save certificate key
