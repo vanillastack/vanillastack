@@ -2,7 +2,7 @@
 - name: debug through ansible.env
   debug: var=ansible_env
 
-- name: make sure, "{{ item }}" directory exists
+- name: make sure, directories exist
   file:
     path: "/home/{{ ansible_env.SUDO_USER }}/{{ item }}"
     state: directory
@@ -31,31 +31,36 @@
     - 93C4A3FD7BB9C367
     - 8BECF1637AD8C79D
 
-- name: Add key for kuberepo
-  apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-- name: Add key for cri-o repo
-  apt_key:
-    url: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Unstable/Release.key
 - name: Add second key for cri-o repo
   apt_key:
-    url: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/Release.key
+    url: "{{ item }}"
+  loop: 
+    - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/Release.key"
+    - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Unstable/Release.key"
+    - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key"
+    - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    - "https://baltocdn.com/helm/signing.asc"
+    - "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
 
 - name: Add ansible repository
   apt_repository:
     repo: "{{ item }}"
     state: present
   loop:
-    - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+    - "deb https://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
     - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-    - "deb https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/Debian_10/ /"
-    - "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
+    - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
+    - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
+    - "deb https://baltocdn.com/helm/stable/debian/ all main"
+    - "deb https://packages.cloudfoundry.org/debian stable main"
 
 - name: Install packages
   apt:
     pkg: 
       - ansible
       - needrestart
+      - helm
+      - cf-cli
     update_cache: yes
 
 - name: generate join token

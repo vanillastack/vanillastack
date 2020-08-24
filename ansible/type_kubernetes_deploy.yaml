@@ -1,4 +1,11 @@
 ---
+- name: Reset Nodes
+  hosts: master,worker
+  become: true
+  gather_facts: false
+  roles:
+    - role: reset-kubernetes
+
 - name: Configure Bastion Host
   hosts: kube_cluster
   become: true

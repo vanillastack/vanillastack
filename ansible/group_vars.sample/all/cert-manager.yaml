@@ -1,4 +1,0 @@
----
-certmanager:
-  namespace: "cert-manager"
-  chartVersion: "v0.15.1"

@@ -1,13 +1,32 @@
 ---
+- name: get latest kube version
+  shell: apt-cache madison kubeadm | grep {{ kube_version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  register: apt_output
+
+- name: get kubeversion
+  set_fact:
+    versions: "{{ apt_output.stdout }}"
+
 - name: Install packages
   apt:
     pkg: 
-      - kubelet
-      - kubeadm
-      - kubectl
-      - cri-o
+      - "kubelet={{ versions }}"
+      - "kubeadm={{ versions }}"
+      - "kubectl={{ versions }}"
+      - "cri-o-{{ kube_version }}"
       - libgtk2.0-0
     update_cache: yes
+
+- name: mark packages as hold
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o-{{ kube_version }}"
+
 
 - name: configure crio
   lineinfile:
@@ -75,15 +94,6 @@
     path: /etc/fstab
     regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
     replace: '#\1\2\3swap\4'
-
-- name: Check if kubeadm has already run
-  stat:
-    path: "/etc/kubernetes/pki/ca.key"
-  register: kubeadm_ca
-
-- name: Reset  the cluster if set
-  command: kubeadm reset --force
-  when: not kubeadm_ca.stat.exists or reset_cluster==true
 
 - name: check if reboot is required
   command: needrestart

@@ -75,4 +75,31 @@ backend master
         server {{ host }} {{ hostvars[host].ansible_host }}:8443 check
 {% endfor %}
 
+frontend worker-http
+        bind {{ loadbalancer_virtualip }}:80
+        mode tcp
+        # Default backend
+        default_backend worker-http
 
+backend worker-http
+        mode tcp
+        balance roundrobin
+        option tcp-check
+            timeout server 300000
+{% for host in groups['worker'] %}
+        server {{ host }} {{ hostvars[host].ansible_host }}:30080 check
+{% endfor %}
+frontend worker-https
+        bind {{ loadbalancer_virtualip }}:443
+        mode tcp
+        # Default backend
+        default_backend worker-https
+
+backend worker-https
+        mode tcp
+        balance roundrobin
+        option tcp-check
+            timeout server 300000
+{% for host in groups['worker'] %}
+        server {{ host }} {{ hostvars[host].ansible_host }}:30443 check
+{% endfor %}

@@ -1,0 +1,5 @@
+---
+# tasks file for install_cloudfoundry
+- name: "{{ action }}"
+  include_tasks: "{{ action }}.yaml"
+

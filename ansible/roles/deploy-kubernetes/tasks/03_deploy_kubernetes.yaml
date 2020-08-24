@@ -4,15 +4,14 @@
     file: main.yml
   when: certificate_key is not defined or certificate_key|length <1
 
-#- name: Check if kubeadm has already run
-#  stat:
-#    path: "/etc/kubernetes/pki/ca.key"
-#  register: kubeadm_ca
+- name: Check if kubeadm has already run
+  stat:
+    path: "/etc/kubernetes/pki/ca.key"
+  register: kubeadm_ca
 
 - name: Init Cluster if not existant
   command: > 
     kubeadm init --service-cidr {{ service_cidr }} \
-                 --kubernetes-version {{ kube_version }} \
                  --pod-network-cidr {{ pod_network_cidr }} \
                  --token {{ token }} \
                  --control-plane-endpoint {{ loadbalancer_fqdn }}:6443 
