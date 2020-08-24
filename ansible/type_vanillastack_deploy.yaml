@@ -71,14 +71,14 @@
       action: 05_add_worker
 
 - name: Deploy Networking
-  hosts: bastion
+  hosts: master[0]
   gather_facts: yes
   roles:
     - role: deploy-kubernetes
       action: 06_configure_network
 
 - name: Deploy Nginx-Ingress
-  hosts: bastion
+  hosts: master[0]
   become: false
   gather_facts: false
   roles:
