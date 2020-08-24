@@ -42,12 +42,17 @@
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
     create: true
 
+- name: make sure, registry is not set
+  file:
+    path: /etc/containers/registries.conf
+    state: absent
+
 - name: add container repos
   blockinfile:
     path: "{{ item }}"
     block: |
       [registries.search]
-      registries = ['docker.io', 'registry.fedoraproject.org', 'registry.access.redhat.com']
+      registries = ['docker.io', 'registry.fedoraproject.org', 'registry.access.redhat.com', {{ global.registry }}]
     create: true
   with_items:
     - /etc/containers/registries.conf
