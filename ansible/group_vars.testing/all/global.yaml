@@ -1,0 +1,5 @@
+---
+global:
+  registry: registry.cloudical.net
+ingress:
+  namespace: nginx-ingress
