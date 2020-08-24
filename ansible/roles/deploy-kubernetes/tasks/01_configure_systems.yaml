@@ -23,7 +23,7 @@
     - python3-kubernetes
     update_cache: yes
 
-- name: Add key for Ansiblerepo
+- name: Add key from keyserver
   apt_key:
     keyserver: keyserver.ubuntu.com
     id: "{{ item }}"
@@ -31,7 +31,7 @@
     - 93C4A3FD7BB9C367
     - 8BECF1637AD8C79D
 
-- name: Add second key for cri-o repo
+- name: Add key for cri-o repos
   apt_key:
     url: "{{ item }}"
   loop: 
@@ -42,12 +42,12 @@
     - "https://baltocdn.com/helm/signing.asc"
     - "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
 
-- name: Add ansible repository
+- name: Add repositories
   apt_repository:
     repo: "{{ item }}"
     state: present
   loop:
-    - "deb https://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+    - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
     - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
     - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
     - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
