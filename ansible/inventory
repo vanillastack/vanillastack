@@ -1,2 +1,2 @@
 [bastion]
-cop-lb.cop.cloudical.net ansible_user=debian
+cop-lb.cop.cloudical.net ansible_user=debian ansible_connection=local
