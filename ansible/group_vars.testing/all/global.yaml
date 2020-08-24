@@ -3,3 +3,9 @@ global:
   registry: registry.cloudical.net
 ingress:
   namespace: nginx-ingress
+
+loadbalancer_virtualip: 135.181.48.19
+clustername: kube
+loadbalancer_fqdn: api.test.vanillastack.cloudical.net
+reset_cluster: false
+
