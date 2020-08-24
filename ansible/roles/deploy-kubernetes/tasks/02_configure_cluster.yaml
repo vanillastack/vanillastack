@@ -52,7 +52,7 @@
     path: "{{ item }}"
     block: |
       [registries.search]
-      registries = ['docker.io', 'registry.fedoraproject.org', 'registry.access.redhat.com', {{ global.registry }}]
+      registries = ['docker.io', 'registry.fedoraproject.org', 'registry.access.redhat.com', '{{ global.registry }}']
     create: true
   with_items:
     - /etc/containers/registries.conf
