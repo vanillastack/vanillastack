@@ -1,5 +1,8 @@
 = VanillaStack
 
+== CI/CD status
+Testing: image:https://gitlab.cloudical.net/vanillastack/vanillastack/badges/testing/pipeline.svg[link="https://gitlab.cloudical.net/vanillastack/vanillastack/-/commits/testing",title="pipeline status"]
+
 == Requirements
 VanillaStack requirements:
 
