@@ -1,0 +1,26 @@
+---
+- name: create join token
+  command: kubeadm token generate
+  register: generated_token
+  delegate_to: "{{ groups['master'] }}"
+  run_once: true
+  
+- name: save token
+  lineinfile:
+    path: /tmp/cluster_vars.yml
+    regexp: '^(.*)token:(.*)$'
+    line: "token: {{ generated_token.stdout }}"
+    create: true
+  
+- name: create certificate key
+  command: kubeadm alpha certs certificate-key
+  register: generated_certificate_key
+  delegate_to: "{{ groups['master'] }}"
+  run_once: true
+
+- name: save certificate key
+  lineinfile:
+    path: /tmp/cluster_vars.yml
+    regexp: '^(.*)certificate_key(.*)$'
+    line: "certificate_key: {{ generated_certificate_key.stdout }}"
+    create: true

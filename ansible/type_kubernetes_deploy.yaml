@@ -1,12 +1,12 @@
 ---
-- name: Reset Nodes
-  hosts: master,worker
-  become: true
-  gather_facts: false
-  roles:
-    - role: reset-kubernetes
+#- name: Reset Nodes
+#  hosts: master,worker
+#  become: true
+#  gather_facts: false
+#  roles:
+#    - role: reset-kubernetes
 
-- name: Configure Bastion Host
+- name: Configure Hosts
   hosts: kube_cluster
   become: true
   gather_facts: true
@@ -21,6 +21,13 @@
   roles:
     - role: deploy-kubernetes
       action: 02_configure_cluster
+
+- name: generate secrets
+  hosts: bastion
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes
+      action: 02-1-generate-certificate
 
 - name: Init KubeCluster
   hosts: master[0]
