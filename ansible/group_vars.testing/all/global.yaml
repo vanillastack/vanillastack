@@ -6,7 +6,7 @@ ingress:
 
 loadbalancer_virtualip: 135.181.48.19
 clustername: kube
-loadbalancer_fqdn: api.test.vanillastack.cloudical.net
+loadbalancer_fqdn: test.vanillastack.cloudical.net
 reset_cluster: false
 
 keepalived_interface: enp1s0

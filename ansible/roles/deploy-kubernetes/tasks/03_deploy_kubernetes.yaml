@@ -14,7 +14,7 @@
     kubeadm init --service-cidr {{ service_cidr }} \
                  --pod-network-cidr {{ pod_network_cidr }} \
                  --token {{ token }} \
-                 --control-plane-endpoint {{ loadbalancer_fqdn }}:6443 
+                 --control-plane-endpoint api.{{ loadbalancer_fqdn }}:6443 
                  --upload-certs \                
                  --apiserver-bind-port 8443 \
                  --certificate-key {{ certificate_key }} \
@@ -29,8 +29,8 @@
   copy:
     src: "{{ kubeadmin_config }}"
     dest: ".kube/config"
-    owner: "debian"
-    group: "debian"
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
     mode: 0755
     remote_src: true
 

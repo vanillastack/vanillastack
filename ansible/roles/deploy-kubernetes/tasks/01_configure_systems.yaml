@@ -7,8 +7,8 @@
     path: "/home/{{ ansible_env.SUDO_USER }}/{{ item }}"
     state: directory
     mode: '750'
-    owner: debian
-    group: debian
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
   loop:
     - .kube
 
@@ -67,7 +67,7 @@
   lineinfile:
     regexp: '^(.*){{ loadbalancer_fqdn }}(.*)$'
     path: /etc/hosts
-    line: "{{ loadbalancer_virtualip }} {{ loadbalancer_fqdn }}"
+    line: "{{ loadbalancer_virtualip }} api.{{ loadbalancer_fqdn }}"
 
 - name: update hosts file
   lineinfile:

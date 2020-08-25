@@ -13,7 +13,7 @@
   command: >
     kubeadm join --token {{ token }} \
                  --discovery-token-unsafe-skip-ca-verification \
-                 --control-plane {{  loadbalancer_fqdn }}:6443 \
+                 --control-plane api.{{ loadbalancer_fqdn }}:6443 \
                  --certificate-key {{ certificate_key }} \
                  --apiserver-bind-port 8443 
 # when: not kubeadm_ca.stat.exists or reset_cluster==true
