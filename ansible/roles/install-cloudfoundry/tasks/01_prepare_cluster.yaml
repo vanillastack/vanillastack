@@ -1,0 +1,66 @@
+---
+- name: copy files to cluster folder
+  copy:
+    src:  "{{ item }}"   
+    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    owner: "{{ ansible_env.USER }}"
+  loop: 
+    - cf-operator.tgz
+    - kubecf_release.tgz
+
+- name: copy files to cluster folder
+  template:
+    src:  "{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    owner: "{{ ansible_env.USER }}"
+  loop:
+    - cfoperator-values.yaml
+    - kubecf-values.yaml
+
+- name: create necessary namespaces
+  k8s:
+    name: "{{ item }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  loop:
+  - "cf-operator"
+
+
+- name: install CF Operator
+  command: >
+    helm install cf-operator \
+    --namespace cf-operator \
+    --set "global.singleNamespace.name=kubecf" \
+    "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz"
+  register: cf_install
+
+- debug:
+    msg: "{{ cf_install.stdout_lines }}"
+
+- pause:
+    seconds: 20
+
+- name: install Kubecf
+  command: > 
+    helm install kubecf \
+    --namespace kubecf \
+    --values "{{ ansible_env.HOME }}/{{ clustername }}/kubecf-values.yaml" \
+    "{{ ansible_env.HOME }}/{{ clustername }}/kubecf_release.tgz"
+  register: kubecf_install
+
+- debug:
+    msg: "{{ kubecf_install.stdout_lines }}"
+
+#- name: wait for statefullset to come up   
+#  shell: kubectl get sts -o json -n "kubecf"   
+#  register: kubectl_get_sts   
+#  until: kubectl_get_sts.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]   retries: 120   delay: 10   when: item.wait
+
+- pause:
+    seconds: 180
+
+- name: Patch RouterStatefullset
+  command: >
+    kubectl patch sts -n kubecf router \
+    --patch '{"spec": {"template": {"spec": {"initContainers": [{"name": "bpm-pre-start-gorouter","securityContext": {"privileged": true}}]}}}}'

@@ -1,0 +1,19 @@
+vrrp_script chk_haproxy {
+        script "killall -0 haproxy"     # cheaper than pidof
+        interval 2                      # check every 2 seconds
+        weight 2                        # add 2 points of prio if OK
+}
+
+vrrp_instance lb_1 {
+   debug {{ keepalived_debug }}
+   interface {{ keepalived_interface }}	# interface to monitor
+   state {{ keepalived_MASTER_SLAVE }}
+   virtual_router_id 22          	# Assign one ID for this route
+   priority {{ keepalived_priority }}	# 101 on master, 100 on backup
+   virtual_ipaddress {
+       {{ loadbalancer_virtualip }} 	# peer IP
+   }
+   track_script {
+       chk_haproxy
+   }
+}

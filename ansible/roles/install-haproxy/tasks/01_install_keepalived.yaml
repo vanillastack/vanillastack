@@ -1,0 +1,23 @@
+---
+- name: Install packages
+  apt: 
+    state: present 
+    update_cache: yes
+    pkg:
+      - keepalived
+
+- name: set primary node as Master
+  set_fact:
+    keepalived_MASTER_SLAVE: MASTER
+  run_once: true
+
+- name: Put configuration file for keepalived
+  template: 
+    src: keepalived.conf.j2 
+    dest: /etc/keepalived/keepalived.conf 
+    owner: root 
+    group: root 
+    mode: 0644
+  notify:
+     - restart keepalived
+  tags: config_keepalived

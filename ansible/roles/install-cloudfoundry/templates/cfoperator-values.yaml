@@ -1,0 +1,5 @@
+global:
+  operator:
+    watchNamespace: kubecf
+  singleNamespace
+    name: kubecf

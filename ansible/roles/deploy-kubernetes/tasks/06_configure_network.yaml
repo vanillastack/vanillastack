@@ -1,0 +1,44 @@
+---
+- name: create clusterfolder
+  file: 
+    path: "{{ ansible_env.HOME }}/{{ clustername }}/"
+    state: directory
+
+- name: get calico definitions
+  get_url:
+    url: "{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ clustername }}/"
+  with_items:
+    - https://docs.projectcalico.org/manifests/calico.yaml
+    - https://docs.projectcalico.org/manifests/calicoctl.yaml
+
+- name: "Install python dependencies"
+  pip:
+    name:
+      - pyhelm
+      - openshift
+    extra_args: --ignore-installed
+
+- debug:
+    msg: "{{ item }}" 
+  with_fileglob:
+    -"{{ ansible_env.HOME }}/{{ clustername }}/calico*"
+
+- name: load calico 
+  k8s:
+    state: present
+    src: "{{ ansible_env.HOME }}/{{ clustername }}/calico.yaml"
+
+- pause:
+    seconds: 60
+
+- name: Wait for control-plane pods become ready
+  shell: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
+
+- pause:
+    seconds: 60
+
+- name: load calicoctl config
+  k8s:
+    state: present
+    src: "{{ ansible_env.HOME }}/{{ clustername }}/calicoctl.yaml"

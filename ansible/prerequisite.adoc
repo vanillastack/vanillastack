@@ -1,0 +1,51 @@
+= Install Kubecluster
+== Before you begin
+
+To start deployment, you need at least a minimum of 5 machines:
+
+* 1 Jumphost:
+** git installed
+** ansible installed
+** ssh key available
+
+* 3 master & 1 worker:
+** authorized keys with pubkey from jumphost
+
+To fullfill prerequisites:
+
+[source]
+----
+# on Jumphost create ssh-key
+$ ssh-keygen -t rsa -b 4096 -f id_rsa
+
+# exchange ssh-key to master and worker nodes
+$ ssh-copy-id -i .ssh/id_rsa.pub <ip-address>
+
+# At actual state, user has to be the same on all machines
+# User has to have sudo rights
+----
+
+== Clone project and configure cluster
+[source]
+----
+$ git clone https://gitlab.cloudical.net/vanillastack/vanillastack.git
+$ cd vanillastack/ansible
+
+# copy and edit hosts file
+$ cp hosts.sample hosts
+
+# copy group_vars folder:
+$ cp -r group_vars.orig group_vars
+
+# modify group_vars/kube_cluster/haproxy.yaml
+# modify group_vars/kube_cluster/all.yaml
+----
+
+== Deploy VanillaStack
+[source]
+----
+# run haproxy installation:
+# if user needs to enter a sudo password, add "--ask-sudo-pass" to the end of the line
+$ ansible-playbook -i hosts type_haproxy_deploy.yaml
+$ ansible-playbook -i hosts type_kubernetes_deploy.yaml
+----

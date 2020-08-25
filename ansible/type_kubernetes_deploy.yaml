@@ -1,0 +1,54 @@
+---
+- name: Reset Nodes
+  hosts: master,worker
+  become: true
+  gather_facts: false
+  roles:
+    - role: reset-kubernetes
+
+- name: Configure Bastion Host
+  hosts: kube_cluster
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 01_configure_systems
+
+- name: Configure Kube Systems
+  hosts: master,worker
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes
+      action: 02_configure_cluster
+
+- name: Init KubeCluster
+  hosts: master[0]
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes
+      action: 03_deploy_kubernetes
+
+- name: Add Master to KubeCluster
+  hosts: master[1:]
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes
+      action: 04_add_nodes
+
+- name: Add worker to KubeCluster
+  hosts: worker
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes
+      action: 05_add_worker
+
+- name: Deploy Networking
+  hosts: bastion
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes
+      action: 06_configure_network
