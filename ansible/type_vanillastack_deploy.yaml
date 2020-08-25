@@ -1,7 +1,6 @@
 ---
 - name: Prepare Bastion node
-  hosts: localhost
-  connection: local
+  hosts: master[0]
   become: true
   gather_facts: no
   roles:
@@ -72,41 +71,35 @@
       action: 05_add_worker
 
 - name: Deploy Networking
-  hosts: localhost
-  connection: local
+  hosts: master[0]
   gather_facts: yes
   roles:
     - role: deploy-kubernetes
       action: 06_configure_network
 
 - name: Deploy Nginx-Ingress
-  hosts: localhost
-  connection: local
+  hosts: master[0]
   become: false
   gather_facts: false
   roles:
     - role: helm-nginx-ingress
 
 - name: Deploy Rook
-  hosts: localhost
-  connection: local
+  hosts: master[0]
   become: false
   gather_facts: false
   roles:
     - role: deploy-rook
 
 - name: Deploy Cert Manager
-  hosts: localhost
-  connection: local
+  hosts: master[0]
   become: false
   gather_facts: true
   roles:
     - role: helm-cert-manager
 
-
 - name: Deploy OpenStack
-  hosts: localhost
-  connection: local
+  hosts: master[0]
   become: false
   gather_facts: no
   roles:
