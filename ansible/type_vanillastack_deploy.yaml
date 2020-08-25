@@ -39,7 +39,8 @@
       action: 02_configure_cluster
 
 - name: generate secrets
-  hosts: bastion
+  hosts: localhost
+  connection: local
   gather_facts: yes
   roles:
     - role: deploy-kubernetes

@@ -9,3 +9,4 @@ clustername: kube
 loadbalancer_fqdn: api.test.vanillastack.cloudical.net
 reset_cluster: false
 
+keepalived_interface: enp1s0
