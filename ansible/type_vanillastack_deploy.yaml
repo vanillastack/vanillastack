@@ -22,7 +22,7 @@
     - role: install-haproxy
       action: 02_install_haproxy
 
-- name: Configure Bastion Host
+- name: Configure Servers
   hosts: kube_cluster
   become: true
   gather_facts: true
@@ -31,7 +31,7 @@
       action: 01_configure_systems
 
 - name: Configure Kube Systems
-  hosts: master,worker
+  hosts: kube_cluster
   become: true
   gather_facts: no
   roles:
@@ -77,6 +77,13 @@
     - role: deploy-kubernetes
       action: 06_configure_network
 
+- name: Label Nodes
+  hosts: master[0]
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes
+      action: 07-label_nodes
+
 - name: Deploy Nginx-Ingress
   hosts: master[0]
   become: false
@@ -104,3 +111,4 @@
   gather_facts: no
   roles:
     - role: deploy-openstack
+
