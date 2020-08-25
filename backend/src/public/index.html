@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Socket.IO chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font: 13px Helvetica, Arial;
+    }
+    form {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+    form input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: 0.5%;
+    }
+    form button {
+      width: 9%;
+      background: rgb(130, 224, 255);
+      border: none;
+      padding: 10px;
+    }
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    #messages li {
+      padding: 5px 10px;
+    }
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+    li.send {
+      color: blue;
+    }
+    li.received {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+<ul id="messages"></ul>
+<form>
+  <input id="msgBox" autocomplete="off" />
+  <button id="msgSendButton" type="button" onclick="sendMessage()">
+    Send
+  </button>
+</form>
+</body>
+<script>
+  // Create WebSocket connection.
+  const socket = new WebSocket('ws://localhost:3000');
+
+  // Connection opened
+  socket.addEventListener('open', function (event) {
+    console.log('Connected to WS');
+  });
+
+  // Listen for messages
+  var msgInput = document.getElementById('msgBox');
+
+  msgInput.addEventListener('keydown', function (event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById('msgSendButton').click();
+    }
+  });
+
+  socket.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+    const liNode = document.createElement('LI');
+    liNode.classList.add('received');
+    const msgNode = document.createTextNode(event.data);
+    liNode.appendChild(msgNode);
+    document.getElementById('messages').appendChild(liNode);
+  });
+  const sendMessage = () => {
+    socket.send(document.getElementById('msgBox').value);
+    const liNode = document.createElement('LI');
+    liNode.classList.add('send');
+    const msgNode = document.createTextNode(
+            document.getElementById('msgBox').value
+    );
+    liNode.appendChild(msgNode);
+    document.getElementById('messages').appendChild(liNode);
+    document.getElementById('msgBox').value = '';
+  };
+</script>
+</html>
+

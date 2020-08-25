@@ -1,31 +1,27 @@
 const express = require('express');
-const server = require('http').createServer(express);
-const ws = require('socket.io')(server);
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 
-const apiRouter = require('./routes/index');
+const indexRouter = require('./routes');
+const apiRouter = require('./routes/api');
 
 const app = express();
-
-const port = process.env.PORT || '3000'
-
-server.listen(app.get('port'), () => {
-    console.log(`WebSocket listening on *:${port}`);
-});
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/', indexRouter);
 app.use('/api/v1', apiRouter);
 
 // Swagger API Documentation
+const port = process.env.PORT || '3000';
+
 const swaggerOptions = {
     swaggerDefinition: {
         openapi: "3.0.3",

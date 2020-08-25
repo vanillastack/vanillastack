@@ -7,9 +7,9 @@ const router = express.Router();
  * @swagger
  */
 router.get('/', function(req, res, next) {
-  res.json({
-    message: 'OK'
-  });
+    res.json({
+        message: 'OK'
+    });
 });
 
 module.exports = router;
