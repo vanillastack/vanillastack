@@ -1,7 +1,4 @@
 ---
-- name: debug through ansible.env
-  debug: var=ansible_env
-
 - name: Install neccessary packages
   apt:
     pkg:
