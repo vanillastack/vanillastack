@@ -35,10 +35,10 @@
 - name: Wait for control-plane pods become ready
   shell: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
 
-- pause:
-    seconds: 60
+#- pause:
+#    seconds: 60
 
-- name: load calicoctl config
-  k8s:
-    state: present
-    src: "{{ ansible_env.HOME }}/{{ clustername }}/calicoctl.yaml"
+#- name: load calicoctl config
+#  k8s:
+#    state: present
+#    src: "{{ ansible_env.HOME }}/{{ clustername }}/calicoctl.yaml"
