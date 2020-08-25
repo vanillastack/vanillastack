@@ -1,5 +1,5 @@
-[bastion]
-vanilla-bastion ansible_host=135.181.48.20 ansible_user=debian
+#[bastion]
+#vanilla-bastion ansible_host=135.181.48.20 ansible_user=debian
 
 [master]
 vanilla-master-1 ansible_host=135.181.48.21 ansible_user=debian
@@ -12,7 +12,7 @@ vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
 vanilla-worker-3 ansible_host=135.181.48.26 ansible_user=debian
 
 [kube_cluster:children]
-bastion
+#bastion
 master
 worker
 
