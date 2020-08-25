@@ -1,7 +1,7 @@
 system_domain: testcluster.cloudical.net
 
 kube:
-  storage_class: "local-storage"
+  storage_class: "{{ cloudfoundry.storageclass }}"
 
 features:
   ingress:
