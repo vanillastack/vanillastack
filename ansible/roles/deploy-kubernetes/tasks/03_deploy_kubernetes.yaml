@@ -23,10 +23,3 @@
                  {{ init_opts }}
   register: init_cluster 
 # when: not kubeadm_ca.stat.exists or reset_cluster==true
-
-- name: fetch kube config
-  fetch:
-    src: /home/{{ ansible_env.SUDO_USER }}/.kube/config
-    dest: /home/{{ ansible_env.SUDO_USER }}/.kube/
-    flat: yes
- 
