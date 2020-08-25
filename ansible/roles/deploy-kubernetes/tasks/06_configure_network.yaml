@@ -1,8 +1,24 @@
 ---
-- name: create clusterfolder
+- name: create folder
   file: 
-    path: "{{ ansible_env.HOME }}/{{ clustername }}/"
+    path: "{{ ansible_env.HOME }}/{{ item }}/"
     state: directory
+    mode: '750'
+    owner: "{{ ansible_env.USER }}"
+  loop:
+    - "{{ clustername }}"
+    - .kube
+
+- name: Copy admin.conf to Home directory
+  become: true
+  when: init_cluster is succeeded
+  copy:
+    src: "{{ kubeadmin_config }}"
+    dest: ".kube/config"
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+    mode: 0640
+    remote_src: true
 
 - name: get calico definitions
   get_url:

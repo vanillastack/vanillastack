@@ -24,16 +24,6 @@
   register: init_cluster 
 # when: not kubeadm_ca.stat.exists or reset_cluster==true
 
-- name: Copy admin.conf to Home directory
-  when: init_cluster is succeeded
-  copy:
-    src: "{{ kubeadmin_config }}"
-    dest: ".kube/config"
-    owner: "{{ ansible_env.USER }}"
-    group: "{{ ansible_env.USER }}"
-    mode: 0755
-    remote_src: true
-
 - name: fetch kube config
   fetch:
     src: /home/{{ ansible_env.SUDO_USER }}/.kube/config
