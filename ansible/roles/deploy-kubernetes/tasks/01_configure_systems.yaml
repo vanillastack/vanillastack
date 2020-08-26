@@ -17,6 +17,10 @@
   loop:
     - 93C4A3FD7BB9C367
     - 8BECF1637AD8C79D
+  retries: 3
+  delay: 1
+  register: result
+  until: result.rc == 0
 
 - name: Add key for cri-o repos
   apt_key:
@@ -28,6 +32,10 @@
     - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
     - "https://baltocdn.com/helm/signing.asc"
     - "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
+  retries: 3
+  delay: 1
+  register: result
+  until: result.rc == 0
 
 - name: Add repositories
   apt_repository:
@@ -40,6 +48,10 @@
     - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
     - "deb https://baltocdn.com/helm/stable/debian/ all main"
     - "deb https://packages.cloudfoundry.org/debian stable main"
+  retries: 3
+  delay: 1
+  register: result
+  until: result.rc == 0
 
 - name: Install packages
   apt:
@@ -49,6 +61,10 @@
       - helm
       - cf-cli
     update_cache: yes
+  retries: 3
+  delay: 1
+  register: result
+  until: result.rc == 0
 
 - name: add hosts entry
   lineinfile:
