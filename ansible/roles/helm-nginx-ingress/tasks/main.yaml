@@ -21,8 +21,8 @@
   command: >
     helm upgrade --install nginx-ingress stable/nginx-ingress \
      --namespace "{{ ingress.namespace }}" -f /tmp/nginx-ingress.yaml
-  retry: 3
   delay: 10
+  retries: 3
   register: result
   until: result is success
 

@@ -80,7 +80,7 @@
 
 - name: update hosts file
   lineinfile:
-    dest: /etc/hosts
+    path: /etc/hosts
     regexp: '{{ hostvars[item].ansible_host }}.*{{ item }}$'
     line: "{{ hostvars[item].ansible_host }} {{item}}"
     state: present

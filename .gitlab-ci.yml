@@ -9,6 +9,7 @@ redeploy_debian:
     refs:
       - testing
   stage: redeploy
+  interruptible: true
   script:
     - apt update && apt install -y curl
     - curl $WEBHOOK_REDEPLOY
@@ -19,6 +20,7 @@ run_playbook:
     refs:
       - testing
   stage: run_playbook
+  interruptible: true
   script: 
     - apt update && apt install -y git ansible ssh-client
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
