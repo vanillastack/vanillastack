@@ -1,23 +1,26 @@
-# **VanillaStack Backend API**
+= **VanillaStack Backend API**
 
-## Requirements
+== Requirements
+
 Docker or Node.js installed
 
 Got to VanillaStack/backend and execute docker build and run command
 
-```shell script
+[source,shell script]
+----
 cd VanillaStack/backend
-docker build -f docker/dev/Dockerfile \ 
+docker build -f docker/dev/Dockerfile \
              -t vsbackend && docker run \
              --name vsbackend \
              -p 3000:3000 \
              -v $(pwd)/app:/usr/workdir/app vsbackend
-```
+----
 
-or 
+or
 
-```shell script
+[source,shell script]
+----
 cd VanillaStack/backend
 npm install
 npm run dev
-```
+----
