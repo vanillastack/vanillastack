@@ -57,6 +57,15 @@
   with_items:
     - /etc/containers/registries.conf
 
+
+- name: remove cni configs
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/cni/net.d/100-crio-bridge.conf"
+    - "/etc/cni/net.d/200-loopback.conf"
+
 - name: Make sure a service is running 
   systemd:
     state: started

@@ -1,4 +1,10 @@
 ---
+- name: enable auto completion
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc" 
+    line: "source <(kubectl completion bash)"
+    state: present
+
 - name: label worker nodes
   command: >
     kubectl label nodes "{{ item }}" node-role.kubernetes.io/worker=worker \
