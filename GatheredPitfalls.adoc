@@ -4,7 +4,7 @@ This is a collection of pitfalls we encountered in the project and how we solved
 
 == List
 
-* https://gitlab.cloudical.net/vanillastack/vanillastack/-/issues/38 ::
+* https://gitlab.cloudical.net/vanillastack/vanillastack/-/issues/38
 +
 CRI-O CNI Config must be removed during installation
 
