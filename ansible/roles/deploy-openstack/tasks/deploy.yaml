@@ -37,6 +37,13 @@
     state: present
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
 
+- name: wait for mariadb to come up
+  shell: kubectl get pods -n "{{openstack.namespace}}" -o json -l application=mariadb
+  register: kubectl_get_pod
+  until: kubectl_get_pod.stdout|from_json|json_query('items[*].status.phase') == "Running"
+  retries: 60
+  delay: 20
+
 - name: wait for pods to come up
   shell: kubectl get pods -o json -n "{{openstack.namespace}}" --field-selector=status.phase!=Succeeded
   register: kubectl_get_pods
