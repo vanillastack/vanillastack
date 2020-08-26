@@ -1,0 +1,13 @@
+= Licenses
+
+The following licenses are used in the project
+
+- *cookie-parser*, https://www.npmjs.com/package/cookie-parser: MIT
+- *debug*, https://www.npmjs.com/package/debug: MIT
+- *dotenv*, https://www.npmjs.com/package/dotenv: BSD-2-Clause
+- *express*, https://www.npmjs.com/package/express: MIT
+- *morgan*, https://www.npmjs.com/package/morgan: MIT
+- *swagger-jsdoc*, https://www.npmjs.com/package/swagger-jsdoc: MIT
+- *swagger-ui-express*, https://www.npmjs.com/package/swagger-ui-express: MIT
+- *uuid*, https://www.npmjs.com/package/uuid: MIT
+- *ws*, https://www.npmjs.com/package/ws: MIT
