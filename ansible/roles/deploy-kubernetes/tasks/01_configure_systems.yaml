@@ -10,6 +10,11 @@
     - python3-kubernetes
     update_cache: yes
 
+- name: make sure, domain search is not set
+  lineinfile:
+    regexp: '^(.*)search(.*)$'
+    state: absent
+
 - name: Add key from keyserver
   apt_key:
     keyserver: keyserver.ubuntu.com
