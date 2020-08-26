@@ -14,6 +14,7 @@
   lineinfile:
     regexp: '^(.*)search(.*)$'
     state: absent
+    path: /etc/resolv.conf
 
 - name: Add key from keyserver
   apt_key:
