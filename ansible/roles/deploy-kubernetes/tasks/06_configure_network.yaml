@@ -41,3 +41,6 @@
 
 - name: Wait for control-plane pods become ready
   shell: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
+
+- name: Reset coredns
+  command: kubectl delete po $(kubectl get po -n kube-system -l k8s-app=kube-dns|cut -d" " -f1) -n kube-system
