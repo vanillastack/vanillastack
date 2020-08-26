@@ -19,7 +19,7 @@
 
 - name: "helm install nginx-ingress"
   shell: "helm upgrade --install nginx-ingress stable/nginx-ingress --namespace {{ ingress.namespace }} -f /tmp/nginx-ingress.yaml" 
-  retry: 3
+  retries: 3
   delay: 10
 
 - name: "delete nginx-ingress.yaml"
