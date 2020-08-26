@@ -14,6 +14,7 @@
   shell: helm upgrade --install {{item.name}} vanilla-openstack/{{ openstack[item.name]['chartName'] }} --version "{{ openstack[item.name]['chartVersion'] }}" --namespace "{{openstack.namespace}}" -f /tmp/openstack_{{item.name}}.yaml
   when: openstack[item.name]['enabled']
   retry: 3
+  delay: 10
 
 - name: "{{item.name}} | remove svc"
   k8s:
