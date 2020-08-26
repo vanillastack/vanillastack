@@ -14,7 +14,7 @@
 
 - name: wait for CephCluster to come up
   shell: kubectl get cephcluster "{{rook.cluster.name}}" -o json -n "{{rook.namespace}}"|grep HEALTH_OK
-  register: kubectl_get_cephcluster
-  until: kubectl_get_pods.rc==0
+  register: cephcluster
+  until: cephcluster.rc==0
   retries: 120
   delay: 10
