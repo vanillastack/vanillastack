@@ -11,3 +11,10 @@
 - name: Delay for upcoming Rook
   wait_for:
     timeout: 60
+
+- name: wait for CephCluster to come up
+  shell: kubectl get cephcluster "{{rook.cluster.name}}" -o json -n "{{rook.namespace}}"|grep HEALTH_OK
+  register: kubectl_get_cephcluster
+  until: kubectl_get_pods.rc==0
+  retries: 120
+  delay: 10
