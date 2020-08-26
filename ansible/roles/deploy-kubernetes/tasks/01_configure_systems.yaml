@@ -35,7 +35,7 @@
   retries: 3
   delay: 1
   register: result
-  until: result.rc == 0
+  until: result is success
 
 - name: Add repositories
   apt_repository:
@@ -51,7 +51,7 @@
   retries: 3
   delay: 1
   register: result
-  until: result.rc == 0
+  until: result is success
 
 - name: Install packages
   apt:
@@ -64,7 +64,7 @@
   retries: 3
   delay: 1
   register: result
-  until: result.rc == 0
+  until: result is success
 
 - name: add hosts entry
   lineinfile:
