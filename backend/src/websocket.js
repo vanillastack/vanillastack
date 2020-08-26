@@ -1,6 +1,6 @@
 const uuid = require('uuid')
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ noServer: true });
+const wss = new WebSocket.Server({noServer: true});
 
 const clients = {};
 const clientArray = [];
@@ -12,18 +12,24 @@ wss.on('connection', function connection(ws) {
     clients[ws.uuid] = ws;
     clientArray.push(ws);
     ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
-        console.log(ws.uuid);
+        try {
+            const data = JSON.parse(message);
+            console.log('received: %s', data);
+        } catch (e) {
+            console.log('Something went wrong: %s', e);
+        }
+        // console.log('received: %s', message);
+        // console.log(ws.uuid);
         ws.send(`Received: ${message}`);
     });
 
     // ws.send('something');
 });
 
-const getClients = function (){
+const getClients = function () {
     return clients;
 };
-const sendMessage = function (uuid, msg){
+const sendMessage = function (uuid, msg) {
     wss.clients.forEach((client) => {
         if (uuid === client.uuid) {
             if (client.readyState === WebSocket.OPEN) {

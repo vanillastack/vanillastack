@@ -10,6 +10,7 @@ RUN npm install
 
 ## Setting up Env
 ENV PORT=3000
+ENV IP=localhost
 ENV NODE_ENV=development
 EXPOSE ${PORT}
 
