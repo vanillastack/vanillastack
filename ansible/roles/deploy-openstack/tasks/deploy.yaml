@@ -44,6 +44,11 @@
     name: "metadata"
     api_version: v1
     state: absent
+  when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
+
+- name: get nova-metadata svc ip
+  shell: "kubectl get svc nova-metadata -n {{openstack.namespace}}|grep metadata|tr -s ' '|cut -d' ' -f3"
+  register: nova_metadata_ip
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
 
 - name: "{{item.name}} | generate metadata svc config"
