@@ -1,146 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <title>VanillaStackFrontend Prototype</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font: 13px Helvetica, Arial;
-      }
-      form {
-        background: #000;
-        padding: 3px;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-      }
-      form input {
-        border: 0;
-        padding: 10px;
-        width: 90%;
-        margin-right: 0.5%;
-      }
-      form button {
-        width: 9%;
-        background: rgb(130, 224, 255);
-        border: none;
-        padding: 10px;
-      }
-      #messages {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-      #messages li {
-        padding: 5px 10px;
-      }
-      #messages li:nth-child(odd) {
-        background: #eee;
-      }
-      li.send {
-        color: blue;
-      }
-      li.received {
-        color: red;
-      }
-      span.transactionId {
-        color: gray;
-        padding: 0px 10px 0px 0px;
-      }
-    </style>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css"> 
+    <link rel="stylesheet" href="/stylesheets/vanilla-backend.css">
+
+    <title>VanillaStack</title>
   </head>
-  <body>
-    <ul id="messages"></ul>
-    <form>
-      <input id="msgBox" autocomplete="off" />
-      <button id="msgSendButton" type="button" onclick="sendMessage()">
-        Send
-      </button>
-    </form>
+  <body id="main">
+
+    <!-- Basic Layout -->
+    <!-- 
+      Header-Area
+      Content-Area
+        First column for navigation
+        Content
+      Footer-Area
+    -->
+
+    <!-- Header area -->
+    <header class="header">
+      <div class="container-fluid">
+        <h1>VanillaStack</h1>
+      </div>
+    </header>
+
+    <!-- Main area -->
+    <main class="main h-100">
+      <div class="container-fluid h-100">
+        <div class="col-1 navigation h-100"><h3>Navigation</h3></div>
+        <div class="col-11"></div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container-fluid">
+        <h3>Footer</h3>
+      </div>
+    </footer>
+
+    <!-- Start the WebSocket-connection -->
+    <script type="text/javascript"  src="/scripts/sockets.js"></script>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/scripts/jquery-3.5.1.slim.min.js"></script>
+    <script src="/scripts/popper.min.js"></script>
+    <script src="/scripts/bootstrap.min.js"></script>
+
+    <!-- Vue -->
+    <script src="/scripts/vue.min.js"></script>
+    <script src="/scripts/vue-router.js"></script>
   </body>
-  <script>
-    let uuid = '';
-    // Create WebSocket connection.
-    const socket = new WebSocket('ws://localhost:3000');
-
-    // Connection opened
-    socket.addEventListener('open', function (event) {
-      console.log('Connected to WS');
-    });
-
-    // Listen for messages
-    const msgInput = document.getElementById('msgBox');
-
-    msgInput.addEventListener('keydown', function (event) {
-      // Number 13 is the "Enter" key on the keyboard
-      if (event.keyCode === 13) {
-        // Cancel the default action, if needed
-        event.preventDefault();
-        // Trigger the button element with a click
-        document.getElementById('msgSendButton').click();
-      }
-    });
-
-    socket.addEventListener('message', function (event) {
-      try {
-        const msg = JSON.parse(event.data);
-        switch (msg.event) {
-          case 'INIT':
-            uuid = msg.transactionId;
-            break;
-          case 'EXECUTION':
-            const liNode = document.createElement('LI');
-            const transactionSpanNode = document.createElement('SPAN');
-            const msgSpanNode = document.createElement('SPAN');
-            liNode.classList.add('received');
-            transactionSpanNode.classList.add('transactionId');
-            const transactionIdNode = document.createTextNode(
-              msg.transactionId
-            );
-            const msgNode = document.createTextNode(msg.payload);
-
-            transactionSpanNode.appendChild(transactionIdNode);
-            msgSpanNode.appendChild(msgNode);
-            liNode.appendChild(transactionSpanNode);
-            liNode.appendChild(msgSpanNode);
-
-            document.getElementById('messages').appendChild(liNode);
-            break;
-          case 'DONE':
-            break;
-          default:
-            console.log('Something went wrong %s', msg.event);
-            break;
-        }
-        console.log('Message from server ', msg.payload);
-      } catch (e) {
-        console.log('Something went wrong %s', e);
-      }
-    });
-    const sendMessage = () => {
-      socket.send(
-        JSON.stringify({
-          transactionId: uuid,
-          event: 'EXECUTION',
-          payload: document.getElementById('msgBox').value,
-        })
-      );
-
-      const liNode = document.createElement('LI');
-      liNode.classList.add('send');
-      const msgNode = document.createTextNode(
-        document.getElementById('msgBox').value
-      );
-      liNode.appendChild(msgNode);
-      document.getElementById('messages').appendChild(liNode);
-      document.getElementById('msgBox').value = '';
-    };
-    const getRndInteger = function getRndInteger() {
-      return Math.floor(Math.random() * (999999999 - 100000000)) + 100000000;
-    };
-  </script>
 </html>
+
