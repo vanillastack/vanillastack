@@ -38,13 +38,13 @@
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
 
 - name: wait for pods to come up
-  shell: "kubectl wait -n {{openstack.namespace}} --for=condition=Ready pods --selector application={{item}} --timeout=1200s"
+#  shell: "kubectl wait -n {{openstack.namespace}} --for=condition=Ready pods --selector application={{item.name}} --timeout=10s  --selector '!job-name'"
   when: item.wait
-#  shell: kubectl get pods -o json -n "{{openstack.namespace}}" --field-selector=status.phase!=Succeeded
-#  register: kubectl_get_pods
-#  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
-#  retries: 120
-#  delay: 10
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{openstack.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
 
 - name: "{{item.name}} | cleanup"
   file:
