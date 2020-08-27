@@ -1,4 +1,4 @@
-system_domain: testcluster.cloudical.net
+system_domain: "{{ loadbalancer_fqdn }}"
 
 kube:
   storage_class: "{{ cloudfoundry.storageclass }}"

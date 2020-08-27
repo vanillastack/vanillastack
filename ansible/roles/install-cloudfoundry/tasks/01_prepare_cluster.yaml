@@ -8,15 +8,6 @@
     - cf-operator.tgz
     - kubecf_release.tgz
 
-- name: copy files to cluster folder
-  template:
-    src:  "{{ item }}"
-    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
-    owner: "{{ ansible_env.USER }}"
-  loop:
-    - cfoperator-values.yaml
-    - kubecf-values.yaml
-
 - name: create necessary namespaces
   k8s:
     name: "{{ item }}"
@@ -26,7 +17,6 @@
   loop:
   - "cf-operator"
 
-
 - name: install CF Operator
   command: >
     helm install cf-operator \
@@ -34,9 +24,6 @@
     --set "global.singleNamespace.name=kubecf" \
     "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz"
   register: cf_install
-
-- debug:
-    msg: "{{ cf_install.stdout_lines }}"
 
 - pause:
     seconds: 20
