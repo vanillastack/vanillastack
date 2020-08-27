@@ -37,6 +37,27 @@
     state: present
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
 
+- name: "{{item.name}} | remove metadata svc"
+  k8s:
+    namespace: "{{openstack.namespace}}"
+    kind: Service
+    name: "metadata"
+    api_version: v1
+    state: absent
+  when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
+
+- name: "{{item.name}} | generate metadata svc config"
+  template:
+    src: "./templates/svc_metadata.yaml.j2"
+    dest: "/tmp/openstack_metadata-svc.yaml"
+  when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
+
+- name: "{{item.name}} | deploy metadata svc"
+  k8s:
+    src: "/tmp/openstack_metadata-svc.yaml"
+    state: present
+  when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
+
 - name: wait for pods to come up
 #  shell: "kubectl wait -n {{openstack.namespace}} --for=condition=Ready pods --selector application={{item.name}} --timeout=10s  --selector '!job-name'"
   when: item.wait
@@ -57,3 +78,9 @@
     path: "/tmp/openstack_{{item.name}}-svc.yaml"
     state: absent
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
+
+- name: "{{item.name}} | cleanup"
+  file:
+    path: "/tmp/openstack_metadata-svc.yaml"
+    state: absent
+  when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
