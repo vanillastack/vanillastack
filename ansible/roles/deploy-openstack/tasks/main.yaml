@@ -23,7 +23,7 @@
     - { name: glance, wait: true}
     - { name: cinder, wait: true}
     - { name: openvswitch, wait: true}
-    - { name: neutron, wait: true}
+    - { name: neutron, wait: false}
     - { name: libvirt, wait: false}
     - { name: nova, wait: true}
     - { name: heat, wait: true}
