@@ -68,6 +68,11 @@ endpoints:
   compute_novnc_proxy:
     host_fqdn_override:
       public: {{openstack.nova.endpoints.novncURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.release == "stein" %}
+  placement:
+    host_fqdn_override:
+      public: {{openstack.nova.endpoints.placementURLPrefix}}.{{openstack.publicDomain}}
+{% endif %}
 {% if openstack.ceph.enabled %}
 conf:
   nova:

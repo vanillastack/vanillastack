@@ -22,4 +22,8 @@ endpoints:
   dashboard:
     host_fqdn_override:
       public:
+{% if openstack.horizon.endpoints.useDirectPublicDomain %}
         host: {{openstack.publicDomain}}
+{% else %}
+        host: {{openstack.horizon.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+{% endif %}

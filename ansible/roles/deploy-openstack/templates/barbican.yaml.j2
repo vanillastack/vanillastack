@@ -2,3 +2,8 @@
 pod:
   replicas:
     api: {{openstack.barbican.api.replicas}}
+endpoints:
+  key_manager:
+    host_fqdn_override:
+      public:
+        host: {{openstack.barbican.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}

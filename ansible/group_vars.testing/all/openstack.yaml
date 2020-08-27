@@ -48,6 +48,8 @@ openstack:
     createService: true
     api:
       replicas: 2
+    endpoints:
+      publicURLPrefix: "barbican"
   cinder:
     enabled: true
     chartName: cinder
@@ -125,6 +127,9 @@ openstack:
     chartVersion: 20200728
     createService: true
     replicas: 2
+    endpoints:
+      useDirectPublicDomain: false
+      publicURLPrefix: "horizon"
   keystone:
     enabled: true
     chartName: keystone
@@ -195,6 +200,7 @@ openstack:
     endpoints:
       publicURLPrefix: "nova"
       novncURLPrefix: "novnc"
+      placementURLPrefix: "placement"
     libvirt:
       # bare metal = kvm, VMs = qemu
       virtType: kvm
