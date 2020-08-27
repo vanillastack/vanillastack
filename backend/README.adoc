@@ -1,4 +1,4 @@
-= **VanillaStack Backend API**
+= VanillaStack Backend API
 
 == Requirements
 

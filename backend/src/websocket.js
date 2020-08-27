@@ -8,19 +8,27 @@ const clientArray = [];
 wss.on('connection', function connection(ws) {
     console.log('New client connected')
     ws.uuid = uuid.v4();
-    ws.send(`Welcome New Client your UUID: ${ws.uuid}`)
+    ws.send(JSON.stringify({
+        transactionId: ws.uuid,
+        event: 'INIT',
+        payload: 'Welcome New Client your UUID: ' + ws.uuid
+    }));
     clients[ws.uuid] = ws;
     clientArray.push(ws);
     ws.on('message', function incoming(message) {
         try {
             const data = JSON.parse(message);
-            console.log('received: %s', data);
+            console.log(`received:\ntransactionId: ${data.transactionId}, event: ${data.event}, payload: ${data.payload}`);
+            ws.send(JSON.stringify({
+                transactionId: ws.uuid,
+                event: 'EXECUTION',
+                payload: `Received: ${data.payload}`
+            }));
         } catch (e) {
             console.log('Something went wrong: %s', e);
         }
         // console.log('received: %s', message);
-        // console.log(ws.uuid);
-        ws.send(`Received: ${message}`);
+        // console.log(`Received: ${message.payload}`);
     });
 
     // ws.send('something');
@@ -29,15 +37,22 @@ wss.on('connection', function connection(ws) {
 const getClients = function () {
     return clients;
 };
-const sendMessage = function (uuid, msg) {
+const sendMessage = function (msgObject, clientUuid) {
+
     wss.clients.forEach((client) => {
-        if (uuid === client.uuid) {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(msg);
+        if (clientUuid === client.uuid) {
+            if (client.readyState === WebSocket.OPEN) { // check this
+                client.send(JSON.stringify(msgObject));
             }
         }
     });
-}
+};
+//
+// {
+//     "transactionId": number
+//     "event": INIT/EXECUTION/DONE
+//     "payload":
+// }
 
 // module.exports = {sendMessage, wss, clients};
 // module.exports = WebSocket;
