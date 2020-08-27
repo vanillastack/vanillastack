@@ -1,0 +1,42 @@
+body, html, main {
+  font-family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+  height: 100% !important;
+}
+
+a {
+  color: #DD402D;
+}
+
+.header {
+  background-color: #333;
+  color: white;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 3em;
+  line-height: 3em;
+}
+
+.navigation {
+  
+}
+
+.main>div {
+  margin-left: 0;
+  margin-top: -0.5rem;
+}
+
+.main {
+  padding-top: 4em;
+}
+
+.footer {
+  background-color: #333;
+  min-height: 3em;
+  color: white;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 3em;
+  line-height: 3em;
+}
