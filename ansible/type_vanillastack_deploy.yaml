@@ -1,5 +1,12 @@
 ---
-- name: Prepare Bastion node
+- name: Wait for nodes
+  hosts: kube_cluster
+  become: false
+  gather_facts: no
+  roles:
+    - role: wait-for-nodes
+ 
+- name: Prepare Deployment node
   hosts: master[0]
   become: true
   gather_facts: no
