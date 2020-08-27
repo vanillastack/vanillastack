@@ -119,3 +119,10 @@
   roles:
     - role: deploy-openstack
 
+- name: install cloudfoundry
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: install-cloudfoundry
+      action: 01_prepare_cluster
+
