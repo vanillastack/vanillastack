@@ -163,7 +163,7 @@ openstack:
     chartVersion: 20200728
     createService: true
     tunnelInterface: "enp2s0"
-    extInterface: "enp9s0"
+    extInterface: "enp3s0"
     server:
       replicas: 2
     l3:
