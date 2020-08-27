@@ -20,7 +20,7 @@ metadata:
    name: {{rook.storageclass.name}}
 # Change "rook-ceph" provisioner prefix to match the operator namespace if needed
    annotations:
-      "storageclass.kubernetes.io/is-default-class": true
+      "storageclass.kubernetes.io/is-default-class": "true"
 provisioner: rook-ceph.rbd.csi.ceph.com
 parameters:
     # clusterID is the namespace where the rook cluster is running
