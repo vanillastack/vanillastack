@@ -56,17 +56,109 @@ conf:
 secrets:
   rbd: images-rbd-keyring
 {% endif %}
-manifests:
-  deployment_registry: true
-  ingress_registry: true
-  pdb_registry: true
-  service_ingress_registry: true
 endpoints:
   image:
     host_fqdn_override:
       public:
         host: {{openstack.glance.endpoints.publicURLPrefix}}.{{openstack.publicDomain}} 
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+          ca: dummy
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      glance:
+        secretName: glance-tls
+        issuerRef:
+          name: {{openstack.tls.letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
   identity:
     hosts:
       default: keystone-api
       internal: keystone-api
+    auth:
+      admin:
+        region_name: {{openstack.region}}
+        username: admin
+        password: {{openstack.keystone.auth.admin.password}}
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+      glance:
+        role: admin
+        region_name: {{openstack.region}}
+        username: glance
+        password: {{openstack.glance.auth.service.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+      test:
+        role: admin
+        region_name: {{openstack.region}}
+        username: glance-test
+        password: {{openstack.glance.auth.glanceTest.password}}
+        project_name: test
+        user_domain_name: service
+        project_domain_name: service
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+        secret:
+          tls:
+            internal: mariadb-tls-direct
+      glance:
+        username: glance
+        password: {{openstack.glance.auth.db.password}}
+  oslo_messaging:
+    auth:
+      admin:
+        username: rabbitmq
+        password: {{openstack.rabbitmq.auth.admin.password}} 
+      glance:
+        username: glance
+        password: {{openstack.glance.auth.messaging.password}}
+  ceph_object_store:
+    name: radosgw
+    namespace: {{openstack.namespace}}
+    auth:
+      glance:
+        username: glance
+        password: {{openstack.glance.auth.radosgw.password}}
+        tmpurlkey: supersecret
+network:
+  api:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
+
+manifests:
+  deployment_registry: true
+  ingress_registry: true
+  pdb_registry: true
+  service_ingress_registry: true
+  secret_ingress_tls: false

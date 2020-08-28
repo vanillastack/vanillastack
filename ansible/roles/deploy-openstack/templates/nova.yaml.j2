@@ -64,14 +64,83 @@ pod:
 endpoints:
   compute:
     host_fqdn_override:
-      public: {{openstack.nova.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+      public: 
+        host: {{openstack.nova.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+          ca: dummy
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      nova:
+        secretName: nova-tls
+        issuerRef:
+          name: {{openstack.tls.letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
   compute_novnc_proxy:
     host_fqdn_override:
-      public: {{openstack.nova.endpoints.novncURLPrefix}}.{{openstack.publicDomain}}
+      public:
+        host: {{openstack.nova.endpoints.novncURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+          ca: dummy
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      nova:
+        secretName: nova-tls
+        issuerRef:
+          name: {{openstack.tls.letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
 {% if openstack.release == "stein" %}
   placement:
     host_fqdn_override:
-      public: {{openstack.nova.endpoints.placementURLPrefix}}.{{openstack.publicDomain}}
+      public:
+        host: {{openstack.nova.endpoints.placementURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+          ca: dummy
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      nova:
+        secretName: nova-tls
+        issuerRef:
+          name: {{openstack.tls.letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
 {% endif %}
 {% if openstack.ceph.enabled %}
 conf:
@@ -89,9 +158,147 @@ conf:
 ceph_client:
   user_secret_name: cinder-volume-rbd-keyring 
 {% endif %}
-
-{% if openstack.release == "train" or openstack.release == "ussuri" %}
+network:
+  osapi:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
+  novncproxy:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
+{% if openstack.release == "stein" %}
+  placement:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
+{% endif %}
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+        secret:
+          tls:
+            internal: mariadb-tls-direct
+      nova:
+        username: nova
+        password: {{openstack.nova.auth.db.password}}
+  oslo_db_api:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+      nova:
+        username: nova
+        password: {{openstack.nova.auth.dbApi.password}}
+  oslo_db_cell0:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+      nova:
+        username: nova
+        password: {{openstack.nova.auth.dbCell0.password}}
+  oslo_messaging:
+    auth:
+      admin:
+        username: rabbitmq
+        password: {{openstack.rabbitmq.auth.admin.password}}
+      nova:
+        username: nova
+        password: {{openstack.nova.auth.messaging.password}}
+  identity:
+    name: keystone
+    auth:
+      admin:
+        region_name: {{openstack.region}}
+        username: admin
+        password: {{openstack.keystone.auth.admin.password}}
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+      nova:
+        role: admin
+        region_name: {{openstack.region}}
+        username: nova
+        password: {{openstack.nova.auth.service.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+      neutron:
+        region_name: {{openstack.region}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+        username: neutron
+        password: {{openstack.neutron.auth.service.password}}
+      ironic:
+        auth_type: password
+        auth_version: v3
+        region_name: {{openstack.region}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+        username: ironic
+        password: {{openstack.ironic.auth.service.password}}
+{% if openstack.release == "stein" %}
+      placement:
+        role: admin
+        region_name: {{openstack.region}}
+        username: placement
+        password: {{openstack.nova.auth.placement.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+{% endif %}
+      test:
+        role: admin
+        region_name: {{openstack.region}}
+        username: nova-test
+        password: {{openstack.nova.auth.novaTest.password}}
+        project_name: test
+        user_domain_name: service
+        project_domain_name: service
 manifests:
+  secret_ingress_tls: false
+{% if openstack.release == "train" or openstack.release == "ussuri" %}
   cron_job_cell_setup: false
   cron_job_service_cleaner: false
   statefulset_compute_ironic: false

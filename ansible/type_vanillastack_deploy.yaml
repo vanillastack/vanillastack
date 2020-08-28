@@ -118,7 +118,6 @@
   gather_facts: no
   roles:
     - role: deploy-openstack
-  when: openstack.enabled
 
 - name: install cloudfoundry
   hosts: master[0]
