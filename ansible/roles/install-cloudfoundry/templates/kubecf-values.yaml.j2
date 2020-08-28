@@ -1,7 +1,7 @@
 system_domain: "cf.{{ loadbalancer_fqdn }}"
 
 kube:
-  storage_class: "{{ cloudfoundry.storageclass }}"
+  storage_class: {{ cloudfoundry.storageclass }}
 
 features:
   ingress:

@@ -40,5 +40,8 @@
     src: "{{ ansible_env.HOME }}/{{ clustername }}/calico.yaml"
 
 - name: Wait for control-plane pods become ready
-  shell: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
+  command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
+
+- name: restart kubedns
+  command: kubectl delete po -n kube-system -l k8s-app=kube-dns
 
