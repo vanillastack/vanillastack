@@ -1,6 +1,7 @@
 ---
 - name: Deploy Rook
   include_tasks: deploy.yaml
+  when: rook.enabled
   with_items:
     - { name: common, wait: false, delay: 0}
     - { name: operator, wait: true, delay: 10}
@@ -11,6 +12,7 @@
 - name: Delay for upcoming Rook
   wait_for:
     timeout: 60
+  when: rook.enabled
 
 - name: wait for CephCluster to come up
   shell: kubectl get cephcluster "{{rook.cluster.name}}" -o json -n "{{rook.namespace}}"|grep HEALTH_OK
@@ -18,3 +20,4 @@
   until: cephcluster.rc==0
   retries: 120
   delay: 10
+  when: rook.enabled
