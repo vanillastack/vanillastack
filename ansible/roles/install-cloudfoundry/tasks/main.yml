@@ -1,5 +1,112 @@
 ---
-# tasks file for install_cloudfoundry
-- name: "{{ action }}"
-  include_tasks: "{{ action }}.yaml"
+- name: copy files to cluster folder
+  copy:
+    src:  "{{ item }}"   
+    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    owner: "{{ ansible_env.USER }}"
+  loop: 
+    - cf-operator.tgz
+    - kubecf_release.tgz
 
+- name: copy files to cluster folder
+  template:
+    src:  "{{ item }}.j2"   
+    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    owner: "{{ ansible_env.USER }}"
+  loop: 
+    - kubecf-values.yaml
+
+- name: helm installation kubecf
+  block:
+  - name: Increment the retry count
+    set_fact:
+      retry_count: "{{ 0 if retry_count is undefined else retry_count | int + 1 }}"
+
+  - name: delete namespaces
+    k8s:
+      state: absent
+      name: "{{ item }}"
+      api_version: v1
+      kind: namespace
+      wait: true
+    loop:
+      - "kubecf"
+      - "cf-operator"
+      - "eirini"
+
+  - name: sleep
+    pause:
+      seconds: 10  
+
+  - name: create necessary namespaces
+    k8s:
+      name: "{{ item }}"
+      api_version: v1
+      kind: Namespace
+      state: present
+      wait: true
+    loop:
+    - "cf-operator"
+
+  - name: install CF Operator
+    command: >
+      helm install --wait cf-operator \
+      --namespace cf-operator \
+      --set "global.singleNamespace.name=kubecf" \
+      "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz" 
+    register: cf_install
+
+  - name: install Kubecf
+    command: > 
+      helm install kubecf \
+      --namespace kubecf \
+      --values "{{ ansible_env.HOME }}/{{ clustername }}/kubecf-values.yaml" \
+      "{{ ansible_env.HOME }}/{{ clustername }}/kubecf_release.tgz"
+    register: kubecf_install
+
+  rescue:
+    - fail: 
+        msg: Maximum retries exceeded
+      when: retry_count | int == 5 
+
+    - include_tasks: 01_prepare_cluster.yaml
+
+- debug:
+    msg: "{{ kubecf_install.stdout_lines }}"
+
+- name: wait for db to come up
+  command: kubectl wait --namespace=kubecf --for=condition=ready pods -l app=database --timeout=10s
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
+
+- name: wait for eirini router to come up
+  command: kubectl delete po --namespace=kubecf -l name=eirini-routing --wait
+
+- name: wait for eirini router to come up
+  command: kubectl wait --namespace=kubecf --for=condition=ready pods -l name=eirini-routing --timeout=10s
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
+
+- name: wait for router sts to be existant    
+  command: kubectl wait --namespace=kubecf --for=condition=podscheduled pods router-0 --timeout=10s
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
+    
+- name: Patch RouterStatefullset
+  command: >
+    kubectl patch sts -n kubecf router \
+    --patch '{"spec": {"template": {"spec": {"initContainers": [{"name": "bpm-pre-start-gorouter","securityContext": {"privileged": true}}]}}}}'
+
+- name: wait for pods to be ready
+  command: kubectl wait --namespace=kubecf --for=condition=ready pods --timeout=10s
+  retries: 360
+  delay: 10
+  register: result
+  until: result.rc == 0
+     

@@ -9,5 +9,6 @@ clustername: kube
 loadbalancer_fqdn: test.vanillastack.cloudical.net
 reset_cluster: false
 cloudfoundry:
+  enable: true
   storageclass: rook-ceph-block
 keepalived_interface: enp1s0
