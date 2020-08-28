@@ -111,6 +111,7 @@
   gather_facts: true
   roles:
     - role: helm-cert-manager
+      when: certmanager.enabled
 
 - name: Deploy OpenStack
   hosts: master[0]
@@ -124,5 +125,5 @@
   gather_facts: true
   roles:
     - role: install-cloudfoundry
-      when: cloudfoundry.enable == true
+      when: cloudfoundry.enabled
 
