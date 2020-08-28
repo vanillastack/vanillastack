@@ -27,13 +27,6 @@
   with_items:
     - https://docs.projectcalico.org/manifests/calico.yaml
 
-- name: "Install python dependencies"
-  pip:
-    name:
-      - pyhelm
-      - openshift
-    extra_args: --ignore-installed
-
 - name: load calico 
   k8s:
     state: present
