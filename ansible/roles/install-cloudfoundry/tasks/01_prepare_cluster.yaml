@@ -8,6 +8,14 @@
     - cf-operator.tgz
     - kubecf_release.tgz
 
+- name: copy files to cluster folder
+  template:
+    src:  "{{ item }}.j2"   
+    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    owner: "{{ ansible_env.USER }}"
+  loop: 
+    - kubecf-values.yaml
+
 - name: create necessary namespaces
   k8s:
     name: "{{ item }}"

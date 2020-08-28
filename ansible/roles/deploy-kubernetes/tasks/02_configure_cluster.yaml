@@ -66,12 +66,18 @@
     - "/etc/cni/net.d/100-crio-bridge.conf"
     - "/etc/cni/net.d/200-loopback.conf"
 
-- name: Make sure a service is running 
+- name: Make sure crio service is running 
   systemd:
-    state: started
+    state: restarted
     enabled: true
     name: crio
 
+- name: Make sure crio service is running
+  systemd:
+    state: restarted
+    enabled: true
+    name: kubelet
+      
 - name: load modules
   modprobe: 
     name: "{{ item }}"
