@@ -25,24 +25,40 @@
   loop:
   - "cf-operator"
 
-- name: install CF Operator
-  command: >
-    helm install --wait cf-operator \
-    --namespace cf-operator \
-    --set "global.singleNamespace.name=kubecf" \
-    "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz" 
-  register: cf_install
 
-- pause:
-    seconds: 10
+- name: helm installation kubecf
+  block:
+  - name: delete namespaces
+    k8s:
+      state: absent
+      name: "{{ item }}"
+      api_version: v1
+      kind: namespace
+      wait: true
+    loop:
+      - "kubecf"
+      - "cf-operator"
+    ignore_errors: true
 
-- name: install Kubecf
-  command: > 
-    helm install kubecf \
-    --namespace kubecf \
-    --values "{{ ansible_env.HOME }}/{{ clustername }}/kubecf-values.yaml" \
-    "{{ ansible_env.HOME }}/{{ clustername }}/kubecf_release.tgz"
-  register: kubecf_install
+  - name: install CF Operator
+    command: >
+      helm install --wait cf-operator \
+      --namespace cf-operator \
+      --set "global.singleNamespace.name=kubecf" \
+      "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz" 
+    register: cf_install
+
+  - name: install Kubecf
+    command: > 
+      helm install kubecf \
+      --namespace kubecf \
+      --values "{{ ansible_env.HOME }}/{{ clustername }}/kubecf-values.yaml" \
+      "{{ ansible_env.HOME }}/{{ clustername }}/kubecf_release.tgz"
+    register: kubecf_install
+   
+  retries: 5
+  delay: 5
+  until: kubecf_install.rc == 0 && cf_install.rc == 0
 
 - debug:
     msg: "{{ kubecf_install.stdout_lines }}"
