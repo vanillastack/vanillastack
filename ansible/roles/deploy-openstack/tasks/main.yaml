@@ -40,3 +40,4 @@
     - { name: senlin, wait: true}
     - { name: mistral, wait: true}
     - { name: congress, wait: true}
+    - { name: octavia, wait: true}

@@ -325,6 +325,28 @@ openstack:
         password: 1XT7LZT67Tai6jOhcL61oPU7p
       novaTest:
         password: 65dS7dG3YqGkDtlQ7RMKvl2Z2
+  octavia:
+    enabled: false
+    chartName: octavia
+    chartVersion: 20200728
+    createService: true
+    api:
+      replicas: 2
+    worker:
+      replicas: 1
+    housekeeping:
+      replicas: 1
+    endpoints:
+      publicURLPrefix: "octavia"
+    auth:
+      service:
+        password: tJ9IbvCcD1A9n0c7EVgSTlH0l
+      db:
+        password: Ve9wpsYuFjMwthJJdUGr8Jq8v
+      messaging:
+        password: hBCbkeyDzaZSkXVp6zUYB3649
+      octaviaTest:
+        password: GhZRI3GgFZAjhm2SiWmvAP97W
   openvswitch:
     enabled: true
     chartName: openvswitch
