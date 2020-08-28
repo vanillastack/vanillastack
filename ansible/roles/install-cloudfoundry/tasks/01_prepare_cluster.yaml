@@ -27,14 +27,14 @@
 
 - name: install CF Operator
   command: >
-    helm install cf-operator \
+    helm install --wait cf-operator \
     --namespace cf-operator \
     --set "global.singleNamespace.name=kubecf" \
-    "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz"
+    "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz" 
   register: cf_install
 
 - pause:
-    seconds: 20
+    seconds: 10
 
 - name: install Kubecf
   command: > 
@@ -48,13 +48,19 @@
     msg: "{{ kubecf_install.stdout_lines }}"
 
 - name: wait for eirini router to come up
-  shell: kubectl wait --namespace=kubecf --for=condition=ready pods -l name=eirini-routing --timeout=600s
-
-- name: wait for router sts to be existant    
-  shell: kubectl wait --namespace=kubecf --for=condition=podscheduled pods router-0 --timeout=600s
+  command: kubectl wait --namespace=kubecf --for=condition=ready pods -l name=eirini-routing --timeout=600s
   retries: 180
   delay: 10
+  register: result
+  until: result.rc == 0
 
+- name: wait for router sts to be existant    
+  command: kubectl wait --namespace=kubecf --for=condition=podscheduled pods router-0 --timeout=600s
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
+    
 - name: Patch RouterStatefullset
   command: >
     kubectl patch sts -n kubecf router \
