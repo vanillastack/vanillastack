@@ -142,73 +142,6 @@ endpoints:
           kind: Issuer
 {% endif %}
 {% endif %}
-{% if openstack.ceph.enabled %}
-conf:
-  nova:
-    libvirt:
-      cpu_mode: {{openstack.nova.libvirt.cpuMode}}
-      virt_type: {{openstack.nova.libvirt.virtType}}
-  ceph:
-    enabled: {{openstack.ceph.enabled}}
-    admin_keyring: null
-    cinder:
-      user:  {{openstack.cinder.rbd.rbdUser}}
-      keyring: "{{ceph_cinder_keyring.stdout}}"
-      secret_uuid: 457eb676-33da-42ec-9a8c-9293d545c337
-ceph_client:
-  user_secret_name: cinder-volume-rbd-keyring 
-{% endif %}
-network:
-  osapi:
-    ingress:
-      public: true
-      classes:
-        namespace: "nginx"
-        cluster: "nginx-cluster"
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /
-        kubernetes.io/ingress.class: nginx
-{% if openstack.tls.enabled and openstack.tls.useCertManager %}
-        kubernetes.io/tls-acme: "true"
-#        nginx.ingress.kubernetes.io/backend-protocol: "https"
-{% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
-{% endif %}
-  novncproxy:
-    ingress:
-      public: true
-      classes:
-        namespace: "nginx"
-        cluster: "nginx-cluster"
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /
-        kubernetes.io/ingress.class: nginx
-{% if openstack.tls.enabled and openstack.tls.useCertManager %}
-        kubernetes.io/tls-acme: "true"
-#        nginx.ingress.kubernetes.io/backend-protocol: "https"
-{% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
-{% endif %}
-{% if openstack.release == "stein" %}
-  placement:
-    ingress:
-      public: true
-      classes:
-        namespace: "nginx"
-        cluster: "nginx-cluster"
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /
-        kubernetes.io/ingress.class: nginx
-{% if openstack.tls.enabled and openstack.tls.useCertManager %}
-        kubernetes.io/tls-acme: "true"
-#        nginx.ingress.kubernetes.io/backend-protocol: "https"
-{% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
-{% endif %}
-{% endif %}
   oslo_db:
     auth:
       admin:
@@ -296,6 +229,75 @@ network:
         project_name: test
         user_domain_name: service
         project_domain_name: service
+
+{% if openstack.ceph.enabled %}
+conf:
+  nova:
+    libvirt:
+      cpu_mode: {{openstack.nova.libvirt.cpuMode}}
+      virt_type: {{openstack.nova.libvirt.virtType}}
+  ceph:
+    enabled: {{openstack.ceph.enabled}}
+    admin_keyring: null
+    cinder:
+      user:  {{openstack.cinder.rbd.rbdUser}}
+      keyring: "{{ceph_cinder_keyring.stdout}}"
+      secret_uuid: 457eb676-33da-42ec-9a8c-9293d545c337
+ceph_client:
+  user_secret_name: cinder-volume-rbd-keyring 
+{% endif %}
+network:
+  osapi:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
+  novncproxy:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
+{% if openstack.release == "stein" %}
+  placement:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
+{% endif %}
+
 manifests:
   secret_ingress_tls: false
 {% if openstack.release == "train" or openstack.release == "ussuri" %}
