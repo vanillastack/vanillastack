@@ -72,19 +72,19 @@
   register: result
   until: result is success
 
-- name: add hosts entry
-  lineinfile:
-    regexp: '^(.*){{ loadbalancer_fqdn }}(.*)$'
-    path: /etc/hosts
-    line: "{{ loadbalancer_virtualip }} api.{{ loadbalancer_fqdn }}"
+    #- name: add hosts entry
+    #  lineinfile:
+    #    regexp: '^(.*){{ loadbalancer_fqdn }}(.*)$'
+    #    path: /etc/hosts
+    #    line: "{{ loadbalancer_virtualip }} api.{{ loadbalancer_fqdn }}"
 
-- name: update hosts file
-  lineinfile:
-    path: /etc/hosts
-    regexp: '{{ hostvars[item].ansible_host }}.*{{ item }}$'
-    line: "{{ hostvars[item].ansible_host }} {{item}}"
-    state: present
-  with_items: "{{ groups.all }}"
+    #- name: update hosts file
+    #  lineinfile:
+    #    path: /etc/hosts
+    #    regexp: '{{ hostvars[item].ansible_host }}.*{{ item }}$'
+    #    line: "{{ hostvars[item].ansible_host }} {{item}}"
+    #    state: present
+    #  with_items: "{{ groups.all }}"
 
 - name: Upgrade all packages to the latest version
   apt:
