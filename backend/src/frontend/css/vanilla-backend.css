@@ -27,7 +27,7 @@ a {
 }
 
 .main {
-  padding-top: 4em;
+  padding-top: 6em;
 }
 
 .footer {
@@ -39,4 +39,9 @@ a {
   width: 100%;
   height: 3em;
   line-height: 3em;
+}
+
+.router-link-active {
+  font-weight: bold;
+  color: white !important;
 }
