@@ -47,13 +47,5 @@ const sendMessage = function (msgObject, clientUuid) {
         }
     });
 };
-//
-// {
-//     "transactionId": number
-//     "event": INIT/EXECUTION/DONE
-//     "payload":
-// }
 
-// module.exports = {sendMessage, wss, clients};
-// module.exports = WebSocket;
 module.exports = {wss, sendMessage, getClients, clients, clientArray};
