@@ -1,4 +1,5 @@
 rook:
+  enabled: true
   namespace: rook-ceph
   common:
     enabled: true

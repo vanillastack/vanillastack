@@ -1,5 +1,6 @@
 ---
 openstack:
+  enabled: false
   namespace: openstack
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
   publicDomain: "test.vanillastack.cloudical.net"
@@ -9,6 +10,15 @@ openstack:
   # - train
   # - ussuri (not tested)
   release: "stein"
+  tls:
+    enabled: true
+    useCertManager: true
+    issuer: "letsEncrypt"
+    letsEncrypt:
+      enabled: true
+      # letsencrypt-prod or letsencrypt-staging
+      issuerName: "letsencrypt-staging"
+      issuerEmail: "testing@test.vanillastack.cloudical.net"
   mariadb:
     enabled: true
     chartName: mariadb
@@ -19,6 +29,15 @@ openstack:
       enabled: true
       storageClass: "rook-ceph-block"
       diskSize: 30Gi
+    auth:
+      admin:
+        password: nBR46Yx5oKoaORLdHXC675emg 
+      sst:
+        password: g1tCeWCl5JlnN4KfII2w1rjWD
+      audit:
+        password: MF91daYvdqnJSALlPNHa0y2ox
+      exporter:
+        password: KvK63FDIqTdCKrFiknVHCIVtC
   rabbitmq:
     enabled: true
     chartName: rabbitmq
@@ -29,6 +48,9 @@ openstack:
       enabled: true
       storageClass: "rook-ceph-block"
       diskSize: 20Gi
+    auth:
+      admin:
+        password: QaBQRbiSh7LVcmUfr066OxOoc
   memcached:
     enabled: true
     chartName: memcached
@@ -50,6 +72,13 @@ openstack:
       replicas: 2
     endpoints:
       publicURLPrefix: "barbican"
+    auth:
+      service:
+        password: WIyJB5ucjhRDBi7JDLN4xPsZF
+      db:
+        password: SLyl35ZTcLs1HSx1MLEEKrTo3
+      messaging:
+        password: ygj41kywzWQL0304n64C6bneW
   cinder:
     enabled: true
     chartName: cinder
@@ -74,6 +103,15 @@ openstack:
       replicas: 1
     endpoints:
       publicURLPrefix: "cinder"
+    auth:
+      service:
+        password: Hb8M4cmki6BxsvgYZ4efBRfzN
+      db:
+        password: iyg1TU0Q6Kbe1GQ74cpIvP002
+      messaging:
+        password: r5L4CXlnthbhOqrvkgMmmV4Lx
+      cinderTest:
+        password: CsXVpYJ1isCfJ8Lu97CY25s7W
   congress:
     enabled: false
     chartName: congress
@@ -85,6 +123,13 @@ openstack:
       replicas: 2
     datasource:
       replicas: 1
+  designate:
+    enabled: false
+    chartName: designate
+    chartVersion: 20200728
+    createService: true
+    auth:
+      service: WvusP3DVawNqM4VIhPsEhptyj
   glance:
     enabled: true
     chartName: glance
@@ -96,6 +141,7 @@ openstack:
       cephAppName: glance
       rbdPool: glance.images
       rbdUser: glance
+      showImageDirectUrl: true
     api:
       replicas: 2
       v1Enabled: false
@@ -105,6 +151,17 @@ openstack:
       v2Enabled: true
     endpoints:
       publicURLPrefix: "glance"
+    auth:
+      service:
+        password: L1hHckv7JulXzAWr2lCyKPwMp
+      db:
+        password: 83bpLt7JyuBNjLWjI1SPdrxex
+      messaging:
+        password: Vc1aHXgW79mz2xdXV7Yk7v1NB
+      glanceTest:
+        password: AkaQ342jULeq7sWV7ayT2bu6d
+      radosgw:
+        password: woK1JLHAz6SujFQsvoPMKm6wH
   heat:
     enabled: true
     chartName: heat
@@ -121,6 +178,19 @@ openstack:
     endpoints:
       publicURLPrefix: "heat"
       cfPublicURLPrefix: "heat-cfn"
+    auth:
+      service:
+        password: Fv2ZXIEb5V5jZTpyA856vkJhB
+      db:
+        password: K29Kr9Uf2xJiovkixnWf4b27V
+      messaging:
+        password: 1R8B1FepIqiaqQrHVS0ncuXpP
+      heatTest:
+        password: Qcfl85lFlryeBzC9kU63sMy1e
+      heatDomain:
+        password: EQgwc4yPg855CdOrbpf1WbBxx
+      serviceTrustee:
+        password: nCWZSoGhojIJf0zKWS7V3t2mg
   horizon:
     enabled: true
     chartName: horizon
@@ -130,6 +200,16 @@ openstack:
     endpoints:
       useDirectPublicDomain: false
       publicURLPrefix: "horizon"
+    auth:
+      db:
+        password: 6jswYdW52JEN0y7oRZ8NLHwCq
+  ironic:
+    enabled: false
+    chartName: ironic
+    chartVersion: 20200728
+    createService: true
+    auth:
+      service: bC3FON5hMXFaJbAEDARV6EfBG
   keystone:
     enabled: true
     chartName: keystone
@@ -139,9 +219,15 @@ openstack:
       publicURLPrefix: "keystone"
     api:
       replicas: 2
-    admin:
-      username: admin
-      password: password
+    auth:
+      admin:
+        password: sn0JGJ2NXuBUrfyoHYRDnKNY3
+      keystoneTest:
+        password: zxQoRVj9dx3ghYDoeDtrIhaMt
+      db:
+        password: 1b2g39k10Qcs6QjugmOt7guPb
+      messaging:
+        password: CdvLDh2fp6WnciVxHsSnrWhOd
   libvirt:
     enabled: true
     chartName: libvirt
@@ -162,6 +248,15 @@ openstack:
       replicas: 2
     endpoints:
       publicURLPrefix: "mistral"
+    auth:
+      service:
+        password: P5nK12zDB5U93hSpistGtyEU4
+      mistralTest:
+        password: 1MYMa9AeaqhTSPQ7qotTU4Tu1
+      db:
+        password: 4rammB7aZCdEusubYnOK6PgJI
+      messaging:
+        password: vRK5KyiuRKxAjy8Z1ySDFuDGS
   neutron:
     enabled: true
     chartName: neutron
@@ -178,6 +273,15 @@ openstack:
       dhcpAgents: 2
     endpoints:
       publicURLPrefix: "neutron"
+    auth:
+      service:
+        password: 1H4c6JURsRRDB6tl4FemkmKU3
+      db:
+        password: XoGM7g5N6Ft0qc8cHTBfvWwFb
+      messaging:
+        password: b45MH3eKVBnXoKEufojIPquEX
+      neutronTest:
+        password: 7bs4vXXfk58oea8txB1w8Atqu
   nova:
     enabled: true
     chartName: nova
@@ -206,6 +310,21 @@ openstack:
       virtType: kvm
       # bare metal = host-passthrough or host-model, vm= none
       cpuMode: host-model
+    auth:
+      service:
+        password: uYn4gU4AabT9YryEOGRLNNhQi
+      db:
+        password: Y1T83ux9qwYBSL0JagRY6zdus
+      dbApi:
+        password: v09sn30CSnYVWLLylQoFr3q0o
+      dbCell0:
+        password: 9MXOM6MHzcaUi386ZZjmDJ0dL
+      placement:
+        password: X3hGdwQAb3uCF52Z2F2SmmIzk
+      messaging:
+        password: 1XT7LZT67Tai6jOhcL61oPU7p
+      novaTest:
+        password: 65dS7dG3YqGkDtlQ7RMKvl2Z2
   openvswitch:
     enabled: true
     chartName: openvswitch
@@ -218,6 +337,9 @@ openstack:
     createService: true
     endpoints:
       publicURLPrefix: "radosgw"
+    auth:
+      service:
+        password: lZcmrMgCOYFWe662PQAGdpwAT
   senlin:
     enabled: true
     chartName: senlin
@@ -229,3 +351,12 @@ openstack:
       replicas: 2
     endpoints:
       publicURLPrefix: "senlin"
+    auth:
+      service:
+        password: I38z3W3AlcLKP7LEC97cK3O9x
+      db:
+        password: rCl1oRknvNxi9oP0cuF4Hd6lx
+      messaging:
+        password: s7uSI9fmGv47VM15wWC67hRpo
+      senlinTest:
+        password: oIRMBVj10GgJX8dSg6qmFBGGU

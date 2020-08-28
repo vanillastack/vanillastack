@@ -1,0 +1,14 @@
+- name: Copy LetsEncrypt Issuer
+  template:
+    src: ./templates/letsencrypt.yaml.j2
+    dest: /tmp/letsencrypt.yaml
+  
+- name: Create LetsEncrypt Issuer
+  k8s:
+    src: /tmp/letsencrypt.yaml
+    state: present
+
+- name: Cleanup LetsEncrypt Issuer
+  file:
+    path: /tmp/letsencrypt.yaml
+    state: absent   

@@ -45,8 +45,146 @@ endpoints:
     host_fqdn_override:
       public:
         host: {{openstack.heat.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+          ca: dummy
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      heat:
+        secretName: heat-tls
+        issuerRef:
+          name: {{openstack.tls.letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
   cloudformation:
     host_fqdn_override:
       public:
         host: {{openstack.heat.endpoints.cfPublicURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+          ca: dummy
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      heat:
+        secretName: heat-cfn-tls
+        issuerRef:
+          name: {{openstack.tls.letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
+  identity:
+    name: keystone
+    auth:
+      admin:
+        region_name: {{openstack.region}}
+        username: admin
+        password: {{openstack.keystone.auth.admin.password}}
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+      heat:
+        role: admin
+        region_name: {{openstack.region}}
+        username: heat
+        password: {{openstack.heat.auth.service.password
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+      heat_trustee:
+        role: admin
+        region_name: {{openstack.region}}
+        username: heat-trust
+        password: {{openstack.heat.auth.serviceTrustee.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+      heat_stack_user:
+        role: admin
+        region_name: {{openstack.region}}
+        username: heat-domain
+        password: {{openstack.heat.auth.heatDomain.password}}
+        domain_name: heat
+      test:
+        role: admin
+        region_name: {{openstack.region}}
+        username: heat-test
+        password: {{openstack.heat.auth.heatTest.password}}
+        project_name: test
+        user_domain_name: service
+        project_domain_name: service
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+        secret:
+          tls:
+            internal: mariadb-tls-direct
+      heat:
+        username: heat
+        password: {{openstack.heat.auth.db.password}}
+  oslo_messaging:
+    auth:
+      admin:
+        username: rabbitmq
+        password: {{openstack.rabbitmq.auth.admin.password}}
+      heat:
+        username: heat
+        password: {{openstack.heat.auth.messaging.password}}
+network:
+  api:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
+  cfn:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+{% endif %}
 
+manifests:
+  secret_ingress_tls: false

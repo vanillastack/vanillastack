@@ -5,14 +5,18 @@
     api_version: v1
     kind: Namespace
     state: present
+  when: certmanager.enabled
 
 - name: "add helm repository - cert-manager"
   shell: "helm repo add jetstack https://charts.jetstack.io"
+  when: certmanager.enabled
 
 - name: "update helm repositories"
   shell: "helm repo update"
+  when: certmanager.enabled
 
 - name: "run helm install cert-manager"
   shell: "helm upgrade --install cert-manager jetstack/cert-manager --namespace {{ certmanager.namespace }} --version {{certmanager.chartVersion}} --set installCRDs=true"
   retries: 3
   delay: 10
+  when: certmanager.enabled
