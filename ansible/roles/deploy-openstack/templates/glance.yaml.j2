@@ -50,6 +50,7 @@ conf:
       enable_v1_api: {{openstack.glance.api.v1Enabled}}
       enable_v2_registry: {{openstack.glance.registry.v2Enabled}}
 {% if openstack.glance.rbd.enabled %}
+      show_image_direct_url: {{openstack.glance.rbd.showImageDirectUrl}}
     glance_store:
       rbd_store_pool: {{openstack.glance.rbd.rbdPool}} 
       rbd_store_user: {{openstack.glance.rbd.rbdUser}}

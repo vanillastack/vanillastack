@@ -141,6 +141,7 @@ openstack:
       cephAppName: glance
       rbdPool: glance.images
       rbdUser: glance
+      showImageDirectUrl: true
     api:
       replicas: 2
       v1Enabled: false
