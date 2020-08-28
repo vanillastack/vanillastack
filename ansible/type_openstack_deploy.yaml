@@ -7,3 +7,4 @@
 #    - role: prepare-node
 #    - role: helm-nginx-ingress
     - role: deploy-openstack
+  when: openstack.enabled
