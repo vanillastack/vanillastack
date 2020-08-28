@@ -47,17 +47,20 @@
 - debug:
     msg: "{{ kubecf_install.stdout_lines }}"
 
-- name: wait for pods to come up
-  shell: kubectl get pods -o json -n "kubecf" -l quarks.cloudfoundry.org/qjob-name=ig --field-selector=status.phase!=Succeeded
-  register: kubectl_get_po   
-  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
-  retries: 240
-  delay: 10
+- name: wait for eirini router to come up
+  shell: kubectl wait --namespace=kubecf --for=condition=ready pods -l name=eirini-routing --timeout=600s
 
-- pause:
-    seconds: 180
+- name: wait for router sts to be existant    
+  shell: kubectl wait --namespace=kubecf --for=condition=podscheduled pods router-0 --timeout=600s
+  retries: 180
+  delay: 10
 
 - name: Patch RouterStatefullset
   command: >
     kubectl patch sts -n kubecf router \
     --patch '{"spec": {"template": {"spec": {"initContainers": [{"name": "bpm-pre-start-gorouter","securityContext": {"privileged": true}}]}}}}'
+
+
+        labels:
+    name: eirini-routing
+
