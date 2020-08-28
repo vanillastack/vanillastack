@@ -1,4 +1,4 @@
-= **VanillaStack Backend API**
+= VanillaStack Backend API
 
 == Requirements
 
@@ -23,4 +23,28 @@ or
 cd VanillaStack/backend
 npm install
 npm run dev
+----
+
+== WebSockets
+
+WebSockets are using JSON-Objects for communication between front- and backend.
+
+The JSON-Objects consists of a transactionId, an event, and the payload.
+The transactionId is a generated number, which is used to identify a single process.
+The *event* describes what kind of transaction it is.
+Following events are possible: *INIT*, *EXEC* and *DONE*, which are describing specific scenario for JSON-Object states.
+Each state expects a specific payload.
+
+WebSocket are initialized through an init message after opening a tunnel.
+During the Init-Process a *UUID* is expected as payload to route issued processes to the requesting client.
+
+*Example INIT-Object:*
+
+[source,json]
+----
+{
+    "transactionId": "",
+    "event": "INIT",
+    "payload": "string"
+}
 ----

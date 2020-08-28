@@ -1,5 +1,11 @@
 FROM node:lts-alpine
 
+## Install Ansible
+RUN apk update && \
+apk add --no-cache ansible && \
+rm -rf /tmp/* && \
+rm -rf /var/cache/apk/*
+
 ## Install Environment
 COPY ./package.json /usr/workdir/
 WORKDIR /usr/workdir
