@@ -1,6 +1,6 @@
 ---
 openstack:
-  enabled: false
+  enabled: true
   namespace: openstack
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
   publicDomain: "test.vanillastack.cloudical.net"
@@ -129,7 +129,8 @@ openstack:
     chartVersion: 20200728
     createService: true
     auth:
-      service: WvusP3DVawNqM4VIhPsEhptyj
+      service: 
+        password: WvusP3DVawNqM4VIhPsEhptyj
   glance:
     enabled: true
     chartName: glance
@@ -209,7 +210,8 @@ openstack:
     chartVersion: 20200728
     createService: true
     auth:
-      service: bC3FON5hMXFaJbAEDARV6EfBG
+      service: 
+        password: bC3FON5hMXFaJbAEDARV6EfBG
   keystone:
     enabled: true
     chartName: keystone
@@ -326,7 +328,7 @@ openstack:
       novaTest:
         password: 65dS7dG3YqGkDtlQ7RMKvl2Z2
   octavia:
-    enabled: false
+    enabled: true
     chartName: octavia
     chartVersion: 20200728
     createService: true
