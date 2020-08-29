@@ -1,0 +1,16 @@
+---
+- name: create LetsEncrypt staging CA Certificate
+  copy:
+    dest: /tmp/openstack_ca.crt
+    content: "{{letsEncrypt.staging.rootCACert | b64decode}}"
+  when: openstack.tls.enabled and openstack.tls.letsEncrypt.enabled and letsEncrypt.issuerName == "letsencrypt-staging"
+
+- name: create LetsEncrypt prod CA Certificate
+  copy:
+    dest: /tmp/openstack_ca.crt
+    content: "{{tls.letsEncrypt.prod.rootCACert | b64decode}}"
+  when: openstack.tls.enabled and openstack.tls.letsEncrypt.enabled and letsEncrypt.issuerName == "letsencrypt-prod"
+
+- name: "create CAcert secret"
+  shell: "kubectl create secret generic cacert --from-file=openstack_ca.crt=/tmp/openstack_ca.crt --namespace {{openstack.namespace}}"
+  when: openstack.tls.enabled and openstack.tls.letsEncrypt.enabled

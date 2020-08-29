@@ -91,7 +91,13 @@ endpoints:
         tls:
           key: dummy
           crt: dummy
-          ca: dummy
+{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+          ca: |
+{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% else %}
+          ca: |
+{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% endif %}
 {% endif %}
     scheme:
       default: http
@@ -131,6 +137,9 @@ endpoints:
   identity:
     name: keystone
     auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
       admin:
         region_name: {{openstack.region}}
         username: admin

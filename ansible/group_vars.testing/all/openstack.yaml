@@ -13,7 +13,6 @@ openstack:
   tls:
     enabled: true
     useCertManager: true
-    issuer: "letsEncrypt"
     letsEncrypt:
       enabled: true
   mariadb:
@@ -321,7 +320,7 @@ openstack:
       novaTest:
         password: 65dS7dG3YqGkDtlQ7RMKvl2Z2
   octavia:
-    enabled: true
+    enabled: false
     chartName: octavia
     chartVersion: 20200728
     createService: true

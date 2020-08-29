@@ -14,7 +14,13 @@ endpoints:
         tls:
           key: dummy
           crt: dummy
-          ca: dummy
+{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+          ca: |
+{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% else %}
+          ca: |
+{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% endif %}
 {% endif %}
     scheme:
       default: http
@@ -35,6 +41,9 @@ endpoints:
   identity:
     name: keystone
     auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
       admin:
         region_name: {{openstack.region}}
         username: admin
@@ -91,5 +100,20 @@ network:
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
         cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
+secrets:
+  identity:
+    admin: mistral-keystone-admin
+    mistral: mistral-keystone-user
+    test: mistral-keystone-test
+  oslo_db:
+    admin: mistral-db-admin
+    mistral: mistral-db-user
+  oslo_messaging:
+    admin: mistral-rabbitmq-admin
+    mistral: mistral-rabbitmq-user
+  tls:
+    workflowv2:
+      api:
+        public: mistral-tls
 manifests:
   secret_ingress_tls: false
