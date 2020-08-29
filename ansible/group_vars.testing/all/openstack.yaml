@@ -16,9 +16,6 @@ openstack:
     issuer: "letsEncrypt"
     letsEncrypt:
       enabled: true
-      # letsencrypt-prod or letsencrypt-staging
-      issuerName: "letsencrypt-staging"
-      issuerEmail: "testing@test.vanillastack.cloudical.net"
   mariadb:
     enabled: true
     chartName: mariadb
@@ -317,10 +314,6 @@ openstack:
         password: uYn4gU4AabT9YryEOGRLNNhQi
       db:
         password: Y1T83ux9qwYBSL0JagRY6zdus
-      dbApi:
-        password: v09sn30CSnYVWLLylQoFr3q0o
-      dbCell0:
-        password: 9MXOM6MHzcaUi386ZZjmDJ0dL
       placement:
         password: X3hGdwQAb3uCF52Z2F2SmmIzk
       messaging:

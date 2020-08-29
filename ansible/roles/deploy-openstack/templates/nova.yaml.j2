@@ -85,7 +85,7 @@ endpoints:
       nova:
         secretName: nova-tls
         issuerRef:
-          name: {{openstack.tls.letsEncrypt.issuerName}}
+          name: {{letsEncrypt.issuerName}}
           kind: Issuer
 {% endif %}
   compute_novnc_proxy:
@@ -111,7 +111,7 @@ endpoints:
       nova:
         secretName: nova-tls
         issuerRef:
-          name: {{openstack.tls.letsEncrypt.issuerName}}
+          name: {{letsEncrypt.issuerName}}
           kind: Issuer
 {% endif %}
 {% if openstack.release == "stein" %}
@@ -138,7 +138,7 @@ endpoints:
       nova:
         secretName: nova-tls
         issuerRef:
-          name: {{openstack.tls.letsEncrypt.issuerName}}
+          name: {{letsEncrypt.issuerName}}
           kind: Issuer
 {% endif %}
 {% endif %}
@@ -160,7 +160,7 @@ endpoints:
         password: {{openstack.mariadb.auth.admin.password}}
       nova:
         username: nova
-        password: {{openstack.nova.auth.dbApi.password}}
+        password: {{openstack.nova.auth.db.password}}
   oslo_db_cell0:
     auth:
       admin:
@@ -168,7 +168,7 @@ endpoints:
         password: {{openstack.mariadb.auth.admin.password}}
       nova:
         username: nova
-        password: {{openstack.nova.auth.dbCell0.password}}
+        password: {{openstack.nova.auth.db.password}}
   oslo_messaging:
     auth:
       admin:
@@ -261,7 +261,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
   novncproxy:
     ingress:
@@ -277,7 +277,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
 {% if openstack.release == "stein" %}
   placement:
@@ -294,7 +294,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
 {% endif %}
 

@@ -106,7 +106,7 @@ endpoints:
       neutron:
         secretName: neutron-tls
         issuerRef:
-          name: {{openstack.tls.letsEncrypt.issuerName}}
+          name: {{letsEncrypt.issuerName}}
           kind: Issuer
 {% endif %}
   oslo_db:
@@ -191,7 +191,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
 manifests:
   secret_ingress_tls: false

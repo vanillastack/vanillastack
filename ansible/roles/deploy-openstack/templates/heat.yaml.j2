@@ -64,7 +64,7 @@ endpoints:
       heat:
         secretName: heat-tls
         issuerRef:
-          name: {{openstack.tls.letsEncrypt.issuerName}}
+          name: {{letsEncrypt.issuerName}}
           kind: Issuer
 {% endif %}
   cloudformation:
@@ -90,7 +90,7 @@ endpoints:
       heat:
         secretName: heat-cfn-tls
         issuerRef:
-          name: {{openstack.tls.letsEncrypt.issuerName}}
+          name: {{letsEncrypt.issuerName}}
           kind: Issuer
 {% endif %}
   identity:
@@ -167,7 +167,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
   cfn:
     ingress:
@@ -183,7 +183,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
 
 manifests:
