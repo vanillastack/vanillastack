@@ -19,6 +19,10 @@
   include_tasks: ceph-connector.yaml
   when: openstack.enabled
 
+- name: Enable TLS
+  when: openstack.tls.enabled
+  include_tasks: tls.yaml
+
 - name: Deploy OpenStack
   include_tasks: deploy.yaml
   when: openstack.enabled
@@ -40,3 +44,4 @@
     - { name: senlin, wait: true}
     - { name: mistral, wait: true}
     - { name: congress, wait: true}
+    - { name: octavia, wait: true}

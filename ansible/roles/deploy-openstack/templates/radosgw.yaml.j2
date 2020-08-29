@@ -2,7 +2,7 @@
 deployment:
   ceph: true
 bootstrap:
-  enabled: false
+  enabled: true
 conf:
   rgw_ks:
     enabled: true
@@ -40,7 +40,13 @@ endpoints:
         tls:
           key: dummy
           crt: dummy
-          ca: dummy
+{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+          ca: |
+{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% else %}
+          ca: |
+{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% endif %}
 {% endif %}
     scheme:
       default: http
@@ -55,13 +61,16 @@ endpoints:
       swift:
         secretName: swift-tls
         issuerRef:
-          name: {{openstack.tls.letsEncrypt.issuerName}}
+          name: {{letsEncrypt.issuerName}}
           kind: Issuer
 {% endif %}
   identity:
     name: keystone
     namespace: null
     auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
       admin:
         region_name: {{openstack.region}}
         password: {{openstack.keystone.auth.admin.password}}
@@ -96,9 +105,9 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{openstack.tls.letsEncrypt.issuerName}}"
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
 manifests:
-  secret_ingress_tls: false
+  secret_ingress_tls: true
   network_policy: true
-  configmap_etc: false
+  configmap_etc: true

@@ -13,12 +13,8 @@ openstack:
   tls:
     enabled: true
     useCertManager: true
-    issuer: "letsEncrypt"
     letsEncrypt:
       enabled: true
-      # letsencrypt-prod or letsencrypt-staging
-      issuerName: "letsencrypt-staging"
-      issuerEmail: "testing@test.vanillastack.cloudical.net"
   mariadb:
     enabled: true
     chartName: mariadb
@@ -129,7 +125,8 @@ openstack:
     chartVersion: 20200728
     createService: true
     auth:
-      service: WvusP3DVawNqM4VIhPsEhptyj
+      service: 
+        password: WvusP3DVawNqM4VIhPsEhptyj
   glance:
     enabled: true
     chartName: glance
@@ -209,7 +206,8 @@ openstack:
     chartVersion: 20200728
     createService: true
     auth:
-      service: bC3FON5hMXFaJbAEDARV6EfBG
+      service: 
+        password: bC3FON5hMXFaJbAEDARV6EfBG
   keystone:
     enabled: true
     chartName: keystone
@@ -315,16 +313,34 @@ openstack:
         password: uYn4gU4AabT9YryEOGRLNNhQi
       db:
         password: Y1T83ux9qwYBSL0JagRY6zdus
-      dbApi:
-        password: v09sn30CSnYVWLLylQoFr3q0o
-      dbCell0:
-        password: 9MXOM6MHzcaUi386ZZjmDJ0dL
       placement:
         password: X3hGdwQAb3uCF52Z2F2SmmIzk
       messaging:
         password: 1XT7LZT67Tai6jOhcL61oPU7p
       novaTest:
         password: 65dS7dG3YqGkDtlQ7RMKvl2Z2
+  octavia:
+    enabled: false
+    chartName: octavia
+    chartVersion: 20200728
+    createService: true
+    api:
+      replicas: 2
+    worker:
+      replicas: 1
+    housekeeping:
+      replicas: 1
+    endpoints:
+      publicURLPrefix: "octavia"
+    auth:
+      service:
+        password: tJ9IbvCcD1A9n0c7EVgSTlH0l
+      db:
+        password: Ve9wpsYuFjMwthJJdUGr8Jq8v
+      messaging:
+        password: hBCbkeyDzaZSkXVp6zUYB3649
+      octaviaTest:
+        password: GhZRI3GgFZAjhm2SiWmvAP97W
   openvswitch:
     enabled: true
     chartName: openvswitch
