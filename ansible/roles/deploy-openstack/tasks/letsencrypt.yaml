@@ -4,11 +4,18 @@
     dest: /tmp/letsencrypt.yaml
   
 - name: Create LetsEncrypt Issuer
-  k8s:
-    src: /tmp/letsencrypt.yaml
-    state: present
-  retries: 10
-  delay: 10
+  block:
+    - name: Apply LetsEncrypt Issuer
+      k8s:
+        src: /tmp/letsencrypt.yaml
+        state: present
+  rescue: 
+    - name: restart cert-manager
+      shell: "kubectl delete po -n {{certmanager.namespace}} -l app=cert-manager"
+    - name: restart cert-manager webhook
+      shell: "kubectl delete po -n {{certmanager.namespace}} -l app=webhook"
+    - name: Wait for pods to be ready
+      shell: kubectl wait -n {{certmanager.namespace}} --for=condition=Ready pods --timeout=60s --all 
 
 - name: Cleanup LetsEncrypt Issuer
   file:
