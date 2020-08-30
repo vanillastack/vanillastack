@@ -8,6 +8,7 @@
     src: /tmp/letsencrypt.yaml
     state: present
   retries: 10
+  delay: 10
 
 - name: Cleanup LetsEncrypt Issuer
   file:
