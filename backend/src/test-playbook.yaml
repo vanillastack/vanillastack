@@ -4,9 +4,8 @@
   gather_facts: false
   become: false
   tasks:
-    - name: Creating Test File
-      shell: touch /usr/workdir/testfile.txt
-
-      #    - name: Debug Shell
-      #debug:
-      #  msg: "{{ hostvars[groups[host_group][0]]['key'] }}"
+    - name: Counter
+      shell: "echo {{ ansible_loop.index }}; sleep 5;"
+      with_sequence: count='60'
+      loop_control:
+        extended: yes

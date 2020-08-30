@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const proc = require('child_process');
-const {sendMessage, clients} = require('../../websocket');
+const {sendMessage, getClient} = require('../../websocket');
 
 /**
  * GET users listing
@@ -20,10 +20,10 @@ const {sendMessage, clients} = require('../../websocket');
  *          200:
  *              description: OK
  *              content:
- *                  text/plain:
- *                      schema:
- *                          type: string
- *                          example: Successfully connected to hostname
+ *                  application/json:
+ *                      schema: {
+ *                          $ref: "#/components/schemas/execResponse"
+ *                      }
  *          400:
  *              description: Bad Request
  *              content: {}
@@ -35,16 +35,30 @@ const {sendMessage, clients} = require('../../websocket');
  *              content: {}
  */
 // todo: more explicit bad codes
-router.post('/', function (req, res, next) {
-    const client = req.body.wsInfo.uuid;
-    const transactionId = req.body.wsInfo.transactionId;
-    if (clients[client] === undefined || transactionId === "" || transactionId === undefined) {
+router.post('/', function (req, res) {
+    const client = getClient(req.body.wsInfo.uuid);
+    if (!client) {
         console.log("Not Found");
         res.status(400).json({
-            message: 'uuid or transactionId invalid'
+            message: 'uuid invalid'
         });
         return;
     }
+
+    const transactionId = genTransactionId();
+
+    execAnsible(transactionId, client);
+
+    res.status(200).json({
+        transactionId: transactionId
+    });
+});
+
+const genTransactionId = function () {
+    return Math.floor(Math.random() * (999999999 - 100000000)) + 100000000;
+};
+
+const execAnsible = function (transactionId, wsClient) {
     const wsMsg = {
         event: '',
         transactionId: transactionId,
@@ -60,10 +74,10 @@ router.post('/', function (req, res, next) {
     const ans = proc.spawn('ansible-playbook', ['test-playbook.yaml', '-e host=localhost'], spawnOptions);
 
     ans.stdout.on('data', stdout => {
-        // console.log(stdout.toString());
+        console.log(stdout.toString());
         wsMsg.event = 'EXECUTION';
         wsMsg.payload = stdout.toString();
-        sendMessage(wsMsg, client);
+        sendMessage(wsMsg, wsClient);
     });
     ans.stderr.on('data', stderr => {
         console.log(stderr.toString());
@@ -75,12 +89,8 @@ router.post('/', function (req, res, next) {
         console.log(code);
         wsMsg.event = 'DONE';
         wsMsg.payload = 'Execution completed';
-        sendMessage(wsMsg, client);
+        sendMessage(wsMsg, wsClient);
     });
-
-    res.status(200).json({
-        message: 'OK'
-    });
-});
+};
 
 module.exports = router;

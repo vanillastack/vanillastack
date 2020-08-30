@@ -10,19 +10,15 @@ const {createClient, getClient} = require('../../websocket');
  *         summary: Info Object
  *         requestBody:
  *             description: Node object which connection needs to be tested
- *             content:
- *                 application/json:
- *                     schema:
- *                         $ref: "#/components/schemas/info"
- *             required: true
+ *             content: {}
+ *             required: false
  *         responses:
  *             200:
  *                 description: OK
  *                 content:
- *                     text/plain:
+ *                     application/json:
  *                         schema:
- *                             type: string
- *                             example: Successfully created clusterName
+ *                             $ref: "#/components/schemas/info"
  *             400:
  *                 description: Bad Request
  *                 content: {}
@@ -45,24 +41,22 @@ router.get('/', function (req, res, next) {
 /**
  * Get Specific Info Object
  * @swagger
- * /info/:uuid:
+ * /info/{uuid}:
  *     get:
  *         summary: Info Object
- *         requestBody:
- *             description: Node object which connection needs to be tested
- *             content:
- *                 application/json:
- *                     schema:
- *                         $ref: "#/components/schemas/Cluster"
- *             required: true
+ *         parameters:
+ *             - name: "uuid"
+ *               in: "path"
+ *               description: "Client ID"
+ *               required: true
+ *               type: "string"
  *         responses:
  *             200:
  *                 description: OK
  *                 content:
- *                     text/plain:
+ *                     application/json:
  *                         schema:
- *                             type: string
- *                             example: Successfully created clusterName
+ *                             $ref: "#/components/schemas/info"
  *             400:
  *                 description: Bad Request
  *                 content: {}
@@ -74,12 +68,21 @@ router.get('/', function (req, res, next) {
  *                 content: {}
  */
 router.get('/:uuid', function (req, res, next) {
+
     const client = getClient(req.params.uuid);
+    if (!client) {
+        console.log("Not Found");
+        res.status(400).json({
+            message: 'uuid invalid'
+        });
+        return;
+    }
     res.json({
         uuid: client.uuid,
         mode: process.env.MODE || 'installer',
         publicKey: ''
     });
 });
+
 
 module.exports = router;

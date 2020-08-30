@@ -136,19 +136,26 @@ const swaggerOptions = {
                         $ref: "#/components/schemas/Tag"
                     }
                 },
-                wsInfo: {
+                wsClient: {
                     type: "object",
                     required: [],
                     properties: {
                         uuid: {
-                            type: "string",
-                            example: "00000000-0000-0000-0000-0000000000000"
-                        },
-                        transactionId: {
-                            type: "string",
-                            example: "00000000"
+                            $ref: "#/components/schemas/uuid"
                         }
                     }
+                },
+                execResponse: {
+                    type: "object",
+                    properties: {
+                        transationId: {
+                            $ref: "#/components/schemas/transactionId"
+                        }
+                    }
+                },
+                transactionId: {
+                    type: "string",
+                    example: "0000000000"
                 },
                 info: {
                     type: "object",
@@ -173,8 +180,8 @@ const swaggerOptions = {
                     type: "object",
                     required: [],
                     properties: {
-                        wsInfo: {
-                            $ref: "#/components/schemas/wsInfo"
+                        client: {
+                            $ref: "#/components/schemas/uuid"
                         },
                         node: {
                             $ref: "#/components/schemas/Node"

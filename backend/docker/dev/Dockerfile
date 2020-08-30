@@ -18,6 +18,7 @@ RUN npm install
 ENV PORT=3000
 ENV IP=localhost
 ENV NODE_ENV=development
+ENV MODE=installer
 EXPOSE ${PORT}
 
 ## Start App

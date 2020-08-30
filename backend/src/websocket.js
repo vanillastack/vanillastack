@@ -43,15 +43,17 @@ const createClient = function () {
 const getClient = function (uuid) {
     return clients[uuid];
 };
-const sendMessage = function (msgObject, clientUuid) {
-
-    wss.clients.forEach((client) => {
-        if (clientUuid === client.uuid) {
-            if (client.readyState === WebSocket.OPEN) { // check this
-                client.send(JSON.stringify(msgObject));
-            }
+const sendMessage = function (msgObject, wsClient) {
+    if (wsClient && wsClient.ws) {
+        if (wsClient.ws.readyState === WebSocket.OPEN) {
+            wsClient.ws.send(JSON.stringify(msgObject));
         }
-    });
+    }
 };
+
+// todo: piv and pub keygen for client-onj
+const genPublicPrivateKey = function () {
+
+}
 
 module.exports = {wss, sendMessage, getClient, createClient};
