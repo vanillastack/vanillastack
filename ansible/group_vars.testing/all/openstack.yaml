@@ -62,7 +62,7 @@ openstack:
   barbican:
     enabled: true
     chartName: barbican
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     api:
       replicas: 2
@@ -78,7 +78,7 @@ openstack:
   cinder:
     enabled: true
     chartName: cinder
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     rbd:
       enabled: true
@@ -111,7 +111,7 @@ openstack:
   congress:
     enabled: false
     chartName: congress
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     api:
       replicas: 2
@@ -122,7 +122,7 @@ openstack:
   designate:
     enabled: false
     chartName: designate
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     auth:
       service: 
@@ -130,7 +130,7 @@ openstack:
   glance:
     enabled: true
     chartName: glance
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     defaultBackend: rbd
     rbd:
@@ -162,7 +162,7 @@ openstack:
   heat:
     enabled: true
     chartName: heat
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     api:
       replicas: 2
@@ -191,7 +191,7 @@ openstack:
   horizon:
     enabled: true
     chartName: horizon
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     replicas: 2
     endpoints:
@@ -203,7 +203,7 @@ openstack:
   ironic:
     enabled: false
     chartName: ironic
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     auth:
       service: 
@@ -211,7 +211,7 @@ openstack:
   keystone:
     enabled: true
     chartName: keystone
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     endpoints:
       publicURLPrefix: "keystone"
@@ -234,7 +234,7 @@ openstack:
   mistral:
     enabled: true
     chartName: mistral
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     api:
       replicas: 2
@@ -258,7 +258,7 @@ openstack:
   neutron:
     enabled: true
     chartName: neutron
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     tunnelInterface: "enp2s0"
     extInterface: "enp3s0"
@@ -283,7 +283,7 @@ openstack:
   nova:
     enabled: true
     chartName: nova
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     apiMetadata:
       replicas: 1
@@ -322,7 +322,7 @@ openstack:
   octavia:
     enabled: false
     chartName: octavia
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     api:
       replicas: 2
@@ -359,7 +359,7 @@ openstack:
   senlin:
     enabled: true
     chartName: senlin
-    chartVersion: 20200728
+    chartVersion: 20200830
     createService: true
     api:
       replicas: 2
