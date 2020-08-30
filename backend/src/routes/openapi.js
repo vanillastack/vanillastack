@@ -150,6 +150,25 @@ const swaggerOptions = {
                         }
                     }
                 },
+                info: {
+                    type: "object",
+                    properties: {
+                        uuid: {
+                            $ref: "#/components/schemas/uuid"
+                        },
+                        publicKey: {
+                            $ref: "#/components/schemas/publicKey"
+                        }
+                    }
+                },
+                publicKey: {
+                    type: "string",
+                    example: "ssh-rsa AAADAQABAAAAgQCq/3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBkedbNf0Tp0GbMJDyR4e9T04ZZw=="
+                },
+                uuid: {
+                    type: "string",
+                    example: "00000000-0000-0000-0000-0000000000000"
+                },
                 Connection: {
                     type: "object",
                     required: [],

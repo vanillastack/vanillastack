@@ -3,22 +3,20 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({noServer: true});
 
 const clients = {};
-const clientArray = [];
 
-wss.on('connection', function connection(ws) {
-    console.log('New client connected')
-    ws.uuid = uuid.v4();
+wss.on('connection', function connection(ws, client) {
+    clients[client.uuid].ws = ws;
+    console.log('New client connected: ' + clients[client.uuid].uuid);
     ws.send(JSON.stringify({
-        transactionId: ws.uuid,
+        transactionId: '0',
         event: 'INIT',
-        payload: 'Welcome New Client your UUID: ' + ws.uuid
+        payload: 'Welcome New Client your UUID: ' + clients[client.uuid].uuid
     }));
-    clients[ws.uuid] = ws;
-    clientArray.push(ws);
+
     ws.on('message', function incoming(message) {
         try {
             const data = JSON.parse(message);
-            console.log(`received:\ntransactionId: ${data.transactionId}, event: ${data.event}, payload: ${data.payload}`);
+            // console.log(`received:\ntransactionId: ${data.transactionId}, event: ${data.event}, payload: ${data.payload}`);
             ws.send(JSON.stringify({
                 transactionId: ws.uuid,
                 event: 'EXECUTION',
@@ -30,12 +28,20 @@ wss.on('connection', function connection(ws) {
         // console.log('received: %s', message);
         // console.log(`Received: ${message.payload}`);
     });
-
+    ws.on('close', function close() {
+        clients[client.uuid].ws = undefined;
+    });
     // ws.send('something');
 });
 
-const getClients = function () {
-    return clients;
+const createClient = function () {
+    const newClient = uuid.v4();
+    clients[newClient] = {uuid: newClient};
+    return clients[newClient];
+}
+
+const getClient = function (uuid) {
+    return clients[uuid];
 };
 const sendMessage = function (msgObject, clientUuid) {
 
@@ -48,4 +54,4 @@ const sendMessage = function (msgObject, clientUuid) {
     });
 };
 
-module.exports = {wss, sendMessage, getClients, clients, clientArray};
+module.exports = {wss, sendMessage, getClient, createClient};
