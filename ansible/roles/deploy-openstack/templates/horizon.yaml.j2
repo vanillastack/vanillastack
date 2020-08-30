@@ -1,4 +1,9 @@
 ---
+{% if openstack.release == "stein" %}
+images:
+  tags:
+    horizon: registry.cloudical.net/vanillastack/openstack-horizon:ubuntu-bionic-20200830
+{% endif %}
 {% if openstack.release == "train" %}
 images:
   tags:
@@ -97,5 +102,33 @@ network:
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
         cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
 {% endif %}
+conf:
+  horizon:
+    extra_panels:
+{% if openstack.heat.enabled %}
+      - heat_dashboard
+{% endif }
+      - neutron_taas_dashboard
+{% if openstack.heat.enabled %}
+      - heat_dashboard
+{% endif }
+{% if openstack.congress.enabled %}
+      - congress_dashboard
+{% endif }
+{% if openstack.designate.enabled %}
+      - designatedashboard
+{% endif }
+{% if openstack.mistral.enabled %}
+      - mistraldashboard
+{% endif }
+{% if openstack.octavia.enabled %}
+      - octavia_dashboard
+{% endif }
+{% if openstack.senlin.enabled %}
+      - senlin_dashboard
+{% endif }
+{% if openstack.ironic.enabled %}
+      - ironic_ui
+{% endif }
 manifests:
   secret_ingress_tls: false
