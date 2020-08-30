@@ -105,9 +105,6 @@ network:
 conf:
   horizon:
     extra_panels:
-{% if openstack.heat.enabled %}
-      - heat_dashboard
-{% endif %}
       - neutron_taas_dashboard
 {% if openstack.heat.enabled %}
       - heat_dashboard
