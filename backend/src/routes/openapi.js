@@ -61,9 +61,6 @@ const swaggerOptions = {
                         username: {
                             type: "string",
                             example: "root"
-                        },
-                        ssh_key: {
-                            type: "string"
                         }
                     }
                 },
@@ -163,6 +160,9 @@ const swaggerOptions = {
                         uuid: {
                             $ref: "#/components/schemas/uuid"
                         },
+                        mode: {
+                            $ref: "#/components/schemas/mode"
+                        },
                         publicKey: {
                             $ref: "#/components/schemas/publicKey"
                         }
@@ -171,6 +171,10 @@ const swaggerOptions = {
                 publicKey: {
                     type: "string",
                     example: "ssh-rsa AAADAQABAAAAgQCq/3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBkedbNf0Tp0GbMJDyR4e9T04ZZw=="
+                },
+                mode: {
+                    type: "string",
+                    example: "installer"
                 },
                 uuid: {
                     type: "string",
@@ -197,6 +201,9 @@ const swaggerOptions = {
                         "externalLB"
                     ],
                     properties: {
+                        client: {
+                            $ref: "#/components/schemas/uuid"
+                        },
                         nodes: {
                             $ref: "#/components/schemas/Nodes"
                         },
