@@ -1,5 +1,6 @@
 const uuid = require('uuid')
 const WebSocket = require('ws');
+const {generateKeyPairSync} = require('crypto');
 const wss = new WebSocket.Server({noServer: true});
 
 const clients = {};
@@ -35,8 +36,13 @@ wss.on('connection', function connection(ws, client) {
 });
 
 const createClient = function () {
+    const {publicKey, privateKey} = genPublicPrivateKey();
     const newClient = uuid.v4();
-    clients[newClient] = {uuid: newClient};
+    clients[newClient] = {
+        uuid: newClient,
+        publicKey: publicKey,
+        privateKey: privateKey
+    };
     return clients[newClient];
 }
 
@@ -53,7 +59,20 @@ const sendMessage = function (msgObject, wsClient) {
 
 // todo: piv and pub keygen for client-onj
 const genPublicPrivateKey = function () {
-
+    const {publicKey, privateKey} = generateKeyPairSync('rsa', {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+            type: 'spki',
+            format: 'pem'
+        },
+        privateKeyEncoding: {
+            type: 'pkcs8',
+            format: 'pem',
+            cipher: 'aes-256-cbc',
+            passphrase: 'top secret'
+        }
+    });
+    return {publicKey, privateKey};
 }
 
 module.exports = {wss, sendMessage, getClient, createClient};

@@ -34,7 +34,7 @@ router.get('/', function (req, res, next) {
     res.json({
         uuid: newClient.uuid,
         mode: process.env.MODE || 'installer',
-        publicKey: ''
+        publicKey: newClient.publicKey
     });
 });
 
@@ -80,7 +80,7 @@ router.get('/:uuid', function (req, res, next) {
     res.json({
         uuid: client.uuid,
         mode: process.env.MODE || 'installer',
-        publicKey: ''
+        publicKey: client.publicKey
     });
 });
 
