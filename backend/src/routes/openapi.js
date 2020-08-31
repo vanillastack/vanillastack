@@ -61,9 +61,6 @@ const swaggerOptions = {
                         username: {
                             type: "string",
                             example: "root"
-                        },
-                        ssh_key: {
-                            type: "string"
                         }
                     }
                 },
@@ -204,6 +201,9 @@ const swaggerOptions = {
                         "externalLB"
                     ],
                     properties: {
+                        client: {
+                            $ref: "#/components/schemas/uuid"
+                        },
                         nodes: {
                             $ref: "#/components/schemas/Nodes"
                         },
