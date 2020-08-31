@@ -2,6 +2,7 @@ const uuid = require('uuid')
 const WebSocket = require('ws');
 const {generateKeyPairSync} = require('crypto');
 const wss = new WebSocket.Server({noServer: true});
+const forge = require('node-forge');
 
 const clients = {};
 
@@ -59,20 +60,36 @@ const sendMessage = function (msgObject, wsClient) {
 
 // todo: piv and pub keygen for client-onj
 const genPublicPrivateKey = function () {
-    const {publicKey, privateKey} = generateKeyPairSync('rsa', {
-        modulusLength: 4096,
-        publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
-        },
-        privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem',
-            cipher: 'aes-256-cbc',
-            passphrase: 'top secret'
-        }
-    });
-    return {publicKey, privateKey};
+    // const keypair = forge.pki.rsa.generateKeyPair({bits: 2048, e: 0x10001});
+    // // console.log(keypair.publicKey);
+    // // const forgePublicKey = forge.pki.setRsaPublicKey(keypair.privateKey.n, keypair.privateKey.e);
+    // // const sshAltPublicKey = forge.ssh.publicKeyToOpenSSH(forgePublicKey);
+    // const sshPublicKeyNew = forge.ssh.publicKeyToOpenSSH(keypair.publicKey, 'admin@braceyourselv.es');
+    // // const privateKey = forge.pki.privateKeyToPem(keypair.privateKey);
+    // // console.log(sshAltPublicKey);
+    // // console.log(sshPublicKey);
+    //
+    // // const {generateKeyPairSync} = require('crypto');
+    // // const {publicKey, privateKey} = generateKeyPairSync('rsa', {
+    // //     modulusLength: 4096,
+    // //     publicKeyEncoding: {
+    // //         type: 'spki',
+    // //         format: 'pem'
+    // //     },
+    // //     privateKeyEncoding: {
+    // //         type: 'pkcs8',
+    // //         format: 'pem',
+    // //         cipher: 'aes-256-cbc',
+    // //         passphrase: ''
+    // //     }
+    // // });
+    // // const publicKeyNew = forge.pki.publicKeyFromPem(publicKey);
+    // // const sshPublicKeyNew = forge.ssh.publicKeyToOpenSSH(publicKeyNew);
+    // // console.log(publicKey);
+    // console.log(sshPublicKeyNew);
+    const sshPublicKey = '';
+    const privateKeyNew = '';
+    return {sshPublicKey, privateKeyNew};
 }
 
 module.exports = {wss, sendMessage, getClient, createClient};

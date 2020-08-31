@@ -36,7 +36,7 @@ const {sendMessage, getClient} = require('../../websocket');
  */
 // todo: more explicit bad codes
 router.post('/', function (req, res) {
-    const client = getClient(req.body.wsInfo.uuid);
+    const client = getClient(req.body.client);
     if (!client) {
         console.log("Not Found");
         res.status(400).json({
