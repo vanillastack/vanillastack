@@ -45,3 +45,11 @@ a {
   font-weight: bold;
   color: white !important;
 }
+
+.logo {
+  max-width: 100px;
+}
+
+ul.secondary-nav {
+  list-style-type: none;
+}
