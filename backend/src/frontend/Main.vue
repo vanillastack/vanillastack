@@ -7,19 +7,6 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-
-        <!--
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <router-link to="/foo" class="nav-link">Home</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/bar" class="nav-link">Bar</router-link>
-            </li>
-          </ul>
-        </div>
-        -->
       </nav>
     </header>
 
@@ -32,7 +19,7 @@
             <ul class="secondary-nav">
               <li><router-link to="/start" class="nav-item">Start</router-link></li>
               <li><router-link to="/terms" class="nav-item">Terms</router-link></li>
-              <li><router-link to="/kind" class="nav-item">Installation Kind</router-link></li>
+              <li><router-link :disabled="accepted" to="/kind" class="nav-item">Installation Kind {{ accepted }}</router-link></li>
               <li><router-link to="/key" class="nav-item">Public Key</router-link></li>
               <li><router-link to="/nodes" class="nav-item">Nodes</router-link></li>
               <li><router-link to="/additional" class="nav-item">Additional Settings</router-link></li>
@@ -53,12 +40,19 @@
   </span>
 </template>
 <script>
+import Events from './js/events.js'
+import EventBus from './js/eventBus'
+
 export default {
   name: 'app',
-  data() {
-    return {
-      message: "Hello!"
-    }
+  data: 
+    function() {
+        return {
+            accepted: this.$store.state.acceptedTerms
+        }
+  },
+  mounted : function () {
+      EventBus.$on(Events.AcceptedTermsChanged, value => console.log("==> AcceptedTermsChanged", value))
   }
 }
 </script>

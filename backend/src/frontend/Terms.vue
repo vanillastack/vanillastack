@@ -35,10 +35,32 @@
                 </p>
             </div>
         </div>
+        <form>
+            <div class="form-check margin-2em">
+                <input class="form-check-input" type="checkbox" v-model="accepted" id="acceptTerms" name="acceptTerms" @input="updateTermsAccepted" />
+                <label class="form-check-label" for="acceptTerms">
+                    I accept the Terms and Conditions
+                </label>
+            </div>
+        </form>
+        <pre>{{ accepted }}</pre>
+        <div class="row margin-2em">
+            <div class="col"><router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/start">Back</router-link><router-link :disabled="accepted" class="btn btn-success min-width-100" role="button" to="/kind">Installation Kind</router-link></div>
+        </div>
     </div>
 </template>
 <script>
 export default {
-    name: 'Terms'
+    name: 'Terms',
+    data: function() {
+        return {
+            accepted: this.$store.state.acceptedTerms
+        }
+    },
+    methods: {
+        updateTermsAccepted (e) {
+            this.$store.commit('updateTermsAccepted', e.target.checked)
+        }
+    }
 }
 </script>
