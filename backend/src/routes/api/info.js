@@ -34,7 +34,7 @@ router.get('/', function (req, res, next) {
     res.json({
         uuid: newClient.uuid,
         mode: process.env.MODE || 'installer',
-        publicKey: newClient.publicKey
+        sshPublicKey: newClient.sshPublicKey
     });
 });
 

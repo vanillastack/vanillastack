@@ -2,7 +2,7 @@ const uuid = require('uuid')
 const WebSocket = require('ws');
 const {generateKeyPairSync} = require('crypto');
 const wss = new WebSocket.Server({noServer: true});
-const forge = require('node-forge');
+const sshpk = require('sshpk');
 
 const clients = {};
 
@@ -37,12 +37,12 @@ wss.on('connection', function connection(ws, client) {
 });
 
 const createClient = function () {
-    const {publicKey, privateKey} = genPublicPrivateKey();
+    const {sshPublicKey, privateKey} = genPublicPrivateKey();
     const newClient = uuid.v4();
     clients[newClient] = {
         uuid: newClient,
-        publicKey: publicKey,
-        privateKey: privateKey
+        privateKey: privateKey,
+        sshPublicKey: sshPublicKey
     };
     return clients[newClient];
 }
@@ -60,36 +60,14 @@ const sendMessage = function (msgObject, wsClient) {
 
 // todo: piv and pub keygen for client-onj
 const genPublicPrivateKey = function () {
-    // const keypair = forge.pki.rsa.generateKeyPair({bits: 2048, e: 0x10001});
-    // // console.log(keypair.publicKey);
-    // // const forgePublicKey = forge.pki.setRsaPublicKey(keypair.privateKey.n, keypair.privateKey.e);
-    // // const sshAltPublicKey = forge.ssh.publicKeyToOpenSSH(forgePublicKey);
-    // const sshPublicKeyNew = forge.ssh.publicKeyToOpenSSH(keypair.publicKey, 'admin@braceyourselv.es');
-    // // const privateKey = forge.pki.privateKeyToPem(keypair.privateKey);
-    // // console.log(sshAltPublicKey);
-    // // console.log(sshPublicKey);
-    //
-    // // const {generateKeyPairSync} = require('crypto');
-    // // const {publicKey, privateKey} = generateKeyPairSync('rsa', {
-    // //     modulusLength: 4096,
-    // //     publicKeyEncoding: {
-    // //         type: 'spki',
-    // //         format: 'pem'
-    // //     },
-    // //     privateKeyEncoding: {
-    // //         type: 'pkcs8',
-    // //         format: 'pem',
-    // //         cipher: 'aes-256-cbc',
-    // //         passphrase: ''
-    // //     }
-    // // });
-    // // const publicKeyNew = forge.pki.publicKeyFromPem(publicKey);
-    // // const sshPublicKeyNew = forge.ssh.publicKeyToOpenSSH(publicKeyNew);
-    // // console.log(publicKey);
-    // console.log(sshPublicKeyNew);
-    const sshPublicKey = '';
-    const privateKeyNew = '';
-    return {sshPublicKey, privateKeyNew};
+
+    const privateKey = sshpk.generatePrivateKey('ed25519');
+    const publicKey = privateKey.toPublic();
+    publicKey.comment = 'k8s@cloudical.io';
+    // console.log(privateKey.toString('pkcs1'));
+    const sshPublicKey = publicKey.toString('ssh');
+    const privateAltKeyNew = '';
+    return {sshPublicKey, privateKey};
 }
 
 module.exports = {wss, sendMessage, getClient, createClient};
