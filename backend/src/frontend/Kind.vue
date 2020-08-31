@@ -31,7 +31,7 @@
             </div>
             <div class="row">
                 <div class="col-3"><strong>Master Nodes</strong></div>
-                <div class="col-1"><strong>Worker Nodes</strong></div>
+                <div class="col-2"><strong>Worker Nodes</strong></div>
             </div>
             <div class="row">
                 <div class="col-1">
