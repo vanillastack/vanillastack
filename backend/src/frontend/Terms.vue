@@ -43,24 +43,36 @@
                 </label>
             </div>
         </form>
-        <pre>{{ accepted }}</pre>
         <div class="row margin-2em">
-            <div class="col"><router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/start">Back</router-link><router-link :disabled="accepted" class="btn btn-success min-width-100" role="button" to="/kind">Installation Kind</router-link></div>
+            <div class="col">
+                <router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/start">Back</router-link>
+                <router-link tag="button" :disabled="!accepted" class="btn btn-success min-width-100" role="button" to="/kind">Installation Kind</router-link>
+            </div>
         </div>
     </div>
 </template>
 <script>
+import Constants from './js/constants'
+import EventBus from './js/eventBus'
+
 export default {
+
     name: 'Terms',
     data: function() {
         return {
             accepted: this.$store.state.acceptedTerms
         }
     },
+
     methods: {
         updateTermsAccepted (e) {
-            this.$store.commit('updateTermsAccepted', e.target.checked)
+            this.$store.commit(Constants.Store_UpdateTermsAccepted, e.target.checked)
         }
+    },
+
+    mounted : function () {
+        // Update the links when the terms were accepted
+        EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.accepted = this.$store.state.acceptedTerms)
     }
 }
 </script>

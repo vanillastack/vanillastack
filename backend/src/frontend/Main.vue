@@ -19,11 +19,11 @@
             <ul class="secondary-nav">
               <li><router-link to="/start" class="nav-item">Start</router-link></li>
               <li><router-link to="/terms" class="nav-item">Terms</router-link></li>
-              <li><router-link :disabled="accepted" to="/kind" class="nav-item">Installation Kind {{ accepted }}</router-link></li>
-              <li><router-link to="/key" class="nav-item">Public Key</router-link></li>
-              <li><router-link to="/nodes" class="nav-item">Nodes</router-link></li>
-              <li><router-link to="/additional" class="nav-item">Additional Settings</router-link></li>
-              <li><router-link to="/summary" class="nav-item">Summary</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/kind" class="nav-item button-as-link">Installation Kind</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/key" class="nav-item button-as-link">Public Key</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/nodes" class="nav-item button-as-link">Nodes</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/additional" class="nav-item button-as-link">Additional Settings</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
             </ul>
           </div>
           <div class="col-11"><router-view></router-view></div>
@@ -40,7 +40,7 @@
   </span>
 </template>
 <script>
-import Events from './js/events.js'
+import Constants from './js/constants.js'
 import EventBus from './js/eventBus'
 
 export default {
@@ -48,11 +48,12 @@ export default {
   data: 
     function() {
         return {
-            accepted: this.$store.state.acceptedTerms
+            acceptedTerms: this.$store.state.acceptedTerms
         }
   },
   mounted : function () {
-      EventBus.$on(Events.AcceptedTermsChanged, value => console.log("==> AcceptedTermsChanged", value))
+    // Update the links when the terms were accepted
+    EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.acceptedTerms = this.$store.state.acceptedTerms)
   }
 }
 </script>

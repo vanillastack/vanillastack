@@ -1,16 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Store from './js/store'
 import App from './Main.vue'
 import Home from './Home.vue'
 import Terms from "./Terms.vue"
-import Vuex from 'vuex'
+import Kind from "./Kind.vue"
 import 'es6-promise/auto'
-import Events from './js/events.js'
-import EventBus from './js/eventBus.js'
 
 // Call Vue.use(VueRouter)
 Vue.use(VueRouter);
-Vue.use(Vuex);
 
 // Require all the CSS
 require('bootstrap');
@@ -20,7 +18,8 @@ require('./css/vanilla-backend.css');
 // Define the routes
 const routes = [
     { path: '/', alias: '/start' , component: Home},
-    { path: '/terms', component: Terms }
+    { path: '/terms', component: Terms },
+    { path: '/kind', component: Kind }
   ];
 
 // Set up the router
@@ -28,25 +27,11 @@ const router = new VueRouter({
     routes // short for `routes: routes`
   })
 
-// Define the store
-const store = new Vuex.Store({
-  state: {
-    acceptedTerms: false
-  },
-
-  mutations: {
-    updateTermsAccepted(state, message) {
-      state.acceptedTerms = message;
-      EventBus.$emit(Events.AcceptedTermsChanged, state.acceptedTerms);
-      console.log(app);
-    }
-  }
-})
   
 // Start the app
 var app = new Vue({
     router,
-    store : store,
+    store : Store,
     created: function () {
       console.log('Vue is running');
     },
