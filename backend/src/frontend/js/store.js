@@ -11,7 +11,8 @@ const Store = new Vuex.Store({
       acceptedTerms: false,
       masters: 1,
       workers: 1,
-      isHA: false
+      isHA: false,
+      copiedKeyToNodes: false
     },
 
     mutations: {
@@ -33,6 +34,11 @@ const Store = new Vuex.Store({
         updateInstallationKind(state, isHA) {
           state.isHA = isHA
           EventBus.$emit(Constants.Event_InstallationKindChanged, state.isHA);
+        },
+    
+        updateCopiedKeyToNodes(state, didCopy) {
+          state.copiedKeyToNodes = didCopy
+          EventBus.$emit(Constants.Event_CopiedKeyToNodes, state.copiedKeyToNodes);
         }
       }
 })

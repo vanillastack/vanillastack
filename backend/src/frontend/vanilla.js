@@ -5,6 +5,7 @@ import App from './Main.vue'
 import Home from './Home.vue'
 import Terms from "./Terms.vue"
 import Kind from "./Kind.vue"
+import Key from './Key.vue'
 import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
@@ -19,7 +20,8 @@ require('./css/vanilla-backend.css');
 const routes = [
     { path: '/', alias: '/start' , component: Home},
     { path: '/terms', component: Terms },
-    { path: '/kind', component: Kind }
+    { path: '/kind', component: Kind },
+    { path: '/key', component: Key}
   ];
 
 // Set up the router
