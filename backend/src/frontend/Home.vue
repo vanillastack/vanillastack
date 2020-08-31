@@ -12,6 +12,19 @@
         </div>
         <div class="row margin-2em">
             <div class="col">
+                <p><strong>Requirements</strong></p>
+                <p>Please ensure to match the following requirements:</p>
+                <ul>
+                    <li>A minimum of two (2) nodes (VMs, Bare-Metal-machines)</li>
+                    <li>A minimum of 1 GB RAM and 20 GB of HDD / SSD storage for each node</li>
+                    <li>Root access to these nodes</li>
+                    <li>IP-address for the cluster / Hostname for the cluser</li>
+                    <li>A small cup of coffee or tea</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row margin-2em">
+            <div class="col">
                 Please press the <i>Next</i>-button to continue.
             </div>
         </div>

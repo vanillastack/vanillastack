@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './Main.vue'
 import Home from './Home.vue'
+import Terms from "./Terms.vue"
 
 // Call Vue.use(VueRouter)
 Vue.use(VueRouter);
@@ -16,8 +17,8 @@ const Foo = { template: '<div>foo</div>' }
 const Bar = { template: '<div>bar</div>' }
 
 const routes = [
-    { path: '/' , component: Home},
-    { path: '/foo', component: Foo },
+    { path: '/', alias: '/start' , component: Home},
+    { path: '/terms', component: Terms },
     { path: '/bar', component: Bar }
   ];
 

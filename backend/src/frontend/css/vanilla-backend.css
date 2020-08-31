@@ -76,3 +76,10 @@ ul.secondary-nav {
 .min-width-100 {
   min-width: 100px;
 }
+
+.cite {
+  font-style: italic;
+  margin-left: 1em;
+  margin-right: 1em;
+  text-align: justify;
+}
