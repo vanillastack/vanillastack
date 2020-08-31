@@ -13,12 +13,32 @@ a {
   position: absolute;
   top: 0;
   width: 100%;
-  height: 3em;
+  height: 4em;
   line-height: 3em;
 }
 
 .navigation {
-  
+  margin-left: -1em;
+  line-height: 2em;
+  border-right: 1px solid #ececec;
+  margin-bottom: 3em;
+}
+
+.nav-item, .nav-item:active, .nav-item:visited  {
+  color: #333;
+  text-decoration: none !important;
+}
+
+.nav-item:hover {
+  text-decoration: underline !important;
+}
+
+.nav-item.router-link-active {
+  color:#DD402D !important;
+}
+
+.nav-item.router-link-active:hover {
+  text-decoration: underline !important;
 }
 
 .main>div {
@@ -27,23 +47,18 @@ a {
 }
 
 .main {
-  padding-top: 6em;
+  padding-top: 9em;
 }
 
 .footer {
-  background-color: #333;
-  min-height: 3em;
+  background-color: #eee;
+  min-height: 1em;
   color: white;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
-  height: 3em;
-  line-height: 3em;
-}
-
-.router-link-active {
-  font-weight: bold;
-  color: white !important;
+  height: 1em;
+  line-height: 1em;
 }
 
 .logo {
@@ -52,4 +67,55 @@ a {
 
 ul.secondary-nav {
   list-style-type: none;
+}
+
+.margin-2em {
+  margin-bottom: 2em;
+}
+
+.min-width-100 {
+  min-width: 100px;
+}
+
+.cite {
+  font-style: italic;
+  margin-left: 1em;
+  margin-right: 1em;
+  text-align: justify;
+}
+
+.margin-right-2em {
+  margin-right: 2em;
+}
+
+.button-as-link {
+  border: 0;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+.button-as-link:disabled {
+  color: #ccc;
+}
+
+.padding-1em {
+  padding: 1em !important;
+}
+
+.no-padding-left {
+  padding-left: 0 !important;
+}
+
+.no-padding-right {
+  padding-right: 0 !important;
+}
+
+.margin-top-1em {
+  margin-top: 1em !important;
+}
+
+.margin-bottom-4em {
+  padding-bottom: 4em !important;
 }
