@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import App from './Start.vue'
+import App from './Main.vue'
 import Home from './Home.vue'
 
 // Call Vue.use(VueRouter)
@@ -10,14 +10,13 @@ Vue.use(VueRouter);
 require('bootstrap');
 require('./css/bootstrap.min.css');
 require('./css/vanilla-backend.css');
-
 // 1. Define route components.
 // These can be imported from other files
 const Foo = { template: '<div>foo</div>' }
 const Bar = { template: '<div>bar</div>' }
 
 const routes = [
-    { path: '/' , component: Home}, 
+    { path: '/' , component: Home},
     { path: '/foo', component: Foo },
     { path: '/bar', component: Bar }
   ];

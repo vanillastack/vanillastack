@@ -27,26 +27,27 @@
     <main class="main h-100">
       <div class="container-fluid h-100">
         <div class="row h-100">
-          <div class="col navigation h-100">
+          <div class="col navigation">
             <!-- Local navigation for the installer -->
             <ul class="secondary-nav">
-              <li><router-link to="/start">Start</router-link></li>
-              <li><router-link to="/terms">Terms</router-link></li>
-              <li><router-link to="/kind">Installation Kind</router-link></li>
-              <li><router-link to="/key">Public Key</router-link></li>
-              <li><router-link to="/nodes">Nodes</router-link></li>
-              <li><router-link to="/summary">Summary</router-link></li>
+              <li><router-link to="/start" class="nav-item">Start</router-link></li>
+              <li><router-link to="/terms" class="nav-item">Terms</router-link></li>
+              <li><router-link to="/kind" class="nav-item">Installation Kind</router-link></li>
+              <li><router-link to="/key" class="nav-item">Public Key</router-link></li>
+              <li><router-link to="/nodes" class="nav-item">Nodes</router-link></li>
+              <li><router-link to="/additional" class="nav-item">Additional Settings</router-link></li>
+              <li><router-link to="/summary" class="nav-item">Summary</router-link></li>
             </ul>
           </div>
           <div class="col-11"><router-view></router-view></div>
         </div>
+        <div class="row">&#160;</div>
       </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
       <div class="container-fluid">
-        <h3>Footer</h3>
       </div>
     </footer>
   </span>

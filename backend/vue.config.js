@@ -1,11 +1,20 @@
+
+const configureAPI = require('./src/configure.js')
+
 module.exports = {
     pages: {
         index: {
             entry: 'src/frontend/vanilla.js',
-            template: 'src/public/index.html',
+            template: 'public/index.html',
             chunks: ['chunk-vendors', 'chunk-common', 'index']
         }
     },
 
-    runtimeCompiler: true
+    devServer: {
+        before: configureAPI
+      },
+
+    runtimeCompiler: true,
+
+
   }
