@@ -12,7 +12,8 @@ const Store = new Vuex.Store({
       masters: 1,
       workers: 1,
       isHA: false,
-      copiedKeyToNodes: false
+      copiedKeyToNodes: false,
+      sshKey: ''
     },
 
     mutations: {
@@ -39,6 +40,11 @@ const Store = new Vuex.Store({
         updateCopiedKeyToNodes(state, didCopy) {
           state.copiedKeyToNodes = didCopy
           EventBus.$emit(Constants.Event_CopiedKeyToNodes, state.copiedKeyToNodes);
+        },
+
+        loadedSSHKey(state, sshKey) {
+          state.sshKey = sshKey
+          EventBus.$emit(Constants.Store_LoadedSSHKey, state.sshKey)
         }
       }
 })

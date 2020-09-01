@@ -46,7 +46,7 @@
         <div class="row margin-2em">
             <div class="col">
                 <router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/start">Back</router-link>
-                <router-link tag="button" :disabled="!accepted" class="btn btn-success min-width-100" role="button" to="/kind">Installation Kind</router-link>
+                <router-link tag="button" :disabled="!accepted" class="btn btn-success min-width-100" role="button" to="/kind">Next</router-link>
             </div>
         </div>
     </div>
@@ -58,6 +58,7 @@ import EventBus from './js/eventBus'
 export default {
 
     name: 'Terms',
+
     data: function() {
         return {
             accepted: this.$store.state.acceptedTerms

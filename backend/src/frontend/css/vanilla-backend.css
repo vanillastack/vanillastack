@@ -22,6 +22,7 @@ a {
   line-height: 2em;
   border-right: 1px solid #ececec;
   margin-bottom: 3em;
+  text-align: right;
 }
 
 .nav-item, .nav-item:active, .nav-item:visited  {

@@ -10,5 +10,6 @@ export default Object.freeze({
     Store_UpdateWorkers: "updateWorkers",
     Store_UpdateInstallationKind: "updateInstallationKind",
     Store_UpdateCopiedKeyToNodes: "updateCopiedKeyToNodes",
+    Store_LoadedSSHKey: "loadedSSHKey",
   })
   
