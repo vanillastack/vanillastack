@@ -13,13 +13,20 @@ const Store = new Vuex.Store({
       workers: 1,
       isHA: false,
       copiedKeyToNodes: false,
-      sshKey: ''
+      sshKey: '',
+      canGoBack: false,
+      canGoForward: false,
+      allowGoForward: false
     },
 
     mutations: {
         updateTermsAccepted(state, message) {
           state.acceptedTerms = message;
           EventBus.$emit(Constants.Event_AcceptedTermsChanged, state.acceptedTerms);
+
+          EventBus.$emit(Constants.Event_NewViewLoaded, {
+            allowGoForward: state.acceptedTerms
+          })
         },
     
         updateMasters(state, masters) {
@@ -45,6 +52,29 @@ const Store = new Vuex.Store({
         loadedSSHKey(state, sshKey) {
           state.sshKey = sshKey
           EventBus.$emit(Constants.Store_LoadedSSHKey, state.sshKey)
+        },
+
+        updateNavigation(state, data) {
+          state.canGoBack = data.canGoBack !== undefined ? data.canGoBack : state.canGoBack
+          state.canGoForward = data.canGoForward !== undefined ? data.canGoForward : state.canGoForward
+          state.allowGoForward = data.allowGoForward
+
+          EventBus.$emit(Constants.Event_NavigationUpdated, {
+            canGoBack : state.canGoBack,
+            canGoForward: state.canGoForward,
+            allowGoForward: state.allowGoForward
+          })
+        },
+
+        updateGlobalNavigation(state, data) {
+          state.canGoBack = data.canGoBack
+          state.canGoForward = data.canGoForward
+
+          EventBus.$emit(Constants.Event_NavigationUpdated, {
+            canGoBack : state.canGoBack,
+            canGoForward: state.canGoForward,
+            allowGoForward: state.allowGoForward
+          })
         }
       }
 })

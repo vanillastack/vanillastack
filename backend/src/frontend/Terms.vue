@@ -43,12 +43,6 @@
                 </label>
             </div>
         </form>
-        <div class="row margin-2em">
-            <div class="col">
-                <router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/start">Back</router-link>
-                <router-link tag="button" :disabled="!accepted" class="btn btn-success min-width-100" role="button" to="/kind">Next</router-link>
-            </div>
-        </div>
     </div>
 </template>
 <script>
@@ -72,6 +66,11 @@ export default {
     },
 
     mounted : function () {
+        // Notify about being loaded
+        EventBus.$emit(Constants.Event_NewViewLoaded, {
+            allowGoForward: false
+        })
+
         // Update the links when the terms were accepted
         EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.accepted = this.$store.state.acceptedTerms)
     }

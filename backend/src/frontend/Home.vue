@@ -28,15 +28,27 @@
                 Please press the <i>Next</i>-button to continue.
             </div>
         </div>
-        <div class="row margin-2em">
-            <div class="col">
-                <router-link class="btn btn-success min-width-100" role="button" to="/terms">Next</router-link>
-            </div>
-        </div>
     </div>
 </template>
 <script>
+import Constants from './js/constants.js'
+import EventBus from './js/eventBus.js'
+
 export default {
-    name: 'Home'
+    name: 'Home',
+
+    mounted : function () {
+        console.log("==> Loaded Home")
+
+        // Notify about being loaded
+        EventBus.$emit(Constants.Event_NewViewLoaded, {
+            allowGoForward: true
+        })
+    },
+
+    created: function() {
+        console.log("==> Created Home")
+
+    }
 }
 </script>
