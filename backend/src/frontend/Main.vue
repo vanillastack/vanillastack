@@ -21,38 +21,77 @@
               <li><router-link to="/terms" class="nav-item">Terms</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/kind" class="nav-item button-as-link">Installation Kind</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/key" class="nav-item button-as-link">Public Key</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/additional" class="nav-item button-as-link">Additional Settings</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/nodes" class="nav-item button-as-link">Nodes</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/ip" class="nav-item button-as-link">IP Addresses</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/rook" class="nav-item button-as-link">Rook</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/additional" class="nav-item button-as-link">Additional Tools</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/subscription" class="nav-item button-as-link">Subscription Key</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
             </ul>
           </div>
-          <div class="col"><router-view></router-view></div>
+          <div class="col h-100">
+            <div class="content h-100">
+              <div class="row h-100">
+                <div class="col scroll-area"><router-view></router-view></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="row">&#160;</div>
       </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
       <div class="container-fluid">
+        <div class="row">
+          <div class="col-12 align-center">
+              <span v-if="!canGoBack" class="block-width-100 margin-right-2em"></span>
+              <a v-if="canGoBack" class="btn btn-primary min-width-100 margin-right-2em" role="button" v-on:click="goBack">Back</a>
+              <a v-if="canGoForward" class="btn btn-success min-width-100" :class="{disabled: !allowGoForward}" role="button" v-on:click="goNext">Next</a>
+          </div>
+        </div>
       </div>
     </footer>
   </span>
 </template>
 <script>
 import Constants from './js/constants.js'
-import EventBus from './js/eventBus'
+import EventBus from './js/eventBus.js'
 
 export default {
   name: 'app',
   data: 
     function() {
         return {
-            acceptedTerms: this.$store.state.acceptedTerms
+          canGoBack: this.$store.state.canGoBack,
+          canGoForward: this.$store.state.canGoForward,
+          allowGoForward: this.$store.state.allowGoForward,
+          acceptedTerms: this.$store.state.acceptedTerms
         }
   },
-  mounted : function () {
+
+  methods: {
+    goBack : function(e) {
+      EventBus.$emit(Constants.Event_GoBack)
+    },
+
+    goNext : function(e) {
+      EventBus.$emit(Constants.Event_GoNext)
+    }
+  },
+
+  created : function () {
     // Update the links when the terms were accepted
     EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.acceptedTerms = this.$store.state.acceptedTerms)
+
+    // Handle an update of the navigation options
+    EventBus.$on(Constants.Event_NavigationUpdated, value => {
+        this.canGoBack = value.canGoBack
+        this.canGoForward = value.canGoForward
+        this.allowGoForward = value.allowGoForward
+    })
   }
 }
 </script>

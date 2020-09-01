@@ -54,7 +54,7 @@
             <div class="row margin-2em">
                 <div class="col">
                     <router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/terms">Back</router-link>
-                    <router-link tag="button" class="btn btn-success min-width-100" role="button" to="/key">Public Key</router-link>
+                    <router-link tag="button" class="btn btn-success min-width-100" role="button" to="/key">Next</router-link>
                 </div>
             </div>
         </form>

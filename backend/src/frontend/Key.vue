@@ -26,15 +26,13 @@
         </div>
         <div class="row margin-2em">
             <div class="col">
-                <p><strong>Requirements</strong></p>
-                <p>Please ensure to match the following requirements:</p>
-                <ul>
-                    <li>A minimum of two (2) nodes (VMs, Bare-Metal-machines)</li>
-                    <li>A minimum of 1 GB RAM and 20 GB of HDD / SSD storage for each node</li>
-                    <li>Root access to these nodes</li>
-                    <li>IP-address for the cluster / Hostname for the cluser</li>
-                    <li>A small cup of coffee or tea</li>
-                </ul>
+                <p><strong>SSH-Key</strong></p>
+                <p>
+                    <textarea class="form-control" cols="30" rows="5" ref="key">{{ key }}</textarea>
+                </p>
+                <p>
+                    <button @click="copyKey" class="btn btn-primary min-width-100" role="button">Copy</button>
+                </p>
             </div>
         </div>
         <form>
@@ -48,13 +46,45 @@
         <div class="row margin-2em">
             <div class="col">
                 <router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/kind">Back</router-link>
-                <router-link tag="button" :disabled="!didCopy" class="btn btn-success min-width-100" role="button" to="/kind">Installation Kind</router-link>
+                <router-link tag="button" :disabled="!didCopy" class="btn btn-success min-width-100" role="button" to="/kind">Next</router-link>
             </div>
         </div>
     </div>
 </template>
 <script>
+import Constants from './js/constants'
+import EventBus from './js/eventBus'
+
 export default {
-    name: 'Home'
+
+    name: 'Key',
+
+    data: function() {
+        return {
+            didCopy: this.$store.state.copiedKeyToNodes,
+            key: this.$store.state.sshKey
+        }
+    },
+
+    methods: {
+        updateCopiedKeys (e) {
+            this.$store.commit(Constants.Store_UpdateCopiedKeyToNodes, e.target.checked)
+        },
+
+        copyKey(e) {
+            var component = this.$refs.key
+            component.select()
+            document.execCommand('copy')
+            component.selectionStart = component.selectionEnd
+        }
+    },
+
+    mounted: function() {
+        // Update the links when the keys were copied
+        EventBus.$on(Constants.Event_CopiedKeyToNodes, value => this.didCopy = value),
+
+        // Display the SSH-key when it got loaded
+        EventBus.$on(Constants.Store_LoadedSSHKey, value => this.key = value)
+    }
 }
 </script>
