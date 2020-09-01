@@ -3,34 +3,34 @@
   shell: helm repo add vanilla-openstack {{openstack.chartRepo}}
   when: openstack.enabled
 
-- name: Create namespace
-  k8s:
-    name: "{{openstack.namespace}}"
-    api_version: v1
-    kind: Namespace
-    state: present
-  when: openstack.enabled
-
-- name: Create LetsEncrypt Issuer
-  include_tasks: letsencrypt.yaml
-  when: openstack.tls.letsEncrypt.enabled and openstack.enabled 
-
-- name: Deploy ceph connnector
-  include_tasks: ceph-connector.yaml
-  when: openstack.enabled
-
-- name: Enable TLS
-  when: openstack.tls.enabled
-  include_tasks: tls.yaml
+#- name: Create namespace
+#  k8s:
+#    name: "{{openstack.namespace}}"
+#    api_version: v1
+#    kind: Namespace
+#    state: present
+#  when: openstack.enabled
+#
+#- name: Create LetsEncrypt Issuer
+#  include_tasks: letsencrypt.yaml
+#  when: openstack.tls.letsEncrypt.enabled and openstack.enabled 
+#
+#- name: Deploy ceph connnector
+#  include_tasks: ceph-connector.yaml
+#  when: openstack.enabled
+#
+#- name: Enable TLS
+#  when: openstack.tls.enabled
+#  include_tasks: tls.yaml
 
 - name: Deploy OpenStack
   include_tasks: deploy.yaml
   when: openstack.enabled
   with_items:
-    - { name: mariadb, wait: true}
-    - { name: rabbitmq, wait: true}
-    - { name: memcached, wait: true}
-    - { name: keystone, wait: true}
+#    - { name: mariadb, wait: true}
+#    - { name: rabbitmq, wait: true}
+#    - { name: memcached, wait: true}
+#    - { name: keystone, wait: true}
     - { name: horizon, wait: true}
     - { name: glance, wait: true}
     - { name: cinder, wait: true}
