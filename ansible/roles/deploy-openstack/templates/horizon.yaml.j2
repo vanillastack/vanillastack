@@ -116,9 +116,9 @@ conf:
 {% if openstack.designate.enabled %}
       - designatedashboard
 {% endif %}
-#{% if openstack.mistral.enabled %}
+{% if openstack.mistral.enabled %}
 #      - mistraldashboard
-#{% endif %}
+{% endif %}
 {% if openstack.octavia.enabled %}
       - octavia_dashboard
 {% endif %}
