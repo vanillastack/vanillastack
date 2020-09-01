@@ -1,6 +1,6 @@
 ---
 global:
-  registry: registry.cloudical.net
+  registry: harbor.cloudical.net
 ingress:
   namespace: nginx-ingress
 letsEncrypt:
