@@ -22,8 +22,7 @@
   k8s:
     src: /tmp/letsencrypt.yaml
     state: present
-  when: letsencryptIssuer is not is succeeded
-
+  when: letsencryptIssuer is not succeeded
 
 - name: Cleanup LetsEncrypt Issuer
   file:
