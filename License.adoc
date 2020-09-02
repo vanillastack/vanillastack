@@ -58,5 +58,7 @@ https://en.wikipedia.org/wiki/BSD_licenses#:~:text=usages%20under%20them.-,FOSS%
 
 If I am understanding right we're targeting with this to Apache 2.0 to not share the whole code of each and everything (expected from GNU GPL3).
 
+>>>
 Differences between Apache 2.0 and GNU GPL
 What is the difference between the Apache License 2.0 and the GNU GPL? The GNU GPL is a copyleft license. So software that uses any GPL-licensed component has to release its full source code and all rights to modify and distribute the entire code. The Apache License 2.0 doesn't impose any such terms.
+>>>
