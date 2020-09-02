@@ -1,9 +1,4 @@
 ---
-- name: Check if kubeadm has already run
-  stat:
-    path: "/etc/kubernetes/pki/ca.key"
-  register: kubeadm_ca
-
 - name: Include certificate var
   include_vars:
     file: /tmp/cluster_vars.yml
@@ -22,4 +17,3 @@
                  {{ kubeadm_opts }} \
                  {{ init_opts }}
   register: init_cluster 
-# when: not kubeadm_ca.stat.exists or reset_cluster==true

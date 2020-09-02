@@ -27,7 +27,6 @@
     - "kubectl"
     - "cri-o-{{ kube_version }}"
 
-
 - name: configure crio
   lineinfile:
     path: /etc/crio/crio.conf
@@ -123,5 +122,4 @@
 - name: "Reboot machine to get latest updates"
   reboot:
   when: reboot_hint.rc == 1
-
 

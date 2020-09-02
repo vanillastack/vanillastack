@@ -4,11 +4,6 @@
     file: /tmp/cluster_vars.yml
   when: certificate_key is not defined or certificate_key|length <1
 
-- name: Check if kubeadm has already run
-  stat:
-    path: "/etc/kubernetes/pki/ca.key"
-  register: kubeadm_ca
-
 - name: Join to Kubernetes cluster
   command: >
     kubeadm join --token {{ token }} \
@@ -16,5 +11,4 @@
                  --control-plane api.{{ loadbalancer_fqdn }}:6443 \
                  --certificate-key {{ certificate_key }} \
                  --apiserver-bind-port 8443 
-# when: not kubeadm_ca.stat.exists or reset_cluster==true
 
