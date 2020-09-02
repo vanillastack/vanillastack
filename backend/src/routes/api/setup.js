@@ -32,7 +32,7 @@ const router = express.Router();
  *                 description: Request Timeout
  *                 content: {}
  */
-router.post('/', function (req, res, next) {
+router.post('/', function (req, res) {
     res.json({
         message: 'OK'
     });

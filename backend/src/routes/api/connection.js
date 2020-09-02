@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const proc = require('child_process');
-const {sendMessage, getClient} = require('../../websocket');
+const {getClient} = require('../../client');
+const {connectionCheck} = require('../../shellexec');
 
 /**
  * GET users listing
@@ -47,7 +47,7 @@ router.post('/', function (req, res) {
 
     const transactionId = genTransactionId();
 
-    execAnsible(transactionId, client);
+    connectionCheck(transactionId, client);
 
     res.status(200).json({
         transactionId: transactionId
@@ -56,41 +56,6 @@ router.post('/', function (req, res) {
 
 const genTransactionId = function () {
     return Math.floor(Math.random() * (999999999 - 100000000)) + 100000000;
-};
-
-const execAnsible = function (transactionId, wsClient) {
-    const wsMsg = {
-        event: '',
-        transactionId: transactionId,
-        payload: ''
-    }
-
-    const spawnOptions = {
-        cwd: '/usr/workdir/src',
-        env: null,
-        detached: false
-    };
-
-    const ans = proc.spawn('ansible-playbook', ['test-playbook.yaml', '-e host=localhost'], spawnOptions);
-
-    ans.stdout.on('data', stdout => {
-        console.log(stdout.toString());
-        wsMsg.event = 'EXECUTION';
-        wsMsg.payload = stdout.toString();
-        sendMessage(wsMsg, wsClient);
-    });
-    ans.stderr.on('data', stderr => {
-        console.log(stderr.toString());
-        // wsMsg.event = 'EXECUTION';
-        // wsMsg.payload = `ERROR:\n${stderr.toString()}`;
-        // sendMessage(wsMsg, client);
-    });
-    ans.on('close', code => {
-        console.log(code);
-        wsMsg.event = 'DONE';
-        wsMsg.payload = 'Execution completed';
-        sendMessage(wsMsg, wsClient);
-    });
 };
 
 module.exports = router;

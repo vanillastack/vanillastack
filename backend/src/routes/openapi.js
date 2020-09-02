@@ -38,11 +38,11 @@ const swaggerOptions = {
 
         components: {
             schemas: {
-                loadbalancer_virtualip: {},
-                loadbalancer_fqdn: {},
+                loadBalancerVirtualIp: {},
+                loadBalancerFqdn: {},
                 reset: {},
                 service_cidr: {},
-                podnet_cidr: {},
+                podNetCidr: {},
                 Node: {
                     required: [
                         "hostname",
@@ -145,7 +145,7 @@ const swaggerOptions = {
                 execResponse: {
                     type: "object",
                     properties: {
-                        transationId: {
+                        transactionId: {
                             $ref: "#/components/schemas/transactionId"
                         }
                     }
@@ -170,7 +170,7 @@ const swaggerOptions = {
                 },
                 publicKey: {
                     type: "string",
-                    example: "ssh-rsa AAADAQABAAAAgQCq/3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBkedbNf0Tp0GbMJDyR4e9T04ZZw=="
+                    example: "ssh-rsa KATAKANAAgQCq/3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBakedNf0Tp0GbMJDyR4e9T04ZZw=="
                 },
                 mode: {
                     type: "string",

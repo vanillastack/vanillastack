@@ -1,7 +1,5 @@
-const uuid = require('uuid')
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({noServer: true});
-const {getKeyPair} = require('./sshgen');
 
 const clients = {};
 
@@ -17,7 +15,6 @@ wss.on('connection', function connection(ws, client) {
     ws.on('message', function incoming(message) {
         try {
             const data = JSON.parse(message);
-            // console.log(`received:\ntransactionId: ${data.transactionId}, event: ${data.event}, payload: ${data.payload}`);
             ws.send(JSON.stringify({
                 transactionId: ws.uuid,
                 event: 'EXECUTION',
@@ -35,26 +32,16 @@ wss.on('connection', function connection(ws, client) {
     // ws.send('something');
 });
 
-const createClient = function () {
-    const {privateKey, publicKey} = getKeyPair();
-    const newClient = uuid.v4();
-    clients[newClient] = {
-        uuid: newClient,
-        privateKey: privateKey,
-        sshPublicKey: publicKey
-    };
-    return clients[newClient];
-}
-
-const getClient = function (uuid) {
-    return clients[uuid];
-};
 const sendMessage = function (msgObject, wsClient) {
-    if (wsClient && wsClient.ws) {
+    if (wsClient.ws) {
         if (wsClient.ws.readyState === WebSocket.OPEN) {
+            console.log(`${msgObject.transactionId}: Sending Message`);
             wsClient.ws.send(JSON.stringify(msgObject));
+            return true;
         }
     }
+    console.log(`${msgObject.transactionId}: Client not Connected`);
+    return false;
 };
 
-module.exports = {wss, sendMessage, getClient, createClient};
+module.exports = {wss, sendMessage};
