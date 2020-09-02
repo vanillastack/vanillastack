@@ -20,7 +20,7 @@
   when: openstack.enabled
 
 - name: Enable TLS
-  when: openstack.tls.enabled
+  when: openstack.tls.enabled and openstack.enabled
   include_tasks: tls.yaml
 
 - name: Deploy OpenStack
