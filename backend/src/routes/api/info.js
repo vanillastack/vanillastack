@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createClient, getClient} = require('../../client');
+const {createClient, getClient} = require('../../websocket');
 
 /**
  * Get Info Object

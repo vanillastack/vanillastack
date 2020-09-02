@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getClient} = require('../../client');
-const {connectionCheck} = require('../../shellexec');
+const {getClient, connectionCheck} = require('../../websocket');
 
 /**
  * GET users listing

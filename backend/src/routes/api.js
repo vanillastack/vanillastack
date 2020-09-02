@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const {sendMessage, clientArray} = require('../websocket');
 
 const connectionRouter = require('./api/connection');
 const setupRouter = require('./api/setup')
@@ -14,7 +13,6 @@ router.use('/keygen', keyGenRouter);
 
 router.get('/', function (req, res) {
     res.send('Hello World');
-    sendMessage(clientArray[0].uuid, 'Hello World');
 });
 
 module.exports = router;

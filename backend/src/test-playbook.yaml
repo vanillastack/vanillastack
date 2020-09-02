@@ -6,7 +6,7 @@
   tasks:
     - name: Counter
       shell: "echo {{ index }}"
-      with_sequence: count='3'
+      with_sequence: count='1'
       loop_control:
         pause: 5
         extended: yes
