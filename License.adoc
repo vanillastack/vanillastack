@@ -54,11 +54,11 @@ https://en.wikipedia.org/wiki/BSD_licenses#:~:text=usages%20under%20them.-,FOSS%
 
 > FOSS compatibility The 3-clause BSD license, like most permissive licenses, is compatible with almost all FOSS licenses (and as well proprietary licenses).[17][18] Two variants of the license, the New BSD License/Modified BSD License (3-clause),[6] and the Simplified BSD License/FreeBSD License (2-clause)[8] have been verified as GPL-compatible free software licenses by the Free Software Foundation, and have been vetted as open source licenses by the Open Source Initiative.[3] The original, 4-clause BSD license has not been accepted as an open source license and, although the original is considered to be a free software license by the FSF, the FSF does not consider it to be compatible with the GPL due to the advertising clause.[2]
 
+
+*Differences between Apache 2.0 and GNU GPL*
+
+What is the difference between the Apache License 2.0 and the GNU GPL? The GNU GPL is a copyleft license. So software that uses any GPL-licensed component has to release its full source code and all rights to modify and distribute the entire code. The Apache License 2.0 doesn't impose any such terms.
+
 *Conclusion:*
 
 If I am understanding right we're targeting with this to Apache 2.0 to not share the whole code of each and everything (expected from GNU GPL3).
-
->>>
-Differences between Apache 2.0 and GNU GPL
-What is the difference between the Apache License 2.0 and the GNU GPL? The GNU GPL is a copyleft license. So software that uses any GPL-licensed component has to release its full source code and all rights to modify and distribute the entire code. The Apache License 2.0 doesn't impose any such terms.
->>>
