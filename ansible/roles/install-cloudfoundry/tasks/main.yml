@@ -56,6 +56,10 @@
       "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz" 
     register: cf_install
 
+  - name: sleep
+    pause: 
+      seconds: 10
+
   - name: install Kubecf
     command: > 
       helm install kubecf \
