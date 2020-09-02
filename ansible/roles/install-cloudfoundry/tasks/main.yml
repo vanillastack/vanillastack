@@ -58,7 +58,7 @@
 
   - name: sleep
     pause: 
-      seconds: 20
+      seconds: 60
 
   - name: install Kubecf
     command: > 
