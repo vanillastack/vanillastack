@@ -1,10 +1,9 @@
-FROM node:lts-alpine
+FROM node:lts-buster-slim
+MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
 
-## Install Ansible
-RUN apk update && \
-apk add --no-cache ansible && \
-rm -rf /tmp/* && \
-rm -rf /var/cache/apk/*
+## Install node, npm, Ansible
+RUN apt update && apt upgrade
+RUN apt install -y build-essential curl openssh-client ansible
 
 ## Install Environment
 COPY ./package.json /usr/workdir/

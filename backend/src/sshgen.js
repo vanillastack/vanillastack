@@ -1,21 +1,22 @@
-const {generateKeyPair, generateKeyPairSync} = require('crypto');
+const proc = require('child_process');
 
-const sshKeyConfig = {
-    modulusLength: 4096,
-    publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-    },
-    privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem',
-        cipher: 'aes-256-cbc',
-        passphrase: 'top secret'
+const exec_options = {
+    cwd: '/usr/workdir/src',
+    env: null,
+}
+const getKeyPair = () => {
+    try {
+        let data = proc.execSync("sh keygen.sh", exec_options);
+        data = data.toString().replace(/(\r\n|\n|\r)/gm, "").split(';_;');
+        const privateKey = data[1];
+        const publicKey = data[2];
+        // console.log('PrivateKey: %s', privateKey);
+        // console.log('PublicKey: %s', publicKey);
+        return {privateKey, publicKey};
+    } catch (e) {
+        console.log(e);
+        return undefined;
     }
-};
-// Sync
-const {publicKey, privateKey} = generateKeyPairSync('rsa', sshKeyConfig);
-// Async
-generateKeyPair('rsa', sshKeyConfig, (err, publicKey, privateKey) => {
-    console.log()
-});
+}
+
+module.exports = {getKeyPair};

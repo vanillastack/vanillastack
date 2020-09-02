@@ -1,8 +1,7 @@
 const uuid = require('uuid')
 const WebSocket = require('ws');
-const {generateKeyPairSync} = require('crypto');
 const wss = new WebSocket.Server({noServer: true});
-const sshpk = require('sshpk');
+const {getKeyPair} = require('./sshgen');
 
 const clients = {};
 
@@ -37,12 +36,12 @@ wss.on('connection', function connection(ws, client) {
 });
 
 const createClient = function () {
-    const {sshPublicKey, privateKey} = genPublicPrivateKey();
+    const {privateKey, publicKey} = getKeyPair();
     const newClient = uuid.v4();
     clients[newClient] = {
         uuid: newClient,
         privateKey: privateKey,
-        sshPublicKey: sshPublicKey
+        sshPublicKey: publicKey
     };
     return clients[newClient];
 }
@@ -57,17 +56,5 @@ const sendMessage = function (msgObject, wsClient) {
         }
     }
 };
-
-// todo: piv and pub keygen for client-onj
-const genPublicPrivateKey = function () {
-
-    const privateKey = sshpk.generatePrivateKey('ed25519');
-    const publicKey = privateKey.toPublic();
-    publicKey.comment = 'k8s@cloudical.io';
-    // console.log(privateKey.toString('pkcs1'));
-    const sshPublicKey = publicKey.toString('ssh');
-    const privateAltKeyNew = '';
-    return {sshPublicKey, privateKey};
-}
 
 module.exports = {wss, sendMessage, getClient, createClient};

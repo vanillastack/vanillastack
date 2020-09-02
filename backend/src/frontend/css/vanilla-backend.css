@@ -138,3 +138,22 @@ ul.secondary-nav {
   margin-bottom:5em;
   padding-bottom:3em
 }
+
+.align-right {
+  text-align: right;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.block-width-100 {
+  display: inline-block;
+  width: 100px;
+}
+
+.scroll-area {
+  overflow:scroll-y;
+  margin-bottom:5em;
+  padding-bottom:3em
+}
