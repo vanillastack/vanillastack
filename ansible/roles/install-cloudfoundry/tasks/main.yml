@@ -36,7 +36,7 @@
 
   - name: sleep
     pause:
-      seconds: 10  
+      seconds: 20  
 
   - name: create necessary namespaces
     k8s:
@@ -58,7 +58,7 @@
 
   - name: sleep
     pause: 
-      seconds: 10
+      seconds: 20
 
   - name: install Kubecf
     command: > 
