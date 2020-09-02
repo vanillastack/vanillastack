@@ -69,7 +69,7 @@
         msg: Maximum retries exceeded
       when: retry_count | int == 5 
 
-    - include_tasks: 01_prepare_cluster.yaml
+    - include_tasks: main.yml
 
 - debug:
     msg: "{{ kubecf_install.stdout_lines }}"
