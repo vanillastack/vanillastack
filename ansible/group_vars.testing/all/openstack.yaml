@@ -1,6 +1,6 @@
 ---
 openstack:
-  enabled: true
+  enabled: false
   namespace: openstack
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
   publicDomain: "test.vanillastack.cloudical.net"
