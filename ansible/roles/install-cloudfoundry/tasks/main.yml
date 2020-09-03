@@ -34,10 +34,6 @@
       - "cf-operator"
       - "eirini"
 
-  - name: sleep
-    pause:
-      seconds: 20  
-
   - name: create necessary namespaces
     k8s:
       name: "{{ item }}"
@@ -50,19 +46,15 @@
 
   - name: install CF Operator
     command: >
-      helm install --wait cf-operator \
+      helm upgrade --install --wait cf-operator \
       --namespace cf-operator \
       --set "global.singleNamespace.name=kubecf" \
       "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz" 
     register: cf_install
 
-  - name: sleep
-    pause: 
-      seconds: 60
-
   - name: install Kubecf
     command: > 
-      helm install kubecf \
+      helm upgrade --install kubecf \
       --namespace kubecf \
       --values "{{ ansible_env.HOME }}/{{ clustername }}/kubecf-values.yaml" \
       "{{ ansible_env.HOME }}/{{ clustername }}/kubecf_release.tgz"
@@ -75,9 +67,6 @@
 
     - include_tasks: main.yml
 
-- debug:
-    msg: "{{ kubecf_install.stdout_lines }}"
-
 - name: wait for db to come up
   command: kubectl wait --namespace=kubecf --for=condition=ready pods -l app=database --timeout=10s
   retries: 180
@@ -85,32 +74,40 @@
   register: result
   until: result.rc == 0
 
-- name: wait for eirini router to come up
-  command: kubectl delete po --namespace=kubecf -l name=eirini-routing --wait
+#- name: wait for eirini router to come up
+#  command: kubectl delete po --namespace=kubecf -l name=eirini-routing --wait
 
 - name: wait for eirini router to come up
-  command: kubectl wait --namespace=kubecf --for=condition=ready pods -l name=eirini-routing --timeout=10s
-  retries: 180
-  delay: 10
-  register: result
-  until: result.rc == 0
-
-- name: wait for router sts to be existant    
-  command: kubectl wait --namespace=kubecf --for=condition=podscheduled pods router-0 --timeout=10s
-  retries: 180
-  delay: 10
-  register: result
-  until: result.rc == 0
-    
-- name: Patch RouterStatefullset
   command: >
-    kubectl patch sts -n kubecf router \
-    --patch '{"spec": {"template": {"spec": {"initContainers": [{"name": "bpm-pre-start-gorouter","securityContext": {"privileged": true}}]}}}}'
+    kubectl wait --namespace=kubecf --for=condition=ready \
+    pods -l name=eirini-routing --timeout=10s
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
 
+#- name: wait for router sts to be existant    
+#  command: kubectl wait --namespace=kubecf --for=condition=podscheduled pods router-0 --timeout=10s
+#  retries: 180
+#  delay: 10
+#  register: result
+#  until: result.rc == 0
+    
+#- name: Patch RouterStatefullset
+#  command: >
+#    kubectl patch sts -n kubecf router \
+#    --patch '{"spec": {"template": {"spec": {"initContainers": [{"name": "bpm-pre-start-gorouter","securityContext": {"privileged": true}}]}}}}'
+#
 - name: wait for pods to be ready
-  command: kubectl wait --namespace=kubecf --for=condition=ready pods --timeout=10s
+  command: >
+    kubectl wait --namespace=kubecf --for=condition=ready \
+    pods -l app.kubernetes.io/component=router --timeout=10s
   retries: 360
   delay: 10
   register: result
   until: result.rc == 0
-     
+
+ - debug:
+    msg: "{{ kubecf_install.stdout_lines }}"
+
+    
