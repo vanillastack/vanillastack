@@ -55,7 +55,7 @@ export default {
 
     data: function() {
         return {
-            accepted: this.$store.state.acceptedTerms
+            accepted: this.$store.state.navigation.acceptedTerms
         }
     },
 
@@ -68,11 +68,14 @@ export default {
     mounted : function () {
         // Notify about being loaded
         EventBus.$emit(Constants.Event_NewViewLoaded, {
-            allowGoForward: false
+            allowGoForward: this.accepted
         })
 
         // Update the links when the terms were accepted
-        EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.accepted = this.$store.state.acceptedTerms)
+        EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.accepted = value)
+
+        // Have the ToC's been accepted?
+        this.accepted = this.$store.state.navigation.acceptedTerms
     }
 }
 </script>

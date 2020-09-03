@@ -43,12 +43,6 @@
                 </label>
             </div>
         </form>
-        <div class="row margin-2em">
-            <div class="col">
-                <router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/kind">Back</router-link>
-                <router-link tag="button" :disabled="!didCopy" class="btn btn-success min-width-100" role="button" to="/kind">Next</router-link>
-            </div>
-        </div>
     </div>
 </template>
 <script>
@@ -61,14 +55,14 @@ export default {
 
     data: function() {
         return {
-            didCopy: this.$store.state.copiedKeyToNodes,
-            key: this.$store.state.sshKey
+            didCopy: this.$store.state.installer.copiedKeyToNodes,
+            key: this.$store.state.installer.sshKey
         }
     },
 
     methods: {
         updateCopiedKeys (e) {
-            this.$store.commit(Constants.Store_UpdateCopiedKeyToNodes, e.target.checked)
+            this.$store.state.installer.commit(Constants.Store_UpdateCopiedKeyToNodes, e.target.checked)
         },
 
         copyKey(e) {
@@ -80,6 +74,11 @@ export default {
     },
 
     mounted: function() {
+        // Notify about being loaded
+        EventBus.$emit(Constants.Event_NewViewLoaded, {
+            allowGoForward: false
+        })
+
         // Update the links when the keys were copied
         EventBus.$on(Constants.Event_CopiedKeyToNodes, value => this.didCopy = value),
 

@@ -11,16 +11,10 @@
             </div>
         </div>
         <form>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="installAsHA" id="installAsHA" value="HA" v-model="installationKind" @input="installationKindChanged">
-                <label class="form-check-label" for="installAsHA">
+            <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" name="installAsHA" id="installAsHA" value="HA" :checked="isHA" v-on:change="installationKindChanged">
+                <label class="custom-control-label" for="installAsHA">
                     Install as HA-cluster for productive workloads
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="installAsHA" id="installAsDefault" value="Default" v-model="installationKind" @input="installationKindChanged">
-                <label class="form-check-label" for="installAsDefault">
-                    Install as Non-HA-cluster for development workloads
                 </label>
             </div>
             <div class="row margin-2em"></div>
@@ -30,31 +24,56 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3"><strong>Master Nodes</strong></div>
-                <div class="col-2"><strong>Worker Nodes</strong></div>
+                <div class="col"><strong>Master Nodes</strong></div>
             </div>
             <div class="row">
                 <div class="col-1">
-                    <input type="number" :disabled="installationKind == ''" max="99" :min="minMaster" v-model="masters" size="3em" class="form-control padding-1em margin-top-1em" />
-                </div>
-                <div class="col-2"></div>
-                <div class="col-1">
-                    <input type="number" :disabled="installationKind == ''" max="99" :min="minWorker" v-model="workers" size="3em" class="form-control padding-1em margin-top-1em" />
+                    <input type="number" max="99" :min="minMaster" v-model="masters" size="3em" class="form-control padding-1em margin-top-1em" />
                 </div>
             </div>
             <div class="row margin-2em" >
                 <div class="col-2">
-                    <input type="range" :disabled="installationKind == ''" class="form-control-range padding-1em no-padding-left no-padding-right" id="MasterNodeCount" v-model="masters" @input="mastersCountChanged" :min="minMaster" max="99">
+                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" id="MasterNodeCount" v-model="masters" @input="mastersCountChanged" :min="minMaster" max="99">
                 </div>
-                <div class="col-1"></div>
-                <div class="col-2">
-                    <input type="range" :disabled="installationKind == ''" class="form-control-range padding-1em no-padding-left no-padding-right" id="WorkerNodeCount" v-model="workers" @input="workersCountChanged" :min="minWorker" max="99">
-                </div>
+            </div>
+            <div class="row margin-1em" >
+                <div class="col"><strong>Additional Workloads</strong></div>
             </div>
             <div class="row margin-2em">
                 <div class="col">
-                    <router-link class="btn btn-primary min-width-100 margin-right-2em" role="button" to="/terms">Back</router-link>
-                    <router-link tag="button" class="btn btn-success min-width-100" role="button" to="/key">Next</router-link>
+                    Please check any additional workload you want to initially install and deploy on your environment. This might impact the number of required worker nodes.
+                </div>
+            </div>
+            <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" name="installRook" id="installRook" value="Rook" :checked="installRook" v-on:change="installationRookChanged">
+                <label class="custom-control-label" for="installRook">
+                    Install Rook as Kubernetes-based object store
+                </label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" name="installOpenStack" id="installOpenStack" value="OpenStack" :checked="installOpenStack" v-on:change="installationOpenStackChanged">
+                <label class="custom-control-label" for="installOpenStack">
+                    Install OpenStack as Infrastructure-as-a-Server (IaaS)-layer
+                </label>
+            </div>
+            <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" name="installCF" id="installRook" value="CF" :checked="installCF" v-on:change="installationCFChanged">
+                <label class="custom-control-label" for="installCF">
+                    Install Cloud Foundry as Platform-as-a-Server (PaaS)-layer
+                </label>
+            </div>
+            <div class="row margin-2em"></div>
+            <div class="row" >
+                <div class="col"><strong>Worker Nodes</strong></div>
+            </div>
+            <div class="row">
+                <div class="col-1">
+                    <input type="number" max="99" :min="minWorker" v-model="workers" size="3em" class="form-control padding-1em margin-top-1em" />
+                </div>
+            </div>
+            <div class="row margin-2em" >
+                <div class="col-2">
+                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" id="WorkerNodeCount" v-model="workers" @input="workersCountChanged" :min="minWorker" max="99">
                 </div>
             </div>
         </form>
@@ -72,16 +91,22 @@ export default {
         return {
             minMaster: 1,
             minWorker: 1,
-            isHA: this.$store.state.isHA,
-            masters: this.$store.state.masters,
-            workers: this.$store.state.workers,
-            installationKind: this.$store.state.isHA ? 'HA' : 'Default'
+            isHA: this.$store.state.installer.isHA,
+            masters: this.$store.state.installer.masters,
+            workers: this.$store.state.installer.workers,
+            installRook: this.$store.state.installer.installRook,
+            installOpenStack: this.$store.state.installer.installOpenStack,
+            installCF: this.$store.state.installer.installCF
         }
     },
 
     methods: {
         installationKindChanged (e) {
-            this.$store.commit(Constants.Store_UpdateInstallationKind, e.target.value == 'HA')
+            this.$store.commit(Constants.Store_UpdateInstallationKind, e.target.checked)
+        },
+        
+        installationRookChanged (e) {
+            this.$store.commit(Constants.Store_UpdateInstallationRook, e.target.checked)
         },
 
         mastersCountChanged (e) { 
@@ -103,9 +128,15 @@ export default {
     },
 
     mounted : function () {
+        // Signal loading of this component
+        // Notify about being loaded
+        EventBus.$emit(Constants.Event_NewViewLoaded, {
+            allowGoForward: true
+        })
+
         // Update the installation kind when signalled
         EventBus.$on(Constants.Event_InstallationKindChanged, value => {
-            this.isHA = this.$store.state.isHA
+            this.isHA = this.$store.state.installer.isHA
             this.minMaster = this.isHA ? 3 : 1;
             this.minWorker = this.isHA ? 3 : 1;
             this.validate()

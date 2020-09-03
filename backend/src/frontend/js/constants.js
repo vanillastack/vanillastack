@@ -8,6 +8,9 @@ export default Object.freeze({
     Event_GoNext: "Event_GoNext",
     Event_NewViewLoaded: "Event_NewViewLoaded",
     Event_NavigationUpdated: "Event_NavigationUpdated",
+    Event_InstallationRookUpdated: "Event_InstallationRookUpdated",
+    Event_InstallationCFUpdated: "Event_InstallationCFUpdated",
+    Event_InstallationOpenStackUpdated: "Event_InstallationOpenStackUpdated",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -16,6 +19,9 @@ export default Object.freeze({
     Store_UpdateCopiedKeyToNodes: "updateCopiedKeyToNodes",
     Store_LoadedSSHKey: "loadedSSHKey",
     Store_UpdateNavigation: "updateNavigation",
-    Store_UpdateGlobalNavigation: "updateGlobalNavigation"
+    Store_UpdateGlobalNavigation: "updateGlobalNavigation",
+    Store_UpdateInstallationRook: "updateInstallationRook",
+    Store_UpdateInstallationCF: "updateInstallationCF",
+    Store_UpdateInstallationOpenStack: "updateInstallationOpenStack",
   })
   

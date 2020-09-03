@@ -65,10 +65,10 @@ export default {
   data: 
     function() {
         return {
-          canGoBack: this.$store.state.canGoBack,
-          canGoForward: this.$store.state.canGoForward,
-          allowGoForward: this.$store.state.allowGoForward,
-          acceptedTerms: this.$store.state.acceptedTerms
+          canGoBack: this.$store.state.navigation.canGoBack,
+          canGoForward: this.$store.state.navigation.canGoForward,
+          allowGoForward: this.$store.state.navigation.allowGoForward,
+          acceptedTerms: this.$store.state.navigation.acceptedTerms
         }
   },
 
@@ -84,7 +84,7 @@ export default {
 
   created : function () {
     // Update the links when the terms were accepted
-    EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.acceptedTerms = this.$store.state.acceptedTerms)
+    EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.acceptedTerms = value)
 
     // Handle an update of the navigation options
     EventBus.$on(Constants.Event_NavigationUpdated, value => {
@@ -92,6 +92,11 @@ export default {
         this.canGoForward = value.canGoForward
         this.allowGoForward = value.allowGoForward
     })
+  },
+
+  mounted: function() {
+    this.acceptedTerms = this.$store.state.navigation.acceptedTerms;
+    this.allowGoForward = this.$store.state.navigation.allowGoForward;
   }
 }
 </script>
