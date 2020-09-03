@@ -1,6 +1,10 @@
 const WebSocket = require('ws');
 const proc = require('child_process');
 const uuid = require('uuid');
+const yaml = require('js-yaml');
+const fs = require('fs');
+const path = require('path');
+
 const wss = new WebSocket.Server({noServer: true});
 
 const clients = {};
@@ -123,4 +127,18 @@ const connectionCheck = function (transactionId, wsClient) {
     });
 };
 
-module.exports = {wss, sendMessage, getClient, createClient, connectionCheck};
+const writeHosts = function (data) {
+    try {
+        const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')))
+        console.log(data);
+        console.log(template);
+        fs.writeFileSync(path.join(__dirname, 'templates/hosts.yml'), yaml.safeDump(template), function (err, file) {
+            if (err) throw err;
+            console.log('saved file');
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+module.exports = {wss, sendMessage, getClient, createClient, connectionCheck, writeHosts};

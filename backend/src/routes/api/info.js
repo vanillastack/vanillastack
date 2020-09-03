@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createClient, getClient} = require('../../websocket');
+const {createClient, getClient, writeHosts} = require('../../websocket');
 
 /**
  * Get Info Object
@@ -31,6 +31,7 @@ const {createClient, getClient} = require('../../websocket');
  */
 router.get('/', function (req, res) {
     const newClient = createClient();
+    writeHosts('info:');
     res.json({
         uuid: newClient.uuid,
         mode: process.env.MODE || 'installer',
