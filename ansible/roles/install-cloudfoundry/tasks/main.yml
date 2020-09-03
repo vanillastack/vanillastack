@@ -107,7 +107,7 @@
   register: result
   until: result.rc == 0
 
- - debug:
-    msg: "{{ kubecf_install.stdout_lines }}"
+- debug:
+  msg: "{{ kubecf_install.stdout_lines }}"
 
     
