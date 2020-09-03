@@ -28,7 +28,7 @@
 #    - https://docs.projectcalico.org/manifests/calico.yaml
 
 - name: install weave
-  shel: kubectl apply --wait -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+  shell: kubectl apply --wait -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
 #- name: load calico 
 #  k8s:
