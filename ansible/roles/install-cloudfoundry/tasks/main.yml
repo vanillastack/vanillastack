@@ -108,6 +108,6 @@
   until: result.rc == 0
 
 - debug:
-  msg: "{{ kubecf_install.stdout_lines }}"
+    msg: "{{ kubecf_install.stdout_lines }}"
 
     
