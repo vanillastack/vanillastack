@@ -21,14 +21,14 @@
               <li><router-link to="/terms" class="nav-item">Terms</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/kind" class="nav-item button-as-link">Installation Kind</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/key" class="nav-item button-as-link">Public Key</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/nodes" class="nav-item button-as-link">Nodes</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/ip" class="nav-item button-as-link">IP Addresses</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/rook" class="nav-item button-as-link">Rook</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/additional" class="nav-item button-as-link">Additional Tools</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/subscription" class="nav-item button-as-link">Subscription Key</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
+              <li><router-link tag="button" :disabled="!seededKey" to="/nodes" class="nav-item button-as-link">Nodes</router-link></li>
+              <li><router-link tag="button" :disabled="!seededKey" to="/ip" class="nav-item button-as-link">IP Addresses</router-link></li>
+              <li v-if="hasRook"><router-link tag="button" :disabled="!seededKey" to="/rook" class="nav-item button-as-link">Rook</router-link></li>
+              <li v-if="hasOpenStack"><router-link tag="button" :disabled="!seededKey" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
+              <li v-if="hasCF"><router-link tag="button" :disabled="!seededKey" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
+              <li><router-link tag="button" :disabled="!seededKey" to="/additional" class="nav-item button-as-link">Additional Tools</router-link></li>
+              <li><router-link tag="button" :disabled="!seededKey" to="/subscription" class="nav-item button-as-link">Subscription Key</router-link></li>
+              <li><router-link tag="button" :disabled="!seededKey" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
             </ul>
           </div>
           <div class="col h-100">
@@ -68,7 +68,11 @@ export default {
           canGoBack: this.$store.state.navigation.canGoBack,
           canGoForward: this.$store.state.navigation.canGoForward,
           allowGoForward: this.$store.state.navigation.allowGoForward,
-          acceptedTerms: this.$store.state.navigation.acceptedTerms
+          acceptedTerms: this.$store.state.navigation.acceptedTerms,
+          seededKey: this.$store.state.installer.copiedKeyToNodes && this.$store.state.navigation.acceptedTerms,
+          hasRook: this.$store.state.installer.installRook,
+          hasOpenStack: this.$store.state.installer.installOpenStack,
+          hasCF: this.$store.state.installer.installCF
         }
   },
 
@@ -79,12 +83,37 @@ export default {
 
     goNext : function(e) {
       EventBus.$emit(Constants.Event_GoNext)
+    },
+
+    validateLinks: function() {
+      this.acceptedTerms = this.$store.state.navigation.acceptedTerms
+      this.seededKey = this.$store.state.installer.copiedKeyToNodes && this.acceptedTerms
     }
   },
 
   created : function () {
     // Update the links when the terms were accepted
-    EventBus.$on(Constants.Event_AcceptedTermsChanged, value => this.acceptedTerms = value)
+    EventBus.$on(Constants.Event_AcceptedTermsChanged, value => {
+      this.acceptedTerms = value
+      this.validateLinks()
+      })
+
+    // Update the links when the SSH-key was seeded
+    EventBus.$on(Constants.Event_CopiedKeyToNodes, value => {
+      this.validateLinks()
+      })
+
+    EventBus.$on(Constants.Event_InstallationRookUpdated, value => {
+      this.hasRook = value
+    })
+
+    EventBus.$on(Constants.Event_InstallationOpenStackUpdated, value => {
+      this.hasOpenStack = value
+    })
+
+    EventBus.$on(Constants.Event_InstallationCFUpdated, value => {
+      this.hasCF = value
+    })
 
     // Handle an update of the navigation options
     EventBus.$on(Constants.Event_NavigationUpdated, value => {

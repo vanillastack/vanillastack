@@ -62,7 +62,7 @@ export default {
 
     methods: {
         updateCopiedKeys (e) {
-            this.$store.state.installer.commit(Constants.Store_UpdateCopiedKeyToNodes, e.target.checked)
+            this.$store.commit(Constants.Store_UpdateCopiedKeyToNodes, e.target.checked)
         },
 
         copyKey(e) {
@@ -70,17 +70,24 @@ export default {
             component.select()
             document.execCommand('copy')
             component.selectionStart = component.selectionEnd
+        },
+
+        checkGoForward() {
+          EventBus.$emit(Constants.Event_NewViewLoaded, {
+            allowGoForward: this.didCopy,
+            canGoForward: true})
         }
     },
 
     mounted: function() {
         // Notify about being loaded
-        EventBus.$emit(Constants.Event_NewViewLoaded, {
-            allowGoForward: false
-        })
+        this.checkGoForward()
 
         // Update the links when the keys were copied
-        EventBus.$on(Constants.Event_CopiedKeyToNodes, value => this.didCopy = value),
+        EventBus.$on(Constants.Event_CopiedKeyToNodes, value => {
+            this.didCopy = value
+            this.checkGoForward()
+        }),
 
         // Display the SSH-key when it got loaded
         EventBus.$on(Constants.Store_LoadedSSHKey, value => this.key = value)

@@ -92,22 +92,22 @@ const installer = {
 
     [Constants.Store_LoadedSSHKey](state, sshKey) {
       state.sshKey = sshKey
-      EventBus.$emit(Constants.Store_LoadedSSHKey, state.sshKey)
+      EventBus.$emit(Constants.Event_CopiedKeyToNodes, state.sshKey)
     },
 
     [Constants.Store_UpdateInstallationRook](state, install) {
       state.installRook = install
-      EventBus.$emit(Constants.Store_UpdateInstallationRook, install)
+      EventBus.$emit(Constants.Event_InstallationRookUpdated, install)
     },
 
     [Constants.Store_UpdateInstallationCF](state, install) {
       state.installCF = install
-      EventBus.$emit(Constants.Store_UpdateInstallationCF, install)
+      EventBus.$emit(Constants.Event_InstallationCFUpdated, install)
     },
 
     [Constants.Store_UpdateInstallationOpenStack](state, install) {
       state.installOpenStack = install
-      EventBus.$emit(Constants.Store_UpdateInstallationOpenStack, install)
+      EventBus.$emit(Constants.Event_InstallationOpenStackUpdated, install)
     }
   }
 }

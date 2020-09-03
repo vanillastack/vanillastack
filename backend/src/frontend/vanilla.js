@@ -23,26 +23,36 @@ const routes = [
     { path: '/', alias: '/start', component: Home},
     { path: '/terms', component: Terms },
     { path: '/kind', component: Kind },
-    { path: '/key', component: Key}
+    { path: '/key', component: Key},
+    { path: '/nodes', component: Key},
+    { path: '/ip', component: Key},
+    { path: '/rook', component: Key},
+    { path: '/cf', component: Key},
+    { path: '/tools', component: Key},
+    { path: '/subscription', component: Key},
+    { path: '/summary', component: Key}
   ];
 
 var currentRoute = 0;
 
 // Set up the router
 const router = new VueRouter({
-    routes // short for `routes: routes`
+    routes: routes,
+    scrollBehavior() {
+        return {x: 0, y: 0}
+    }
   })
 
 // Handle the forward / backward-events
 EventBus.$on(Constants.Event_GoBack, e => {
   currentRoute -= 1
-  app.handleNavigation(currentRoute)
+  app.handleNavigation(currentRoute, false)
 })
 
 // Handle the forward / backward-events
 EventBus.$on(Constants.Event_GoNext, e => {
   currentRoute += 1
-  app.handleNavigation(currentRoute)
+  app.handleNavigation(currentRoute, true)
 })
 
 // Start the app
@@ -67,11 +77,27 @@ var app = new Vue({
     },
     
     methods: {
+      getRoute: function(index, forward) {
+        var route = routes[index];
+
+        // Check, whether it is one of the dynamic routes (which might not be visible)
+        if(route.path == 'rook' && !this.$store.installer.installRook)
+          return this.getRoute(forward ? index + 1 : index - 1)
+
+        if(route.path == 'cf' && !this.$store.installer.installCF)
+          return this.getRoute(forward ? index + 1 : index - 1)
+
+        if(route.path == 'openstack' && !this.$store.installer.installOpenStack)
+          return this.getRoute(forward ? index + 1 : index - 1)
+
+        return route
+      },
+
       // Handles the navigation
-      handleNavigation: function(index, navigate) {
+      handleNavigation: function(index, forward) {
         
         // Get the route
-        var route = routes[index]
+        var route = this.getRoute(index, forward);
 
         // Make it visible
         if(this.$route === null || this.$route.path !== route.path) 
@@ -87,7 +113,7 @@ var app = new Vue({
   })
   .$mount("#vanilla")
 
-app.handleNavigation(0, false)
+app.handleNavigation(0, true)
 
 console.log("Started Vue");
   
