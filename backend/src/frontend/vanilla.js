@@ -24,7 +24,7 @@ const routes = [
     { path: '/terms', component: Terms },
     { path: '/kind', component: Kind },
     { path: '/key', component: Key},
-    { path: '/nodes', component: Key},
+    { path: '/nodes', component: Nodes},
     { path: '/ip', component: Key},
     { path: '/rook', component: Key},
     { path: '/cf', component: Key},
