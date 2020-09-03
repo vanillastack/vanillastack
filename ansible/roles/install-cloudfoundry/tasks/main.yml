@@ -2,7 +2,7 @@
 - name: copy files to cluster folder
   copy:
     src:  "{{ item }}"   
-    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/{{ item }}"
     owner: "{{ ansible_env.USER }}"
   loop: 
     - cf-operator.tgz
@@ -11,7 +11,7 @@
 - name: copy files to cluster folder
   template:
     src:  "{{ item }}.j2"   
-    dest: "{{ ansible_env.HOME }}/{{ clustername }}/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/{{ item }}"
     owner: "{{ ansible_env.USER }}"
   loop: 
     - kubecf-values.yaml
@@ -49,15 +49,15 @@
       helm upgrade --install --wait cf-operator \
       --namespace cf-operator \
       --set "global.singleNamespace.name=kubecf" \
-      "{{ ansible_env.HOME }}/{{ clustername }}/cf-operator.tgz" 
+      "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/cf-operator.tgz" 
     register: cf_install
 
   - name: install Kubecf
     command: > 
       helm upgrade --install kubecf \
       --namespace kubecf \
-      --values "{{ ansible_env.HOME }}/{{ clustername }}/kubecf-values.yaml" \
-      "{{ ansible_env.HOME }}/{{ clustername }}/kubecf_release.tgz"
+      --values "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/kubecf-values.yaml" \
+      "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/kubecf_release.tgz"
     register: kubecf_install
 
   rescue:

@@ -8,5 +8,4 @@
   command: >
     kubeadm join --token {{ token }} \
                  --discovery-token-unsafe-skip-ca-verification \
-                 api.{{ loadbalancer_fqdn }}:6443 
-
+                 api.{{ kubernetes.loadBalancer.fqdn }}:6443 

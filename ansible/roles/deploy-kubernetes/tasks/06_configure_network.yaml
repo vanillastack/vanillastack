@@ -6,7 +6,7 @@
     mode: '750'
     owner: "{{ ansible_env.USER }}"
   loop:
-    - "{{ clustername }}"
+    - "{{ kubernetes.clusterName }}"
     - .kube
 
 - name: Copy admin.conf to Home directory
@@ -23,7 +23,7 @@
 #- name: get calico definitions
 #  get_url:
 #    url: "{{ item }}"
-#    dest: "{{ ansible_env.HOME }}/{{ clustername }}/"
+#    dest: "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/"
 #  with_items:
 #    - https://docs.projectcalico.org/manifests/calico.yaml
 
@@ -33,7 +33,7 @@
 #- name: load calico 
 #  k8s:
 #    state: present
-#    src: "{{ ansible_env.HOME }}/{{ clustername }}/calico.yaml"
+#    src: "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/calico.yaml"
 
 - name: Wait for control-plane pods become ready
   command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"

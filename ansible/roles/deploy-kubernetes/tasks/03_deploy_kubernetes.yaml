@@ -9,7 +9,7 @@
     kubeadm init --service-cidr {{ service_cidr }} \
                  --pod-network-cidr {{ pod_network_cidr }} \
                  --token {{ token }} \
-                 --control-plane-endpoint api.{{ loadbalancer_fqdn }}:6443 
+                 --control-plane-endpoint api.{{ kubernetes.loadBalancer.fqdn }}:6443 
                  --upload-certs \                
                  --apiserver-bind-port 8443 \
                  --certificate-key {{ certificate_key }} \
