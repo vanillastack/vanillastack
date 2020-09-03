@@ -74,9 +74,6 @@
   register: result
   until: result.rc == 0
 
-#- name: wait for eirini router to come up
-#  command: kubectl delete po --namespace=kubecf -l name=eirini-routing --wait
-
 - name: wait for eirini router to come up
   command: >
     kubectl wait --namespace=kubecf --for=condition=ready \
