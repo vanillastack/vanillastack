@@ -20,21 +20,20 @@
     mode: 0640
     remote_src: true
 
-- name: get calico definitions
-  get_url:
-    url: "{{ item }}"
-    dest: "{{ ansible_env.HOME }}/{{ clustername }}/"
-  with_items:
-    - https://docs.projectcalico.org/manifests/calico.yaml
+#- name: get calico definitions
+#  get_url:
+#    url: "{{ item }}"
+#    dest: "{{ ansible_env.HOME }}/{{ clustername }}/"
+#  with_items:
+#    - https://docs.projectcalico.org/manifests/calico.yaml
 
 - name: install weave
-  command: >  
-    kubectl apply --wait -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+  shel: kubectl apply --wait -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
-      #- name: load calico 
-      #  k8s:
-      #    state: present
-      #    src: "{{ ansible_env.HOME }}/{{ clustername }}/calico.yaml"
+#- name: load calico 
+#  k8s:
+#    state: present
+#    src: "{{ ansible_env.HOME }}/{{ clustername }}/calico.yaml"
 
 - name: Wait for control-plane pods become ready
   command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
