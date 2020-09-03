@@ -66,6 +66,8 @@ const installer = {
     installRook: false,
     installCF: false,
     installOpenStack: false,
+    workersList: [],
+    mastersList: []
   }),
 
   mutations: {

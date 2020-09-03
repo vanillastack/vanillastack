@@ -11,6 +11,7 @@ export default Object.freeze({
     Event_InstallationRookUpdated: "Event_InstallationRookUpdated",
     Event_InstallationCFUpdated: "Event_InstallationCFUpdated",
     Event_InstallationOpenStackUpdated: "Event_InstallationOpenStackUpdated",
+    Event_PrepareNavigation: "Event_PrepareNavigation",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",

@@ -78,10 +78,12 @@ export default {
 
   methods: {
     goBack : function(e) {
+      EventBus.$emit(Constants.Event_PrepareNavigation)
       EventBus.$emit(Constants.Event_GoBack)
     },
 
     goNext : function(e) {
+      EventBus.$emit(Constants.Event_PrepareNavigation)
       EventBus.$emit(Constants.Event_GoNext)
     },
 

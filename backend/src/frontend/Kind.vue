@@ -23,12 +23,12 @@
             </div>
             <div class="row">
                 <div class="col-1">
-                    <input type="number" max="99" :min="minMaster" v-model="masters" size="3em" class="form-control padding-1em margin-top-1em" />
+                    <input type="number" max="99" :min="minMaster" v-on:change="mastersCountChanged" v-model="masters" size="3em" class="form-control padding-1em margin-top-1em" />
                 </div>
             </div>
             <div class="row margin-2em" >
                 <div class="col-2">
-                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" id="MasterNodeCount" v-model="masters" @input="mastersCountChanged" :min="minMaster" max="99">
+                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" id="MasterNodeCount" v-model="masters" v-on:change="mastersCountChanged" :min="minMaster" max="99">
                 </div>
             </div>
             <div class="row margin-1em" >
@@ -71,7 +71,7 @@
             </div>
             <div class="row margin-2em" >
                 <div class="col-2">
-                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" id="WorkerNodeCount" v-model="workers" @input="workersCountChanged" :min="minWorker" max="99">
+                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" id="WorkerNodeCount" v-model="workers"  v-on:change="workersCountChanged" :min="minWorker" max="99">
                 </div>
             </div>
         </form>
@@ -137,8 +137,13 @@ export default {
             if(this.workers < this.minWorker) this.$store.commit(Constants.Store_UpdateWorkers, this.minWorker);
         },
 
-        updateMasterCount: function(value) { this.$store.commit(Constants.Store_UpdateMasters, value)},
-        updateWorkerCount: function(value) { this.$store.commit(Constants.Store_UpdateWorkers, value)},
+        updateMasterCount: function(value) { 
+            this.masters = value
+            this.$store.commit(Constants.Store_UpdateMasters, value)},
+
+        updateWorkerCount: function(value) { 
+            this.workers = value
+            this.$store.commit(Constants.Store_UpdateWorkers, value)},
             
     },
 

@@ -8,6 +8,7 @@ import Home from './Home.vue'
 import Terms from "./Terms.vue"
 import Kind from "./Kind.vue"
 import Key from './Key.vue'
+import Nodes from './Nodes.vue'
 import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
