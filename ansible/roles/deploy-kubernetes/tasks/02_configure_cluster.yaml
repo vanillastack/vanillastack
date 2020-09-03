@@ -34,6 +34,14 @@
     line: 'conmon = "/usr/bin/conmon"'
     backrefs: yes
 
+## Bug needs to be tracked
+- name: remove seccomp from crio
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^(.*)seccomp_profile =(.*)$'
+    line: 'seccomp_profile = ""'
+    backrefs: yes
+
 - name: configure kubelet
   lineinfile:
     path: /etc/default/kubelet 
