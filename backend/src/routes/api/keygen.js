@@ -4,7 +4,7 @@ const router = express.Router();
 /**
  * Generate SSH Object
  * @swagger
- * /sshkeygen:
+ * /keygen:
  *     post:
  *         summary: Generate SSH private and public key-pair
  *         requestBody:
@@ -32,7 +32,7 @@ const router = express.Router();
  *                 description: Request Timeout
  *                 content: {}
  */
-router.post('/', function (req, res, next) {
+router.post('/', function (req, res) {
     res.json({
         message: 'OK'
     });

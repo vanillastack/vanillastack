@@ -29,12 +29,12 @@ const {createClient, getClient} = require('../../websocket');
  *                 description: Request Timeout
  *                 content: {}
  */
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
     const newClient = createClient();
     res.json({
         uuid: newClient.uuid,
         mode: process.env.MODE || 'installer',
-        publicKey: newClient.publicKey
+        sshPublicKey: newClient.sshPublicKey
     });
 });
 
@@ -67,7 +67,7 @@ router.get('/', function (req, res, next) {
  *                 description: Request Timeout
  *                 content: {}
  */
-router.get('/:uuid', function (req, res, next) {
+router.get('/:uuid', function (req, res) {
 
     const client = getClient(req.params.uuid);
     if (!client) {

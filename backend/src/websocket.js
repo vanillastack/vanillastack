@@ -1,24 +1,23 @@
-const uuid = require('uuid')
 const WebSocket = require('ws');
-const {generateKeyPairSync} = require('crypto');
+const proc = require('child_process');
+const uuid = require('uuid');
 const wss = new WebSocket.Server({noServer: true});
-const forge = require('node-forge');
 
 const clients = {};
 
 wss.on('connection', function connection(ws, client) {
-    clients[client.uuid].ws = ws;
-    console.log('New client connected: ' + clients[client.uuid].uuid);
+    const wsClient = getClient(client.uuid);
+    wsClient.ws = ws;
+    console.log('New client connected: ' + wsClient.uuid);
     ws.send(JSON.stringify({
         transactionId: '0',
         event: 'INIT',
-        payload: 'Welcome New Client your UUID: ' + clients[client.uuid].uuid
+        payload: 'Welcome New Client your UUID: ' + wsClient.uuid
     }));
 
     ws.on('message', function incoming(message) {
         try {
             const data = JSON.parse(message);
-            // console.log(`received:\ntransactionId: ${data.transactionId}, event: ${data.event}, payload: ${data.payload}`);
             ws.send(JSON.stringify({
                 transactionId: ws.uuid,
                 event: 'EXECUTION',
@@ -27,22 +26,34 @@ wss.on('connection', function connection(ws, client) {
         } catch (e) {
             console.log('Something went wrong: %s', e);
         }
-        // console.log('received: %s', message);
-        // console.log(`Received: ${message.payload}`);
     });
     ws.on('close', function close() {
-        clients[client.uuid].ws = undefined;
+        wsClient.ws = undefined;
+        console.log('Client disconnected: ' + wsClient.uuid);
     });
     // ws.send('something');
 });
 
+const sendMessage = function (msgObject, wsClient) {
+    // console.log(wsClient);
+    if (wsClient.ws) {
+        if (wsClient.ws.readyState === WebSocket.OPEN) {
+            console.log(`${msgObject.transactionId}: Sending Message`);
+            wsClient.ws.send(JSON.stringify(msgObject));
+            return true;
+        }
+    }
+    console.log(`${msgObject.transactionId}: Client not Connected`);
+    return false;
+};
+
 const createClient = function () {
-    const {publicKey, privateKey} = genPublicPrivateKey();
+    const {privateKey, publicKey} = getKeyPair();
     const newClient = uuid.v4();
     clients[newClient] = {
         uuid: newClient,
-        publicKey: publicKey,
-        privateKey: privateKey
+        privateKey: privateKey,
+        sshPublicKey: publicKey
     };
     return clients[newClient];
 }
@@ -50,46 +61,66 @@ const createClient = function () {
 const getClient = function (uuid) {
     return clients[uuid];
 };
-const sendMessage = function (msgObject, wsClient) {
-    if (wsClient && wsClient.ws) {
-        if (wsClient.ws.readyState === WebSocket.OPEN) {
-            wsClient.ws.send(JSON.stringify(msgObject));
-        }
-    }
-};
 
-// todo: piv and pub keygen for client-onj
-const genPublicPrivateKey = function () {
-    // const keypair = forge.pki.rsa.generateKeyPair({bits: 2048, e: 0x10001});
-    // // console.log(keypair.publicKey);
-    // // const forgePublicKey = forge.pki.setRsaPublicKey(keypair.privateKey.n, keypair.privateKey.e);
-    // // const sshAltPublicKey = forge.ssh.publicKeyToOpenSSH(forgePublicKey);
-    // const sshPublicKeyNew = forge.ssh.publicKeyToOpenSSH(keypair.publicKey, 'admin@braceyourselv.es');
-    // // const privateKey = forge.pki.privateKeyToPem(keypair.privateKey);
-    // // console.log(sshAltPublicKey);
-    // // console.log(sshPublicKey);
-    //
-    // // const {generateKeyPairSync} = require('crypto');
-    // // const {publicKey, privateKey} = generateKeyPairSync('rsa', {
-    // //     modulusLength: 4096,
-    // //     publicKeyEncoding: {
-    // //         type: 'spki',
-    // //         format: 'pem'
-    // //     },
-    // //     privateKeyEncoding: {
-    // //         type: 'pkcs8',
-    // //         format: 'pem',
-    // //         cipher: 'aes-256-cbc',
-    // //         passphrase: ''
-    // //     }
-    // // });
-    // // const publicKeyNew = forge.pki.publicKeyFromPem(publicKey);
-    // // const sshPublicKeyNew = forge.ssh.publicKeyToOpenSSH(publicKeyNew);
-    // // console.log(publicKey);
-    // console.log(sshPublicKeyNew);
-    const sshPublicKey = '';
-    const privateKeyNew = '';
-    return {sshPublicKey, privateKeyNew};
+const getKeyPair = function () {
+
+    const execOptions = {
+        cwd: '/usr/workdir/src',
+        env: null
+    }
+
+    try {
+        let data = proc.execSync("sh keygen.sh", execOptions);
+        data = data.toString().replace(/(\r\n|\n|\r)/gm, "").split(';_;');
+        const privateKey = data[1];
+        const publicKey = data[2];
+        return {privateKey, publicKey};
+    } catch (e) {
+        console.log(e);
+        return undefined;
+    }
 }
 
-module.exports = {wss, sendMessage, getClient, createClient};
+const connectionCheck = function (transactionId, wsClient) {
+    const wsMsg = {
+        event: 'INIT',
+        transactionId: transactionId,
+        payload: ''
+    }
+    sendMessage(wsMsg, wsClient);
+    const spawnOptions = {
+        cwd: '/usr/workdir/src',
+        env: null,
+        detached: false
+    };
+    // console.log(wsClient);
+    const ans = proc.spawn(
+        'ansible-playbook',
+        ['test-playbook.yaml', '-e host=localhost'],
+        spawnOptions
+    );
+    // const ans = proc.spawn('ls', ['-lha'], spawnOptions);
+
+    ans.stdout.on('data', stdout => {
+        // console.log(stdout.toString());
+        wsMsg.event = 'EXECUTION';
+        wsMsg.payload = stdout.toString();
+        sendMessage(wsMsg, wsClient);
+    });
+
+    ans.stderr.on('data', stderr => {
+        // console.log(stderr.toString());
+        wsMsg.event = 'EXECUTION';
+        wsMsg.payload = stderr.toString();
+        sendMessage(wsMsg, wsClient);
+    });
+
+    ans.on('close', code => {
+        console.log(`${wsMsg.transactionId}: Return Code: ${code}`);
+        wsMsg.event = 'DONE';
+        wsMsg.payload = 'Execution completed';
+        sendMessage(wsMsg, wsClient);
+    });
+};
+
+module.exports = {wss, sendMessage, getClient, createClient, connectionCheck};

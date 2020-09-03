@@ -5,7 +5,9 @@
   become: false
   tasks:
     - name: Counter
-      shell: "echo {{ ansible_loop.index }}; sleep 5;"
-      with_sequence: count='60'
+      shell: "echo {{ index }}"
+      with_sequence: count='1'
       loop_control:
+        pause: 5
         extended: yes
+        index_var: index
