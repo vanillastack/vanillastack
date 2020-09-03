@@ -86,18 +86,18 @@
   register: result
   until: result.rc == 0
 
-#- name: wait for router sts to be existant    
-#  command: kubectl wait --namespace=kubecf --for=condition=podscheduled pods router-0 --timeout=10s
-#  retries: 180
-#  delay: 10
-#  register: result
-#  until: result.rc == 0
-    
-#- name: Patch RouterStatefullset
-#  command: >
-#    kubectl patch sts -n kubecf router \
-#    --patch '{"spec": {"template": {"spec": {"initContainers": [{"name": "bpm-pre-start-gorouter","securityContext": {"privileged": true}}]}}}}'
-#
+- name: wait for router sts to be existant    
+  command: kubectl wait --namespace=kubecf --for=condition=podscheduled pods router-0 --timeout=10s
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
+   
+- name: Patch RouterStatefullset
+  command: >
+    kubectl patch sts -n kubecf router \
+    --patch '{"spec": {"template": {"spec": {"initContainers": [{"name": "bpm-pre-start-gorouter","securityContext": {"privileged": true}}]}}}}'
+
 - name: wait for pods to be ready
   command: >
     kubectl wait --namespace=kubecf --for=condition=ready \
