@@ -1,44 +1,45 @@
 ---
-- name: create clusterfolder
+- name: create folder
   file: 
-    path: "{{ ansible_env.HOME }}/{{ clustername }}/"
+    path: "{{ ansible_env.HOME }}/{{ item }}/"
     state: directory
+    mode: '750'
+    owner: "{{ ansible_env.USER }}"
+  loop:
+    - "{{ clustername }}"
+    - .kube
 
-- name: get calico definitions
-  get_url:
-    url: "{{ item }}"
-    dest: "{{ ansible_env.HOME }}/{{ clustername }}/"
-  with_items:
-    - https://docs.projectcalico.org/manifests/calico.yaml
-    - https://docs.projectcalico.org/manifests/calicoctl.yaml
+- name: Copy admin.conf to Home directory
+  become: true
+  when: init_cluster is succeeded
+  copy:
+    src: "{{ kubeadmin_config }}"
+    dest: ".kube/config"
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+    mode: 0640
+    remote_src: true
 
-- name: "Install python dependencies"
-  pip:
-    name:
-      - pyhelm
-      - openshift
-    extra_args: --ignore-installed
+#- name: get calico definitions
+#  get_url:
+#    url: "{{ item }}"
+#    dest: "{{ ansible_env.HOME }}/{{ clustername }}/"
+#  with_items:
+#    - https://docs.projectcalico.org/manifests/calico.yaml
 
-- debug:
-    msg: "{{ item }}" 
-  with_fileglob:
-    -"{{ ansible_env.HOME }}/{{ clustername }}/calico*"
+- name: install weave
+  shell: kubectl apply --wait -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
-- name: load calico 
-  k8s:
-    state: present
-    src: "{{ ansible_env.HOME }}/{{ clustername }}/calico.yaml"
-
-- pause:
-    seconds: 60
+#- name: load calico 
+#  k8s:
+#    state: present
+#    src: "{{ ansible_env.HOME }}/{{ clustername }}/calico.yaml"
 
 - name: Wait for control-plane pods become ready
-  shell: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
+  command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
 
-- pause:
-    seconds: 60
+- name: restart kubedns
+  command: kubectl delete po -n kube-system -l k8s-app=kube-dns
 
-- name: load calicoctl config
-  k8s:
-    state: present
-    src: "{{ ansible_env.HOME }}/{{ clustername }}/calicoctl.yaml"
+- name: Reset CoreDNS
+  shell: "kubectl delete po -n kube-system -l k8s-app=kube-dns"

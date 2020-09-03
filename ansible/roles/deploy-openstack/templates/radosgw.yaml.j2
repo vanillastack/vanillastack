@@ -2,7 +2,7 @@
 deployment:
   ceph: true
 bootstrap:
-  enabled: false
+  enabled: true
 conf:
   rgw_ks:
     enabled: true
@@ -36,6 +36,78 @@ endpoints:
     host_fqdn_override:
       public:
         host: {{openstack.radosgw.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+          ca: |
+{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% else %}
+          ca: |
+{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% endif %}
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      swift:
+        secretName: swift-tls
+        issuerRef:
+          name: {{letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
+  identity:
+    name: keystone
+    namespace: null
+    auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
+      admin:
+        region_name: {{openstack.region}}
+        password: {{openstack.keystone.auth.admin.password}}
+        username: admin
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+        os_auth_type: password
+        os_tenant_name: admin
+      swift:
+        role: admin
+        region_name: {{openstack.region}}
+        username: swift
+        password: {{openstack.radosgw.auth.service.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+        os_auth_type: password
+        os_tenant_name: admin
+network:
+  api:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% endif %}
 manifests:
+  secret_ingress_tls: true
   network_policy: true
-  configmap_etc: false
+  configmap_etc: true

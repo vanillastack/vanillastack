@@ -27,7 +27,6 @@
     - "kubectl"
     - "cri-o-{{ kube_version }}"
 
-
 - name: configure crio
   lineinfile:
     path: /etc/crio/crio.conf
@@ -57,12 +56,27 @@
   with_items:
     - /etc/containers/registries.conf
 
-- name: Make sure a service is running 
+
+- name: remove cni configs
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/cni/net.d/100-crio-bridge.conf"
+    - "/etc/cni/net.d/200-loopback.conf"
+
+- name: Make sure crio service is running 
   systemd:
-    state: started
+    state: restarted
     enabled: true
     name: crio
 
+- name: Make sure crio service is running
+  systemd:
+    state: restarted
+    enabled: true
+    name: kubelet
+      
 - name: load modules
   modprobe: 
     name: "{{ item }}"
@@ -108,5 +122,4 @@
 - name: "Reboot machine to get latest updates"
   reboot:
   when: reboot_hint.rc == 1
-
 

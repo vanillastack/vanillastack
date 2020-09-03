@@ -1,9 +1,4 @@
 ---
-- name: Check if kubeadm has already run
-  stat:
-    path: "/etc/kubernetes/pki/ca.key"
-  register: kubeadm_ca
-
 - name: Include certificate var
   include_vars:
     file: /tmp/cluster_vars.yml
@@ -14,7 +9,7 @@
     kubeadm init --service-cidr {{ service_cidr }} \
                  --pod-network-cidr {{ pod_network_cidr }} \
                  --token {{ token }} \
-                 --control-plane-endpoint {{ loadbalancer_fqdn }}:6443 
+                 --control-plane-endpoint api.{{ loadbalancer_fqdn }}:6443 
                  --upload-certs \                
                  --apiserver-bind-port 8443 \
                  --certificate-key {{ certificate_key }} \
@@ -22,21 +17,3 @@
                  {{ kubeadm_opts }} \
                  {{ init_opts }}
   register: init_cluster 
-# when: not kubeadm_ca.stat.exists or reset_cluster==true
-
-- name: Copy admin.conf to Home directory
-  when: init_cluster is succeeded
-  copy:
-    src: "{{ kubeadmin_config }}"
-    dest: ".kube/config"
-    owner: "debian"
-    group: "debian"
-    mode: 0755
-    remote_src: true
-
-- name: fetch kube config
-  fetch:
-    src: /home/{{ ansible_env.SUDO_USER }}/.kube/config
-    dest: /home/{{ ansible_env.SUDO_USER }}/.kube/
-    flat: yes
- 

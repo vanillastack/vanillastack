@@ -1,8 +1,9 @@
 ---
 - name: install cloudfoundry
-  hosts: bastion
+  hosts: master[0]
   gather_facts: true
   roles:
     - role: install-cloudfoundry
-      action: 01_prepare_cluster
+      when: cloudfoundry.enable == true
+
 

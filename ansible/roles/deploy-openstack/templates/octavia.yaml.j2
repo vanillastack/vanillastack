@@ -1,12 +1,14 @@
 ---
 pod:
   replicas:
-    api: {{openstack.barbican.api.replicas}}
+    api: {{openstack.octavia.api.replicas}}
+    worker: {{openstack.octavia.worker.replicas}}
+    housekeeping: {{openstack.octavia.housekeeping.replicas}}
 endpoints:
-  key_manager:
+  load_balancer:
     host_fqdn_override:
       public:
-        host: {{openstack.barbican.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+        host: {{openstack.octavia.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
         tls:
           key: dummy
@@ -29,17 +31,18 @@ endpoints:
         public: 443
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
     certs:
-      barbican:
-        secretName: barbican-tls-public
+      octavia:
+        secretName: octavia-tls
         issuerRef:
           name: {{letsEncrypt.issuerName}}
           kind: Issuer
 {% endif %} 
   identity:
+    name: keystone
     auth:
 {% if openstack.tls.enabled %}
       cacert: /tmp/openstack_ca.crt
-{% endif %} 
+{% endif %}
       admin:
         region_name: {{openstack.region}}
         username: admin
@@ -47,12 +50,20 @@ endpoints:
         project_name: admin
         user_domain_name: default
         project_domain_name: default
-      barbican:
+      octavia:
         role: admin
         region_name: {{openstack.region}}
-        username: barbican
-        password: {{openstack.barbican.auth.service.password}}
+        username: octavia
+        password: {{openstack.octavia.auth.service.password}}
         project_name: service
+        user_domain_name: service
+        project_domain_name: service
+      test:
+        role: admin
+        region_name: {{openstack.region}}
+        username: test
+        password: {{openstack.octavia.auth.octaviaTest.password}}
+        project_name: test
         user_domain_name: service
         project_domain_name: service
   oslo_db:
@@ -60,17 +71,17 @@ endpoints:
       admin:
         username: root
         password: {{openstack.mariadb.auth.admin.password}}
-      barbican:
-        username: barbican
-        password: {{openstack.barbican.auth.db.password}}
+      octavia:
+        username: octavia
+        password: {{openstack.octavia.auth.db.password}}
   oslo_messaging:
     auth:
       admin:
         username: rabbitmq
         password: {{openstack.rabbitmq.auth.admin.password}}
-      barbican:
-        username: barbican
-        password: {{openstack.barbican.auth.messaging.password}}
+      octavia:
+        username: octavia
+        password: {{openstack.octavia.auth.messaging.password}}
 network:
   api:
     ingress:

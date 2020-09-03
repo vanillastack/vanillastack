@@ -1,4 +1,10 @@
 ---
+{% if openstack.release == "stein" %}
+images:
+  tags:
+    horizon: harbor.cloudical.net/vanillastack/openstack-horizon:ubuntu-bionic-20200901-5
+    horizon_db_sync: harbor.cloudical.net/vanillastack/openstack-horizon:ubuntu-bionic-20200901-5
+{% endif %}
 {% if openstack.release == "train" %}
 images:
   tags:
@@ -22,4 +28,105 @@ endpoints:
   dashboard:
     host_fqdn_override:
       public:
+{% if openstack.horizon.endpoints.useDirectPublicDomain %}
         host: {{openstack.publicDomain}}
+{% else %}
+        host: {{openstack.horizon.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+          ca: |
+{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% else %}
+          ca: |
+{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% endif %}
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      horizon:
+        secretName: horizon-tls
+        issuerRef:
+          name: {{letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
+  identity:
+    name: keystone
+    auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
+      admin:
+        region_name: {{openstack.region}}
+        username: admin
+        password: {{openstack.keystone.auth.admin.password}}
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+        secret:
+          tls:
+            internal: mariadb-tls-direct
+      horizon:
+        username: horizon
+        password: {{openstack.horizon.auth.db.password}}
+
+network:
+  dashboard:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% endif %}
+conf:
+  horizon:
+    extra_panels:
+      - neutron_taas_dashboard
+{% if openstack.heat.enabled %}
+      - heat_dashboard
+{% endif %}
+{% if openstack.congress.enabled %}
+      - congress_dashboard
+{% endif %}
+{% if openstack.designate.enabled %}
+      - designatedashboard
+{% endif %}
+{% if openstack.mistral.enabled %}
+#      - mistraldashboard
+{% endif %}
+{% if openstack.octavia.enabled %}
+      - octavia_dashboard
+{% endif %}
+{% if openstack.senlin.enabled %}
+      - senlin_dashboard
+{% endif %}
+{% if openstack.ironic.enabled %}
+      - ironic_ui
+{% endif %}
+manifests:
+  secret_ingress_tls: false

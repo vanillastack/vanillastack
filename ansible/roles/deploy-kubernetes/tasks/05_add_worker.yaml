@@ -1,10 +1,4 @@
 ---
-- name: Check if kubeadm has already run
-  become: true
-  stat:
-    path: "/etc/kubernetes/pki/ca.crt"
-  register: kubeadm_crt
-
 - name: Include certificate var
   include_vars:
     file: /tmp/cluster_vars.yml
@@ -14,6 +8,5 @@
   command: >
     kubeadm join --token {{ token }} \
                  --discovery-token-unsafe-skip-ca-verification \
-                 {{  loadbalancer_fqdn }}:6443 
-  when: not kubeadm_crt.stat.exists or reset_cluster==true
+                 api.{{ loadbalancer_fqdn }}:6443 
 

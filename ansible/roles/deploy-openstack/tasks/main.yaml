@@ -1,6 +1,7 @@
 ---
 - name: Add repo
   shell: helm repo add vanilla-openstack {{openstack.chartRepo}}
+  when: openstack.enabled
 
 - name: Create namespace
   k8s:
@@ -8,12 +9,23 @@
     api_version: v1
     kind: Namespace
     state: present
+  when: openstack.enabled
+
+- name: Create LetsEncrypt Issuer
+  include_tasks: letsencrypt.yaml
+  when: openstack.tls.letsEncrypt.enabled and openstack.enabled 
 
 - name: Deploy ceph connnector
   include_tasks: ceph-connector.yaml
+  when: openstack.enabled
+
+- name: Enable TLS
+  when: openstack.tls.enabled and openstack.enabled
+  include_tasks: tls.yaml
 
 - name: Deploy OpenStack
   include_tasks: deploy.yaml
+  when: openstack.enabled
   with_items:
     - { name: mariadb, wait: true}
     - { name: rabbitmq, wait: true}
@@ -23,7 +35,7 @@
     - { name: glance, wait: true}
     - { name: cinder, wait: true}
     - { name: openvswitch, wait: true}
-    - { name: neutron, wait: true}
+    - { name: neutron, wait: false}
     - { name: libvirt, wait: false}
     - { name: nova, wait: true}
     - { name: heat, wait: true}
@@ -32,3 +44,4 @@
     - { name: senlin, wait: true}
     - { name: mistral, wait: true}
     - { name: congress, wait: true}
+    - { name: octavia, wait: true}

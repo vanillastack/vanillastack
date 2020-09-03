@@ -14,3 +14,7 @@
 
 - name: "run helm install cert-manager"
   shell: "helm upgrade --install cert-manager jetstack/cert-manager --namespace {{ certmanager.namespace }} --version {{certmanager.chartVersion}} --set installCRDs=true"
+  retries: 3
+  delay: 10
+  register: result
+  until: result.rc == 0

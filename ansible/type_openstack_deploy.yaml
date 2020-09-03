@@ -1,9 +1,9 @@
 ---
 - name: Deploy OpenStack
-  hosts: all
+  hosts: master[0]
   become: false
   gather_facts: no
   roles:
-    - role: prepare-node
-    - role: helm-nginx-ingress
+#    - role: prepare-node
+#    - role: helm-nginx-ingress
     - role: deploy-openstack

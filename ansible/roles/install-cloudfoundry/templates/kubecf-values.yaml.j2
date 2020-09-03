@@ -1,7 +1,7 @@
-system_domain: testcluster.cloudical.net
+system_domain: "cf.{{ loadbalancer_fqdn }}"
 
 kube:
-  storage_class: "local-storage"
+  storage_class: {{ cloudfoundry.storageclass }}
 
 features:
   ingress:
@@ -12,4 +12,6 @@ features:
     #  kubernetes.io/tls-acme: "true"
   eirini:
     enabled: true
+
+install_stacks: [sle15]
 
