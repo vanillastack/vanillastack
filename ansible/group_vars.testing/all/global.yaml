@@ -3,7 +3,7 @@ global:
   registry: harbor.cloudical.net
 ingress:
   namespace: nginx-ingress
-  enable: true
+  enabled: true
 letsEncrypt:
   # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
   issuerName: "letsencrypt-staging"
@@ -24,4 +24,4 @@ cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
 stratos:
-  enable: true
+  enabled: true
