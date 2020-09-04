@@ -1,8 +1,7 @@
 apiVersion: cert-manager.io/v1alpha2
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
-  namespace: "{{openstack.namespace}}"
 spec:
   acme:
     # The ACME server URL
@@ -19,10 +18,9 @@ spec:
           class: nginx
 ---
 apiVersion: cert-manager.io/v1alpha2
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: letsencrypt-staging
-  namespace: "{{openstack.namespace}}"
 spec:
   acme:
     # The ACME server URL
@@ -31,7 +29,7 @@ spec:
     email: {{letsEncrypt.issuerEmail}}
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: letsencrypt-staging
     # Enable the HTTP-01 challenge provider
     solvers:
     - http01:
