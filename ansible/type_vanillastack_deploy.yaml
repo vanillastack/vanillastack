@@ -99,7 +99,6 @@
     - role: helm-nginx-ingress
       when: ingress.enabled
 
-
 - name: Deploy Rook
   hosts: master[0]
   become: false
