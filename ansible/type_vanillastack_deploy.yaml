@@ -97,7 +97,7 @@
   gather_facts: false
   roles:
     - role: helm-nginx-ingress
-      when: ingress.enable
+      when: ingress.enabled
 
 
 - name: Deploy Rook
