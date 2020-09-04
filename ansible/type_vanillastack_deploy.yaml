@@ -140,7 +140,6 @@
   hosts: master[0]
   gather_facts: true
   roles:
-<<<<<<< HEAD
     - role: install-stratos
       when: stratos.enabled
 
@@ -177,8 +176,3 @@
   roles:
     - role: deploy-harbor
       when: harbor.enabled
-=======
-    - role: install-cloudfoundry
-      when: stratos.enabled
-
->>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
