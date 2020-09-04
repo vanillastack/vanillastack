@@ -43,14 +43,28 @@
       wait: true
     loop:
     - "cf-operator"
+    - "console"
 
   - name: install CF Operator
-    command: >
-      helm upgrade --install --wait cf-operator \
-      --namespace cf-operator \
-      --set "global.singleNamespace.name=kubecf" \
-      "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/cf-operator.tgz" 
-    register: cf_install
+    helm:
+      chart:
+        name: cf-operator
+        version: 5.2.0+0.g22cafc90
+        source:
+          type: repo
+          location: https://harbor.cloudical.net/chartrepo/vanillastack-cloudfoundry
+        state: present
+        name: cf-operator
+        namespace: cf-operator
+        values: global.singleNamespace.name=kubecf
+
+  #- name: install CF Operator
+  #   command: >
+  #     helm upgrade --install --wait cf-operator \
+  #     --namespace cf-operator \
+  #     --set "global.singleNamespace.name=kubecf" \
+  #     "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/cf-operator.tgz" 
+  #   register: cf_install
 
   - name: install Kubecf
     command: > 

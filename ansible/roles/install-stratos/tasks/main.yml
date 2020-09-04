@@ -1,0 +1,20 @@
+---
+# tasks file for install-stratos
+- name: create webui namespace
+  k8s:
+    name: console
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Install stratos
+  helm:
+    chart:
+      name: console
+      version: latest
+      source:
+        type: repo
+        location: https://cloudfoundry.github.io/stratos
+    state: present
+    name: console
+    namespace: console
