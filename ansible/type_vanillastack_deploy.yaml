@@ -141,7 +141,7 @@
   gather_facts: true
   roles:
     - role: install-stratos
-      when: stratos.enable
+      when: stratos.enabled
 
 - name: Deploy efk
   hosts: master[0]

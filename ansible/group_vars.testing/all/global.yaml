@@ -4,10 +4,14 @@ global:
 ingress:
   namespace: nginx-ingress
 <<<<<<< HEAD
+<<<<<<< HEAD
   enabled: true
 =======
   enable: true
 >>>>>>> 0735615... fixxed missing variable
+=======
+  enabled: true
+>>>>>>> 046b4e8... fixxed missing variable
 letsEncrypt:
   # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
   issuerName: "letsencrypt-staging"
