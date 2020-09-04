@@ -33,6 +33,29 @@
             name: kubecf
       create_namespace: true
       wait: true
+<<<<<<< HEAD
+=======
+    loop:
+    - "cf-operator"
+    - "console"
+
+  - name: install CF repository
+    community.kubernetes.helm_repository:
+      name: cloudfoundry
+      repo_url: https://harbor.cloudical.net/chartrepo/vanillastack-cloudfoundry
+        
+  - name: Deploy latest version of CloudFoundry
+    community.kubernetes.helm:
+      name: cf-operator
+      chart_ref: cloudfoundry/cf-operator
+      release_namespace: cf-operator
+      values: 
+        global:
+          singleNamespace:
+            name: kubecf
+      create_namespace: true
+      wait: true
+>>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
 
   - name: install Kubecf
     community.kubernetes.helm:
@@ -42,12 +65,12 @@
       values: "{{ lookup('template', 'kubecf-values.yaml.j2') | from_yaml }}"  
     register: kubecf_install
 
-  rescue:
-    - fail: 
-        msg: Maximum retries exceeded
-      when: retry_count | int == 5 
-
-    - include_tasks: main.yml
+      #  rescue:
+      #    - fail: 
+      #        msg: Maximum retries exceeded
+      #      when: retry_count | int == 5 
+      #
+      #    - include_tasks: main.yml
 
 - name: wait for db to come up
   command: kubectl wait --namespace=kubecf --for=condition=ready pods -l app=database --timeout=10s

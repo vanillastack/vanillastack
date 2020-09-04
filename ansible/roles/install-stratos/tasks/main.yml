@@ -1,9 +1,13 @@
 ---
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
 - name: add stratos repository
   community.kubernetes.helm_repository:
     repo_url: https://cloudfoundry.github.io/stratos
     name: stratos
+<<<<<<< HEAD
 
 - name: Install stratos
   community.kubernetes.helm:
@@ -21,16 +25,19 @@
     api_version: v1
     kind: Namespace
     state: present
+=======
+>>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
 
 - name: Install stratos
-  helm:
-    chart:
-      name: console
-      version: latest
-      source:
-        type: repo
-        location: https://cloudfoundry.github.io/stratos
-    state: present
+  community.kubernetes.helm:
+    chart_ref: stratos/console
     name: console
+<<<<<<< HEAD
     namespace: console
 >>>>>>> f30a29c... added stratos console
+=======
+    release_namespace: console
+    create_namespace: true
+    values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
+
+>>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
