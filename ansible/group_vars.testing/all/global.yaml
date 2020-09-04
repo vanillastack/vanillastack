@@ -3,6 +3,7 @@ global:
   registry: harbor.cloudical.net
 ingress:
   namespace: nginx-ingress
+  enable: true
 letsEncrypt:
   # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
   issuerName: "letsencrypt-staging"
