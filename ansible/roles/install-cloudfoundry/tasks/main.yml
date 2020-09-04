@@ -45,41 +45,37 @@
     - "cf-operator"
     - "console"
 
-  - name: install CF Operator
-    helm:
-      chart:
-        name: cf-operator
-        version: 5.2.0+0.g22cafc90
-        source:
-          type: repo
-          location: https://harbor.cloudical.net/chartrepo/vanillastack-cloudfoundry
-        state: present
-        name: cf-operator
-        namespace: cf-operator
-        values: global.singleNamespace.name=kubecf
-
-  #- name: install CF Operator
-  #   command: >
-  #     helm upgrade --install --wait cf-operator \
-  #     --namespace cf-operator \
-  #     --set "global.singleNamespace.name=kubecf" \
-  #     "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/cf-operator.tgz" 
-  #   register: cf_install
+  - name: install CF repository
+    community.kubernetes.helm_repository:
+      name: cloudfoundry
+      repo_url: https://harbor.cloudical.net/chartrepo/vanillastack-cloudfoundry
+        
+  - name: Deploy latest version of CloudFoundry
+    community.kubernetes.helm:
+      name: cf-operator
+      chart_ref: cloudfoundry/cf-operator
+      release_namespace: cf-operator
+      values: 
+        global:
+          singleNamespace:
+            name: kubecf
+      create_namespace: true
+      wait: true
 
   - name: install Kubecf
-    command: > 
-      helm upgrade --install kubecf \
-      --namespace kubecf \
-      --values "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/kubecf-values.yaml" \
-      "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/kubecf_release.tgz"
+    community.kubernetes.helm:
+      name: kubecf
+      chart_ref: cloudfoundry/kubecf
+      release_namespace: kubecf
+      values: "{{ lookup('template', 'kubecf-values.yaml.j2') | from_yaml }}"  
     register: kubecf_install
 
-  rescue:
-    - fail: 
-        msg: Maximum retries exceeded
-      when: retry_count | int == 5 
-
-    - include_tasks: main.yml
+      #  rescue:
+      #    - fail: 
+      #        msg: Maximum retries exceeded
+      #      when: retry_count | int == 5 
+      #
+      #    - include_tasks: main.yml
 
 - name: wait for db to come up
   command: kubectl wait --namespace=kubecf --for=condition=ready pods -l app=database --timeout=10s

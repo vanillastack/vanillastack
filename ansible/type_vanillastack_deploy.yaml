@@ -97,6 +97,8 @@
   gather_facts: false
   roles:
     - role: helm-nginx-ingress
+      when: ingress.enabled
+
 
 - name: Deploy Rook
   hosts: master[0]
@@ -126,4 +128,11 @@
   roles:
     - role: install-cloudfoundry
       when: cloudfoundry.enabled
+
+- name: install stratos
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: install-cloudfoundry
+      when: stratos.enabled
 

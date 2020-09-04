@@ -20,5 +20,7 @@ kubernetes:
   clusterName: kube
   resetCluster: false
 cloudfoundry:
-  enabled: true
+  enabled: false
   storageclass: rook-ceph-block
+stratos:
+  enabled: true
