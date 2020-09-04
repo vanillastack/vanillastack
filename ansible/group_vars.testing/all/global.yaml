@@ -24,4 +24,4 @@ cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
 stratos:
-  enabled: true
+  enable: true
