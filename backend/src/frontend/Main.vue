@@ -43,7 +43,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" style="z-index:10000">
       <div class="container-fluid">
         <div class="row">
           <div class="col-12 align-center">

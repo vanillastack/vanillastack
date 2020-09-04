@@ -16,7 +16,7 @@
                     <p><strong>Master Nodes</strong></p>
                 </div>
             </div>
-            <div class="form-group" v-for="master in masters" v-bind:key="master.key">
+            <div class="form-group" v-for="item in masters" v-bind:key="item.key">
                 <div class="row">
                     <div class="col-2">
                         <label for="ip">IP-address of node</label>
@@ -27,13 +27,13 @@
                 </div>
                 <div class="row">
                     <div class="col-2">
-                        <input class="form-control" placeholder="0.0.0.0" name="ip" v-model="master.ip" required="required" />
+                        <input class="form-control" placeholder="0.0.0.0" name="ip" v-model="item.ip" v-on:change="item.triggerValidation()" v-on:blur="item.triggerValidation()" required="required" />
                     </div>
                     <div class="col">
-                        <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="master.user" v-on:change="master.copyUserNameChanged($event.target.value, master)" :required="master.userNameRequired" :disabled="master.copyUser && master.isNotFirst" /></div>
-                        <div class="custom-control custom-switch inline-block" v-if="master.isNotFirst">
-                            <input class="custom-control-input" :id="master.key" :name="master.key" type="checkbox" v-model="master.copyUser" v-on:click="master.copyUserChanged(master)">
-                            <label class="custom-control-label" :for="master.key">
+                        <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="item.user" v-on:blur="item.triggerValidation()" v-on:change="item.copyUserNameChanged($event.target.value, item)" :required="item.userNameRequired" :disabled="item.copyUser && item.isNotFirst" /></div>
+                        <div class="custom-control custom-switch inline-block" v-if="item.isNotFirst">
+                            <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">
+                            <label class="custom-control-label" :for="item.key">
                                 Use master value
                             </label>
                         </div>
@@ -46,7 +46,18 @@
                     <p><strong>Worker Nodes</strong></p>
                 </div>
             </div>
-            <div class="form-group" v-for="master in workers" :key="master.key">
+            <div v-if="hasApplications" class="row">
+                <div class="col">
+                    <p>Please assign applications to worker nodes. The following conditions must be met:</p>
+                    <ul>
+                        <li v-if="installRook">3 worker nodes for Rook</li>
+                        <li v-if="installOpenStack">4 worker nodes for OpenStack</li>
+                        <li v-if="installCF">3 worker nodes for Cloud Foundry</li>
+                    </ul>
+                    <p v-if="hasMultipleApplications"><em>Note: You can assign multiple applications to a worker node.</em></p>
+                </div>
+            </div>
+            <div class="form-group" v-for="item in workers" :key="item.key">
                 <div class="row">
                     <div class="col-2">
                         <label for="ip">IP-address of node</label>
@@ -54,36 +65,39 @@
                     <div class="col">
                         <label for="user">Username on node</label>
                     </div>
+                    <div class="col">
+                        <label for="user" v-if="hasApplications">Application usage on node</label>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-2">
-                        <input class="form-control" placeholder="0.0.0.0" name="ip" v-model="master.ip" required="required" />
+                        <input class="form-control" placeholder="0.0.0.0" name="ip" v-on:change="item.triggerValidation()" v-on:blur="item.triggerValidation()" v-model="item.ip" required="required" />
                     </div>
-                    <div class="col-4">
-                        <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="master.user" v-on:change="master.copyUserNameChanged($event.target.value, master)" :required="master.userNameRequired" :disabled="master.copyUser && master.isNotFirst" /></div>
-                        <div class="custom-control custom-switch inline-block" v-if="master.isNotFirst">
-                            <input class="custom-control-input" :id="master.key" :name="master.key" type="checkbox" v-model="master.copyUser" v-on:click="master.copyUserChanged(master)">
-                            <label class="custom-control-label" :for="master.key">
+                    <div class="col">
+                        <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="item.user" v-on:blur="item.triggerValidation()" v-on:change="item.copyUserNameChanged($event.target.value, item)" :required="item.userNameRequired" :disabled="item.copyUser && item.isNotFirst" /></div>
+                        <div class="custom-control custom-switch inline-block" v-if="item.isNotFirst">
+                            <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">
+                            <label class="custom-control-label" :for="item.key">
                                 Use first worker's value
                             </label>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col" style="vertical-align:center;margin-top:.45em">
                         <div class="custom-control custom-switch" v-if="installRook">
-                            <input :id="master.key_rook" class="custom-control-input" type="checkbox" v-model="master.rook">
-                            <label :for="master.key_rook" class="custom-control-label">
+                            <input :id="item.key_rook" class="custom-control-input" type="checkbox" v-model="item.rook" v-on:change="item.triggerValidation()">
+                            <label :for="item.key_rook" class="custom-control-label">
                                 Rook
                             </label>
                         </div>
                         <div class="custom-control custom-switch" v-if="installOpenStack">
-                            <input :id="master.key_openstack" class="custom-control-input" type="checkbox" v-model="master.openstack">
-                            <label :for="master.key_openstack" class="custom-control-label">
+                            <input :id="item.key_openstack" class="custom-control-input" type="checkbox" v-model="item.openstack" v-on:change="item.triggerValidation()">
+                            <label :for="item.key_openstack" class="custom-control-label">
                                 OpenStack
                             </label>
                         </div>
                         <div class="custom-control custom-switch" v-if="installCF">
-                            <input :id="master.key_cf" class="custom-control-input" type="checkbox" v-model="master.cf">
-                            <label :for="master.key_cf" class="custom-control-label">
+                            <input :id="item.key_cf" class="custom-control-input" type="checkbox" v-model="item.cf" v-on:change="item.triggerValidation()">
+                            <label :for="item.key_cf" class="custom-control-label">
                                 Cloud Foundry
                             </label>
                         </div>
@@ -100,6 +114,7 @@ import EventBus from './js/eventBus.js'
 const LocalEvent_CopyUser = "CopyUser"
 const LocalEvent_RefreshItem = "RefreshItem"
 const LocalEvent_UpdateUser = "UpdateUser"
+const LocalEvent_Validate = "Validate"
 
 export default {
     name: 'Home',
@@ -111,10 +126,21 @@ export default {
             masters: [],
             installRook : this.$store.state.installer.installRook,
             installCF : this.$store.state.installer.installCF,
-            installOpenStack : this.$store.state.installer.installOpenStack
+            installOpenStack : this.$store.state.installer.installOpenStack,
+            hasApplications: false,
+            hasMultipleApplications: false
     }},
 
     mounted : function () {
+        this.hasApplications = this.installRook || this.installOpenStack || this.installCF
+        var appCount = 0;
+        if(this.hasApplications) {
+            appCount += this.installRook ? 1 : 0
+            appCount += this.installOpenStack ? 1 : 0
+            appCount += this.installCF ? 1 : 0
+        }
+        this.hasMultipleApplications = appCount > 1
+
         // Notify about being loaded
         EventBus.$emit(Constants.Event_NewViewLoaded, {
             allowGoForward: false
@@ -148,6 +174,9 @@ export default {
         EventBus.$on(LocalEvent_RefreshItem, item => {
             // Force refresh
             this.$set(item.isWorker ? this.workers : this.masters, item.index, item)
+
+            // Validate data
+            this.validate();
         })
 
         // Copy the data onto the store
@@ -155,6 +184,9 @@ export default {
             this.$store.state.installer.workersList = this.workers
             this.$store.state.installer.mastersList = this.masters
         })
+
+        // Trigger the validation
+        EventBus.$on(LocalEvent_Validate, () => this.validate())
 
         // Define workers and masters
         var workers = this.$store.state.installer.workersList
@@ -165,6 +197,9 @@ export default {
 
         this.workers = this.fillList(workers, this.$store.state.installer.workersList, true)
         this.masters = this.fillList(masters, this.$store.state.installer.mastersList, false)
+
+        // Validate the data
+        this.validate();
     },
 
     methods: {
@@ -201,6 +236,15 @@ export default {
                     cf: item.cf,
                     openstack: item.openstack,
                     isWorker: isWorkersList,
+
+                    isValid: function() {
+                        return this.user.length > 0 &&
+                               /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(this.ip)
+                    },
+
+                    triggerValidation: function() {
+                        EventBus.$emit(LocalEvent_Validate)
+                    },
                     
                     userNameRequired: function() {
                         return this.index == 0 || !copyUser
@@ -221,8 +265,6 @@ export default {
                         if(item.index == 0) {
                             EventBus.$emit(LocalEvent_UpdateUser, item)
                         }
-
-                        console.log(value, item)
                     }
                 }
 
@@ -232,9 +274,55 @@ export default {
             return list
         },
 
-        copyUserChanged: function(e) {
-                    console.log(e);
-                }
+        validate: function() {
+            // Validate the data
+            var isValid = true;
+            var ipAddresses = []
+
+            // Validate the masters
+            for(var i=0; i<this.masters.length; i++) {
+                var masterIsValid = this.masters[i].isValid()
+
+                if(isValid && !masterIsValid)
+                    isValid = false;
+
+                ipAddresses[ipAddresses.length] = this.masters[i].ip
+            }
+
+            // Validate the workers
+            var rookNodes = 0;
+            var cfNodes = 0;
+            var openStackNodes = 0;
+
+            for(var i=0; i<this.workers.length; i++) {
+                var worker = this.workers[i]
+                isValid = isValid && worker.isValid();
+
+                rookNodes += worker.rook ? 1 : 0;
+                cfNodes += worker.cf ? 1 : 0;
+                openStackNodes += worker.openstack ? 1 : 0;
+
+                ipAddresses[ipAddresses.length] = worker.ip
+            }
+
+            // Check for the number of assigned nodes
+            if(this.installRook) isValid = isValid && rookNodes >= 3;
+            if(this.installCF) isValid = isValid && cfNodes >= 3;
+            if(this.installOpenStack) isValid = isValid && openStackNodes >= 4;
+
+            // Check for duplicate IP-addresses
+            let duplicates = ipAddresses.reduce((acc,currentValue,index, array) => {
+                if(array.indexOf(currentValue) != index && !acc.includes(currentValue)) 
+                    acc.push(currentValue);
+                return acc;
+            }, []);
+            isValid = isValid && duplicates.length == 0
+
+            // Inform about the validation
+            EventBus.$emit(Constants.Event_NewViewLoaded, {
+                allowGoForward: isValid
+            })
+        }
 
     },
 
