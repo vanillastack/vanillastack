@@ -1,4 +1,5 @@
 ---
+<<<<<<< HEAD
 - name: add stratos repository
   community.kubernetes.helm_repository:
     repo_url: https://cloudfoundry.github.io/stratos
@@ -12,3 +13,24 @@
     create_namespace: true
     values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
     wait: true
+=======
+# tasks file for install-stratos
+- name: create webui namespace
+  k8s:
+    name: console
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Install stratos
+  helm:
+    chart:
+      name: console
+      version: latest
+      source:
+        type: repo
+        location: https://cloudfoundry.github.io/stratos
+    state: present
+    name: console
+    namespace: console
+>>>>>>> f30a29c... added stratos console
