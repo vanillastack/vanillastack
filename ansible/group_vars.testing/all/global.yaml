@@ -3,7 +3,11 @@ global:
   registry: harbor.cloudical.net
 ingress:
   namespace: nginx-ingress
+<<<<<<< HEAD
   enabled: true
+=======
+  enable: true
+>>>>>>> 0735615... fixxed missing variable
 letsEncrypt:
   # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
   issuerName: "letsencrypt-staging"
@@ -23,8 +27,6 @@ kubernetes:
 cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
-<<<<<<< HEAD
-
 stratos:
   enabled: true
   adminpassword: 4JOA4l8DK7Sr
@@ -115,7 +117,3 @@ harbor:
     backup:
       enabled: false
       cronjob: "30 */2 * * *"
-=======
-stratos:
-  enabled: true
->>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module

@@ -96,9 +96,13 @@
   gather_facts: false
   roles:
     - role: helm-nginx-ingress
+<<<<<<< HEAD
       when: ingress.enabled
 <<<<<<< HEAD
 =======
+=======
+      when: ingress.enable
+>>>>>>> 0735615... fixxed missing variable
 
 >>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
 
