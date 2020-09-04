@@ -9,6 +9,7 @@ import Terms from "./Terms.vue"
 import Kind from "./Kind.vue"
 import Key from './Key.vue'
 import Nodes from './Nodes.vue'
+import IPs from './IPs.vue'
 import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
@@ -26,7 +27,7 @@ const routes = [
     { path: '/kind', component: Kind },
     { path: '/key', component: Key},
     { path: '/nodes', component: Nodes},
-    { path: '/ip', component: Key},
+    { path: '/ip', component: IPs},
     { path: '/rook', component: Key},
     { path: '/cf', component: Key},
     { path: '/tools', component: Key},

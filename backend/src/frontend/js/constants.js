@@ -12,6 +12,7 @@ export default Object.freeze({
     Event_InstallationCFUpdated: "Event_InstallationCFUpdated",
     Event_InstallationOpenStackUpdated: "Event_InstallationOpenStackUpdated",
     Event_PrepareNavigation: "Event_PrepareNavigation",
+    Event_IpAddressesUpdated: "Event_IpAddressesUpdated",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -24,5 +25,8 @@ export default Object.freeze({
     Store_UpdateInstallationRook: "updateInstallationRook",
     Store_UpdateInstallationCF: "updateInstallationCF",
     Store_UpdateInstallationOpenStack: "updateInstallationOpenStack",
+    Store_UpdateIPAddresses: "updateIPAddresses",
+
+    Validate_IpAddress: /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
   })
   

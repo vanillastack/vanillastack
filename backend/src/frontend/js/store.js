@@ -67,7 +67,12 @@ const installer = {
     installCF: false,
     installOpenStack: false,
     workersList: [],
-    mastersList: []
+    mastersList: [],
+    clusterip: '',
+    clusterfqdn: '',
+    useclusterfqdn: true,
+    adminfqdn: '',
+    useadminfqdn: true
   }),
 
   mutations: {
@@ -110,6 +115,16 @@ const installer = {
     [Constants.Store_UpdateInstallationOpenStack](state, install) {
       state.installOpenStack = install
       EventBus.$emit(Constants.Event_InstallationOpenStackUpdated, install)
+    },
+
+    [Constants.Store_UpdateIPAddresses](state, data) {
+      state.clusterip = data.clusterip,
+      state.useadminfqdn = data.useadminfqdn,
+      state.useclusterfqdn = data.useclusterfqdn,
+      state.clusterfqdn = data.clusterfqdn,
+      state.adminfqdn = data.adminfqdn,
+
+      EventBus.$emit(Constants.Event_IpAddressesUpdated, data)
     }
   }
 }

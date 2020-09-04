@@ -11,7 +11,7 @@
                     Please collect the IP-addresses, the SSH-username and the designation of your cluster nodes here.
                 </div>
             </div>
-            <div class="row margin-2em">
+            <div class="row">
                 <div class="col">
                     <p><strong>Master Nodes</strong></p>
                 </div>
@@ -239,7 +239,7 @@ export default {
 
                     isValid: function() {
                         return this.user.length > 0 &&
-                               /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(this.ip)
+                               Constants.Validate_IpAddress.test(this.ip)
                     },
 
                     triggerValidation: function() {
