@@ -169,3 +169,17 @@ ul.secondary-nav {
 .inline-block {
   display: inline-block
 }
+
+.lead-image {
+  max-width: 80px;
+  max-height: 80px;
+  text-align: center !important;
+}
+
+div>.lead-image {
+  text-align: center !important;
+}
+
+.valign-center {
+  vertical-align: middle;
+}
