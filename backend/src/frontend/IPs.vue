@@ -34,7 +34,7 @@
             <div class="form-group row margin-2em">
                 <div class="col">
                     <div class="inline-block margin-right-2em">
-                        <input class="form-control" placeholder="your.cluster" name="clusterfqdn" v-model="clusterfqdn" 
+                        <input class="form-control" placeholder="my.cluster" name="clusterfqdn" v-model="clusterfqdn" 
                             v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
                             :required="useclusterfqdn" :disabled="!useclusterfqdn" />
                     </div>
@@ -54,7 +54,7 @@
             <div class="form-group row margin-2em">
                 <div class="col">
                     <div class="inline-block margin-right-2em">
-                        <input class="form-control" placeholder="appstore.cluster" name="adminfqdn" v-model="adminfqdn" 
+                        <input class="form-control" placeholder="admin.my.cluster" name="adminfqdn" v-model="adminfqdn" 
                             v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
                             :required="useadminfqdn" :disabled="!useadminfqdn" />
                     </div>

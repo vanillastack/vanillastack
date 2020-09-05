@@ -117,7 +117,7 @@ const LocalEvent_UpdateUser = "UpdateUser"
 const LocalEvent_Validate = "Validate"
 
 export default {
-    name: 'Home',
+    name: '/nodes',
 
     data: function() {
         return {
@@ -175,14 +175,20 @@ export default {
             // Force refresh
             this.$set(item.isWorker ? this.workers : this.masters, item.index, item)
 
+            // Store the data
+            this.$store.commit(Constants.Store_UpdateWorkers, this.workers)
+            this.$store.commit(Constants.Store_UpdateMasters, this.masters)
+
             // Validate data
             this.validate();
         })
 
         // Copy the data onto the store
         EventBus.$on(Constants.Event_PrepareNavigation, value => {
-            this.$store.state.installer.workersList = this.workers
-            this.$store.state.installer.mastersList = this.masters
+            if(value.currentRoute == this.name) {
+                this.$store.commit(Constants.Store_UpdateWorkers, this.workers)
+                this.$store.commit(Constants.Store_UpdateMasters, this.masters)
+            }
         })
 
         // Trigger the validation
@@ -213,7 +219,8 @@ export default {
                     rook: false,
                     cf: false,
                     openstack: false,
-                    copyUser: list.length > 0
+                    copyUser: list.length > 0,
+                    rookChecked: false
                 }
             } 
         },
@@ -236,6 +243,7 @@ export default {
                     cf: item.cf,
                     openstack: item.openstack,
                     isWorker: isWorkersList,
+                    rookChecked: item.rookChecked,
 
                     isValid: function() {
                         return this.user.length > 0 &&

@@ -11,6 +11,7 @@ import Key from './Key.vue'
 import Nodes from './Nodes.vue'
 import IPs from './IPs.vue'
 import Tools from './AdditionalTools.vue'
+import Rook from './Rook.vue'
 import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
@@ -29,8 +30,9 @@ const routes = [
     { path: '/key', component: Key},
     { path: '/nodes', component: Nodes},
     { path: '/ip', component: IPs},
-    //{ path: '/rook', component: Key},
-    //{ path: '/cf', component: Key},
+    { path: '/rook', component: Rook},
+    { path: '/openstack', component: Home},
+    { path: '/cf', component: Home},
     { path: '/tools', component: Tools},
     { path: '/subscription', component: Key},
     { path: '/summary', component: Key}
@@ -84,13 +86,13 @@ var app = new Vue({
         var route = routes[index];
 
         // Check, whether it is one of the dynamic routes (which might not be visible)
-        if(route.path == '/rook' && !this.$store.installer.installRook)
+        if(route.path == '/rook' && !this.$store.state.installer.installRook)
           return this.getRoute(forward ? index + 1 : index - 1)
 
-        if(route.path == '/cf' && !this.$store.installer.installCF)
+        if(route.path == '/cf' && !this.$store.state.installer.installCF)
           return this.getRoute(forward ? index + 1 : index - 1)
 
-        if(route.path == '/openstack' && !this.$store.installer.installOpenStack)
+        if(route.path == '/openstack' && !this.$store.state.installer.installOpenStack)
           return this.getRoute(forward ? index + 1 : index - 1)
 
         return route
@@ -105,6 +107,9 @@ var app = new Vue({
         // Make it visible
         if(this.$route === null || this.$route.path !== route.path) 
           router.push(route)
+
+        // Store the current position
+        currentRoute = routes.indexOf(route);
       
         // Set whether forward or backward navigation was possible
         this.$store.commit(Constants.Store_UpdateGlobalNavigation, {
