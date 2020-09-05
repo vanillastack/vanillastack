@@ -25,3 +25,4 @@ cloudfoundry:
   storageclass: rook-ceph-block
 stratos:
   enabled: true
+  adminpassword: 4JOA4l8DK7Sr
