@@ -8,11 +8,7 @@ console:
       enabled: {{ ingress.enabled }}
       annotations:
         nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-<<<<<<< HEAD
         nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-
-=======
->>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
         cert-manager.io/cluster-issuer: {{ letsEncrypt.issuerName }}
         kubernetes.io/tls-acme: "true"
   localAdminPassword: {{ stratos.adminpassword }}
