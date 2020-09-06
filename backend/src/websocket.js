@@ -66,6 +66,16 @@ const getClient = function (uuid) {
     return clients[uuid];
 };
 
+const setNewKeyPair = function (uuid) {
+    const client = getClient(uuid);
+    if (client) {
+        const {privateKey, publicKey} = getKeyPair();
+        client.privateKey = privateKey;
+        client.sshPublicKey = publicKey;
+        return client;
+    }
+}
+
 const getKeyPair = function () {
 
     const execOptions = {
@@ -141,4 +151,4 @@ const writeHosts = function (data) {
     }
 }
 
-module.exports = {wss, sendMessage, getClient, createClient, connectionCheck, writeHosts};
+module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck, writeHosts};

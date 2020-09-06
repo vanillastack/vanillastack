@@ -10,10 +10,11 @@ Got to VanillaStack/backend and execute docker build and run command
 ----
 cd VanillaStack/backend
 docker build -f docker/dev/Dockerfile \
-             -t vsbackend && docker run \
-             --name vsbackend \
-             -p 3000:3000 \
-             -v $(pwd)/app:/usr/workdir/app vsbackend
+-t vsbackend && \
+docker run \
+--name vsbackend \
+-p 3000:3000 \
+-v $(pwd)/app:/usr/workdir/app vsbackend
 ----
 
 or
@@ -24,6 +25,17 @@ cd VanillaStack/backend
 npm install
 npm run dev
 ----
+
+== API
+
+The API definition can be found with the backend running on:
+
+[source,]
+----
+http://localhost:3000/api-docs
+----
+
+The definition is written in OpenAPI and can be tested on the spot.
 
 == WebSockets
 
