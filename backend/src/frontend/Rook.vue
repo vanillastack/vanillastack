@@ -53,7 +53,7 @@ import EventBus from './js/eventBus.js'
 const LocalEvent_ValidateRook = "LocalEvent_ValidateRook"
 
 export default {
-    name: '/rook',
+    name: 'rook',
 
     data: function() {
         return {

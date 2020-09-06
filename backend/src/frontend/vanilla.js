@@ -12,6 +12,7 @@ import Nodes from './Nodes.vue'
 import IPs from './IPs.vue'
 import Tools from './AdditionalTools.vue'
 import Rook from './Rook.vue'
+import OpenStack from './OpenStack.vue'
 import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
@@ -31,7 +32,7 @@ const routes = [
     { path: '/nodes', component: Nodes},
     { path: '/ip', component: IPs},
     { path: '/rook', component: Rook},
-    { path: '/openstack', component: Home},
+    { path: '/openstack', component: OpenStack},
     { path: '/cf', component: Home},
     { path: '/tools', component: Tools},
     { path: '/subscription', component: Key},
@@ -109,7 +110,7 @@ var app = new Vue({
 
         // Inform about the navigational change
         EventBus.$emit(Constants.Event_PrepareNavigation, {
-          currentRoute: previousRoute.path
+          currentRoute: previousRoute.path.length > 0 ? previousRoute.path.substring(1) : 'start'
         })
 
         // Make it visible

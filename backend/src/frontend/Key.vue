@@ -51,7 +51,7 @@ import EventBus from './js/eventBus'
 
 export default {
 
-    name: '/key',
+    name: 'key',
 
     data: function() {
         return {

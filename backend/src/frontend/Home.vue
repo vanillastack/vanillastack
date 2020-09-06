@@ -35,7 +35,7 @@ import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
 
 export default {
-    name: '/',
+    name: 'start',
 
     mounted : function () {
         console.log("==> Loaded Home")

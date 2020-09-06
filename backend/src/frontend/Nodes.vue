@@ -117,7 +117,7 @@ const LocalEvent_UpdateUser = "UpdateUser"
 const LocalEvent_Validate = "Validate"
 
 export default {
-    name: '/nodes',
+    name: 'nodes',
 
     data: function() {
         return {

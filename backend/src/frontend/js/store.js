@@ -52,8 +52,39 @@ const navigation = {
   }
 }
 
+// OpenStack Module
+const openstack = {
+  state: () => ({
+    domain: '',
+    release: 'stein',
+    tls: true,
+    mariadb: true,
+    mariadb_size: 30,
+    rabbitmq: true,
+    rabbitmq_size: 30,
+    barbican: true,
+    barbican_endpoint: ''
+  }),
+
+  mutations: {
+    [Constants.Store_OpenStackUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_OpenStackUpdatedData, state.data);
+    },
+  }
+}
+
 // Installer Module
 const installer = {
+
+  modules: {
+    openstack: openstack
+  },
+
   state: () => ({
     masters: 1,
     workers: 1,

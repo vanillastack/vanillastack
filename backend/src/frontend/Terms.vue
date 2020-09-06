@@ -51,7 +51,7 @@ import EventBus from './js/eventBus'
 
 export default {
 
-    name: 'Terms',
+    name: 'terms',
 
     data: function() {
         return {

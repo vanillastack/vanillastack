@@ -84,7 +84,7 @@ import Store from './js/store'
 
 export default {
 
-    name: '/kind',
+    name: 'kind',
     
     data: function() {
         return {

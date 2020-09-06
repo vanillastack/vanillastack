@@ -166,6 +166,10 @@ ul.secondary-nav {
   padding-left: 3em;
 }
 
+.padding-top-2_5em {
+  padding-top: 2.5em;
+}
+
 .inline-block {
   display: inline-block
 }
@@ -182,4 +186,15 @@ div>.lead-image {
 
 .valign-center {
   vertical-align: middle;
+}
+
+/* Accordion */
+.accordion-link {
+  font-weight: normal;
+  color: black
+}
+
+.accordion-link[aria-expanded = "true"] {
+  font-weight: bolder;
+  color: black
 }
