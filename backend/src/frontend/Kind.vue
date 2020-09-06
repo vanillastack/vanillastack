@@ -84,7 +84,8 @@ import Store from './js/store'
 
 export default {
 
-    name: 'Kind',
+    name: '/kind',
+    
     data: function() {
         return {
             minMaster: 1,

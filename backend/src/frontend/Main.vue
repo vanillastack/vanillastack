@@ -26,7 +26,7 @@
               <li v-if="hasRook"><router-link tag="button" :disabled="!seededKey" to="/rook" class="nav-item button-as-link">Rook</router-link></li>
               <li v-if="hasOpenStack"><router-link tag="button" :disabled="!seededKey" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
               <li v-if="hasCF"><router-link tag="button" :disabled="!seededKey" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
-              <li><router-link tag="button" :disabled="!seededKey" to="/additional" class="nav-item button-as-link">Additional Tools</router-link></li>
+              <li><router-link tag="button" :disabled="!seededKey" to="/tools" class="nav-item button-as-link">Additional Tools</router-link></li>
               <li><router-link tag="button" :disabled="!seededKey" to="/subscription" class="nav-item button-as-link">Subscription Key</router-link></li>
               <li><router-link tag="button" :disabled="!seededKey" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
             </ul>
@@ -78,12 +78,10 @@ export default {
 
   methods: {
     goBack : function(e) {
-      EventBus.$emit(Constants.Event_PrepareNavigation)
       EventBus.$emit(Constants.Event_GoBack)
     },
 
     goNext : function(e) {
-      EventBus.$emit(Constants.Event_PrepareNavigation)
       EventBus.$emit(Constants.Event_GoNext)
     },
 

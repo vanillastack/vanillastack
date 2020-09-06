@@ -50,14 +50,16 @@ const router = new VueRouter({
 
 // Handle the forward / backward-events
 EventBus.$on(Constants.Event_GoBack, e => {
+  var current = currentRoute
   currentRoute -= 1
-  app.handleNavigation(currentRoute, false)
+  app.handleNavigation(current, currentRoute, false)
 })
 
 // Handle the forward / backward-events
 EventBus.$on(Constants.Event_GoNext, e => {
+  var current = currentRoute
   currentRoute += 1
-  app.handleNavigation(currentRoute, true)
+  app.handleNavigation(current, currentRoute, true)
 })
 
 // Start the app
@@ -87,22 +89,28 @@ var app = new Vue({
 
         // Check, whether it is one of the dynamic routes (which might not be visible)
         if(route.path == '/rook' && !this.$store.state.installer.installRook)
-          return this.getRoute(forward ? index + 1 : index - 1)
+          return this.getRoute(forward ? index + 1 : index - 1, forward)
 
         if(route.path == '/cf' && !this.$store.state.installer.installCF)
-          return this.getRoute(forward ? index + 1 : index - 1)
+          return this.getRoute(forward ? index + 1 : index - 1, forward)
 
         if(route.path == '/openstack' && !this.$store.state.installer.installOpenStack)
-          return this.getRoute(forward ? index + 1 : index - 1)
+          return this.getRoute(forward ? index + 1 : index - 1, forward)
 
         return route
       },
 
       // Handles the navigation
-      handleNavigation: function(index, forward) {
+      handleNavigation: function(current, index, forward) {
         
         // Get the route
-        var route = this.getRoute(index, forward);
+        var route = this.getRoute(index, forward)
+        var previousRoute = routes[current]
+
+        // Inform about the navigational change
+        EventBus.$emit(Constants.Event_PrepareNavigation, {
+          currentRoute: previousRoute.path
+        })
 
         // Make it visible
         if(this.$route === null || this.$route.path !== route.path) 
@@ -121,7 +129,7 @@ var app = new Vue({
   })
   .$mount("#vanilla")
 
-app.handleNavigation(0, true)
+app.handleNavigation(0, 0, true)
 
 console.log("Started Vue");
   

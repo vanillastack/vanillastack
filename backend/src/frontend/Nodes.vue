@@ -46,7 +46,7 @@
                     <p><strong>Worker Nodes</strong></p>
                 </div>
             </div>
-            <div v-if="hasApplications" class="row">
+            <div v-if="hasApplications" class="row margin-1em">
                 <div class="col">
                     <p>Please assign applications to worker nodes. The following conditions must be met:</p>
                     <ul>
@@ -62,7 +62,7 @@
                     <div class="col-2">
                         <label for="ip">IP-address of node</label>
                     </div>
-                    <div class="col">
+                    <div class="col-6">
                         <label for="user">Username on node</label>
                     </div>
                     <div class="col">
@@ -73,7 +73,7 @@
                     <div class="col-2">
                         <input class="form-control" placeholder="0.0.0.0" name="ip" v-on:change="item.triggerValidation()" v-on:blur="item.triggerValidation()" v-model="item.ip" required="required" />
                     </div>
-                    <div class="col">
+                    <div class="col-6">
                         <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="item.user" v-on:blur="item.triggerValidation()" v-on:change="item.copyUserNameChanged($event.target.value, item)" :required="item.userNameRequired" :disabled="item.copyUser && item.isNotFirst" /></div>
                         <div class="custom-control custom-switch inline-block" v-if="item.isNotFirst">
                             <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">

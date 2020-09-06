@@ -74,7 +74,7 @@ import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
 
 export default {
-    name: 'IPs',
+    name: '/ip',
 
     data: function()  {
         return {
@@ -113,9 +113,7 @@ export default {
 
     mounted : function () {
         // Notify about being loaded
-        EventBus.$emit(Constants.Event_NewViewLoaded, {
-            allowGoForward: false
-        })
+        this.triggerValidation()
     },
 
     created: function() {

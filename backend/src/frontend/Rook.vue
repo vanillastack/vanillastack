@@ -11,7 +11,7 @@
                     Please ensure the following requirements are fulfilled for each of the nodes where Rook is to be deployed to.
                 </div>
             </div>
-            <div class="row margin-2em">
+            <div class="row">
                 <div class="col">
                     <p><strong>Requirements for every node</strong></p>
                     <ul>
@@ -23,23 +23,23 @@
             </div>
             <div class="row margin-2em">
                 <div class="col">
-                    <p>You can use the <pre>lsblk -f</pre> command to verify the filesystem-information on your machines:</p>
+                    <p>You can use the <pre style="display: inline">lsblk -f</pre> command to verify the filesystem-information on your machines:</p>
                     <p><img src="/images/rook-prerequisites.png" style="max-width: 800px" /></p>
                     <p>In the given image, volume <strong>sdb</strong> is in a raw state, and can therefore be used for Rook.</p>
                 </div>
             </div>
             <div class="form-group" v-for="item in nodes" :key="item.key">
                 <div class="row">
-                    <div class="col-1">{{ item.ip }}</div>
-                </div>
-                <div class="col">
-                    <div class="custom-control custom-switch inline-block">
-                        <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" 
-                            v-model="item.rookChecked" 
-                            v-on:click="handleRookChecked($event.target.checked, item)">
-                        <label class="custom-control-label" :for="item.key">
-                            Fulfills Rook requirements
-                        </label>
+                    <div class="col-2">{{ item.ip }}</div>
+                    <div class="col">
+                        <div class="custom-control custom-switch inline-block">
+                            <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" 
+                                v-model="item.rookChecked" 
+                                v-on:click="handleRookChecked($event.target.checked, item)">
+                            <label class="custom-control-label" :for="item.key">
+                                Fulfills Rook requirements
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -53,7 +53,7 @@ import EventBus from './js/eventBus.js'
 const LocalEvent_ValidateRook = "LocalEvent_ValidateRook"
 
 export default {
-    name: 'Home',
+    name: '/rook',
 
     data: function() {
         return {

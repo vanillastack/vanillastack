@@ -129,7 +129,7 @@ import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
 
 export default {
-    name: 'Additional Tools',
+    name: '/tools',
 
     data: function() {
         return {
