@@ -45,16 +45,13 @@ const swaggerOptions = {
                 podNetCidr: {},
                 Node: {
                     required: [
-                        "hostname",
+                        "host",
                         "username",
                         "ssh_key"
                     ],
                     type: "object",
                     properties: {
-                        name: {
-                            type: "string"
-                        },
-                        hostname: {
+                        host: {
                             type: "string",
                             example: "domain.io"
                         },
@@ -182,7 +179,10 @@ const swaggerOptions = {
                 },
                 Connection: {
                     type: "object",
-                    required: [],
+                    required: [
+                        "uuid",
+                        "node"
+                    ],
                     properties: {
                         uuid: {
                             type: "string",
