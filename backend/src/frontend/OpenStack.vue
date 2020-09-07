@@ -340,7 +340,224 @@
                     </div>
                 </div>
             </div>
-            <!-- /horizon -->
+            <!-- /Horizon -->
+
+            <!-- keystone -->
+            <div class="card margin-1em">
+                <div class="card-header" id="keystoneHeading">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#keystoneData" 
+                            aria-expanded="false" aria-controls="keystoneData">
+                            Keystone
+                        </button>
+                    </h5>
+                </div>
+
+                <!-- keystone-Data -->
+                <div id="keystoneData" class="collapse" aria-labelledby="keystoneHeading" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>keystone Endpoint</strong></p>
+                                <input class="form-control" placeholder="keystone.openstack.my.cluster" 
+                                    name="keystone_endpoint" v-model="keystone_endpoint" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                            <div class="col">
+                                <div class="custom-control custom-switch padding-top-3em">
+                                    <input class="custom-control-input" id="keystone" name="keystone" 
+                                        type="checkbox" 
+                                        v-model="keystone" 
+                                        v-on:click="triggerValidation()">
+                                    <label class="custom-control-label" for="keystone">
+                                        Keystone Authentication Service
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Keystone -->
+
+            <!-- Mistral -->
+            <div class="card margin-1em">
+                <div class="card-header" id="mistralHeading">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#mistralData" 
+                            aria-expanded="false" aria-controls="mistralData">
+                            Mistral
+                        </button>
+                    </h5>
+                </div>
+
+                <!-- Mistral-Data -->
+                <div id="mistralData" class="collapse" aria-labelledby="mistralHeading" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>mistral Endpoint</strong></p>
+                                <input class="form-control" placeholder="mistral.openstack.my.cluster" 
+                                    name="mistral_endpoint" v-model="mistral_endpoint" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                            <div class="col">
+                                <div class="custom-control custom-switch padding-top-3em">
+                                    <input class="custom-control-input" id="mistral" name="mistral" 
+                                        type="checkbox" 
+                                        v-model="mistral" 
+                                        v-on:click="triggerValidation()">
+                                    <label class="custom-control-label" for="mistral">
+                                        Mistral Workflow Service
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /mistral -->
+
+            <!-- Neutron -->
+            <div class="card margin-1em">
+                <div class="card-header" id="neutronHeading">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#neutronData" 
+                            aria-expanded="false" aria-controls="neutronData">
+                            Neutron
+                        </button>
+                    </h5>
+                </div>
+
+                <!-- neutron-Data -->
+                <div id="neutronData" class="collapse" aria-labelledby="neutronHeading" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>Neutron Endpoint</strong></p>
+                                <input class="form-control" placeholder="neutron.openstack.my.cluster" 
+                                    name="neutron_endpoint" v-model="neutron_endpoint" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                            <div class="col">
+                                <div class="custom-control custom-switch padding-top-3em">
+                                    <input class="custom-control-input" id="neutron" name="neutron" disabled="disabled" type="checkbox" 
+                                        v-model="neutron" 
+                                        v-on:click="triggerValidation()">
+                                    <label class="custom-control-label" for="neutron">
+                                        Neutron Networking
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>Interface Name (Tunnel / Overlay)</strong></p>
+                                <input class="form-control" placeholder="eth1" 
+                                    name="neutron_interface_tunnel" v-model="neutron_interface_tunnel" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                            <div class="col-3">
+                                <p><strong>Interface Name (External)</strong></p>
+                                <input class="form-control" placeholder="eth2" 
+                                    name="neutron_interface_external" v-model="neutron_interface_external" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>Layer3 HA</strong></p>
+                                <div class="custom-control custom-switch">
+                                    <input class="custom-control-input" id="neutron_l3ha" name="neutron_l3ha" type="checkbox" 
+                                        v-model="neutron_l3ha" 
+                                        v-on:click="triggerValidation()">
+                                    <label class="custom-control-label" for="neutron_l3ha">
+                                        Enable Layer3 HA
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <p><strong>Overlay Network Type</strong></p>
+                                <select class="custom-select"
+                                    name="neutron_overlayNetworkType" v-model="neutron_overlayNetworkType" v-on:blur="triggerValidation()">
+                                    <option value="VXLAN">VXLAN</option>
+                                    <option value="GRE">GRE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>Max Agents per Router</strong></p>
+                                <select class="custom-select"
+                                    name="neutron_maxAgentsPerRouter" v-model="neutron_maxAgentsPerRouter" v-on:blur="triggerValidation()">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <p><strong>DHCP Agents</strong></p>
+                                <select class="custom-select"
+                                    name="neutron_dhcpAgents" v-model="neutron_dhcpAgents" v-on:blur="triggerValidation()">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /neutron -->
+
+            <!-- Senlin -->
+            <div class="card margin-1em">
+                <div class="card-header" id="senlinHeading">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#senlinData" 
+                            aria-expanded="false" aria-controls="senlinData">
+                            Senlin
+                        </button>
+                    </h5>
+                </div>
+
+                <!-- Senlin-Data -->
+                <div id="senlinData" class="collapse" aria-labelledby="senlinHeading" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>senlin Endpoint</strong></p>
+                                <input class="form-control" placeholder="senlin.openstack.my.cluster" 
+                                    name="senlin_endpoint" v-model="senlin_endpoint" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                            <div class="col">
+                                <div class="custom-control custom-switch padding-top-3em">
+                                    <input class="custom-control-input" id="senlin" name="senlin" 
+                                        type="checkbox" 
+                                        v-model="senlin" 
+                                        v-on:click="triggerValidation()">
+                                    <label class="custom-control-label" for="senlin">
+                                        Senlin Clustering
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Senlin -->
+            
         </div>
     </div>
 </template>
@@ -379,6 +596,14 @@ export default {
             mistral:  this.$store.state.installer.openstack.mistral,
             senlin_endpoint:  this.$store.state.installer.openstack.senlin_endpoint,
             senlin:  this.$store.state.installer.openstack.senlin,
+            neutron: this.$store.state.installer.openstack.neutron,
+            neutron_endpoint: this.$store.state.installer.openstack.neutron_endpoint,
+            neutron_interface_tunnel: this.$store.state.installer.openstack.neutron_interface_tunnel,
+            neutron_interface_external: this.$store.state.installer.openstack.neutron_interface_external,
+            neutron_l3ha: this.$store.state.installer.openstack.neutron_l3ha,
+            neutron_overlayNetworkType: this.$store.state.installer.openstack.neutron_overlayNetworkType,
+            neutron_maxAgentsPerRouter: this.$store.state.installer.openstack.neutron_maxAgentsPerRouter,
+            neutron_dhcpAgents: this.$store.state.installer.openstack.neutron_dhcpAgents
         }
     },
 
@@ -391,6 +616,7 @@ export default {
                             ((this.keystone && this.keystone_endpoint.length > 0) || !this.keystone) &&
                             ((this.mistral && this.mistral_endpoint.length > 0) || !this.mistral) &&
                             ((this.senlin && this.senlin_endpoint.length > 0) || !this.senlin) &&
+                            this.neutron_endpoint.length > 0 && this.neutron_interface_tunnel.length > 0 && this.neutron_interface_external.length > 0 &&
                             this.glance_endpoint != '' 
 
             // Store the data
@@ -449,6 +675,11 @@ export default {
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.keystone_endpoint.length == 0)
             this.keystone_endpoint = 'keystone.' + this.domain
+        
+        // Set the Neutron-Domain
+        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+            this.$store.state.installer.openstack.keystone_endpoint.length == 0)
+            this.neutron_endpoint = 'neutron.' + this.domain
 
         // Notify about being loaded
         this.triggerValidation()
