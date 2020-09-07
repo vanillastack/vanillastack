@@ -90,6 +90,9 @@ export default {
         triggerValidation() {
             var isValid = false;
 
+            if(this.clusterfqdn.length > 0 && this.adminfqdn.length == 0) 
+                this.adminfqdn = "admin." + this.clusterfqdn
+
             // validates the data
             isValid = Constants.Validate_IpAddress.test(this.clusterip) &&
                 this.useadminfqdn ? this.adminfqdn.length > 0 : true &&
