@@ -66,6 +66,16 @@ const getClient = function (uuid) {
     return clients[uuid];
 };
 
+const setNewKeyPair = function (uuid) {
+    const client = getClient(uuid);
+    if (client) {
+        const {privateKey, publicKey} = getKeyPair();
+        client.privateKey = privateKey;
+        client.sshPublicKey = publicKey;
+        return client;
+    }
+}
+
 const getKeyPair = function () {
 
     const execOptions = {
@@ -85,13 +95,22 @@ const getKeyPair = function () {
     }
 }
 
-const connectionCheck = function (transactionId, wsClient) {
+const connectionCheck = function (transactionId, node, wsClient) {
     const wsMsg = {
         event: 'INIT',
         transactionId: transactionId,
         payload: ''
     }
+
+    createDir(`/tmp/${wsClient.uuid}`)
+
     sendMessage(wsMsg, wsClient);
+
+    fs.writeFileSync(`/tmp/${wsClient.uuid}/private.key`, wsClient.privateKey, function (err, file) {
+        if (err) throw err;
+        console.log('saved file');
+    })
+
     const spawnOptions = {
         cwd: '/usr/workdir/src',
         env: null,
@@ -99,21 +118,21 @@ const connectionCheck = function (transactionId, wsClient) {
     };
     // console.log(wsClient);
     const ans = proc.spawn(
-        'ansible-playbook',
-        ['test-playbook.yaml', '-e host=localhost'],
+        'ansible',
+        [node.host, `-u ${node.user}`, `--private-key /tmp/${wsClient.uuid}/private.key`, '-m ping'],
         spawnOptions
     );
     // const ans = proc.spawn('ls', ['-lha'], spawnOptions);
 
     ans.stdout.on('data', stdout => {
-        // console.log(stdout.toString());
+        console.log(stdout.toString());
         wsMsg.event = 'EXECUTION';
         wsMsg.payload = stdout.toString();
         sendMessage(wsMsg, wsClient);
     });
 
     ans.stderr.on('data', stderr => {
-        // console.log(stderr.toString());
+        console.log(stderr.toString());
         wsMsg.event = 'EXECUTION';
         wsMsg.payload = stderr.toString();
         sendMessage(wsMsg, wsClient);
@@ -127,6 +146,15 @@ const connectionCheck = function (transactionId, wsClient) {
     });
 };
 
+const createDir = function (path) {
+    fs.mkdirSync(path, {recursive: true}, (err) => {
+        if (err) {
+            console.error('Something went wrong: ', err);
+        } else {
+            console.log(`Directory ${path} created`)
+        }
+    });
+}
 const writeHosts = function (data) {
     try {
         const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')))
@@ -141,4 +169,4 @@ const writeHosts = function (data) {
     }
 }
 
-module.exports = {wss, sendMessage, getClient, createClient, connectionCheck, writeHosts};
+module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck, writeHosts};

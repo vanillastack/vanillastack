@@ -3,13 +3,13 @@ const router = express.Router();
 const {getClient, connectionCheck} = require('../../websocket');
 
 /**
- * GET users listing
+ * POST Connection Check for given Node
  * @swagger
  * /connection:
  *   post:
- *      summary: Check connection to existing Nodes
+ *      summary: Test the accessibility to a given Node
  *      requestBody:
- *          description: Node object which connection needs to be tested
+ *          description: Node object with connection details
  *          content:
  *              application/json:
  *                  schema:
@@ -20,9 +20,8 @@ const {getClient, connectionCheck} = require('../../websocket');
  *              description: OK
  *              content:
  *                  application/json:
- *                      schema: {
+ *                      schema:
  *                          $ref: "#/components/schemas/execResponse"
- *                      }
  *          400:
  *              description: Bad Request
  *              content: {}
@@ -35,8 +34,9 @@ const {getClient, connectionCheck} = require('../../websocket');
  */
 // todo: more explicit bad codes
 router.post('/', function (req, res) {
-    const client = getClient(req.body.client);
-    if (!client) {
+    const client = getClient(req.body.uuid);
+    const node = req.body.node;
+    if (!client && !node) {
         console.log("Not Found");
         res.status(400).json({
             message: 'uuid invalid'
@@ -46,7 +46,7 @@ router.post('/', function (req, res) {
 
     const transactionId = genTransactionId();
 
-    connectionCheck(transactionId, client);
+    connectionCheck(transactionId, node, client);
 
     res.status(200).json({
         transactionId: transactionId

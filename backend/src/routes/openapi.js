@@ -45,16 +45,13 @@ const swaggerOptions = {
                 podNetCidr: {},
                 Node: {
                     required: [
-                        "hostname",
+                        "host",
                         "username",
                         "ssh_key"
                     ],
                     type: "object",
                     properties: {
-                        name: {
-                            type: "string"
-                        },
-                        hostname: {
+                        host: {
                             type: "string",
                             example: "domain.io"
                         },
@@ -158,34 +155,38 @@ const swaggerOptions = {
                     type: "object",
                     properties: {
                         uuid: {
-                            $ref: "#/components/schemas/uuid"
+                            type: "string",
+                            example: "00000000-0000-0000-0000-0000000000000"
                         },
                         mode: {
-                            $ref: "#/components/schemas/mode"
+                            type: "string",
+                            example: "installer"
                         },
-                        publicKey: {
-                            $ref: "#/components/schemas/publicKey"
+                        sshPublicKey: {
+                            type: "string",
+                            example: "ssh-rsa KATAKANAAgQCq/3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBakedNf0Tp0GbMJDyR4e9T04ZZw=="
                         }
                     }
                 },
-                publicKey: {
-                    type: "string",
-                    example: "ssh-rsa KATAKANAAgQCq/3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBakedNf0Tp0GbMJDyR4e9T04ZZw=="
-                },
-                mode: {
-                    type: "string",
-                    example: "installer"
-                },
                 uuid: {
-                    type: "string",
-                    example: "00000000-0000-0000-0000-0000000000000"
+                    type: "object",
+                    properties: {
+                        uuid: {
+                            type: "string",
+                            example: "00000000-0000-0000-0000-0000000000000"
+                        }
+                    }
                 },
                 Connection: {
                     type: "object",
-                    required: [],
+                    required: [
+                        "uuid",
+                        "node"
+                    ],
                     properties: {
-                        client: {
-                            $ref: "#/components/schemas/uuid"
+                        uuid: {
+                            type: "string",
+                            example: "00000000-0000-0000-0000-0000000000000"
                         },
                         node: {
                             $ref: "#/components/schemas/Node"
