@@ -77,17 +77,31 @@ const setNewKeyPair = function (uuid) {
 }
 
 const getKeyPair = function () {
-
+    const location = '/usr/workdir/src'
     const execOptions = {
-        cwd: '/usr/workdir/src',
+        cwd: `${location}`,
         env: null
     }
-
+    let privateKey;
+    let publicKey;
+// ssh-keygen -f 'temp.key' -t rsa -b 2048 -N '' -C "$COMMENT"
     try {
-        let data = proc.execSync("sh keygen.sh", execOptions);
-        data = data.toString().replace(/(\r\n|\n|\r)/gm, "").split(';_;');
-        const privateKey = data[1];
-        const publicKey = data[2];
+        const comment = 'k8s@cloudical.io'
+        proc.execSync(`ssh-keygen -f 'temp.key' -t rsa -b 2048 -N '' -C ${comment}`, execOptions);
+        // data = data.toString().split(';_;'); // .replace(/(\r\n|\n|\r)/gm, "").split(';_;');
+        try {
+            privateKey = fs.readFileSync(path.join(location, 'temp.key'), 'utf8'); // data[1];
+            publicKey = fs.readFileSync(path.join(location, 'temp.key.pub'), 'utf8').replace(/(\r\n|\n|\r)/gm, ""); // data[2].replace(/(\r\n|\n|\r)/gm, "");
+        } catch (e) {
+            console.log('Reading KeyPair gone wrong: ', e);
+        } finally {
+            try {
+                fs.unlinkSync(path.join(location, 'temp.key'));
+                fs.unlinkSync(path.join(location, 'temp.key.pub'));
+            } catch (e) {
+                console.log('Cleaning up gone wrong: ', e);
+            }
+        }
         return {privateKey, publicKey};
     } catch (e) {
         console.log(e);
@@ -95,78 +109,99 @@ const getKeyPair = function () {
     }
 }
 
-const connectionCheck = function (transactionId, node, wsClient) {
+const connectionCheck = function (transactionId, node, wsClient, dryRun) {
     const wsMsg = {
         event: 'INIT',
         transactionId: transactionId,
         payload: ''
     }
 
-    createDir(`/tmp/${wsClient.uuid}`)
-
+    const dir = createDir(`/tmp/${wsClient.uuid}`);
     sendMessage(wsMsg, wsClient);
 
-    fs.writeFileSync(`/tmp/${wsClient.uuid}/private.key`, wsClient.privateKey, function (err, file) {
+    fs.writeFileSync(`${dir}/private.key`, wsClient.privateKey, function (err, file) {
         if (err) throw err;
-        console.log('saved file');
-    })
-
-    const spawnOptions = {
-        cwd: '/usr/workdir/src',
-        env: null,
-        detached: false
-    };
-    // console.log(wsClient);
-    const ans = proc.spawn(
-        'ansible',
-        [node.host, `-u ${node.user}`, `--private-key /tmp/${wsClient.uuid}/private.key`, '-m ping'],
-        spawnOptions
-    );
-    // const ans = proc.spawn('ls', ['-lha'], spawnOptions);
-
-    ans.stdout.on('data', stdout => {
-        console.log(stdout.toString());
-        wsMsg.event = 'EXECUTION';
-        wsMsg.payload = stdout.toString();
-        sendMessage(wsMsg, wsClient);
+        console.log('saved file', file);
     });
 
-    ans.stderr.on('data', stderr => {
-        console.log(stderr.toString());
-        wsMsg.event = 'EXECUTION';
-        wsMsg.payload = stderr.toString();
-        sendMessage(wsMsg, wsClient);
-    });
+    const hostsYaml = {
+        all: {
+            hosts: {
+                test_node: {
+                    ansible_ssh_host: node.host,
+                    ansible_ssh_private_key_file: `${dir}/private.key`
+                }
+            }
+        }
+    }
 
-    ans.on('close', code => {
-        console.log(`${wsMsg.transactionId}: Return Code: ${code}`);
-        wsMsg.event = 'DONE';
-        wsMsg.payload = 'Execution completed';
-        sendMessage(wsMsg, wsClient);
-    });
+    writeYaml(`${dir}/hosts.yml`, hostsYaml);
+
+    if (!dryRun) {
+        const spawnOptions = {
+            cwd: dir,
+            env: null,
+            detached: false
+        };
+
+        const ans = proc.spawn(
+            'ansible',
+            ['all', '-i', 'hosts.yml', '-u', node.user, '-m ping'],
+            spawnOptions
+        );
+
+        ans.stdout.on('data', stdout => {
+            console.log(stdout.toString());
+            wsMsg.event = 'EXECUTION';
+            wsMsg.payload = stdout.toString();
+            sendMessage(wsMsg, wsClient);
+        });
+        ans.stderr.on('data', stderr => {
+            console.log(stderr.toString());
+            wsMsg.event = 'EXECUTION';
+            wsMsg.payload = stderr.toString();
+            sendMessage(wsMsg, wsClient);
+        });
+
+        ans.on('close', code => {
+            console.log(`${wsMsg.transactionId}: Return Code: ${code}`);
+            wsMsg.event = 'DONE';
+            wsMsg.payload = 'Execution completed';
+            sendMessage(wsMsg, wsClient);
+        });
+    }
 };
 
 const createDir = function (path) {
-    fs.mkdirSync(path, {recursive: true}, (err) => {
-        if (err) {
-            console.error('Something went wrong: ', err);
-        } else {
-            console.log(`Directory ${path} created`)
-        }
-    });
-}
-const writeHosts = function (data) {
     try {
-        const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')))
-        console.log(data);
-        console.log(template);
-        fs.writeFileSync(path.join(__dirname, 'templates/hosts.yml'), yaml.safeDump(template), function (err, file) {
+        return fs.mkdirSync(path, {recursive: true});
+    } catch (e) {
+        console.error('Something went wrong: ', e);
+    }
+}
+
+const writeFile = function (location, data) {
+    try {
+        // const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')));
+        fs.writeFileSync(location, data, function (err, file) {
             if (err) throw err;
-            console.log('saved file');
+            return file;
         })
     } catch (e) {
         console.log(e);
     }
 }
 
-module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck, writeHosts};
+const writeYaml = function (location, data) {
+    try {
+        // const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')));
+        fs.writeFileSync(location, yaml.safeDump(data), function (err, file) {
+            if (err) throw err;
+            return file;
+        })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck, writeYaml};

@@ -188,6 +188,10 @@ const swaggerOptions = {
                             type: "string",
                             example: "00000000-0000-0000-0000-0000000000000"
                         },
+                        dry: {
+                            type: "boolean",
+                            example: "true"
+                        },
                         node: {
                             $ref: "#/components/schemas/Node"
                         }

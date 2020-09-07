@@ -35,6 +35,7 @@ const {getClient, connectionCheck} = require('../../websocket');
 // todo: more explicit bad codes
 router.post('/', function (req, res) {
     const client = getClient(req.body.uuid);
+    const dryRun = req.body.dry;
     const node = req.body.node;
     if (!client && !node) {
         console.log("Not Found");
@@ -46,7 +47,7 @@ router.post('/', function (req, res) {
 
     const transactionId = genTransactionId();
 
-    connectionCheck(transactionId, node, client);
+    connectionCheck(transactionId, node, client, dryRun);
 
     res.status(200).json({
         transactionId: transactionId
