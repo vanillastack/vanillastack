@@ -46,8 +46,7 @@ const swaggerOptions = {
                 Node: {
                     required: [
                         "host",
-                        "username",
-                        "ssh_key"
+                        "user"
                     ],
                     type: "object",
                     properties: {
@@ -55,7 +54,7 @@ const swaggerOptions = {
                             type: "string",
                             example: "domain.io"
                         },
-                        username: {
+                        user: {
                             type: "string",
                             example: "root"
                         }

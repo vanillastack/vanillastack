@@ -115,93 +115,109 @@ const connectionCheck = function (transactionId, node, wsClient, dryRun) {
         transactionId: transactionId,
         payload: ''
     }
-
-    const dir = createDir(`/tmp/${wsClient.uuid}`);
+    // Send init msg through ws
     sendMessage(wsMsg, wsClient);
-
-    fs.writeFileSync(`${dir}/private.key`, wsClient.privateKey, function (err, file) {
-        if (err) throw err;
-        console.log('saved file', file);
-    });
-
-    const hostsYaml = {
-        all: {
-            hosts: {
-                test_node: {
-                    ansible_ssh_host: node.host,
-                    ansible_ssh_private_key_file: `${dir}/private.key`
+    const dir = `/tmp/${wsClient.uuid}`;
+    try {
+        fs.mkdirSync(dir, {recursive: true});
+        fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey);
+        const hostsYaml = {
+            all: {
+                hosts: {
+                    test_node: {
+                        ansible_ssh_host: node.host,
+                        ansible_user: node.user,
+                        ansible_ssh_private_key_file: `${dir}/key.pem`
+                    }
                 }
             }
-        }
-    }
-
-    writeYaml(`${dir}/hosts.yml`, hostsYaml);
-
-    if (!dryRun) {
-        const spawnOptions = {
-            cwd: dir,
-            env: null,
-            detached: false
         };
+        fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
 
-        const ans = proc.spawn(
-            'ansible',
-            ['all', '-i', 'hosts.yml', '-u', node.user, '-m ping'],
-            spawnOptions
-        );
+        // Exec ansible connection test
+        if (!dryRun) {
+            const spawnOptions = {
+                cwd: dir,
+                env: null,
+                detached: false
+            };
 
-        ans.stdout.on('data', stdout => {
-            console.log(stdout.toString());
-            wsMsg.event = 'EXECUTION';
-            wsMsg.payload = stdout.toString();
-            sendMessage(wsMsg, wsClient);
-        });
-        ans.stderr.on('data', stderr => {
-            console.log(stderr.toString());
-            wsMsg.event = 'EXECUTION';
-            wsMsg.payload = stderr.toString();
-            sendMessage(wsMsg, wsClient);
-        });
+            const ans = proc.spawn(
+                'ansible',
+                ['all', '-i', 'hosts.yml', '-m ping'],
+                spawnOptions
+            );
 
-        ans.on('close', code => {
-            console.log(`${wsMsg.transactionId}: Return Code: ${code}`);
-            wsMsg.event = 'DONE';
-            wsMsg.payload = 'Execution completed';
-            sendMessage(wsMsg, wsClient);
-        });
+            ans.stdout.on('data', stdout => {
+                console.log(stdout.toString());
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = stdout.toString();
+                sendMessage(wsMsg, wsClient);
+            });
+            ans.stderr.on('data', stderr => {
+                console.log(stderr.toString());
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = stderr.toString();
+                sendMessage(wsMsg, wsClient);
+            });
+
+            ans.on('close', code => {
+                console.log(`${wsMsg.transactionId}: Return Code: ${code}`);
+                wsMsg.event = 'DONE';
+                wsMsg.payload = 'Execution completed';
+                sendMessage(wsMsg, wsClient);
+            });
+        } else {
+            console.log(`${transactionId} Connection check running in dry-run-mode continuing with cleanup`);
+        }
+    } catch (e) {
+        console.log(`Something went wrong: ${e}`);
+        wsMsg.event = 'DONE';
+        wsMsg.payload = '-1';
+        sendMessage(wsMsg, wsClient);
+    } finally {
+        // Cleanup
+        try {
+            // fs.unlinkSync(`${dir}/key.pem`);
+            // fs.unlinkSync(`${dir}/hosts.yml`);
+            fs.rmdirSync(dir, {recursive: true});
+            console.log(`${transactionId} Connection check and cleanup completed`);
+        } catch (e) {
+            console.log('Cleaning up gone wrong: ', e);
+        }
     }
 };
 
-const createDir = function (path) {
-    try {
-        return fs.mkdirSync(path, {recursive: true});
-    } catch (e) {
-        console.error('Something went wrong: ', e);
-    }
-}
+// const createDir = function (path) {
+//     try {
+//         return fs.mkdirSync(path, {recursive: true});
+//     } catch (e) {
+//         console.error('Something went wrong: ', e);
+//     }
+// }
+//
+// const writeFile = function (location, data) {
+//     try {
+//         // const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')));
+//         fs.writeFileSync(location, data, function (err, file) {
+//             if (err) throw err;
+//             return file;
+//         })
+//     } catch (e) {
+//         console.log(e);
+//     }
+// }
+//
+// const writeYaml = function (location, data) {
+//     try {
+//         // const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')));
+//         fs.writeFileSync(location, yaml.safeDump(data), function (err, file) {
+//             if (err) throw err;
+//             return file;
+//         })
+//     } catch (e) {
+//         console.log(e);
+//     }
+// }
 
-const writeFile = function (location, data) {
-    try {
-        // const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')));
-        fs.writeFileSync(location, data, function (err, file) {
-            if (err) throw err;
-            return file;
-        })
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-const writeYaml = function (location, data) {
-    try {
-        // const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')));
-        fs.writeFileSync(location, yaml.safeDump(data), function (err, file) {
-            if (err) throw err;
-            return file;
-        })
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck, writeYaml};
+module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck};
