@@ -1,0 +1,77 @@
+all:
+  master:
+    hosts:
+      vanilla-master-1 ansible_host=135.181.48.21 ansible_user=debian
+      vanilla-master-2 ansible_host=135.181.48.22 ansible_user=debian
+      vanilla-master-3 ansible_host=135.181.48.23 ansible_user=debian
+  worker:
+    hosts:
+      vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
+      vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
+      vanilla-worker-3 ansible_host=135.181.48.26 ansible_user=debian
+  storage:
+    hosts:
+      vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
+      vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
+      vanilla-worker-3 ansible_host=135.181.48.26 ansible_user=debian
+  compute:
+    hosts:
+      vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
+      vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
+  kube_cluster:
+    children:
+      master:
+      worker:
+  haproxy:
+    children:
+      master:
+certmanager:
+  enabled: true
+global:
+  registry: harbor.cloudical.net
+ingress:
+  enabled: true
+letsEncrypt:
+  # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
+  issuerName: "letsencrypt-staging"
+  issuerEmail: "testing@test.vanillastack.cloudical.net"
+kubernetes:
+  loadBalancer:
+    virtualIP: 135.181.48.19
+    fqdn: test.vanillastack.cloudical.net
+  clusterName: kube
+cloudfoundry:
+  enabled: false
+  storageclass: rook-ceph-block
+stratos:
+  enabled: true
+  adminpassword: 4JOA4l8DK7Sr
+openstack:
+  enabled: false
+  publicDomain: "test.vanillastack.cloudical.net"
+  publicProto: "http"
+  region: RegionOne
+  # releases available:
+  # - train
+  # - ussuri (not tested)
+  release: "stein"
+  tls:
+    enabled: true
+    useCertManager: true
+    letsEncrypt:
+      enabled: true
+  octavia:
+    enabled: false
+rook:
+  enabled: true
+    dashboard:
+      enabled: false
+      ssl: true
+    monitoring:
+      enabled: false
+    storage:
+      useAllNodes: true
+      useAllDevices: true
+  storageclass:
+    enabled: true
+    name: rook-ceph-block
