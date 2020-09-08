@@ -9,15 +9,18 @@ all:
       vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
       vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
       vanilla-worker-3 ansible_host=135.181.48.26 ansible_user=debian
+  #    rook
   storage:
     hosts:
       vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
       vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
       vanilla-worker-3 ansible_host=135.181.48.26 ansible_user=debian
+  #    openstack
   compute:
     hosts:
       vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
       vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
+  #
   haproxy:
     children:
       master:
