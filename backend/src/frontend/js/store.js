@@ -52,6 +52,29 @@ const navigation = {
   }
 }
 
+const cloudfoundry = {
+  state: () => ({
+    domain: '',
+    stratos: true,
+    loadBalancerIp: '',
+    loadBalancerKind: 'internal',
+    clusterName: '',
+    issuerName: '',
+    emailDeployer: ''
+  }),
+
+  mutations: {
+    [Constants.Store_CloudFoundryUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_CloudFoundryUpdatedData, state);
+    },
+  }
+}
+
 // OpenStack Module
 const openstack = {
   state: () => ({
@@ -80,12 +103,18 @@ const openstack = {
     mistral_endpoint: '',
     mistral:  true,
     neutron_endpoint: '',
-    neutron_interface_tunnel: '',
-    neutron_interface_external: '',
+    neutron_interface_tunnel: 'eth1',
+    neutron_interface_external: 'eth2',
     neutron_l3ha: false,
     neutron_overlayNetworkType: 'VXLAN',
     neutron_maxAgentsPerRouter: 2,
     neutron_dhcpAgents: 2,
+    nova_cpuMode: 'host-model',
+    nova_virtType: 'Kvm',
+    nova_placement_endpoint: '',
+    nova_novnc_endpoint: '',
+    nova: true,
+    nova_endpoint: '',
     senlin_endpoint: '',
     senlin:  true,
   }),
@@ -97,7 +126,7 @@ const openstack = {
           state[key] = data[key]
       }
 
-      EventBus.$emit(Constants.Event_OpenStackUpdatedData, state.data);
+      EventBus.$emit(Constants.Event_OpenStackUpdatedData, state);
     },
   }
 }
@@ -106,7 +135,8 @@ const openstack = {
 const installer = {
 
   modules: {
-    openstack: openstack
+    openstack: openstack,
+    cloudfoundry: cloudfoundry
   },
 
   state: () => ({
