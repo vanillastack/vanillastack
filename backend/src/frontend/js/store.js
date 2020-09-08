@@ -52,6 +52,29 @@ const navigation = {
   }
 }
 
+const cloudfoundry = {
+  state: () => ({
+    domain: '',
+    stratos: true,
+    loadBalancerIp: '',
+    loadBalancerKind: 'internal',
+    clusterName: '',
+    issuerName: '',
+    emailDeployer: ''
+  }),
+
+  mutations: {
+    [Constants.Store_CloudFoundryUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_CloudFoundryUpdatedData, state);
+    },
+  }
+}
+
 // OpenStack Module
 const openstack = {
   state: () => ({
@@ -103,7 +126,7 @@ const openstack = {
           state[key] = data[key]
       }
 
-      EventBus.$emit(Constants.Event_OpenStackUpdatedData, state.data);
+      EventBus.$emit(Constants.Event_OpenStackUpdatedData, state);
     },
   }
 }
@@ -112,7 +135,8 @@ const openstack = {
 const installer = {
 
   modules: {
-    openstack: openstack
+    openstack: openstack,
+    cloudfoundry: cloudfoundry
   },
 
   state: () => ({
