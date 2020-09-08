@@ -19,6 +19,31 @@ kubernetes:
     fqdn: test.vanillastack.cloudical.net
   clusterName: kube
   resetCluster: false
+
 cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
+
+harbor:
+  enabled: true
+  namespace: harbor
+  bucket:
+    name: harbor-bkt
+    maxSize: "25G"
+    storageClass: "cephobjectn1"
+
+postgresOperator:
+  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
+  enabled: true
+  chartName: "postgres-operator"
+  chartVersion: "1.5.0"
+  namespace: "postgres-operator"
+  backup:
+    enabled: false
+    s3:
+      accessKey: nul
+      secretKey: nul
+      regionName: nul
+      endpoint: nul
+      bucketName: nul
+    cron: "30 00 * * *"

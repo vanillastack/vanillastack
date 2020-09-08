@@ -23,6 +23,7 @@ run_playbook:
   interruptible: true
   script: 
     - apt update && apt install -y git ansible ssh-client
+    - ansible-galaxy collection install community.kubernetes
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack/ansible
