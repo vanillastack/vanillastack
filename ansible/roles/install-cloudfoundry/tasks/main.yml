@@ -1,21 +1,4 @@
 ---
-- name: copy files to cluster folder
-  copy:
-    src:  "{{ item }}"   
-    dest: "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/{{ item }}"
-    owner: "{{ ansible_env.USER }}"
-  loop: 
-    - cf-operator.tgz
-    - kubecf_release.tgz
-
-- name: copy files to cluster folder
-  template:
-    src:  "{{ item }}.j2"   
-    dest: "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/{{ item }}"
-    owner: "{{ ansible_env.USER }}"
-  loop: 
-    - kubecf-values.yaml
-
 - name: helm installation kubecf
   block:
   - name: Increment the retry count
@@ -33,17 +16,6 @@
       - "kubecf"
       - "cf-operator"
       - "eirini"
-
-  - name: create necessary namespaces
-    k8s:
-      name: "{{ item }}"
-      api_version: v1
-      kind: Namespace
-      state: present
-      wait: true
-    loop:
-    - "cf-operator"
-    - "console"
 
   - name: install CF repository
     community.kubernetes.helm_repository:
@@ -70,12 +42,12 @@
       values: "{{ lookup('template', 'kubecf-values.yaml.j2') | from_yaml }}"  
     register: kubecf_install
 
-      #  rescue:
-      #    - fail: 
-      #        msg: Maximum retries exceeded
-      #      when: retry_count | int == 5 
-      #
-      #    - include_tasks: main.yml
+  rescue:
+    - fail: 
+        msg: Maximum retries exceeded
+      when: retry_count | int == 5 
+
+    - include_tasks: main.yml
 
 - name: wait for db to come up
   command: kubectl wait --namespace=kubecf --for=condition=ready pods -l app=database --timeout=10s
