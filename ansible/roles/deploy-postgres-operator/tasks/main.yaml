@@ -12,6 +12,7 @@
     chart_version: "{{postgresOperator.chartVersion}}"
     create_namespace: yes
     values: "{{ lookup('template', 'operator.yaml.j2') | from_yaml }}"
+<<<<<<< HEAD
 
 - name: create operator configs
   template:
@@ -24,3 +25,5 @@
     state: present
     wait: true
 
+=======
+>>>>>>> 73e716e... ADD: initial postgres-operator deployment
