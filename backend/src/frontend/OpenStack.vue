@@ -516,7 +516,87 @@
                     </div>
                 </div>
             </div>
-            <!-- /neutron -->
+            <!-- /Neutron -->
+
+            <!-- Nova -->
+            <div class="card margin-1em">
+                <div class="card-header" id="novaHeading">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#novaData" 
+                            aria-expanded="false" aria-controls="novaData">
+                            Nova
+                        </button>
+                    </h5>
+                </div>
+
+                <!-- Nova-Data -->
+                <div id="novaData" class="collapse" aria-labelledby="novaHeading" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>Public Endpoint API</strong></p>
+                                <input class="form-control" placeholder="nova.openstack.my.cluster" 
+                                    name="nova_endpoint" v-model="nova_endpoint" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                            <div class="col">
+                                <div class="custom-control custom-switch padding-top-3em">
+                                    <input class="custom-control-input" id="nova" name="nova" disabled="disabled" type="checkbox" 
+                                        v-model="nova" 
+                                        v-on:click="triggerValidation()">
+                                    <label class="custom-control-label" for="nova">
+                                        Nova Computing
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>Public Endpoint NoVNC</strong></p>
+                                <input class="form-control" placeholder="novnc.openstack.my.cluster" 
+                                    name="nova_novnc_endpoint" v-model="nova_novnc_endpoint" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                            <div class="col-3">
+                                <p><strong>Public Endpoint Placement API</strong></p>
+                                <input class="form-control" placeholder="placement.openstack.my.cluster" 
+                                    name="nova_placement_endpoint" v-model="nova_placement_endpoint" 
+                                        v-on:blur="triggerValidation()" 
+                                        required="required"  />
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-3">
+                                <p><strong>Virtualization Type</strong></p>
+                                
+                                <select class="custom-select"
+                                    name="nova_virtType" v-model="nova_virtType" 
+                                    v-on:blur="triggerValidation()"
+                                    v-on:change="triggerValidation()">
+                                    <option value="Kvm">KVM (for bare metal)</option>
+                                    <option value="Qemu">QEMU (for virtual machines)</option>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <p><strong>CPU Mode</strong></p>
+                                <select class="custom-select"
+                                    name="nova_cpuMode" v-model="nova_cpuMode" 
+                                        v-on:blur="triggerValidation()"
+                                        v-on:change="triggerValidation()"
+                                        :disabled="nova_virtType == 'Qemu'">
+                                    <option value="host-passthrough">host-passthrough</option>
+                                    <option value="host-model">host-model</option>
+                                    <option value="none">none</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /nova -->
 
             <!-- Senlin -->
             <div class="card margin-1em">
@@ -603,12 +683,28 @@ export default {
             neutron_l3ha: this.$store.state.installer.openstack.neutron_l3ha,
             neutron_overlayNetworkType: this.$store.state.installer.openstack.neutron_overlayNetworkType,
             neutron_maxAgentsPerRouter: this.$store.state.installer.openstack.neutron_maxAgentsPerRouter,
-            neutron_dhcpAgents: this.$store.state.installer.openstack.neutron_dhcpAgents
+            neutron_dhcpAgents: this.$store.state.installer.openstack.neutron_dhcpAgents,
+            nova_cpuMode: this.$store.state.installer.openstack.nova_cpuMode,
+            nova_virtType: this.$store.state.installer.openstack.nova_virtType,
+            nova_placement_endpoint: this.$store.state.installer.openstack.nova_placement_endpoint,
+            nova_novnc_endpoint: this.$store.state.installer.openstack.nova_novnc_endpoint,
+            nova: this.$store.state.installer.openstack.nova,
+            nova_endpoint: this.$store.state.installer.openstack.nova_endpoint,
+            prev_cpuMode: ''
         }
     },
 
     methods: {
         triggerValidation: function() {
+
+            // Check whether VirtType quemu is selected and adjust the CPU-modes accordingly
+            if(this.nova_virtType == 'Qemu') {
+                this.prev_cpuMode = this.nova_cpuMode
+                this.nova_cpuMode = 'none'
+            } else if(this.nova_cpuMode == 'none') {
+                this.nova_cpuMode = this.prev_cpuMode == '' ? 'host-model' : this.prev_cpuMode
+            }
+
             var isValid = this.domain != '' && this.mariadb_size >= 10 && this.rabbitmq_size >= 10 &&
                             ((this.barbican && this.barbican_endpoint.length > 0) || !this.barbican) &&
                             ((this.heat && this.heat_endpoint.length > 0) || !this.heat) &&
@@ -616,6 +712,7 @@ export default {
                             ((this.keystone && this.keystone_endpoint.length > 0) || !this.keystone) &&
                             ((this.mistral && this.mistral_endpoint.length > 0) || !this.mistral) &&
                             ((this.senlin && this.senlin_endpoint.length > 0) || !this.senlin) &&
+                            this.nova_placement_endpoint.length > 0 && this.nova_novnc_endpoint.length > 0 && this.nova_endpoint.length > 0 &&
                             this.neutron_endpoint.length > 0 && this.neutron_interface_tunnel.length > 0 && this.neutron_interface_external.length > 0 &&
                             this.glance_endpoint != '' 
 
@@ -630,56 +727,70 @@ export default {
     },
 
     mounted : function () {
-        // Set the OpenStack-Domain
+        // Set the OpenStack-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.domain.length == 0)
             this.domain = 'openstack.' + this.$store.state.installer.clusterfqdn
-
         
-        // Set the Barbican-Domain
+        // Set the Barbican-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.barbican_endpoint.length == 0)
             this.barbican_endpoint = 'barbican.' + this.domain
         
-        // Set the Cinder-Domain
+        // Set the Cinder-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.cinder_endpoint.length == 0)
             this.cinder_endpoint = 'cinder.' + this.domain
         
-        // Set the Glance-Domain
+        // Set the Glance-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.glance_endpoint.length == 0)
             this.glance_endpoint = 'glance.' + this.domain
         
-        // Set the Heat-Domain
+        // Set the Heat-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.heat_endpoint.length == 0)
             this.heat_endpoint = 'heat.' + this.domain
         
-        // Set the Horizon-Domain
+        // Set the Horizon-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.horizon_endpoint.length == 0)
             this.horizon_endpoint = 'horizon.' + this.domain
         
-        // Set the Senlin-Domain
+        // Set the Senlin-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.senlin_endpoint.length == 0)
             this.senlin_endpoint = 'senlin.' + this.domain
         
-        // Set the Mistral-Domain
+        // Set the Mistral-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.mistral_endpoint.length == 0)
             this.mistral_endpoint = 'mistral.' + this.domain
         
-        // Set the Keystone-Domain
+        // Set the Keystone-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.keystone_endpoint.length == 0)
             this.keystone_endpoint = 'keystone.' + this.domain
         
-        // Set the Neutron-Domain
+        // Set the Neutron-Endpoint
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.openstack.keystone_endpoint.length == 0)
             this.neutron_endpoint = 'neutron.' + this.domain
+        
+        // Set the Nova-Endpoint
+        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+            this.$store.state.installer.openstack.nova_endpoint.length == 0)
+            this.nova_endpoint = 'nova.' + this.domain
+        
+        // Set the NoVNC-Endpoint
+        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+            this.$store.state.installer.openstack.nova_novnc_endpoint.length == 0)
+            this.nova_novnc_endpoint = 'novnc.' + this.domain
+        
+        // Set the PlacementAPI-Endpoint
+        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+            this.$store.state.installer.openstack.nova_placement_endpoint.length == 0)
+            this.nova_placement_endpoint = 'placement.' + this.domain
 
         // Notify about being loaded
         this.triggerValidation()
