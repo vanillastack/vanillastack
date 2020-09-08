@@ -1,0 +1,46 @@
+# affinity: {}
+dbcreation:
+  image:
+    pullPolicy: "IfNotPresent"
+    repository: "bitnami/postgresql"
+    tag: "11.7.0-debian-10-r9"
+# fullnameOverridestring: ""
+guacamole:
+  image:
+    pullPolicy: "IfNotPresent"
+    repository: "guacamole/guacamole"
+    tag: "{{ .Chart.AppVersion }}"
+guacd:
+  image:
+    pullPolicy: "IfNotPresent"
+    repository: "guacamole/guacd"
+    tag: "{{ .Chart.AppVersion }}"
+# imagePullSecretslist: []
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    kubernetes.io/tls-acme: "true"
+  enabled: true
+  host: "guacamole.test.vanillastack.cloudical.net"
+  # tls: []
+# nameOverride: ""
+# nodeSelector: {}
+# podSecurityContext: {}
+postgres:
+  database: "guacamole"
+  hostname: "postgresql"
+  password: "password"
+  port: "5432"
+  user: "guacamole"
+replicaCount: 1
+# resources: {}
+# securityContext: {}
+service:
+  port: 80
+  type: "ClusterIP"
+serviceAccount:
+  create: true
+  # name: nil
+# tolerations: []
