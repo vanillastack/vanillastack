@@ -17,6 +17,7 @@
     create_namespace: true
     values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
     wait: true
+<<<<<<< HEAD
 =======
 # tasks file for install-stratos
 - name: create webui namespace
@@ -41,3 +42,5 @@
     values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
 
 >>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
+=======
+>>>>>>> 7c617fb... Refactoring
