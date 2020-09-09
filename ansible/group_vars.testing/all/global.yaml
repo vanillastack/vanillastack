@@ -24,14 +24,6 @@ cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
 
-harbor:
-  enabled: true
-  namespace: harbor
-  bucket:
-    name: harbor-bkt
-    maxSize: "25G"
-    storageClass: "cephobjectn1"
-
 postgresOperator:
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
@@ -47,3 +39,63 @@ postgresOperator:
       endpoint: nul
       bucketName: nul
     cron: "30 00 * * *"
+
+harbor:
+  enabled: true
+  chartVersion: 1.4.0
+  namespace: harbor
+  ingress:
+    coreDomain: "harbor.test.vanillastack.cloudical.net"
+    notaryDomain: "notary.test.vanillastack.cloudical.net"
+  tls:
+    enabled: true
+  portal:
+    replicas: 1
+  core:
+    replicas: 1
+  jobservice:
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 15Gi
+  registry:
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 10Gi
+  chartmuseum:
+    enabled: true
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 5Gi
+  clair:
+    enabled: true
+    replicas: 1
+  trivy:
+    enabled: true
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 5Gi
+  notary:
+    enabled: true
+    replicas: 1
+  auth:
+    password: 02ZVPokFHXPHfSfkfQGCWIfmJ
+    # secret lenght must be 16
+    secret: p1zX2AazSCwtUfmv
+  redis:
+    chartVersion: 10.8.1
+    password: zP7GPoCnFNa6XiVnsLVJ3jJgw
+    persistence:
+      storageClass: "rook-ceph-block"
+      size: 8Gi
+  postgres:
+    size: "20Gi"
+    replicas: 2
+    version: "12"
+    maxConnections: 400
+    backup:
+      enabled: false
+      cronjob: "30 */2 * * *"
