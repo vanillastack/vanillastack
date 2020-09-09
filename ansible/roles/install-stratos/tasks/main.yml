@@ -1,0 +1,14 @@
+---
+- name: add stratos repository
+  community.kubernetes.helm_repository:
+    repo_url: https://cloudfoundry.github.io/stratos
+    name: stratos
+
+- name: Install stratos
+  community.kubernetes.helm:
+    chart_ref: stratos/console
+    name: console
+    release_namespace: console
+    create_namespace: true
+    values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
+    wait: true

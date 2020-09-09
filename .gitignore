@@ -1,2 +1,17 @@
 group_vars
 hosts
+*.retry
+*.log
+*[_.]local[_.]*
+.idea
+*.kate-swp
+.*.swp
+*~
+tests/junit_xml/*.xml
+# macbook auto generated file
+*[_.]DS_Store
+# auto generated python files after compilation
+*[_.]pyc
+*[_.]pyo
+*[_/]__pycache__/*
+.vscode/settings.json

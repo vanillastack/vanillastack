@@ -4,7 +4,7 @@
     file: /tmp/cluster_vars.yml
   when: certificate_key is not defined or certificate_key|length <1
 
-- name: Init Cluster if not existant
+- name: Init Cluster
   command: > 
     kubeadm init --service-cidr {{ service_cidr }} \
                  --pod-network-cidr {{ pod_network_cidr }} \

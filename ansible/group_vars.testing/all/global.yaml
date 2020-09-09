@@ -3,6 +3,7 @@ global:
   registry: harbor.cloudical.net
 ingress:
   namespace: nginx-ingress
+  enabled: true
 letsEncrypt:
   # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
   issuerName: "letsencrypt-staging"
@@ -18,7 +19,9 @@ kubernetes:
     virtualIP: 135.181.48.19
     fqdn: test.vanillastack.cloudical.net
   clusterName: kube
-  resetCluster: false
 cloudfoundry:
-  enabled: true
+  enabled: false
   storageclass: rook-ceph-block
+stratos:
+  enabled: true
+  adminpassword: 4JOA4l8DK7Sr
