@@ -12,7 +12,7 @@ router.use('/info', infoRouter);
 router.use('/api-docs', docuRouter);
 
 router.get('/', function (req, res) {
-    res.send('Hello World');
+    res.redirect('/api-docs');
 });
 
 module.exports = router;

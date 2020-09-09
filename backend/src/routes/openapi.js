@@ -5,7 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 
 // Swagger API Documentation
-const port = process.env.NGINX_PORT;
+const port = process.env.PORT;
 const ip = process.env.IP;
 
 const swaggerOptions = {

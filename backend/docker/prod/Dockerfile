@@ -2,7 +2,8 @@ FROM node:lts-buster-slim
 MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
 
 ## Setting up Env
-ENV PORT=8080
+ENV PORT=3000
+ENV NGINX_PORT=8080
 ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer

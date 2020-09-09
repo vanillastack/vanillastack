@@ -6,17 +6,17 @@ echo "Starting backend"
 npm run dockerdetached -D
 status=$?
 if [ $status -ne 0 ]; then
-  echo "Failed to start backend: $status"
+  echo "Failed to start my_first_process: $status"
   exit $status
 fi
 
 # Prep and Start nginx
 echo "Starting nginx"
-envsubst '${PORT}' </etc/nginx/templates/vsnginx.conf.template >/etc/nginx/conf.d/vsnginx.conf
+envsubst '${NGINX_PORT}' </etc/nginx/templates/vsnginx.conf.template >/etc/nginx/conf.d/vsnginx.conf
 /etc/init.d/nginx restart -D
 status=$?
 if [ $status -ne 0 ]; then
-  echo "Failed to start nginx: $status"
+  echo "Failed to start my_second_process: $status"
   exit $status
 fi
 
