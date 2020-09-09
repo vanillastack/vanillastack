@@ -10,9 +10,9 @@ Got to VanillaStack/backend and execute docker build and run command
 ----
 cd VanillaStack/backend
 docker build -f docker/dev/Dockerfile \
-  -t vsbackend && \
+  -t vsbackend . && \
   docker run \
-  --name vsbackend \
+  --name vsbackend -d \
   -p 8080:8080 \
   vsbackend
 ----
