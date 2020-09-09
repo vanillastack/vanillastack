@@ -27,7 +27,6 @@ cloudfoundry:
 stratos:
   enabled: true
   adminpassword: 4JOA4l8DK7Sr
-<<<<<<< HEAD
 guacamole:
   enabled: true
   namespace: guacamole
@@ -39,8 +38,6 @@ guacamole:
     version: "12"
     replicas: "2"
     size: "20Gi"
-=======
-
 postgresOperator:
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
@@ -116,4 +113,3 @@ harbor:
     backup:
       enabled: false
       cronjob: "30 */2 * * *"
->>>>>>> 564685e0435836d56a8ce76ff4824788795ffe1f
