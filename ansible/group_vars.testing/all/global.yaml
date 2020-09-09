@@ -18,7 +18,6 @@ kubernetes:
     virtualIP: 135.181.48.19
     fqdn: test.vanillastack.cloudical.net
   clusterName: kube
-<<<<<<< HEAD
 cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
@@ -37,13 +36,6 @@ guacamole:
     version: "12"
     replicas: "2"
     size: "20Gi"
-=======
-  resetCluster: false
-
-cloudfoundry:
-  enabled: true
-  storageclass: rook-ceph-block
-
 postgresOperator:
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
