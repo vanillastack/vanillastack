@@ -3,12 +3,5 @@
   hosts: master[0]
   gather_facts: true
   roles:
-<<<<<<< HEAD
     - role: install-guacamole
       when: guacamole.enabled
-=======
-    - role: install-cloudfoundry
-    - role: install-stratos
-      when: stratos.enabled
-
->>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module

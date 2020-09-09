@@ -3,15 +3,7 @@ global:
   registry: harbor.cloudical.net
 ingress:
   namespace: nginx-ingress
-<<<<<<< HEAD
-<<<<<<< HEAD
   enabled: true
-=======
-  enable: true
->>>>>>> 0735615... fixxed missing variable
-=======
-  enabled: true
->>>>>>> 046b4e8... fixxed missing variable
 letsEncrypt:
   # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
   issuerName: "letsencrypt-staging"
@@ -27,7 +19,7 @@ kubernetes:
     fqdn: test.vanillastack.cloudical.net
   clusterName: kube
 cloudfoundry:
-  enabled: false
+  enabled: true
   storageclass: rook-ceph-block
 stratos:
   enabled: true

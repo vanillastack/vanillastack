@@ -17,7 +17,6 @@
       - "cf-operator"
       - "eirini"
 
-<<<<<<< HEAD
   - name: install CF repository
     community.kubernetes.helm_repository:
       name: cloudfoundry
@@ -34,31 +33,6 @@
             name: kubecf
       create_namespace: true
       wait: true
-<<<<<<< HEAD
-=======
-    loop:
-    - "cf-operator"
-    - "console"
-
-=======
->>>>>>> 7c617fb... Refactoring
-  - name: install CF repository
-    community.kubernetes.helm_repository:
-      name: cloudfoundry
-      repo_url: https://harbor.cloudical.net/chartrepo/vanillastack-cloudfoundry
-        
-  - name: Deploy latest version of CloudFoundry
-    community.kubernetes.helm:
-      name: cf-operator
-      chart_ref: cloudfoundry/cf-operator
-      release_namespace: cf-operator
-      values: 
-        global:
-          singleNamespace:
-            name: kubecf
-      create_namespace: true
-      wait: true
->>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
 
   - name: install Kubecf
     community.kubernetes.helm:

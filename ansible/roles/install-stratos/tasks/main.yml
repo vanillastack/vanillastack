@@ -1,13 +1,8 @@
 ---
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
 - name: add stratos repository
   community.kubernetes.helm_repository:
     repo_url: https://cloudfoundry.github.io/stratos
     name: stratos
-<<<<<<< HEAD
 
 - name: Install stratos
   community.kubernetes.helm:
@@ -17,30 +12,4 @@
     create_namespace: true
     values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
     wait: true
-<<<<<<< HEAD
-=======
-# tasks file for install-stratos
-- name: create webui namespace
-  k8s:
-    name: console
-    api_version: v1
-    kind: Namespace
-    state: present
-=======
->>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
 
-- name: Install stratos
-  community.kubernetes.helm:
-    chart_ref: stratos/console
-    name: console
-<<<<<<< HEAD
-    namespace: console
->>>>>>> f30a29c... added stratos console
-=======
-    release_namespace: console
-    create_namespace: true
-    values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
-
->>>>>>> 628baff... added helm collection and migratest stratos and cf to helm module
-=======
->>>>>>> 7c617fb... Refactoring

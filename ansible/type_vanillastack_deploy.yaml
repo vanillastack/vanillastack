@@ -147,7 +147,6 @@
     action: kibana_helm
   - role: install-efk
     action: fluentd_deploy
-<<<<<<< HEAD
 
 - name: Deploy Postgres Operator
   hosts: master[0]
@@ -169,5 +168,3 @@
   roles:
     - role: deploy-harbor
       when: harbor.enabled
-=======
->>>>>>> 6863b12... EFK to vanillastack playbook
