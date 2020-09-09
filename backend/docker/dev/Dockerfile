@@ -17,7 +17,8 @@ RUN apt update && apt install -y \
     echo "deb http://nginx.org/packages/debian `lsb_release -cs` nginx" \
         | tee /etc/apt/sources.list.d/nginx.list && \
     curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - && \
-    apt update && apt install nginx -y
+    apt update && apt install nginx -y && \
+    ansible-galaxy collection install community.kubernetes
 
 ## Copy entrypoint.sh
 COPY ./docker/dev/entrypoint.sh /usr/workdir/entrypoint.sh
