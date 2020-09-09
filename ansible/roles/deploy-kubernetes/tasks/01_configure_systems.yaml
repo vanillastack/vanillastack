@@ -66,6 +66,7 @@
       - needrestart
       - helm
       - cf-cli
+      - vim
     update_cache: yes
   retries: 3
   delay: 1
