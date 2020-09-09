@@ -63,19 +63,33 @@ const swaggerOptions = {
                 Nodes: {
                     type: "array",
                     items: {
-                        required: [
-                            "node",
-                            "role"
-                        ],
-                        properties: {
-                            node: {
-                                $ref: "#/components/schemas/Node"
-                            },
-                            role: {
-                                type: "string",
-                                example: "m"
-                            }
+                        $ref: "#/components/schemas/Node",
+                    }
+                },
+                Role: {
+                    type: "object",
+                    properties: {
+                        role: {
+                            type: "string",
+                            example: "m"
                         }
+                    }
+                },
+                NodeWithRole: {
+                    type: "object",
+                    allOf: [
+                        {
+                            $ref: '#/components/schemas/Node'
+                        },
+                        {
+                            $ref: '#/components/schemas/Role'
+                        }
+                    ]
+                },
+                NodesWithRole: {
+                    type: "array",
+                    items: {
+                        $ref: '#/components/schemas/NodeWithRole'
                     }
                 },
                 InternalLB: {
@@ -180,7 +194,7 @@ const swaggerOptions = {
                     type: "object",
                     required: [
                         "uuid",
-                        "node"
+                        "nodes"
                     ],
                     properties: {
                         uuid: {
@@ -191,8 +205,8 @@ const swaggerOptions = {
                             type: "boolean",
                             example: "true"
                         },
-                        node: {
-                            $ref: "#/components/schemas/Node"
+                        nodes: {
+                            $ref: "#/components/schemas/Nodes"
                         }
                     }
                 },
@@ -209,7 +223,7 @@ const swaggerOptions = {
                             $ref: "#/components/schemas/uuid"
                         },
                         nodes: {
-                            $ref: "#/components/schemas/Nodes"
+                            $ref: "#/components/schemas/NodesWithRole"
                         },
                         clusterName: {
                             type: "string",

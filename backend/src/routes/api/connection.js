@@ -37,10 +37,19 @@ router.post('/', function (req, res) {
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry;
     const node = req.body.node;
-    if (!client && !node) {
-        console.log("Not Found");
+    if (!client) {
         res.status(400).json({
             message: 'uuid invalid'
+        });
+        return;
+    } else if (!node.user) {
+        res.status(400).json({
+            message: 'user must be specified'
+        });
+        return;
+    } else if (!node.host) {
+        res.status(400).json({
+            message: 'host must be specified'
         });
         return;
     }
