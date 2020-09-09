@@ -127,3 +127,16 @@
     - role: install-cloudfoundry
       when: cloudfoundry.enabled
 
+- name: Deploy Postgres Operator
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: deploy-postgres-operator
+      when: postgresOperator.enabled
+
+- name: Deploy Harbor
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: deploy-harbor
+      when: harbor.enabled
