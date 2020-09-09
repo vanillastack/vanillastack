@@ -3,6 +3,7 @@ image: "ubuntu:latest"
 stages:
   - redeploy
   - run_playbook
+  - build_liveimage
 
 redeploy_debian:
   only:
@@ -29,3 +30,12 @@ run_playbook:
     - cd vanillastack/ansible
     - mv group_vars.testing group_vars
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+
+
+build_liveimage:
+  only:
+    refs:
+      - live-image
+  stage: build_liveimage
+  script:
+    - cd live_image && docker build . -t vanilla_installer
