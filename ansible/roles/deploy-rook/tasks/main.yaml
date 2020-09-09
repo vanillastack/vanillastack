@@ -7,7 +7,11 @@
     - { name: operator, wait: true, delay: 10}
     - { name: cluster, wait: true, delay: 10}
     - { name: toolbox, wait: true, delay: 0}
-    - { name: storageclass, wait: false, delay: 0}
+    - { name: objectStorage, wait: false, delay: 0}
+    - { name: filesystem, wait: false, delay: 0}
+    - { name: storageClassRBD, wait: false, delay: 0}
+    - { name: storageClassObject, wait: false, delay: 0}
+    - { name: storageClassFile, wait: false, delay: 0}
 
 - name: Delay for upcoming Rook
   wait_for:
