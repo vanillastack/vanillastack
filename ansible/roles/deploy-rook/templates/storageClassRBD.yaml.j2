@@ -1,12 +1,12 @@
 apiVersion: ceph.rook.io/v1
 kind: CephBlockPool
 metadata:
-  name: {{rook.storageclass.poolName}}
+  name: {{rook.storageClassRBD.poolName}}
   namespace: {{rook.namespace}}
 spec:
-  failureDomain: {{rook.storageclass.failureDomain}}
+  failureDomain: {{rook.storageClassRBD.failureDomain}}
   replicated:
-    size: {{rook.storageclass.replicaLevel}}
+    size: {{rook.storageClassRBD.replicaLevel}}
     # Disallow setting pool with replica 1, this could lead to data loss without recovery.
     # Make sure you're *ABSOLUTELY CERTAIN* that is what you want
     requireSafeReplicaSize: true
@@ -17,7 +17,7 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-   name: {{rook.storageclass.name}}
+   name: {{rook.storageClassRBD.name}}
 # Change "rook-ceph" provisioner prefix to match the operator namespace if needed
    annotations:
       "storageclass.kubernetes.io/is-default-class": "true"
@@ -33,7 +33,7 @@ parameters:
     # used for the metadata of the images.
     # The erasure coded pool must be set as the `dataPool` parameter below.
     #dataPool: ec-data-pool
-    pool: {{rook.storageclass.poolName}}
+    pool: {{rook.storageClassRBD.poolName}}
 
     # RBD image format. Defaults to "2".
     imageFormat: "2"

@@ -25,13 +25,32 @@ rook:
     storage:
       useAllNodes: true
       useAllDevices: true
-  storageclass:
+  storageClassRBD:
     enabled: true
     name: rook-ceph-block
     failureDomain: host
     poolName: replicapool
     replicaLevel: 3
+  storageClassObject:
+    enabled: false
+  storageClassFile:
+    enabled: false
   toolbox:
     enabled: true
     name: rook-ceph-tools
     image: rook/ceph:v1.4.1
+  objectStorage:
+    enabled: false
+    ingress:
+      domain: s3.test.vanillastack.cloudical.net
+      tls:
+        enabled: true
+        issuerName: "letsencrypt-staging"
+    name: cephobjectn1
+    failureDomain: host
+    replicaLevel: 2
+  filesystem:
+    enabled: false
+    name: cephfsn1
+    replicaLevel: 2
+    failureDomain: host
