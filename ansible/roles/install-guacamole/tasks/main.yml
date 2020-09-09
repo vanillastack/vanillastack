@@ -1,0 +1,53 @@
+---
+- name: install vanillastack base repository
+  community.kubernetes.helm_repository:
+    name: vanillastack
+    repo_url: "https://{{ global.registry }}/chartrepo/vanillastack"
+
+- name: create postgres-config
+  template:
+    src: postgres.yaml.j2
+    dest: /tmp/guacamole_postgres.yaml
+
+- name: Create Namespace
+  k8s:
+    state: present
+    kind: Namespace
+    name: "{{ guacamole.namespace }}"
+    api_version: v1
+
+- name: Create PostgreSQL
+  k8s:
+    src: /tmp/guacamole_postgres.yaml
+    state: present
+    wait: true
+
+- name: "wait until postgres pod is ready"
+  command: >
+    kubectl wait --namespace="{{ guacamole.namespace }}" --for=condition=ready \
+    pods -l cluster-name=guacamole-postgresql --timeout=10s
+  register: postgresReady
+  retries: 180
+  delay: 10
+  until: postgresReady.rc == 0  
+
+- name: "register postgres application password"   
+  shell: echo "$(kubectl get secret -n {{ guacamole.namespace }} -o json guacamole.{{guacamole.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d 
+  register: postgrespassword
+
+- debug:
+    msg: "{{ postgrespassword.stdout }}"
+
+- name: create values
+  template:
+    src: guacamole-values.yaml.j2
+    dest: /tmp/guacamole-values.yaml
+
+- name: install guacamole
+  community.kubernetes.helm:
+    name: guacamole
+    chart_ref: vanillastack/guacamole
+    release_namespace: guacamole
+    create_namespace: true
+    wait: true
+    values: "{{ lookup('template', 'guacamole-values.yaml.j2') | from_yaml }}"
