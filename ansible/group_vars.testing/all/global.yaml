@@ -18,12 +18,16 @@ kubernetes:
     virtualIP: 135.181.48.19
     fqdn: test.vanillastack.cloudical.net
   clusterName: kube
+  resetCluster: false
+
 cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
+
 stratos:
   enabled: true
   adminpassword: 4JOA4l8DK7Sr
+<<<<<<< HEAD
 guacamole:
   enabled: true
   namespace: guacamole
@@ -35,3 +39,81 @@ guacamole:
     version: "12"
     replicas: "2"
     size: "20Gi"
+=======
+
+postgresOperator:
+  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
+  enabled: true
+  chartName: "postgres-operator"
+  chartVersion: "1.5.0"
+  namespace: "postgres-operator"
+  backup:
+    enabled: false
+    s3:
+      accessKey: nul
+      secretKey: nul
+      regionName: nul
+      endpoint: nul
+      bucketName: nul
+    cron: "30 00 * * *"
+
+harbor:
+  enabled: true
+  chartVersion: 1.4.0
+  namespace: harbor
+  ingress:
+    coreDomain: "harbor.test.vanillastack.cloudical.net"
+    notaryDomain: "notary.test.vanillastack.cloudical.net"
+  tls:
+    enabled: true
+  portal:
+    replicas: 1
+  core:
+    replicas: 1
+  jobservice:
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 15Gi
+  registry:
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 10Gi
+  chartmuseum:
+    enabled: true
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 5Gi
+  clair:
+    enabled: true
+    replicas: 1
+  trivy:
+    enabled: true
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 5Gi
+  notary:
+    enabled: true
+    replicas: 1
+  auth:
+    password: 02ZVPokFHXPHfSfkfQGCWIfmJ
+    # secret lenght must be 16
+    secret: p1zX2AazSCwtUfmv
+  redis:
+    chartVersion: 10.8.1
+    password: zP7GPoCnFNa6XiVnsLVJ3jJgw
+    persistence:
+      storageClass: "rook-ceph-block"
+      size: 8Gi
+  postgres:
+    size: "20Gi"
+    replicas: 2
+    version: "12"
+    maxConnections: 400
+    backup:
+      enabled: false
+      cronjob: "30 */2 * * *"
+>>>>>>> 564685e0435836d56a8ce76ff4824788795ffe1f
