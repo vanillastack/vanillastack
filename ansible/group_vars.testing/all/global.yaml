@@ -44,14 +44,6 @@ cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
 
-harbor:
-  enabled: true
-  namespace: harbor
-  bucket:
-    name: harbor-bkt
-    maxSize: "25G"
-    storageClass: "cephobjectn1"
-
 postgresOperator:
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
