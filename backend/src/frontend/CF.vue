@@ -7,7 +7,8 @@
         </div>
         <div class="row margin-2em">
             <div class="col">
-                This is the VanillaStack installer. We will be collecting some basic information and then we will be setting up your basic VanillaStack environment for you.
+                Here you can set the settings for your Cloud Foundry installation. 
+                To ease your work, we have prepopulated the settings with useful options.
             </div>
         </div>
         <div class="row margin-2em">
@@ -41,11 +42,6 @@ export default {
         return {
             stratos : this.$store.state.cloudfoundry.stratos,
             domainName : this.$store.state.cloudfoundry.domainName,
-            loadBalancerIp:  this.$store.state.cloudfoundry.loadBalancerIp,
-            loadBalancerKind : this.$store.state.cloudfoundry.loadBalancerKind,
-            clusterName:  this.$store.state.cloudfoundry.clusterName,
-            issuerName : this.$store.state.cloudfoundry.issuerName,
-            emailDeployer:  this.$store.state.cloudfoundry.emailDeployer,
         }
     },
 
