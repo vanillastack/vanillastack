@@ -6,6 +6,7 @@
     "start": "node src/bin/www",
     "dev": "nodemon src/bin/www",
     "dockerdev": "nodemon -L src/bin/www",
+    "dockerdetached": "forever start src/bin/www",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
@@ -16,6 +17,7 @@
     "dotenv": "^8.2.0",
     "es6-promise": "^4.2.8",
     "express": "~4.16.1",
+    "forever": "^3.0.2",
     "jquery": "^3.5.1",
     "js-yaml": "^3.14.0",
     "morgan": "~1.9.1",

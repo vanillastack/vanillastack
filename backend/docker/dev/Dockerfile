@@ -1,10 +1,28 @@
 FROM node:lts-buster-slim
 MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
 
+## Setting up Env
+ENV PORT=3000
+ENV NGINX_PORT=8080
+ENV IP=localhost
+ENV NODE_ENV=development
+ENV MODE=installer
+EXPOSE ${PORT}
+WORKDIR /usr/workdir
+
 ## Install nginx, Ansible and pre-req
-RUN apt update && apt install -y build-essential curl openssh-client python3-pip nginx && \
-pip3 install ansible && \
-rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install -y \
+    build-essential curl gnupg2 ca-certificates lsb-release \
+    openssh-client python3-pip procps dos2unix gettext-base && \
+    pip3 install ansible && \
+    echo "deb http://nginx.org/packages/debian `lsb_release -cs` nginx" \
+        | tee /etc/apt/sources.list.d/nginx.list && \
+    curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - && \
+    apt update && apt install nginx -y
+
+## Copy entrypoint.sh
+COPY ./docker/dev/entrypoint.sh /usr/workdir/entrypoint.sh
+RUN dos2unix /usr/workdir/entrypoint.sh && apt --purge remove -y dos2unix && rm -rf /var/lib/apt/lists/*
 
 ## copy app files
 COPY ./package.json /usr/workdir/
@@ -12,23 +30,15 @@ COPY ./vue.config.js /usr/workdir/
 COPY ./src /usr/workdir/src/
 COPY ./public /usr/workdir/public/
 
-## Setting up Env
-ENV PORT=3000
-ENV IP=localhost
-ENV NODE_ENV=development
-ENV MODE=installer
-EXPOSE ${PORT}
-WORKDIR /usr/workdir
-
 ## Install npm Modules
 RUN npm install
 
 ## Build Frontend
 RUN npm run build
 
-## Prep nginx & Start/Restart nginx
-COPY ./docker/dev/nginx.conf /etc/nginx/conf.d/
-RUN mkdir -p /var/www/vsfrontend && cp -r ./dist/* /var/www/vsfrontend && /etc/init.d/nginx restart
+## Prep nginx
+COPY ./docker/dev/vsnginx.conf /etc/nginx/templates/vsnginx.conf.template
+RUN mkdir -p /var/www/vsfrontend && cp -r ./dist/* /var/www/vsfrontend
 
-#CMD ["nginx", "-g", "daemon off;"]
-CMD ["npm", "run", "dockerdev"]
+## Run nginx and backend
+CMD ./entrypoint.sh
