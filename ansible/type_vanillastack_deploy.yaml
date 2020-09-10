@@ -46,8 +46,7 @@
       action: 02_configure_cluster
 
 - name: generate secrets
-  hosts: localhost
-  connection: local
+  hosts: master[0]
   gather_facts: yes
   roles:
     - role: deploy-kubernetes
