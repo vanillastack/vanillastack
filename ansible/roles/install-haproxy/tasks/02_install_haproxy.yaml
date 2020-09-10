@@ -1,9 +1,8 @@
 ---
 - name: Install basic packages
-  apt: 
+  package: 
     state: present 
-    update_cache: yes
-    pkg:
+    name:
      - haproxy
 
 
