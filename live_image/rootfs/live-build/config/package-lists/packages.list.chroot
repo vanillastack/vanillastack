@@ -1,0 +1,3 @@
+apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+docker-ce docker-ce-cli containerd.io
+task-lxde-desktop iceweasel
