@@ -12,6 +12,16 @@
       - needrestart
       - vim
       - lvm2
+      - jq
+      - curl
+      - python3-passlib
+
+- name: install pip modules
+  pip:
+    name:
+      - pyhelm
+      - openshift
+    extra_args: --ignore-installed
 
 - name: make sure, domain search is not set
   lineinfile:
