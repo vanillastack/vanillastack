@@ -16,6 +16,7 @@ build_docker_image_dev:
   stage: build_docker_image_dev
   interruptible: true
   script:
+    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack/backend
