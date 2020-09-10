@@ -42,6 +42,13 @@
     line: 'seccomp_profile = ""'
     backrefs: yes
 
+- name: fix runc runtime path in crio config
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^  runtime_path =(.*)$'
+    line: '  runtime_path = "/usr/sbin/runc"'
+    backrefs: yes
+
 - name: configure kubelet
   lineinfile:
     path: /etc/default/kubelet 
