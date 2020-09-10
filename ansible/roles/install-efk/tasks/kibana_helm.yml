@@ -1,0 +1,58 @@
+---
+- name: Helm add kubernetes charts repo elastic
+  command: helm repo add elastic https://helm.elastic.co
+  changed_when: false
+
+- name: Create kibana user apache
+  htpasswd:
+    path: /tmp/kibana_auth
+    name: "{{ kibana_user }}"
+    password: "{{ kibana_password }}"
+    owner: "{{ kibana.system_user }}"
+    group: "{{ kibana.system_group }}"
+    mode: 0640
+
+- name: Slurp auth file
+  slurp:
+    src: /tmp/kibana_auth
+  register: kibana_auth_slurp
+
+- name: Create secret kibana
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: kibana-basic-auth
+        namespace: kube-logging
+      type: Opaque
+      data:
+        auth: "{{ kibana_auth_slurp.content }}"
+
+- name: create kibana values
+  template:
+    src: kibana_values.yml.j2
+    dest: /tmp/kibana_values.yml
+
+- name: Install kibana
+  command: >
+    helm upgrade -i kibana elastic/kibana
+    --namespace kube-logging
+    --values /tmp/kibana_values.yml
+
+- name: wait for kibana pods to come up
+  shell: kubectl get pods -n kube-logging -o json
+  register: kubectl_get_kibana_pods
+  until: >
+    kubectl_get_kibana_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"] or
+    kubectl_get_kibana_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running", "Failed"] or
+    kubectl_get_kibana_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running", "Succeeded"] or
+    kubectl_get_kibana_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running", "Failed", "Succeeded"]
+  retries: 720
+  delay: 10
+
+- name: Clean kibana files
+  file:
+    state: absent
+    path: /tmp/kibana_values.yml

@@ -68,3 +68,11 @@ Please read and apply the following rules to contribute to this project:
 * Playbooks don't execute any tasks, they are used to call roles.
   ** Every Role is used for one part and should include multiple tasks
   ** tasks should not be to complex, f.e. you do not provision a bastion host and install kubernetes on top in one task
+
+=== Workflow
+* Create a feature / personal branch based on the master branch
+* Change your stuff
+* Create a merge request to "testing" branch
+* Two Developers / Maintainers needs to review and ACK the changes by +1
+* One of the Maintainers merge the branch to "testing"
+* Pipeline is starting. If successful the testing branch will be merged to master automatically.

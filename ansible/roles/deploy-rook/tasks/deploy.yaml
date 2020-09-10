@@ -11,6 +11,24 @@
     state: present
   when: rook[item.name]['enabled']
 
+- name: "{{item.name}} | generate ingress config"
+  template:
+    src: "object-ingress.yaml.j2"
+    dest: "/tmp/rook_object-ingress.yaml"
+  when: rook[item.name]['enabled'] and item.name == "objectStorage"
+
+- name: "{{item.name}} | deploy ingress"
+  k8s:
+    src: "/tmp/rook_object-ingress.yaml"
+    state: present
+  when: rook[item.name]['enabled'] and item.name == "objectStorage"
+
+- name: "{{item.name}} | cleanup ingress"
+  file:
+    path: "/tmp/rook_object-ingress.yaml"
+    state: absent
+  when: rook[item.name]['enabled'] and item.name == "objectStorage"
+
 - name: "{{item.name}} | delay"
   pause:
     seconds: "{{item.delay}}"

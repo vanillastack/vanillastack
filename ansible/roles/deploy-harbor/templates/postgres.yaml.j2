@@ -1,0 +1,27 @@
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  name: harbor-postgresql
+  namespace: {{harbor.namespace}}
+spec:
+  teamId: "harbor"
+  volume:
+    size: {{harbor.postgres.size}}
+  numberOfInstances: {{harbor.postgres.replicas}}
+  users:
+    postgres:
+    - superuser
+    - createdb
+    harbor: []
+  databases:
+    harbor: harbor
+    clair: harbor
+    notary_server: harbor
+    notary_signer: harbor
+    registry: harbor
+  postgresql:
+    version: "{{harbor.postgres.version}}"
+    parameters:
+      max_connections: "{{harbor.postgres.maxConnections}}"
+  enableLogicalBackup: {{harbor.postgres.backup.enabled}}
+  logicalBackupSchedule: {{harbor.postgres.backup.cronjob}}
