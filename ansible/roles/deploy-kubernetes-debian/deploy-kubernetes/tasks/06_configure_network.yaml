@@ -32,6 +32,7 @@
     release_namespace: kube-system
     values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
     create_namespace: true
+    chart_version: "1.8.3"
     wait: true
 
 - name: Wait for control-plane pods become ready
