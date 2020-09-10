@@ -1,25 +1,26 @@
 [master]
-vanilla-master-1 ansible_host=135.181.48.21 ansible_user=debian
-vanilla-master-2 ansible_host=135.181.48.22 ansible_user=debian
-vanilla-master-3 ansible_host=135.181.48.23 ansible_user=debian
+fedora-master-1 ansible_host=95.217.63.249 ansible_user=fedora
+fedora-master-2 ansible_host=95.217.63.250 ansible_user=fedora
+fedora-master-3 ansible_host=95.217.63.251 ansible_user=fedora
 
 [worker]
-vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
-vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
-vanilla-worker-3 ansible_host=135.181.48.26 ansible_user=debian
+fedora-worker-1 ansible_host=95.217.63.252 ansible_user=fedora
+fedora-worker-2 ansible_host=95.217.63.253 ansible_user=fedora
+fedora-worker-3 ansible_host=95.217.63.254 ansible_user=fedora
 
 [kube_cluster:children]
 master
 worker
 
 [storage]
-vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
-vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
-vanilla-worker-3 ansible_host=135.181.48.26 ansible_user=debian
+fedora-worker-1 ansible_host=95.217.63.252 ansible_user=fedora
+fedora-worker-2 ansible_host=95.217.63.253 ansible_user=fedora
+fedora-worker-3 ansible_host=95.217.63.254 ansible_user=fedora
 
 [compute]
-vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
-vanilla-worker-3 ansible_host=135.181.48.26 ansible_user=debian
+fedora-worker-1 ansible_host=95.217.63.252 ansible_user=fedora
+fedora-worker-2 ansible_host=95.217.63.253 ansible_user=fedora
+fedora-worker-3 ansible_host=95.217.63.254 ansible_user=fedora
 
 [haproxy:children]
 master
