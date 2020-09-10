@@ -120,7 +120,8 @@
   gather_facts: no
   roles:
     - role: deploy-openstack
-
+      when: openstack.enabled
+      
 - name: Deploy cloudfoundry
   hosts: master[0]
   gather_facts: true
