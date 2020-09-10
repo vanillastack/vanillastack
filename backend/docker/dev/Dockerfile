@@ -17,7 +17,7 @@ RUN apt update && apt install -y \
     echo "deb http://nginx.org/packages/debian `lsb_release -cs` nginx" \
         | tee /etc/apt/sources.list.d/nginx.list && \
     curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - && \
-    apt update && apt install nginx -y && \
+    apt install nginx -y && \
     ansible-galaxy collection install community.kubernetes
 
 ## Copy entrypoint.sh
@@ -31,7 +31,7 @@ COPY ./src /usr/workdir/src/
 COPY ./public /usr/workdir/public/
 
 ## Install npm Modules
-RUN npm install
+RUN npm install && npm audit fix
 
 ## Build Frontend
 RUN npm run build

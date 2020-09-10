@@ -3,7 +3,7 @@
 # Start backend
 cd "/usr/workdir"
 echo "Starting backend"
-npm run dockerdetached -D
+npm run dockerdetached
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start my_first_process: $status"
@@ -12,8 +12,8 @@ fi
 
 # Prep and Start nginx
 echo "Starting nginx"
-envsubst '${NGINX_PORT}' </etc/nginx/templates/vsnginx.conf.template >/etc/nginx/conf.d/vsnginx.conf
-/etc/init.d/nginx restart -D
+envsubst '${PORT}' </etc/nginx/templates/vsnginx.conf.template >/etc/nginx/conf.d/vsnginx.conf
+/etc/init.d/nginx restart
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start my_second_process: $status"
