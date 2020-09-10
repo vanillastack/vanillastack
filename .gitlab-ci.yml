@@ -13,7 +13,7 @@ build_docker_image_dev:
   only:
     refs:
       - backend
-  stage: build_docker_image
+  stage: build_docker_image_dev
   interruptible: true
   script:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
@@ -30,7 +30,6 @@ redeploy_debian:
   interruptible: true
   script:
     - curl $WEBHOOK_REDEPLOY
-
 
 run_playbook:
   only:
