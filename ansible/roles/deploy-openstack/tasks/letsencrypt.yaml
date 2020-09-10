@@ -1,3 +1,4 @@
+---
 - name: Copy LetsEncrypt Issuer
   template:
     src: ./templates/letsencrypt.yaml.j2
@@ -31,4 +32,4 @@
 - name: Cleanup LetsEncrypt Issuer
   file:
     path: /tmp/letsencrypt.yaml
-    state: absent   
+    state: absent
