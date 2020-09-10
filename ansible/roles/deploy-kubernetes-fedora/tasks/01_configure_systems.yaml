@@ -72,7 +72,7 @@
       - "kubeadm-{{ versions }}"
       - "kubectl-{{ versions }}"
       - grubby
-    disable_exclude: kubernetes
+    disable_excludes: kubernetes
 
 - name: Disable SELinux
   selinux:
