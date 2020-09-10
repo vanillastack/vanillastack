@@ -18,6 +18,7 @@ kubernetes:
     virtualIP: 135.181.48.19
     fqdn: test.vanillastack.cloudical.net
   clusterName: kube
+  version: "1.19"
 cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
