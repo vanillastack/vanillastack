@@ -1,3 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-operator
+  namespace: {{ guacamole.namespace }}
+data:
+  # referencing config map with custom settings
+  pod_environment_configmap: {{ guacamole.namespace }}/postgres-pod-config
+---
+apiVersion: "acid.zalan.do/v1"
+kind: OperatorConfiguration
+metadata:
+  name: postgresql-operator-configuration
+  namespace: {{ guacamole.namespace }}
+data:
+configuration:
+  kubernetes:
+    # referencing config map with custom settings
+    pod_environment_configmap: {{ guacamole.namespace }}/postgres-pod-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-pod-config
+  namespace: {{ guacamole.namespace }}
+data:
+  ALLOW_NOSSL: "true"
+---
 apiVersion: acid.zalan.do/v1
 kind: postgresql
 metadata:
