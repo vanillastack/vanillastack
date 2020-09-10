@@ -33,7 +33,7 @@
   get_url:
     url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
     dest: /tmp/get_helm.sh
-    mode: '0600'  
+    mode: '0700'  
 
 - name: install helm
   command: /tmp/get_helm.sh
