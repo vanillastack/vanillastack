@@ -3,12 +3,21 @@ build_liveimage:
     refs:
       - live-image
   stage: build_liveimage
-#  image: debian/buster:latest
+  image: debian:buster
   variables:
-    WORKDIR: ./live_image
+    WORKDIR: ./build
+    OUTPUT: ./output
   script:
-    - cp -a rootfs/* /
-    - cd /live-build
-    - /prepare-installer.bash
-    - /build-installer.bash
-
+    - export WORKDIR=$(pwd)/$WORKDIR
+    - export OUTPUT=$(pwd)/$OUTPUT
+    - cat /proc/mounts
+    - pwd
+    - mkdir -p $WORKDIR
+    - mkdir -p $OUTPUT
+    - cp -a live_image/rootfs/* $WORKDIR
+    - cd $WORKDIR/live-build
+    - $WORKDIR/prepare-installer.bash
+    - $WORKDIR/build-installer.bash
+  artifacts:
+    paths:
+      - ./output
