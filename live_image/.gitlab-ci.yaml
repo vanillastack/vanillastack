@@ -3,7 +3,7 @@ build_liveimage:
     refs:
       - live-image
   stage: build_liveimage
-  image: debian/buster
+#  image: debian/buster:latest
   variables:
     WORKDIR: ./live_image
   script:
