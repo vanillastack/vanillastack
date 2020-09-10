@@ -104,6 +104,17 @@
     - net.bridge.bridge-nf-call-iptables
     - net.ipv4.ip_forward
 
+# See https://github.com/cilium/cilium/issues/10645
+- name: set net.ipv4.conf.*.rp_filter to 0 for systemd 245 workaround
+  sysctl:
+    name: "{{ item }}"
+    value: '0'
+    sysctl_file: /etc/sysctl.d/99-z-rp_filter.conf
+    reload: yes
+  with_items:
+    - net.ipv4.conf.all.rp_filter
+    - net.ipv4.conf.default.rp_filter
+
 - name: load Modules
   lineinfile:
     path: /etc/modules
