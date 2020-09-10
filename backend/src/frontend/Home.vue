@@ -19,6 +19,7 @@
                     <li>A minimum of 1 GB RAM and 20 GB of HDD / SSD storage for each node</li>
                     <li>Root access to these nodes</li>
                     <li>IP-address for the cluster / Hostname for the cluser</li>
+                    <li>A wildcard domain (*.my.cluster) for making components accessible</li>
                     <li>A small cup of coffee or tea</li>
                 </ul>
             </div>

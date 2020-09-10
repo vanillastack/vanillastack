@@ -18,426 +18,220 @@ all:
     hosts:
       vanilla-worker-1 ansible_host=135.181.48.24 ansible_user=debian
       vanilla-worker-2 ansible_host=135.181.48.25 ansible_user=debian
-  haproxy:
-    children:
-      master:
   kube_cluster:
     children:
       master:
       worker:
-    vars:
-      certmanager:
-        enabled: true
-        namespace: "cert-manager"
-        chartVersion: "v0.15.1"
-      global:
-        registry: registry.cloudical.net
-      ingress:
-        namespace: nginx-ingress
-
-      loadbalancer_virtualip: 135.181.48.19
-      clustername: kube
-      loadbalancer_fqdn: test.vanillastack.cloudical.net
-      reset_cluster: false
-      cloudfoundry:
-        enabled: true
-        storageclass: rook-ceph-block
-      keepalived_interface: enp1s0
-      openstack:
-        enabled: true
-        namespace: openstack
-        chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
-        publicDomain: "test.vanillastack.cloudical.net"
-        publicProto: "http"
-        region: RegionOne
-        # releases available:
-        # - train
-        # - ussuri (not tested)
-        release: "stein"
-        tls:
-          enabled: true
-          useCertManager: true
-          issuer: "letsEncrypt"
-          letsEncrypt:
-            enabled: true
-            # letsencrypt-prod or letsencrypt-staging
-            issuerName: "letsencrypt-staging"
-            issuerEmail: "testing@test.vanillastack.cloudical.net"
-        mariadb:
-          enabled: true
-          chartName: mariadb
-          chartVersion: 0.1.0
-          createService: false
-          replicas: 3
-          persistence:
-            enabled: true
-            storageClass: "rook-ceph-block"
-            diskSize: 30Gi
-          auth:
-            admin:
-              password: nBR46Yx5oKoaORLdHXC675emg
-            sst:
-              password: g1tCeWCl5JlnN4KfII2w1rjWD
-            audit:
-              password: MF91daYvdqnJSALlPNHa0y2ox
-            exporter:
-              password: KvK63FDIqTdCKrFiknVHCIVtC
-        rabbitmq:
-          enabled: true
-          chartName: rabbitmq
-          chartVersion: 0.1.0
-          createService: false
-          replicas: 2
-          persistence:
-            enabled: true
-            storageClass: "rook-ceph-block"
-            diskSize: 20Gi
-          auth:
-            admin:
-              password: QaBQRbiSh7LVcmUfr066OxOoc
-        memcached:
-          enabled: true
-          chartName: memcached
-          chartVersion: 0.1.0
-          createService: false
-          replicas: 1
-        ceph:
-          enabled: true
-          rook:
-            cephMonitors: [ rook-ceph-mon-a.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-b.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-c.rook-ceph.svc.cluster.local:6789 ]
-            namespace: "rook-ceph"
-            fsid: "602a7124-e4ba-43fd-a6f7-00bd574329d8"
-        barbican:
-          enabled: true
-          chartName: barbican
-          chartVersion: 20200728
-          createService: true
-          api:
-            replicas: 2
-          endpoints:
-            publicURLPrefix: "barbican"
-          auth:
-            service:
-              password: WIyJB5ucjhRDBi7JDLN4xPsZF
-            db:
-              password: SLyl35ZTcLs1HSx1MLEEKrTo3
-            messaging:
-              password: ygj41kywzWQL0304n64C6bneW
-        cinder:
-          enabled: true
-          chartName: cinder
-          chartVersion: 20200728
-          createService: true
-          rbd:
-            enabled: true
-            rbdPool: cinder.volumes
-            rbdUser: cinder
-            rbdBackupUser: cinder-backup
-            rbdBackupPool: cinder.backups
-          api:
-            replicas: 2
-            v1Enabled: false
-          volume:
-            replicas: 1
-            osapiVolumeWorkers: 1
-          scheduler:
-            replicas: 1
-          backup:
-            enabled: false
-            replicas: 1
-          endpoints:
-            publicURLPrefix: "cinder"
-          auth:
-            service:
-              password: Hb8M4cmki6BxsvgYZ4efBRfzN
-            db:
-              password: iyg1TU0Q6Kbe1GQ74cpIvP002
-            messaging:
-              password: r5L4CXlnthbhOqrvkgMmmV4Lx
-            cinderTest:
-              password: CsXVpYJ1isCfJ8Lu97CY25s7W
-        congress:
-          enabled: false
-          chartName: congress
-          chartVersion: 20200728
-          createService: true
-          api:
-            replicas: 2
-          policyEngine:
-            replicas: 2
-          datasource:
-            replicas: 1
-        designate:
-          enabled: false
-          chartName: designate
-          chartVersion: 20200728
-          createService: true
-          auth:
-            service: WvusP3DVawNqM4VIhPsEhptyj
-        glance:
-          enabled: true
-          chartName: glance
-          chartVersion: 20200728
-          createService: true
-          defaultBackend: rbd
-          rbd:
-            enabled: true
-            cephAppName: glance
-            rbdPool: glance.images
-            rbdUser: glance
-            showImageDirectUrl: true
-          api:
-            replicas: 2
-            v1Enabled: false
-            version: 2
-          registry:
-            replicas: 2
-            v2Enabled: true
-          endpoints:
-            publicURLPrefix: "glance"
-          auth:
-            service:
-              password: L1hHckv7JulXzAWr2lCyKPwMp
-            db:
-              password: 83bpLt7JyuBNjLWjI1SPdrxex
-            messaging:
-              password: Vc1aHXgW79mz2xdXV7Yk7v1NB
-            glanceTest:
-              password: AkaQ342jULeq7sWV7ayT2bu6d
-            radosgw:
-              password: woK1JLHAz6SujFQsvoPMKm6wH
-        heat:
-          enabled: true
-          chartName: heat
-          chartVersion: 20200728
-          createService: true
-          api:
-            replicas: 2
-          cfn:
-            replicas: 2
-          cloudwatch:
-            replicas: 2
-          engine:
-            replicas: 2
-          endpoints:
-            publicURLPrefix: "heat"
-            cfPublicURLPrefix: "heat-cfn"
-          auth:
-            service:
-              password: Fv2ZXIEb5V5jZTpyA856vkJhB
-            db:
-              password: K29Kr9Uf2xJiovkixnWf4b27V
-            messaging:
-              password: 1R8B1FepIqiaqQrHVS0ncuXpP
-            heatTest:
-              password: Qcfl85lFlryeBzC9kU63sMy1e
-            heatDomain:
-              password: EQgwc4yPg855CdOrbpf1WbBxx
-            serviceTrustee:
-              password: nCWZSoGhojIJf0zKWS7V3t2mg
-        horizon:
-          enabled: true
-          chartName: horizon
-          chartVersion: 20200728
-          createService: true
-          replicas: 2
-          endpoints:
-            useDirectPublicDomain: false
-            publicURLPrefix: "horizon"
-          auth:
-            db:
-              password: 6jswYdW52JEN0y7oRZ8NLHwCq
-        ironic:
-          enabled: false
-          chartName: ironic
-          chartVersion: 20200728
-          createService: true
-          auth:
-            service: bC3FON5hMXFaJbAEDARV6EfBG
-        keystone:
-          enabled: true
-          chartName: keystone
-          chartVersion: 20200728
-          createService: true
-          endpoints:
-            publicURLPrefix: "keystone"
-          api:
-            replicas: 2
-          auth:
-            admin:
-              password: sn0JGJ2NXuBUrfyoHYRDnKNY3
-            keystoneTest:
-              password: zxQoRVj9dx3ghYDoeDtrIhaMt
-            db:
-              password: 1b2g39k10Qcs6QjugmOt7guPb
-            messaging:
-              password: CdvLDh2fp6WnciVxHsSnrWhOd
-        libvirt:
-          enabled: true
-          chartName: libvirt
-          chartVersion: 0.1.0
-          createService: false
-        mistral:
-          enabled: true
-          chartName: mistral
-          chartVersion: 20200728
-          createService: true
-          api:
-            replicas: 2
-          engine:
-            replicas: 2
-          eventEngine:
-            replicas: 2
-          executor:
-            replicas: 2
-          endpoints:
-            publicURLPrefix: "mistral"
-          auth:
-            service:
-              password: P5nK12zDB5U93hSpistGtyEU4
-            mistralTest:
-              password: 1MYMa9AeaqhTSPQ7qotTU4Tu1
-            db:
-              password: 4rammB7aZCdEusubYnOK6PgJI
-            messaging:
-              password: vRK5KyiuRKxAjy8Z1ySDFuDGS
-        neutron:
-          enabled: true
-          chartName: neutron
-          chartVersion: 20200728
-          createService: true
-          tunnelInterface: "enp2s0"
-          extInterface: "enp3s0"
-          server:
-            replicas: 2
-          l3:
-            ha: false
-            maxAgentsPerRouter: 1
-            haNetworkType: vxlan
-            dhcpAgents: 2
-          endpoints:
-            publicURLPrefix: "neutron"
-          auth:
-            service:
-              password: 1H4c6JURsRRDB6tl4FemkmKU3
-            db:
-              password: XoGM7g5N6Ft0qc8cHTBfvWwFb
-            messaging:
-              password: b45MH3eKVBnXoKEufojIPquEX
-            neutronTest:
-              password: 7bs4vXXfk58oea8txB1w8Atqu
-        nova:
-          enabled: true
-          chartName: nova
-          chartVersion: 20200728
-          createService: true
-          apiMetadata:
-            replicas: 1
-          placement:
-            replicas: 2
-          osapi:
-            replicas: 2
-          conductor:
-            replicas: 2
-          consoleauth:
-            replicas: 2
-          scheduler:
-            replicas: 1
-          novncproxy:
-            replicas: 1
-          endpoints:
-            publicURLPrefix: "nova"
-            novncURLPrefix: "novnc"
-            placementURLPrefix: "placement"
-          libvirt:
-            # bare metal = kvm, VMs = qemu
-            virtType: kvm
-            # bare metal = host-passthrough or host-model, vm= none
-            cpuMode: host-model
-          auth:
-            service:
-              password: uYn4gU4AabT9YryEOGRLNNhQi
-            db:
-              password: Y1T83ux9qwYBSL0JagRY6zdus
-            dbApi:
-              password: v09sn30CSnYVWLLylQoFr3q0o
-            dbCell0:
-              password: 9MXOM6MHzcaUi386ZZjmDJ0dL
-            placement:
-              password: X3hGdwQAb3uCF52Z2F2SmmIzk
-            messaging:
-              password: 1XT7LZT67Tai6jOhcL61oPU7p
-            novaTest:
-              password: 65dS7dG3YqGkDtlQ7RMKvl2Z2
-        openvswitch:
-          enabled: true
-          chartName: openvswitch
-          chartVersion: 0.1.0
-          createService: false
-        radosgw:
-          enabled: false
-          chartName: ceph-rgw
-          chartVersion: 0.1.0
-          createService: true
-          endpoints:
-            publicURLPrefix: "radosgw"
-          auth:
-            service:
-              password: lZcmrMgCOYFWe662PQAGdpwAT
-        senlin:
-          enabled: true
-          chartName: senlin
-          chartVersion: 20200728
-          createService: true
-          api:
-            replicas: 2
-          engine:
-            replicas: 2
-          endpoints:
-            publicURLPrefix: "senlin"
-          auth:
-            service:
-              password: I38z3W3AlcLKP7LEC97cK3O9x
-            db:
-              password: rCl1oRknvNxi9oP0cuF4Hd6lx
-            messaging:
-              password: s7uSI9fmGv47VM15wWC67hRpo
-            senlinTest:
-              password: oIRMBVj10GgJX8dSg6qmFBGGU
-      rook:
-        enabled: true
-        namespace: rook-ceph
-        common:
-          enabled: true
-        operator:
-          enabled: true
-          csiEnableCephFS: true
-          csiEnableRBD: true
-          csiEnableGRPC: true
-          image: rook/ceph:v1.4.1
-        cluster:
-          enabled: true
-          image: ceph/ceph:v15.2.4
-          name: rook-ceph
-          dataHostDir: /var/lib/rook
-          mon:
-            count: 3
-            allowMultiplePerNode: false
-          dashboard:
-            enabled: false
-            ssl: true
-          monitoring:
-            enabled: false
-          storage:
-            useAllNodes: true
-            useAllDevices: true
-        storageclass:
-          enabled: true
-          name: rook-ceph-block
-          failureDomain: host
-          poolName: replicapool
-          replicaLevel: 3
-        toolbox:
-          enabled: true
-          name: rook-ceph-tools
-          image: rook/ceph:v1.4.1
+  haproxy:
+    children:
+      master:
+certmanager:
+  enabled: true
+global:
+  registry: harbor.cloudical.net
+ingress:
+  enabled: true
+letsEncrypt:
+  # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
+  issuerName: "letsencrypt-staging"
+  issuerEmail: "testing@test.vanillastack.cloudical.net"
+kubernetes:
+  loadBalancer:
+    virtualIP: 135.181.48.19
+    fqdn: test.vanillastack.cloudical.net
+  clusterName: kube
+cloudfoundry:
+  enabled: false
+  storageclass: rook-ceph-block
+stratos:
+  enabled: true
+  adminpassword: 4JOA4l8DK7Sr
+openstack:
+  enabled: false
+  publicDomain: "test.vanillastack.cloudical.net"
+  publicProto: "http"
+  region: RegionOne
+  release: "stein"
+  tls:
+    enabled: true
+    useCertManager: true
+    letsEncrypt:
+      enabled: true
+  mariadb:
+    persistence:
+      diskSize: 30Gi
+    auth:
+      admin:
+        password: nBR46Yx5oKoaORLdHXC675emg
+      sst:
+        password: g1tCeWCl5JlnN4KfII2w1rjWD
+      audit:
+        password: MF91daYvdqnJSALlPNHa0y2ox
+      exporter:
+        password: KvK63FDIqTdCKrFiknVHCIVtC
+  rabbitmq:
+    persistence:
+      diskSize: 20Gi
+    auth:
+      admin:
+        password: QaBQRbiSh7LVcmUfr066OxOoc
+  barbican:
+    enabled: true
+    endpoints:
+      publicURLPrefix: "barbican"
+    auth:
+      service:
+        password: WIyJB5ucjhRDBi7JDLN4xPsZF
+      db:
+        password: SLyl35ZTcLs1HSx1MLEEKrTo3
+      messaging:
+        password: ygj41kywzWQL0304n64C6bneW
+  cinder:
+    enabled: true
+    endpoints:
+      publicURLPrefix: "cinder"
+    auth:
+      service:
+        password: Hb8M4cmki6BxsvgYZ4efBRfzN
+      db:
+        password: iyg1TU0Q6Kbe1GQ74cpIvP002
+      messaging:
+        password: r5L4CXlnthbhOqrvkgMmmV4Lx
+      cinderTest:
+        password: CsXVpYJ1isCfJ8Lu97CY25s7W
+  glance:
+    enabled: true
+    endpoints:
+      publicURLPrefix: "glance"
+    auth:
+      service:
+        password: L1hHckv7JulXzAWr2lCyKPwMp
+      db:
+        password: 83bpLt7JyuBNjLWjI1SPdrxex
+      messaging:
+        password: Vc1aHXgW79mz2xdXV7Yk7v1NB
+      glanceTest:
+        password: AkaQ342jULeq7sWV7ayT2bu6d
+      radosgw:
+        password: woK1JLHAz6SujFQsvoPMKm6wH
+  heat:
+    enabled: true
+    endpoints:
+      publicURLPrefix: "heat"
+      cfPublicURLPrefix: "heat-cfn"
+    auth:
+      service:
+        password: Fv2ZXIEb5V5jZTpyA856vkJhB
+      db:
+        password: K29Kr9Uf2xJiovkixnWf4b27V
+      messaging:
+        password: 1R8B1FepIqiaqQrHVS0ncuXpP
+      heatTest:
+        password: Qcfl85lFlryeBzC9kU63sMy1e
+      heatDomain:
+        password: EQgwc4yPg855CdOrbpf1WbBxx
+      serviceTrustee:
+        password: nCWZSoGhojIJf0zKWS7V3t2mg
+  horizon:
+    enabled: true
+    endpoints:
+      useDirectPublicDomain: false
+      publicURLPrefix: "horizon"
+    auth:
+      db:
+        password: 6jswYdW52JEN0y7oRZ8NLHwCq
+  keystone:
+    enabled: true
+    endpoints:
+      publicURLPrefix: "keystone"
+    auth:
+      admin:
+        # MUST BE SHOWN ON UI - LOGIN PASSWORD FOR OPENSTACK ADMIN USER
+        password: sn0JGJ2NXuBUrfyoHYRDnKNY3
+      keystoneTest:
+        password: zxQoRVj9dx3ghYDoeDtrIhaMt
+      db:
+        password: 1b2g39k10Qcs6QjugmOt7guPb
+      messaging:
+        password: CdvLDh2fp6WnciVxHsSnrWhOd
+  mistral:
+    enabled: true
+    endpoints:
+      publicURLPrefix: "mistral"
+    auth:
+      service:
+        password: P5nK12zDB5U93hSpistGtyEU4
+      mistralTest:
+        password: 1MYMa9AeaqhTSPQ7qotTU4Tu1
+      db:
+        password: 4rammB7aZCdEusubYnOK6PgJI
+      messaging:
+        password: vRK5KyiuRKxAjy8Z1ySDFuDGS
+  neutron:
+    enabled: true
+    tunnelInterface: "enp2s0" # must be equal on all nodes
+    extInterface: "enp3s0" # must be equal on all nodes
+    l3:
+      ha: false
+      maxAgentsPerRouter: 1
+      haNetworkType: vxlan
+      dhcpAgents: 2
+    endpoints:
+      publicURLPrefix: "neutron"
+    auth:
+      service:
+        password: 1H4c6JURsRRDB6tl4FemkmKU3
+      db:
+        password: XoGM7g5N6Ft0qc8cHTBfvWwFb
+      messaging:
+        password: b45MH3eKVBnXoKEufojIPquEX
+      neutronTest:
+        password: 7bs4vXXfk58oea8txB1w8Atqu
+  nova:
+    enabled: true
+    endpoints:
+      publicURLPrefix: "nova"
+      novncURLPrefix: "novnc"
+      placementURLPrefix: "placement"
+    libvirt:
+      # bare metal = kvm, VMs = qemu
+      virtType: kvm
+      # bare metal = host-passthrough or host-model, vm= none
+      cpuMode: host-model
+    auth:
+      service:
+        password: uYn4gU4AabT9YryEOGRLNNhQi
+      db:
+        password: Y1T83ux9qwYBSL0JagRY6zdus
+      placement:
+        password: X3hGdwQAb3uCF52Z2F2SmmIzk
+      messaging:
+        password: 1XT7LZT67Tai6jOhcL61oPU7p
+      novaTest:
+        password: 65dS7dG3YqGkDtlQ7RMKvl2Z2
+  senlin:
+    enabled: true
+    endpoints:
+      publicURLPrefix: "senlin"
+    auth:
+      service:
+        password: I38z3W3AlcLKP7LEC97cK3O9x
+      db:
+        password: rCl1oRknvNxi9oP0cuF4Hd6lx
+      messaging:
+        password: s7uSI9fmGv47VM15wWC67hRpo
+      senlinTest:
+        password: oIRMBVj10GgJX8dSg6qmFBGGU
+rook:
+  enabled: true
+  cluster:
+    dashboard:
+      enabled: false
+      ssl: true
+    monitoring:
+      enabled: false
+    storage:
+      useAllNodes: true
+      useAllDevices: true
+  storageclass:
+    enabled: true

@@ -2,7 +2,8 @@ FROM node:lts-buster-slim
 MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
 
 ## Setting up Env
-ENV PORT=8080
+ENV PORT=3000
+ENV NGINX_PORT=8080
 ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
@@ -17,8 +18,7 @@ RUN apt update && apt install -y \
     echo "deb http://nginx.org/packages/debian `lsb_release -cs` nginx" \
         | tee /etc/apt/sources.list.d/nginx.list && \
     curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - && \
-    apt update && apt install nginx -y && \
-    ansible-galaxy collection install community.kubernetes
+    apt update && apt install nginx -y
 
 ## Copy entrypoint.sh
 COPY ./docker/dev/entrypoint.sh /usr/workdir/entrypoint.sh

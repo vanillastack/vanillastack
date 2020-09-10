@@ -133,6 +133,9 @@ export default {
 
     mounted : function () {
         this.hasApplications = this.installRook || this.installOpenStack || this.installCF
+
+        this.validate()
+
         var appCount = 0;
         if(this.hasApplications) {
             appCount += this.installRook ? 1 : 0

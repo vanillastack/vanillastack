@@ -13,6 +13,7 @@ import IPs from './IPs.vue'
 import Tools from './AdditionalTools.vue'
 import Rook from './Rook.vue'
 import OpenStack from './OpenStack.vue'
+import CF from './CF.vue'
 import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
@@ -33,7 +34,7 @@ const routes = [
     { path: '/ip', component: IPs},
     { path: '/rook', component: Rook},
     { path: '/openstack', component: OpenStack},
-    { path: '/cf', component: Home},
+    { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
     { path: '/subscription', component: Key},
     { path: '/summary', component: Key}
@@ -78,6 +79,21 @@ var app = new Vue({
 
     created: function() {
       
+      this.$router.afterEach((to, from) => {
+        // Get the new index
+        var index = 0;
+        for(var i=0; i<routes.length; i++) {
+          var route = routes[i].path
+          if(route == to.path) {
+            index = i
+            break;
+          }
+        }
+
+        currentRoute = index
+        console.log("Current Route Index", currentRoute)
+      })
+
       EventBus.$on(Constants.Event_NewViewLoaded, data => {
         // Store the data
         this.$store.commit(Constants.Store_UpdateNavigation, data);
