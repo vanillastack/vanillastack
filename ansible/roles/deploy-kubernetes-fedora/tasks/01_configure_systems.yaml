@@ -57,7 +57,7 @@
     exclude: kubelet kubeadm kubectl
 
 - name: enable crio
-  command: "dnf module enable cri-o:{{ kubernetes.crioVersion }}"
+  command: "dnf module enable cri-o:{{ kubernetes.crioVersion }} -y" 
 
 - name: get latest kube version
   shell: dnf --showduplicate list  kubelet --disableexcludes=kubernetes | grep 1.19 | tail -1 | tr -s ' ' | cut -d ' ' -f2
