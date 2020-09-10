@@ -1,19 +1,19 @@
 #!/bin/bash
 
 # Start backend
-cd "/usr/workdir"
-echo "Starting backend"
-npm run dockerdetached -D
-status=$?
-if [ $status -ne 0 ]; then
-  echo "Failed to start backend: $status"
-  exit $status
-fi
+#cd "/usr/workdir"
+#echo "Starting backend"
+#nohup npm run dockerdev
+#status=$?
+#if [ $status -ne 0 ]; then
+#  echo "Failed to start backend: $status"
+#  exit $status
+#fi
 
 # Prep and Start nginx
 echo "Starting nginx"
 envsubst '${PORT}' </etc/nginx/templates/vsnginx.conf.template >/etc/nginx/conf.d/vsnginx.conf
-/etc/init.d/nginx restart -D
+/etc/init.d/nginx restart
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start nginx: $status"
@@ -27,7 +27,7 @@ while sleep 15; do
   PROCESS_2_STATUS=$?
   # If the greps above find anything, they exit with 0 status
   # If they are not both 0, then something is wrong
-  if [ $PROCESS_1_STATUS -ne 0 -o $PROCESS_2_STATUS -ne 0 ]; then
+  if [ $PROCESS_1_STATUS -ne 0 -o $PROCESS_2_STATUS -ne 1 ]; then
     echo "One of the processes has already exited."
     exit 1
   fi
