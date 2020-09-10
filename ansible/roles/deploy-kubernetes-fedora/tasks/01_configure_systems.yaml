@@ -82,8 +82,8 @@
   systemd: 
     name: firewalld
     masked: true
-    disabled: true
-    state: stoped
+    enabled: false
+    state: stopped
 
 - name: Check if systemd.unified_cgroup_hierarchy in grubenv already
   command: grep -Fq "systemd.unified_cgroup_hierarchy=0" /boot/grub2/grubenv
