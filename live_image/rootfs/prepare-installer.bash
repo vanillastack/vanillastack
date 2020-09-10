@@ -32,6 +32,10 @@ apt-get update && apt-get install -y --no-install-recommends \
 
 apt-get install -y --no-install-recommends mc aptitude screen curl openssl apt-transport-https ca-certificates gnupg-agent software-properties-common less
 
+# Monkeypatching because Bug
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
+sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
+
 mkdir -p /LIVE_BOOT
 
 curl -fsSL https://download.docker.com/linux/debian/gpg > /live-build/config/archives/docker.key.chroot
