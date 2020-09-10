@@ -3,7 +3,8 @@ image: "ubuntu:latest"
 stages:
   - redeploy
   - run_playbook
-
+  - build_liveimage
+  
 redeploy_debian:
   only:
     refs:
