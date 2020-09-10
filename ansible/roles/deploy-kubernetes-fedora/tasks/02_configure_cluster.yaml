@@ -28,7 +28,7 @@
     enabled: true
     name: crio
 
-- name: Make sure crio service is running
+- name: Make sure kubelet service is running
   systemd:
     state: restarted
     enabled: true
@@ -41,6 +41,15 @@
   with_items:
     - overlay
     - br_netfilter
+
+- name: make Modules persistant
+  lineinfile:
+    path: /etc/modules-load.d/k8s.conf
+    line: "{{ item }}"      
+    create: true
+  with_items:
+     - br_netfilter
+     - overlay
 
 - name: create bridge traffic config
   sysctl:
@@ -63,15 +72,6 @@
   with_items:
     - net.ipv4.conf.all.rp_filter
     - net.ipv4.conf.default.rp_filter
-
-- name: load Modules
-  lineinfile:
-    path: /etc/modules-load.d/k8s.conf
-    line: "{{ item }}"      
-    create: true
-  with_items:
-     - br_netfilter
-     - overlay
 
 - name: Disable Swap
   command: swapoff -a
