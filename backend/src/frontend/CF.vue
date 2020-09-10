@@ -22,11 +22,11 @@
                 </div>
                 <div class="row">
                     <div class="col-2">
-                        <input class="form-control" placeholder="cloudfoundry.my.cluster" name="domainName" v-model="domainName" v-on:change="item.triggerValidation()" v-on:blur="item.triggerValidation()" required="required" />
+                        <input class="form-control" placeholder="cloudfoundry.my.cluster" name="domainName" v-model="domainName" v-on:change="triggerValidation()" v-on:blur="triggerValidation()" required="required" />
                     </div>
                     <div class="col">
-                        <div class="custom-control custom-switch inline-block" v-if="item.isNotFirst">
-                            <input class="custom-control-input" disabled="disabled" id="stratos" name="stratos" type="checkbox" v-model="stratos" v-on:click="item.triggerValidation()">
+                        <div class="custom-control custom-switch inline-block">
+                            <input class="custom-control-input" disabled="disabled" id="stratos" name="stratos" type="checkbox" v-model="stratos" v-on:click="triggerValidation()">
                             <label class="custom-control-label" for="stratos">
                                 Stratos Dashboard
                             </label>
@@ -70,7 +70,7 @@ export default {
 
         if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
             this.$store.state.installer.cloudfoundry.domainName.length == 0)
-            this.domainName = 'cloudfoundry.' + this.domain
+            this.domainName = 'cloudfoundry.' + this.$store.state.installer.clusterfqdn
 
         this.triggerValidation()
     },
