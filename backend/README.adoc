@@ -9,12 +9,12 @@ Got to VanillaStack/backend and execute docker build and run command
 [source,shell script]
 ----
 cd VanillaStack/backend
-docker build -f docker/dev/Dockerfile \
-  -t vsbackend . && \
+docker build -f docker/prod/Dockerfile \
+  -t vanillastack-installer . && \
   docker run \
-  --name vsbackend -d \
+  --name vanillastack-installer -d \
   -p 8080:8080 \
-  vsbackend
+  vanillastack-installer
 ----
 
 or
@@ -32,7 +32,7 @@ The API definition can be found with the backend running on:
 
 [source,]
 ----
-http://localhost:3000/api-docs
+http://localhost:8080/api/v1/api-docs
 ----
 
 The definition is written in OpenAPI and can be tested on the spot.
