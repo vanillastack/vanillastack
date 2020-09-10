@@ -9,11 +9,14 @@ This page lists all active contributors and their areas of expertise. This can b
 
 Steering committee members will be added according to the [process for adding a steering committee member](GOVERNANCE.md#becoming-a-steering-committee-member) in the [governance](GOVERNANCE.md).
 
-| Name                                                    | Represents  | Github                                  |
-| ------------------------------------------------------- | ----------- | --------------------------------------- |
-| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>          | Cloudical   | [kisahm](https://github.com/kisahm)     |
-| Karsten Samaschke <karsten.samaschke@cloudical.io>      | Cloudical   |                                         |
-| Christian Schilliing <christian.schilling@cloudical.io> | Cloudical   |                                         |
+.Steeting Commitee
+|===
+| Name                                                    | Represents  | Github  
+
+| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>          | Cloudical   | [kisahm](https://github.com/kisahm)     
+| Karsten Samaschke <karsten.samaschke@cloudical.io>      | Cloudical   |                                         
+| Christian Schilliing <christian.schilling@cloudical.io> | Cloudical   |                                         
+|===
 
 ## Maintainers
 
