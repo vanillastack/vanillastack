@@ -66,12 +66,12 @@
 
 - name: load Modules
   lineinfile:
-    path: /etc/modules
+    path: /etc/modules-load.d/k8s.conf
     line: "{{ item }}"      
     create: true
   with_items:
      - br_netfilter
-     -  overlay
+     - overlay
 
 - name: Disable Swap
   command: swapoff -a
