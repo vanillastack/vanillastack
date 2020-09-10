@@ -19,6 +19,7 @@ kubernetes:
     fqdn: test.vanillastack.cloudical.net
   clusterName: kube
   version: "1.19"
+  crioVersion: "1.18"
 cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
