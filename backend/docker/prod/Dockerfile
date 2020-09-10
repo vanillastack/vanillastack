@@ -2,8 +2,7 @@ FROM node:lts-buster-slim
 MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
 
 ## Setting up Env
-ENV PORT=3000
-ENV NGINX_PORT=8080
+ENV PORT=8080
 ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
@@ -18,10 +17,11 @@ RUN apt update && apt install -y \
     echo "deb http://nginx.org/packages/debian `lsb_release -cs` nginx" \
         | tee /etc/apt/sources.list.d/nginx.list && \
     curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - && \
-    apt update && apt install nginx -y
+    apt install nginx -y && \
+    ansible-galaxy collection install community.kubernetes
 
 ## Copy entrypoint.sh
-COPY ./docker/dev/entrypoint.sh /usr/workdir/entrypoint.sh
+COPY ./docker/prod/entrypoint.sh /usr/workdir/entrypoint.sh
 RUN dos2unix /usr/workdir/entrypoint.sh && apt --purge remove -y dos2unix && rm -rf /var/lib/apt/lists/*
 
 ## copy app files
@@ -31,13 +31,13 @@ COPY ./src /usr/workdir/src/
 COPY ./public /usr/workdir/public/
 
 ## Install npm Modules
-RUN npm install
+RUN npm install && npm audit fix
 
 ## Build Frontend
 RUN npm run build
 
 ## Prep nginx
-COPY ./docker/dev/vsnginx.conf /etc/nginx/templates/vsnginx.conf.template
+COPY ./docker/prod/vsnginx.conf /etc/nginx/templates/vsnginx.conf.template
 RUN mkdir -p /var/www/vsfrontend && cp -r ./dist/* /var/www/vsfrontend
 
 ## Run nginx and backend
