@@ -19,8 +19,8 @@ build_docker_image_dev:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack/backend
-    - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/dev/Dockerfile -t harbor.cloudical.net/vanillastack/vsinstaller:$DATE .
-    - docker push harbor.cloudical.net/vanillastack/vsinstaller:$DATE
+    - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/dev/Dockerfile -t harbor.cloudical.net/vanillastack/vsinstaller:dev-$DATE .
+    - docker push harbor.cloudical.net/vanillastack/vsinstaller:dev-$DATE
 
 redeploy_debian:
   only:
