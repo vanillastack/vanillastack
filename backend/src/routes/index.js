@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', function (req, res, next) {
-    res.send('Hello World');
-    res.render('index');
+    res.redirect('/api/v1/api-docs');
 });
 
 module.exports = router;

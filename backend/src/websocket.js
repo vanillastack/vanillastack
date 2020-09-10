@@ -78,6 +78,7 @@ const setNewKeyPair = function (uuid) {
 
 const getKeyPair = function () {
     const location = '/usr/workdir/src'
+    console.log(randPassword(4, 4, 8));
     const execOptions = {
         cwd: `${location}`,
         env: null
@@ -188,36 +189,22 @@ const connectionCheck = function (transactionId, node, wsClient, dryRun) {
     }
 };
 
-// const createDir = function (path) {
-//     try {
-//         return fs.mkdirSync(path, {recursive: true});
-//     } catch (e) {
-//         console.error('Something went wrong: ', e);
-//     }
-// }
-//
-// const writeFile = function (location, data) {
-//     try {
-//         // const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')));
-//         fs.writeFileSync(location, data, function (err, file) {
-//             if (err) throw err;
-//             return file;
-//         })
-//     } catch (e) {
-//         console.log(e);
-//     }
-// }
-//
-// const writeYaml = function (location, data) {
-//     try {
-//         // const template = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'templates/hosts.temp.yml')));
-//         fs.writeFileSync(location, yaml.safeDump(data), function (err, file) {
-//             if (err) throw err;
-//             return file;
-//         })
-//     } catch (e) {
-//         console.log(e);
-//     }
-// }
+function randPassword(letters, numbers, either) {
+    const chars = [
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", // letters
+        "0123456789", // numbers
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" // either
+    ];
+
+    return [letters, numbers, either].map(function (len, i) {
+        return Array(len).fill(chars[i]).map(function (x) {
+            return x[Math.floor(Math.random() * x.length)];
+        }).join('');
+    }).concat().join('').split('').sort(function () {
+        return 0.5 - Math.random();
+    }).join('')
+}
+
+// invoke like so: randPassword(5,3,2);
 
 module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck};

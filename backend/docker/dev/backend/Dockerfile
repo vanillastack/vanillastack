@@ -1,0 +1,29 @@
+FROM node:lts-buster-slim
+MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
+
+## Setting up Env
+ENV PORT=8080
+ENV IP=localhost
+ENV NODE_ENV=development
+ENV MODE=installer
+EXPOSE ${PORT}
+WORKDIR /usr/workdir
+
+## Install nginx, Ansible and pre-req
+RUN apt update && apt install -y \
+    build-essential curl gnupg2 \
+    ca-certificates lsb-release \
+    openssh-client python3-pip && \
+    pip3 install ansible && \
+    ansible-galaxy collection install community.kubernetes && \
+    rm -rf /var/lib/apt/lists/*
+
+## copy app files
+COPY ./package.json /usr/workdir/
+COPY ./src /usr/workdir/src/
+
+## Install npm Modules
+RUN npm install && npm audit fix
+
+## Run nginx and backend
+CMD ["npm", "run", "dockerdev"]
