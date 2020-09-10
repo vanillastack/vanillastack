@@ -1,0 +1,18 @@
+stages:
+  - build_liveimage
+
+
+build_liveimage:
+  only:
+    refs:
+      - live-image
+  stage: build_liveimage
+  image: debian/buster
+  variables:
+    WORKDIR: ./live_image
+  script:
+    - cp -a rootfs/* /
+    - cd /live-build
+    - /prepare-installer.bash
+    - /build-installer.bash
+
