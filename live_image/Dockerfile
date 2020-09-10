@@ -12,3 +12,5 @@ RUN bash -x prepare-installer.bash
 RUN sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
 
 WORKDIR /LIVE_BOOT
+
+VOLUME /data

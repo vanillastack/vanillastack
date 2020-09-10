@@ -37,6 +37,7 @@ apt-get install -y --no-install-recommends mc aptitude screen curl openssl apt-t
 sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
 
 mkdir -p /LIVE_BOOT
+mkdir -p /data
 
 curl -fsSL https://download.docker.com/linux/debian/gpg > /live-build/config/archives/docker.key.chroot
 

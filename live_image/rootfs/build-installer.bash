@@ -16,6 +16,7 @@ lb config noauto \
         --apt-source-archives false \
         --archive-areas "main contrib non-free" \
         --clean \
+        --mode debian \
         --compression gzip \
         --debconf-frontend noninteractive \
         --debug \
@@ -32,3 +33,5 @@ lb config noauto \
         --verbose
 
 lb build 2>&1 | tee build.log
+
+cp vanillastack-installer* /data
