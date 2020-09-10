@@ -40,7 +40,7 @@ hubble-relay:
   #   # repository of the docker image
   #   name: hubble-relay
   #   # tag is the container image tag to use
-  #   tag: v1.8.2
+  #   tag: v1.8.3
   #   # pullPolicy is the container image pull policy
   #   pullPolicy: IfNotPresent
   #
@@ -79,7 +79,7 @@ global:
   registry: docker.io/cilium
 
   # tag is the container image tag to use
-  tag: v1.8.2
+  tag: v1.8.3
 
   # pullPolicy is the container image pull policy
   pullPolicy: IfNotPresent
@@ -341,7 +341,7 @@ global:
   hostFirewall: false
 
   # kubeProxyReplacement enables kube-proxy replacement in Cilium BPF datapath
-  kubeProxyReplacement: "strict"
+  kubeProxyReplacement: "probe"
 
   # hostServices is the configuration for ClusterIP service handling in host namespace
   hostServices:
