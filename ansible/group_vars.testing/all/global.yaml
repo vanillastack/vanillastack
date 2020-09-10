@@ -28,6 +28,7 @@ stratos:
   enabled: true
   adminpassword: 4JOA4l8DK7Sr
 guacamole:
+  imageTag: 202009100849
   enabled: true
   namespace: guacamole
   postgres:
