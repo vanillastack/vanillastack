@@ -57,7 +57,7 @@
     exclude: kubelet kubeadm kubectl
 
 - name: get latest kube version
-  shell: dnf --showduplicate list  kubelet | grep 1.19 | tail -1 | tr -s ' ' | cut -d ' ' -f2
+  shell: dnf --showduplicate list  kubelet --disableexcludes=kubernetes | grep 1.19 | tail -1 | tr -s ' ' | cut -d ' ' -f2
   register: dnf_output
 
 - name: get kubeversion
