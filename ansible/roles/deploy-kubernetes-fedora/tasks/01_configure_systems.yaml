@@ -94,7 +94,7 @@
 
 - name: Fix for systemd version 245
   template:
-    src: usr/lib/sysctl.d/99-rp_filter.conf
+    src: 99-rp_filter.conf
     dest: /usr/lib/sysctl.d/99-rp_filter.conf
     mode: '0644'
     owner: root
