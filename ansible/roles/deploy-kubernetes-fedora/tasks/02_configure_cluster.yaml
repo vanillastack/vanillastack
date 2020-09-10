@@ -89,5 +89,4 @@
 
 - name: "Reboot machine to get latest updates"
   reboot:
-  when: reboot_hint.rc == 1
 
