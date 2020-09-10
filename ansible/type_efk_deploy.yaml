@@ -1,0 +1,17 @@
+---
+- name: install efk
+  hosts: master[0]
+  gather_facts: true
+  roles:
+  # EFK init
+  - role: install-efk
+    action: init
+  # EFK elasticsearch
+  - role: install-efk
+    action: es_deploy
+  # EFK kibana
+  - role: install-efk
+    action: kibana_helm
+  # EFK fluentd
+  - role: install-efk
+    action: fluentd_deploy

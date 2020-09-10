@@ -1,0 +1,44 @@
+dbcreation:
+  image:
+    pullPolicy: "IfNotPresent"
+    repository: "registry.opensource.zalan.do/acid/spilo-12"
+    tag: "1.6-p3"
+# fullnameOverridestring: ""
+guacamole:
+  image:
+    repository: "vanillastack-guacamole/guacamole"
+    tag: "{{ guacamole.imageTag }}"
+guacd:
+  image:
+    repository: "vanillastack-guacamole/guacd"
+    tag: "{{ guacamole.imageTag }}"
+# imagePullSecretslist: []
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "{{ letsEncrypt.issuerName }}"
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/app-root: /guacamole
+  enabled: true
+  host: "guacamole.{{ kubernetes.loadBalancer.fqdn }}"
+  # tls: []
+# nameOverride: ""
+# nodeSelector: {}
+# podSecurityContext: {}
+postgres:
+  database: "guacamole"
+  hostname: "guacamole-postgresql"
+  password: "{{ postgrespassword.stdout }}"
+  port: "5432"
+  user: "guacamole"
+replicaCount: 1
+# resources: {}
+# securityContext: {}
+service:
+  port: 80
+  type: "ClusterIP"
+serviceAccount:
+  create: true
+  # name: nil
+# tolerations: []

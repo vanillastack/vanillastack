@@ -1,4 +1,4 @@
-system_domain: "cf.{{ loadbalancer_fqdn }}"
+system_domain: "cf.{{ kubernetes.loadBalancer.fqdn }}"
 
 kube:
   storage_class: {{ cloudfoundry.storageclass }}
@@ -8,8 +8,11 @@ features:
     enabled: true
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-    #  cert-manager.io/cluster-issuer: letsencrypt-prod
-    #  kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: {{ letsEncrypt.issuerName }}
+      kubernetes.io/tls-acme: "true"
   eirini:
     enabled: true
+
+install_stacks: [sle15]
 

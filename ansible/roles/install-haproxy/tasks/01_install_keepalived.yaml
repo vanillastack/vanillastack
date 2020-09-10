@@ -1,9 +1,8 @@
 ---
 - name: Install packages
-  apt: 
+  package: 
     state: present 
-    update_cache: yes
-    pkg:
+    name:
       - keepalived
 
 - name: set primary node as Master

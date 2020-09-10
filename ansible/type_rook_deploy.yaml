@@ -1,8 +1,8 @@
 ---
 - name: Deploy Rook
-  hosts: bastion
+  hosts: master[0]
   become: false
   gather_facts: false
   roles:
-    - role: prepare-node
+#    - role: prepare-node
     - role: deploy-rook
