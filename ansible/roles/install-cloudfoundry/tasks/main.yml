@@ -56,6 +56,9 @@
   register: result
   until: result.rc == 0
 
+- name: reset eirini pod
+  command: kubectl delete --wait po -n kubecf -l name=eirini-routing
+
 - name: wait for eirini router to come up
   command: >
     kubectl wait --namespace=kubecf --for=condition=ready \
