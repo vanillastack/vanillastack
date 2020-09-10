@@ -6,13 +6,6 @@
   roles:
     - role: wait-for-nodes
  
-- name: Prepare Deployment node
-  hosts: master[0]
-  become: true
-  gather_facts: no
-  roles:
-    - role: prepare-node
-
 - name: Install Keepalived
   hosts: haproxy
   become: true
