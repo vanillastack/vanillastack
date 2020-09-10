@@ -7,7 +7,6 @@
 - name: Init Cluster
   command: > 
     kubeadm init --service-cidr {{ service_cidr }} \
-                 --pod-network-cidr {{ pod_network_cidr }} \
                  --token {{ token }} \
                  --control-plane-endpoint api.{{ kubernetes.loadBalancer.fqdn }}:6443 
                  --upload-certs \                
