@@ -9,7 +9,6 @@
       - python-kubernetes
       - python3-kubernetes
       - ansible
-      - needrestart
       - vim
       - lvm2
       - jq
