@@ -13,6 +13,7 @@
                  --apiserver-bind-port 8443 \
                  --certificate-key {{ certificate_key }} \
                  --ignore-preflight-errors=Port-6443 \
+                 --skip-phases=addon/kube-proxy \
                  {{ kubeadm_opts }} \
                  {{ init_opts }}
   register: init_cluster 
