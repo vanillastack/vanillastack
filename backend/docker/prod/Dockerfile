@@ -21,8 +21,8 @@ RUN apt update && apt install -y \
     ansible-galaxy collection install community.kubernetes
 
 ## Copy entrypoint.sh
-COPY ./docker/prod/entrypoint.sh /usr/workdir/entrypoint.sh
-RUN dos2unix /usr/workdir/entrypoint.sh && apt --purge remove -y dos2unix && rm -rf /var/lib/apt/lists/*
+COPY ./docker/prod/*.sh /usr/workdir/
+RUN dos2unix /usr/workdir/*.sh && apt --purge remove -y dos2unix && rm -rf /var/lib/apt/lists/*
 
 ## copy app files
 COPY ./package.json /usr/workdir/

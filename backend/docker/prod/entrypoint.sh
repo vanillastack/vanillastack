@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# Start backend
+# Prep and Start backend
 cd "/usr/workdir"
+mv "vsbackend.init.sh" "/etc/init.d/vsbackend"
+chmod +x /etc/init.d/vsbackend
 echo "Starting backend"
-npm run dockerdetached
+/etc/init.d/vsbackend start
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start my_first_process: $status"
