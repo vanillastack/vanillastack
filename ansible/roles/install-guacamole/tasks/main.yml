@@ -24,8 +24,21 @@
 
 - name: "wait until postgres pod is ready"
   command: >
-    kubectl wait --namespace="{{ guacamole.namespace }}" --for=condition=ready \
-    pods -l cluster-name=guacamole-postgresql --timeout=10s
+   kubectl wait --namespace="{{ guacamole.namespace }}" --for=condition=ready 
+   pods -l cluster-name=guacamole-postgresql --timeout=10s
+  register: postgresReady
+  retries: 180
+  delay: 10
+  until: postgresReady.rc == 0  
+
+- name: sleep
+  pause:
+    seconds: 1
+
+- name: "wait until postgres pod is ready"
+  command: >
+   kubectl wait --namespace="{{ guacamole.namespace }}" --for=condition=ready 
+   pods -l cluster-name=guacamole-postgresql --timeout=10s
   register: postgresReady
   retries: 180
   delay: 10

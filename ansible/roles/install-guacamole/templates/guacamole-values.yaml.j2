@@ -7,11 +7,11 @@ dbcreation:
 guacamole:
   image:
     repository: "vanillastack-guacamole/guacamole"
-    tag: 1-0
+    tag: "{{ guacamole.imageTag }}"
 guacd:
   image:
     repository: "vanillastack-guacamole/guacd"
-    tag: 1-0
+    tag: "{{ guacamole.imageTag }}"
 # imagePullSecretslist: []
 ingress:
   annotations:

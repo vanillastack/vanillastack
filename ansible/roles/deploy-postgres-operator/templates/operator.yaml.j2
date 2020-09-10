@@ -104,7 +104,7 @@ configKubernetes:
   # override topology key for pod anti affinity
   pod_antiaffinity_topology_key: "kubernetes.io/hostname"
   # namespaced name of the ConfigMap with environment variables to populate on every pod
-  # pod_environment_configmap: "default/my-custom-config"
+  pod_environment_configmap: "{{ postgresOperator.namespace }}/postgres-pod-config"
 
   # specify the pod management policy of stateful sets of Postgres clusters
   pod_management_policy: "ordered_ready"

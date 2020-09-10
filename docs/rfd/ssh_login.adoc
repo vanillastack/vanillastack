@@ -1,0 +1,100 @@
+= How to handle inital ssh-logins
+
+== Document State: Draft
+
+Currently this document only reflects some of the thoughts from our Community-meeting on 2020-09-02. Anybody involved and with own ideas and arguments is urged to add these here.
+
+== Problem statement:
+
+The machine that is doing the deployment, needs to access all the nodes to install via ssh.
+The Installer will be a docker container, thats started via a shell script. So we have some options, on how to aquire access.
+
+
+== Target
+
+We want to use ssh private/public key pairs. If the customer has not yet established public/private keypairs, we are able to create these for our usecase
+Our container must create its own, new private-key on start. We don't want to deliver a pre-created privatekey with the container.
+
+== Not in Focus
+
+We don't want to rollout "thePerfectAccessManagementSolution[tm]" with all the bells and whistles.
+
+== Discussed options
+
+. User is asked for Username/Password. The installer then can create a new ssh-keypair use these information, to use and deploy them to the machines for later use
+
+. User already has working ssh-keypairs. We could reuse these by mounting/injecting these into the container (maybe autodetected?)
+
+.. The simplest case: no passphrase protection on the keys. simply works
+
+.. If there are passphrase proteced Private-Keys the user has to be asked for the passphrase
+
+.. maybe the user is using SSH-Agent - can we simply detect the socket of the ssh-agent and access it from the container?
+
+
+== Arguments
+
+. Option: Username/Password
++
+Pro::
+- Works straight forward in every scenario
+- no complexity for different scenarios
+
+Contra::
+- seems more insecure
+- creating additional public-keys in customers infrastructure
+
+  Implementational Effort:
+
+. Option: Reuse of existing ssh-keypairs, a customer already rolled out
+
+.. Option:
++
+Pro:::
+- fast solution in default usecases that simply works
+
+Contra:::
+- PreReq: user has to have already rolled out public-keys
+- PreReq: private keys accessible and not passphrase-protected
+
+  Implementational Effort:
+
+.. Option:
++
+Pro:::
+- fast solution like 2a)
+
+Contra:::
+- implementation of passphrase handling necessary
+- PreReq: user has to have already rolled out public-keys
+
+  Implementational Effort:
+
+.. Option:
++
+Pro:::
+- if SSH-Agent is in use, its the premium solution.
+
+Contra:::
+- PreReq: user has to have already rolled out public-keys
+- (minor) implement detection and use of SSH_AUTH_SOCKET
+
+  Implementational Effort:
+
+== Issues & Comments
+
+* Solution 1) has the lowest barrier for users, just starting to setup linux and vanilla. Keypairs are not uncommon at all, but are used on a more expert level.
+
+* SSH it trying hard, to make you create keypairs with passprases. Its to be assumed, that lot of users have passphrases on their private keys
+
+* In all cases, that involve passing secret information to SSH like passwords or passphrases, ssh actively tries to force an interactive keyboard session. Simple pipes or expect-scripts don't work in these cases and you have to work around that in any case
+
+* for private keys we should assume that the ssh config and keys are stored in $HOME/.ssh
++ Any other directory is a significant change from defaults and can not be focused on for the mvp
+
+* Detecting SSH-Agent is indeed quite easy, and the installer-script should at least give this a try: If the environment variable `SSH_AUTH_SOCK` is set, then it points to the socket. If the user can read this file, then he has access to the SSH-Agent. Injecting this socket into the container is possible, and relaying the variable into the container is no problem.
+
+
+== Decision
+
+No decision yet

@@ -155,6 +155,13 @@
     - role: deploy-postgres-operator
       when: postgresOperator.enabled
 
+- name: install guacamole
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: install-guacamole
+      when: guacamole.enabled
+
 - name: Deploy Harbor
   hosts: master[0]
   gather_facts: true
