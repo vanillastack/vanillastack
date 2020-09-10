@@ -54,13 +54,8 @@ const navigation = {
 
 const cloudfoundry = {
   state: () => ({
-    domain: '',
-    stratos: true,
-    loadBalancerIp: '',
-    loadBalancerKind: 'internal',
-    clusterName: '',
-    issuerName: '',
-    emailDeployer: ''
+    domainName: '',
+    stratos: true
   }),
 
   mutations: {
@@ -140,15 +135,15 @@ const installer = {
   },
 
   state: () => ({
-    masters: 1,
-    workers: 1,
-    isHA: false,
+    masters: 3,
+    workers: 3, // Default for VS+Rook
+    isHA: true,
     copiedKeyToNodes: false,
     sshKey: '',
     canGoBack: false,
     canGoForward: false,
     allowGoForward: false,
-    installRook: false,
+    installRook: true,
     installCF: false,
     installOpenStack: false,
     workersList: [],

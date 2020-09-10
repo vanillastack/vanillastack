@@ -43,9 +43,9 @@
                 </div>
             </div>
             <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" name="installRook" id="installRook" value="Rook" :checked="installRook" v-on:change="installationRookChanged">
+                <input class="custom-control-input" type="checkbox" disabled="disabled" name="installRook" id="installRook" value="Rook" :checked="installRook" v-on:change="installationRookChanged">
                 <label class="custom-control-label" for="installRook">
-                    Install Rook as Kubernetes-based object store
+                    Install Rook as persistent storage
                 </label>
             </div>
             <div class="custom-control custom-switch">
@@ -188,6 +188,8 @@ export default {
 
         // Handle the amount of workers being changed
         EventBus.$on(Constants.Event_WorkersCountChanged, value => this.workers = value)
+
+        this.validate()
     },
 }
 </script>
