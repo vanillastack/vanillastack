@@ -97,7 +97,7 @@ conf:
     override:
     append:
     admin_keyring: null
-    monitors: {{openstack.ceph.rook.cephMonitors}}
+    monitors: rook-ceph-mon-a.{{rook.namespace}}.svc.cluster.local:6789,rook-ceph-mon-b.{{rook.namespace}}.svc.cluster.local:6789,rook-ceph-mon-c.{{rook.namespace}}.svc.cluster.local:6789
     pools:
       {{openstack.cinder.rbd.rbdBackupPool}}:
         replication: 3
