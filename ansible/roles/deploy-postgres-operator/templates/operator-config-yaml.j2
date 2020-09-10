@@ -1,0 +1,19 @@
+apiVersion: "acid.zalan.do/v1"
+kind: OperatorConfiguration
+metadata:
+  name: postgresql-operator-configuration
+  namespace: postgres-operator
+data:
+configuration:
+  kubernetes:
+    # referencing config map with custom settings
+    pod_environment_configmap: {{ postgresOperator.namespace }}/postgres-pod-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-pod-config
+  namespace: {{ postgresOperator.namespace }}
+data:
+  ALLOW_NOSSL: "true"
+

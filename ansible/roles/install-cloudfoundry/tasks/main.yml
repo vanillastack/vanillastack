@@ -1,21 +1,4 @@
 ---
-- name: copy files to cluster folder
-  copy:
-    src:  "{{ item }}"   
-    dest: "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/{{ item }}"
-    owner: "{{ ansible_env.USER }}"
-  loop: 
-    - cf-operator.tgz
-    - kubecf_release.tgz
-
-- name: copy files to cluster folder
-  template:
-    src:  "{{ item }}.j2"   
-    dest: "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/{{ item }}"
-    owner: "{{ ansible_env.USER }}"
-  loop: 
-    - kubecf-values.yaml
-
 - name: helm installation kubecf
   block:
   - name: Increment the retry count
@@ -34,30 +17,29 @@
       - "cf-operator"
       - "eirini"
 
-  - name: create necessary namespaces
-    k8s:
-      name: "{{ item }}"
-      api_version: v1
-      kind: Namespace
-      state: present
+  - name: install CF repository
+    community.kubernetes.helm_repository:
+      name: cloudfoundry
+      repo_url: https://harbor.cloudical.net/chartrepo/vanillastack-cloudfoundry
+        
+  - name: Deploy latest version of CloudFoundry
+    community.kubernetes.helm:
+      name: cf-operator
+      chart_ref: cloudfoundry/cf-operator
+      release_namespace: cf-operator
+      values: 
+        global:
+          singleNamespace:
+            name: kubecf
+      create_namespace: true
       wait: true
-    loop:
-    - "cf-operator"
-
-  - name: install CF Operator
-    command: >
-      helm upgrade --install --wait cf-operator \
-      --namespace cf-operator \
-      --set "global.singleNamespace.name=kubecf" \
-      "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/cf-operator.tgz" 
-    register: cf_install
 
   - name: install Kubecf
-    command: > 
-      helm upgrade --install kubecf \
-      --namespace kubecf \
-      --values "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/kubecf-values.yaml" \
-      "{{ ansible_env.HOME }}/{{ kubernetes.clusterName }}/kubecf_release.tgz"
+    community.kubernetes.helm:
+      name: kubecf
+      chart_ref: cloudfoundry/kubecf
+      release_namespace: kubecf
+      values: "{{ lookup('template', 'kubecf-values.yaml.j2') | from_yaml }}"  
     register: kubecf_install
 
   rescue:
@@ -73,6 +55,9 @@
   delay: 10
   register: result
   until: result.rc == 0
+
+- name: reset eirini pod
+  command: kubectl delete --wait po -n kubecf -l name=eirini-routing
 
 - name: wait for eirini router to come up
   command: >

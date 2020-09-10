@@ -66,6 +66,7 @@
       - needrestart
       - helm
       - cf-cli
+      - vim
     update_cache: yes
   retries: 3
   delay: 1
@@ -76,11 +77,3 @@
   apt:
     name: "*"
     state: latest
-
-- name: extend var lvm
-  lvol:
-    vg: "{{ inventory_hostname_short }}-vg"
-    lv: var
-    size: 100%FREE
-    resizefs: true
-    shrink: no
