@@ -1,6 +1,6 @@
 ---
 - name: Add elastic repository
-    community.kubernetes.helm_repository:
+  community.kubernetes.helm_repository:
     name: elastic
     repo_url: https://helm.elastic.co
 
