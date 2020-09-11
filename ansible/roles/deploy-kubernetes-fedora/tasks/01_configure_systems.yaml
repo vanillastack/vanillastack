@@ -117,7 +117,7 @@
       line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
       create: true
 
-when: ansible_distribution == "Fedora"
+  when: ansible_distribution == "Fedora"
 
 - name: Upgrade all packages to the latest version
   package:
