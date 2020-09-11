@@ -109,6 +109,14 @@ var app = new Vue({
         this.$store.commit(Constants.Store_UpdateNavigation, data);
       }) 
 
+      // Handle the loading of the base info data
+      EventBus.$on(Constants.Network_LoadedInfo, data => {
+        this.$store.commit(Constants.Store_BaseDataUpdateData, data)
+
+        // Open the websocket connection
+        this.$network.openWebSocket(this.$network, data.uuid)
+      })
+
       // Execute the info-call to the backend
       this.$network.getInfo()
     },

@@ -5,6 +5,9 @@ import EventBus from './eventBus'
 
 Vue.use(VueResource)
 
+const LocalEvent_LoadedInfoData = "Network_LocalEvent_LoadedInfoData"
+var ___vue 
+
 const Network = {
 
     install: function(Vue, options) {
@@ -25,7 +28,13 @@ const Network = {
                 const path = this.data.addressPrefix + "/info"
         
                 this.data.__vue.http.get(path).then(response => {
-                    EventBus.$emit(Constants.Network_LoadedInfo, response)
+                    var loadedData = {
+                        sshKey : response.body.sshPublicKey,
+                        mode : response.body.mode,
+                        uuid : response.body.uuid
+                    }
+
+                    EventBus.$emit(Constants.Network_LoadedInfo, loadedData)
                 })
             },
 
@@ -37,9 +46,13 @@ const Network = {
                 this.data.protocol = window.location.protocol
                 this.data.port = window.location.search.indexOf("local=true") > 0 ? 3000 : window.location.port
                 this.data.addressPrefix = this.data.protocol + "//" + this.data.host + ":" + this.data.port + "/api/v1" 
+            },
 
+            openWebSocket : function(instance, uuid) {
                 // Create the websocket client
-                const ws = new WebSocket("ws://" + this.data.host + ":" + this.data.port)
+                var url = "ws://" + this.data.host + this.data.port + "?uuid=" + uuid
+                const ws = new WebSocket(url)
+                console.log("Websocket Call: " + url)
 
                 // Add the listeners
                 ws.addEventListener('open', function(event) {
@@ -62,9 +75,8 @@ const Network = {
                     console.log("WS CLOSE", event)
                 })
 
-                this.__ws = ws
-                
-            },
+                this.__ws = ws 
+            }
         }
         
         Vue.prototype.$network.construct(Vue)
