@@ -4,9 +4,11 @@ const logger = require('morgan');
 const path = require('path');
 const indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api');
+const cors = cors = require('cors');
 
 const app = express();
 
+app.use(cors());
 app.disable('x-powered-by');
 app.use(logger('dev'));
 app.use(express.json());

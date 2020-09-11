@@ -36,27 +36,22 @@ const {getClient, connectionCheck} = require('../../websocket');
 router.post('/', function (req, res) {
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry;
-    const node = req.body.node;
+    const nodes = req.body.nodes;
     if (!client) {
         res.status(400).json({
             message: 'uuid invalid'
         });
         return;
-    } else if (!node.user) {
+    } else if (!nodes) {
         res.status(400).json({
-            message: 'user must be specified'
-        });
-        return;
-    } else if (!node.host) {
-        res.status(400).json({
-            message: 'host must be specified'
+            message: 'nodes must be specified'
         });
         return;
     }
 
     const transactionId = genTransactionId();
 
-    connectionCheck(transactionId, node, client, dryRun);
+    connectionCheck(transactionId, nodes, client, dryRun);
 
     res.status(200).json({
         transactionId: transactionId

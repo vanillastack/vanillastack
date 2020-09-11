@@ -109,7 +109,7 @@ const getKeyPair = function () {
     }
 }
 
-const connectionCheck = function (transactionId, node, wsClient, dryRun) {
+const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
     const wsMsg = {
         event: 'INIT',
         transactionId: transactionId,
@@ -121,21 +121,43 @@ const connectionCheck = function (transactionId, node, wsClient, dryRun) {
     try {
         fs.mkdirSync(dir, {recursive: true});
         fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey);
+
         const hostsYaml = {
             all: {
-                hosts: {
-                    test_node: {
-                        ansible_ssh_host: node.host,
-                        ansible_user: node.user,
-                        ansible_ssh_private_key_file: `${dir}/key.pem`
-                    }
-                }
+                hosts: {}
             }
         };
+
+        nodes.forEach((node, i) => {
+            // const host = {}
+            // host[`node-${i}`] = {
+            //     ansible_ssh_host: node.host,
+            //     ansible_user: node.user,
+            //     ansible_ssh_private_key_file: `${dir}/key.pem`
+            // }
+            // `${node.host} ansible_ssh_host=${node.host} ansible_user=${node.user} ansible_ssh_private_key_file=${dir}/key.pem`
+            console.log(`index: ${i}`);
+            hostsYaml.all.hosts[`node-${i}`] = {
+                ansible_ssh_host: node.host,
+                ansible_user: node.user,
+                ansible_ssh_private_key_file: `${dir}/key.pem`
+            }
+
+            // `node-${i}`: {
+            //     ansible_ssh_host: node.host,
+            //     ansible_user: node.user,
+            //     ansible_ssh_private_key_file: `${dir}/key.pem`
+            // }
+
+        });
+        console.log(yaml.safeLoad(fs.readFileSync('/tmp/test.yml', 'utf8')));
+        console.log(hostsYaml);
+        console.log(yaml.safeDump(hostsYaml));
+
         fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
 
         // Exec ansible connection test
-        if (!dryRun) {
+        if (dryRun === 'false') {
             const spawnOptions = {
                 cwd: dir,
                 env: null,
@@ -180,7 +202,7 @@ const connectionCheck = function (transactionId, node, wsClient, dryRun) {
         try {
             // fs.unlinkSync(`${dir}/key.pem`);
             // fs.unlinkSync(`${dir}/hosts.yml`);
-            fs.rmdirSync(dir, {recursive: true});
+            // fs.rmdirSync(dir, {recursive: true});
             console.log(`${transactionId} Connection check and cleanup completed`);
         } catch (e) {
             console.log('Cleaning up gone wrong: ', e);
