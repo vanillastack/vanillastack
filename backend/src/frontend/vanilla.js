@@ -2,6 +2,7 @@ import EventBus from './js/eventBus'
 import Constants from './js/constants'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import VueResource from 'vue-resource'
 import Store from './js/store'
 import App from './Main.vue'
 import Home from './Home.vue'
@@ -15,9 +16,16 @@ import Rook from './Rook.vue'
 import OpenStack from './OpenStack.vue'
 import CF from './CF.vue'
 import 'es6-promise/auto'
+import Network from './js/network'
 
 // Call Vue.use(VueRouter)
-Vue.use(VueRouter);
+Vue.use(VueRouter)
+
+// Add the resources-plugin
+Vue.use(VueResource)
+
+// Add the Network-Componten
+Vue.use(Network)
 
 // Require all the CSS
 require('bootstrap');
@@ -68,6 +76,7 @@ EventBus.$on(Constants.Event_GoNext, e => {
 var app = new Vue({
     router,
     store : Store,
+
     created: function () {
       console.log('Vue is running');
     },
@@ -78,7 +87,7 @@ var app = new Vue({
     },
 
     created: function() {
-      
+      // Configure the router
       this.$router.afterEach((to, from) => {
         // Get the new index
         var index = 0;
@@ -94,10 +103,14 @@ var app = new Vue({
         console.log("Current Route Index", currentRoute)
       })
 
+      // Handle the NewViewLoaded-event
       EventBus.$on(Constants.Event_NewViewLoaded, data => {
         // Store the data
         this.$store.commit(Constants.Store_UpdateNavigation, data);
       }) 
+
+      // Execute the info-call to the backend
+      this.$network.getInfo()
     },
     
     methods: {

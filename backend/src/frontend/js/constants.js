@@ -31,6 +31,8 @@ export default Object.freeze({
     Store_OpenStackUpdateData : "openStackUpdateData",
     Store_CloudFoundryUpdateData: "cloudFoundryUpdateData",
 
+    Network_LoadedInfo: "Network_LoadedInfo",
+
     Validate_IpAddress: /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
   })
   
