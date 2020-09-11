@@ -28,8 +28,8 @@ kibana_user: kibana_test
 kibana_password: secretlysecretpassword
 kibana_replicas: 2
 kibana:
-  system_user: debian
-  system_group: debian
+  system_user: "{{ ansible_user }}"
+  system_group: "{{ ansible_user }}"
   ingress:
     enabled: true
     dns: "kibana.test.vanillastack.cloudical.net"

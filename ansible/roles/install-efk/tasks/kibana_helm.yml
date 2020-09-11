@@ -30,16 +30,14 @@
       data:
         auth: "{{ kibana_auth_slurp.content }}"
 
-- name: create kibana values
-  template:
-    src: kibana_values.yml.j2
-    dest: /tmp/kibana_values.yml
-
 - name: Install kibana
-  command: >
-    helm upgrade -i kibana elastic/kibana
-    --namespace kube-logging
-    --values /tmp/kibana_values.yml
+    community.kubernetes.helm:
+    name: kibana
+    chart_ref: elastic/kibana
+    release_namespace: kube-logging
+    values: "{{ lookup('template', 'kibana_values.yaml.j2') | from_yaml }}"
+    create_namespace: true
+    wait: true
 
 - name: wait for kibana pods to come up
   shell: kubectl get pods -n kube-logging -o json
