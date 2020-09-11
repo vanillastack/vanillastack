@@ -2,6 +2,13 @@
 
 set -e
 
+/usr/bin/containerd &
+sleep 2
+/usr/bin/dockerd --containerd=/run/containerd/containerd.sock &
+sleep 2
+docker version  | tee -a $OUTPUT/build.log
+docker pull harbor.cloudical.net/vanillastack/vsinstaller  | tee -a $OUTPUT/build.log
+
 mkdir -p ${WORKDIR}/build
 cd ${WORKDIR}/build
 
@@ -38,6 +45,10 @@ lb config noauto \
         --memtest none \
         --source false \
         --verbose | tee -a $OUTPUT/build.log
+
+mkdir -p $WORKDIR/config/includes.chroot/vanilla | tee -a $OUTPUT/build.log
+
+docker save harbor.cloudical.net/vanillastack/vsinstaller | pixz -p 8 -9 > $WORKDIR/build/config/includes.chroot/vanilla/vanilla-installer.tar.xz  | tee -a $OUTPUT/build.log
 
 lb build 2>&1 | tee -a $OUTPUT/build.log
 
