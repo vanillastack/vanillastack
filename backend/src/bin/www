@@ -40,11 +40,14 @@ server.on('upgrade', onUpgrade);
 function onUpgrade(request, socket, head) {
     const {uuid} = getParams(request.url);
     authenticate(uuid, (err, client) => {
-        // console.log(client);
         if (err || !client) {
-            socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+            const errorIsSend = socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+            console.log('Sending Error Msg for unauthenticated WS-Request');
+            while (!errorIsSend) {
+            }
             socket.destroy();
-            console.log('Socket destroyed');
+            console.log('WS-Socket destroyed');
+
             return;
         }
         request.uuid = client.uuid;
