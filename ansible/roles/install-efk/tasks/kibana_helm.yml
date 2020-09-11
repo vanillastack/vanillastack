@@ -31,11 +31,11 @@
         auth: "{{ kibana_auth_slurp.content }}"
 
 - name: Install kibana
-    community.kubernetes.helm:
+  community.kubernetes.helm:
     name: kibana
     chart_ref: elastic/kibana
     release_namespace: kube-logging
-    values: "{{ lookup('template', 'kibana_values.yaml.j2') | from_yaml }}"
+    values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
     create_namespace: true
     wait: true
 
