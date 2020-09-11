@@ -73,6 +73,9 @@ conf:
         tunnel_types: {{openstack.neutron.l3.haNetworkType}}
       ovs:
         bridge_mappings: public:br-ex
+    linuxbridge_agent:
+      linux_bridge:
+        bridge_mappings: public:br-ex
 ### WORKAROUND
     tungstenfabric:
       - dummy: true
