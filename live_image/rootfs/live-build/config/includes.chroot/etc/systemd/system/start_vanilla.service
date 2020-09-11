@@ -6,4 +6,4 @@ Requires=docker.service
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/usr/bin/docker run --rm harbor.cloudical.net/vanillastack/vsinstaller
+ExecStart=/usr/bin/docker run --rm --name vanilla-installa -p 8080:8080 harbor.cloudical.net/vanillastack/vsinstaller

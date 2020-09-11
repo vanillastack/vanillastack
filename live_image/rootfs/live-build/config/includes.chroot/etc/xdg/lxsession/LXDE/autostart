@@ -4,4 +4,4 @@
 @xset s off
 @xset -dpms
 @xset s noblank
-@chromium --app=https://vanillastack.io
+@chromium --app=http://localhost:8080
