@@ -64,11 +64,6 @@ Plugin {
   }
 }
 Plugin {
-  type=cpu
-  Config {
-  }
-}
-Plugin {
   type=tray
   Config {
   }
@@ -83,11 +78,4 @@ Plugin {
     CenterText=0
   }
 }
-Plugin {
-  type=launchbar
-  Config {
-    Button {
-      id=lxde-logout.desktop
-    }
-  }
-}
+
