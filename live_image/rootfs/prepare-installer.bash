@@ -19,9 +19,9 @@ export LC_TELEPHONE=C.UTF-8
 export LC_MEASUREMENT=C.UTF-8
 export LC_IDENTIFICATION=C.UTF-8
 
-PACKAGES_NEEDED="live-build xz-utils"
+PACKAGES_NEEDED="live-build xz-utils pixz"
 PACKAGES_NEEDED+=" curl ca-certificates"
-PACKAGES_NEEDED+=" "
+PACKAGES_NEEDED+=" gnupg gnupg-agent software-properties-common"
 
 PACKAGES_DEBUG="mc less"
 PACKAGES_DEBUG+=" aptitude"
@@ -35,7 +35,6 @@ PACKAGES_DEBUG+=" "
 
 apt-get update && apt-get install -y --no-install-recommends $PACKAGES_NEEDED $PACKAGES_DEBUG
 
-
 # Monkeypatching because Bug
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
 sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
@@ -45,6 +44,9 @@ mkdir -p ${OUTPUT}
 
 ls -l $WORKDIR
 
+echo "deb [arch=amd64] https://download.docker.com/linux/debian buster stable" > /etc/apt/sources.list.d/docker.list
+
 curl -fsSL https://download.docker.com/linux/debian/gpg > $WORKDIR/live-build/config/archives/docker.key.chroot
+cat $WORKDIR/live-build/config/archives/docker.key.chroot | apt-key add -
 
-
+apt-get update && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io
