@@ -28,7 +28,7 @@
             <div class="col">
                 <p><strong>SSH-Key</strong></p>
                 <p>
-                    <textarea class="form-control" cols="30" rows="5" ref="key">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDR3FpSe9EyW96fgIv69fi3XnbKkcSi1w/HrhWOlzDJ+tpwEsIQtAcXFkhcs1hpHjGsZepJPzwFEP4JzdfvErHpL/j2Kvfo62IWNTf3Rouf1rG1IXUJEkl+a7cI5FHolbYiGEGPXe2+MuhSTtxX5iYLdyk3o+Tf4qTZxrpexoVzFxEKUKzfVoongZkECdr81bXv9IN6KRD05w9/AwS96mrv7tspBk9ypUETvB3DiLW3X9oxpMFL6IUNvTO1AZubti3Da9ES0xBiIH63rn8AE4stiNv6awnhUaP3SZa10RVn3WjQ/adboxtnOO2MAo+HACP8Jqhy2b1AzpZZa+9OIfptUqyGWcEE+E8iqoVMQfqxJNoAvaKsAg3UqRawuAOSU+UEYbUSxQ8yMZ7l075hA0c1ULzHt6WRaRid99I6/okg3zOTOv1rOuAuVjN4YbHQM/qzZ8+O+ixvTh+KVjaKgmZmzKH1LkPxH5zB09WbEtnVXuCQac+/l0dQwI+b61yT+XM= ksamaschke@opensuse</textarea>
+                    <textarea class="form-control" cols="30" rows="5" ref="key" v-model="key"></textarea>
                 </p>
                 <p>
                     <button @click="copyKey" class="btn btn-primary min-width-100" role="button">Copy</button>
@@ -56,7 +56,7 @@ export default {
     data: function() {
         return {
             didCopy: this.$store.state.installer.copiedKeyToNodes,
-            key: this.$store.state.installer.sshKey
+            key: this.$store.state.base.sshKey
         }
     },
 

@@ -126,6 +126,26 @@ const openstack = {
   }
 }
 
+// Base-Data module
+const baseData = {
+  state: () => ({
+    sshKey: '',
+    uuid: '',
+    mode: 'installer'
+  }),
+
+  mutations: {
+    [Constants.Store_BaseDataUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_BaseDataUpdated, state);
+    }
+  }
+}
+
 // Installer Module
 const installer = {
 
@@ -139,7 +159,6 @@ const installer = {
     workers: 3, // Default for VS+Rook
     isHA: true,
     copiedKeyToNodes: false,
-    sshKey: '',
     canGoBack: false,
     canGoForward: false,
     allowGoForward: false,
@@ -213,7 +232,8 @@ const installer = {
 const Store = new Vuex.Store({
     modules: {
       navigation: navigation,
-      installer: installer
+      installer: installer,
+      base: baseData
     }
 })
 

@@ -15,6 +15,7 @@ export default Object.freeze({
     Event_IpAddressesUpdated: "Event_IpAddressesUpdated",
     Event_OpenStackUpdatedData : "Event_OpenStackUpdatedData",
     Event_CloudFoundryUpdatedData: "Event_CloudFoundryUpdatedData",
+    Event_BaseDataUpdated: "Event_InfoDataUpdated",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -30,6 +31,7 @@ export default Object.freeze({
     Store_UpdateIPAddresses: "updateIPAddresses",
     Store_OpenStackUpdateData : "openStackUpdateData",
     Store_CloudFoundryUpdateData: "cloudFoundryUpdateData",
+    Store_BaseDataUpdateData: "baseDataUpdateData",
 
     Network_LoadedInfo: "Network_LoadedInfo",
 
