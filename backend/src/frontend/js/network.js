@@ -19,6 +19,7 @@ const Network = {
                     port,
                     protocol,
                     addressPrefix,
+                    dryRun,
                     __vue,
                     __ws
                 }
@@ -39,6 +40,27 @@ const Network = {
                 })
             },
 
+            validateNode: function(ip, user, uuid) {
+                const path = this.data.addressPrefix + "/connection"
+
+                this.data.__vue.http.post(path, {
+                    uuid: uuid,
+                    dry: this.data.dryRun,
+                    nodes: [
+                        {
+                            host: ip,
+                            user: user
+                        }
+                    ]
+                }).then(response => {
+                    EventBus.$emit(Constants.Network_CheckingNode, {
+                        ip: ip,
+                        transactionId: response.body.transactionId
+                    })
+
+                    console.log(response)
+                })
+            },
 
             construct: function(Vue) {
                 this.data.__vue = Vue
@@ -46,6 +68,7 @@ const Network = {
                 this.data.host = window.location.hostname
                 this.data.protocol = window.location.protocol
                 this.data.port = window.location.search.indexOf("local=true") > 0 ? 3000 : window.location.port
+                this.data.dryRun = window.location.search.indexOf("local=true") > 0
                 this.data.addressPrefix = this.data.protocol + "//" + this.data.host + ":" + this.data.port + "/api/v1" 
             },
 

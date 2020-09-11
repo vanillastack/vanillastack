@@ -115,6 +115,7 @@ const LocalEvent_CopyUser = "CopyUser"
 const LocalEvent_RefreshItem = "RefreshItem"
 const LocalEvent_UpdateUser = "UpdateUser"
 const LocalEvent_Validate = "Validate"
+const LocalEvent_ValidateNode = "ValidateNode"
 
 export default {
     name: 'nodes',
@@ -197,6 +198,16 @@ export default {
         // Trigger the validation
         EventBus.$on(LocalEvent_Validate, () => this.validate())
 
+        EventBus.$on(LocalEvent_ValidateNode, node => {
+            // Execute the call to validate a node
+            this.$network.validateNode(node.ip, node.user, this.$store.state.base.uuid);
+        })
+
+        // Associating a transaction-id to a node
+        EventBus.$on(Constants.Network_CheckingNode, data => {
+            console.log(data)
+        })
+
         // Define workers and masters
         var workers = this.$store.state.installer.workersList
         var masters = this.$store.state.installer.mastersList
@@ -247,10 +258,20 @@ export default {
                     openstack: item.openstack,
                     isWorker: isWorkersList,
                     rookChecked: item.rookChecked,
+                    isValidRemotely: true,
+                    isValidating: false,
 
                     isValid: function() {
-                        return this.user.length > 0 &&
+                        var isValidLocally =
+                            this.user.length > 0 &&
                                Constants.Validate_IpAddress.test(this.ip)
+
+                        if(isValidLocally && !this.isValidating) {
+                            this.isValidating = true
+                            EventBus.$emit(LocalEvent_ValidateNode, this)
+                        }
+
+                        return isValidLocally && this.isValidRemotely
                     },
 
                     triggerValidation: function() {

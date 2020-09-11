@@ -34,6 +34,7 @@ export default Object.freeze({
     Store_BaseDataUpdateData: "baseDataUpdateData",
 
     Network_LoadedInfo: "Network_LoadedInfo",
+    Network_CheckingNode: "Network_CheckingNode",
 
     Validate_IpAddress: /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
   })
