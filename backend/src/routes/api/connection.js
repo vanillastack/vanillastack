@@ -50,9 +50,9 @@ router.post('/', function (req, res) {
     }
 
     const transactionId = genTransactionId();
-
-    connectionCheck(transactionId, nodes, client, dryRun);
-
+    sleep(500).then(() => {
+        connectionCheck(transactionId, nodes, client, dryRun);
+    });
     res.status(200).json({
         transactionId: transactionId
     });
@@ -61,5 +61,9 @@ router.post('/', function (req, res) {
 const genTransactionId = function () {
     return Math.floor(Math.random() * (999999999 - 100000000)) + 100000000;
 };
+
+function sleep(millis) {
+    return new Promise(resolve => setTimeout(resolve, millis));
+}
 
 module.exports = router;

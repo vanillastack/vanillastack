@@ -117,6 +117,8 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
     }
     // Send init msg through ws
     sendMessage(wsMsg, wsClient);
+
+
     const dir = `/tmp/${wsClient.uuid}`;
     try {
         fs.mkdirSync(dir, {recursive: true});
@@ -139,7 +141,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
         fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
 
         // Exec ansible connection test
-        if (dryRun === 'false') {
+        if (!Boolean(dryRun)) {
             const spawnOptions = {
                 cwd: dir,
                 env: null,
@@ -172,7 +174,21 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                 sendMessage(wsMsg, wsClient);
             });
         } else {
-            console.log(`${transactionId} Connection check running in dry-run-mode continuing with cleanup`);
+            console.log(`${transactionId} Connection check running in dry-run-mode`);
+            nodes.forEach((node) => {
+                node.avail = Math.random() >= 0.5;
+                node.raw = Math.random() >= 0.5;
+                node.diskspace = `${randPassword(0, 2, 0)}000000000`
+
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = JSON.stringify(node);
+                sendMessage(wsMsg, wsClient);
+
+            });
+            wsMsg.event = 'DONE';
+            wsMsg.payload = '0';
+            sendMessage(wsMsg, wsClient);
+            console.log(`${transactionId} Dry-run complete continuing with cleanup`);
         }
     } catch (e) {
         console.log(`Something went wrong: ${e}`);
@@ -184,7 +200,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
         try {
             // fs.unlinkSync(`${dir}/key.pem`);
             // fs.unlinkSync(`${dir}/hosts.yml`);
-            // fs.rmdirSync(dir, {recursive: true});
+            fs.rmdirSync(dir, {recursive: true});
             console.log(`${transactionId} Connection check and cleanup completed`);
         } catch (e) {
             console.log('Cleaning up gone wrong: ', e);

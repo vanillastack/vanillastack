@@ -12,8 +12,6 @@ WORKDIR /usr/workdir
 
 ## Install nginx, Ansible and pre-req
 RUN apt update && apt install -y \
-    build-essential curl gnupg2 \
-    ca-certificates lsb-release \
     openssh-client python3-pip && \
     pip3 install ansible && \
     ansible-galaxy collection install community.kubernetes && \
