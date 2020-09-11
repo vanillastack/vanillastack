@@ -150,12 +150,13 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
 
             const ans = proc.spawn(
                 'ansible',
-                ['all', '-i', 'hosts.yml', '-m ping'],
+                ['all', '-i', 'hosts.yml', '-m', 'setup'],
                 spawnOptions
             );
-
+            // todo: filtering response object for raw, freeDiskSpace
             ans.stdout.on('data', stdout => {
-                console.log(stdout.toString());
+                const out = stdout.toString().substring(stdout.toString().indexOf('{'));
+                console.log(out);
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = stdout.toString();
                 sendMessage(wsMsg, wsClient);
@@ -172,13 +173,22 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                 wsMsg.event = 'DONE';
                 wsMsg.payload = 'Execution completed';
                 sendMessage(wsMsg, wsClient);
+
+                // Cleanup
+                try {
+                    fs.rmdirSync(dir, {recursive: true});
+                    console.log(`${transactionId} Cleanup done`);
+                    console.log(`${transactionId} Connection check completed`);
+                } catch (cleaningError) {
+                    console.log('Cleaning up gone wrong: ', cleaningError);
+                }
             });
         } else {
             console.log(`${transactionId} Connection check running in dry-run-mode`);
             nodes.forEach((node) => {
                 node.avail = Math.random() >= 0.5;
                 node.raw = Math.random() >= 0.5;
-                node.diskspace = `${randPassword(0, 2, 0)}000000000`
+                node.feediskspace = `${randPassword(0, 2, 0)}000000000`
 
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = JSON.stringify(node);
@@ -189,21 +199,27 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
             wsMsg.payload = '0';
             sendMessage(wsMsg, wsClient);
             console.log(`${transactionId} Dry-run complete continuing with cleanup`);
+            // Cleanup
+            try {
+                fs.rmdirSync(dir, {recursive: true});
+                console.log(`${transactionId} Cleanup done`);
+                console.log(`${transactionId} Connection check completed`);
+            } catch (cleaningError) {
+                console.log('Cleaning up gone wrong: ', cleaningError);
+            }
         }
     } catch (e) {
         console.log(`Something went wrong: ${e}`);
         wsMsg.event = 'DONE';
         wsMsg.payload = '-1';
         sendMessage(wsMsg, wsClient);
-    } finally {
+
         // Cleanup
         try {
-            // fs.unlinkSync(`${dir}/key.pem`);
-            // fs.unlinkSync(`${dir}/hosts.yml`);
             fs.rmdirSync(dir, {recursive: true});
-            console.log(`${transactionId} Connection check and cleanup completed`);
-        } catch (e) {
-            console.log('Cleaning up gone wrong: ', e);
+            console.log(`${transactionId} Cleanup done`);
+        } catch (cleaningError) {
+            console.log('Cleaning up gone wrong: ', cleaningError);
         }
     }
 };

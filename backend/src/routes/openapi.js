@@ -203,7 +203,7 @@ const swaggerOptions = {
                         },
                         dry: {
                             type: "boolean",
-                            example: "true"
+                            example: true
                         },
                         nodes: {
                             $ref: "#/components/schemas/Nodes"
