@@ -120,7 +120,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
     const dir = `/tmp/${wsClient.uuid}`;
     try {
         fs.mkdirSync(dir, {recursive: true});
-        fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey);
+        fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
 
         const hostsYaml = {
             all: {
@@ -135,8 +135,6 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                 ansible_ssh_private_key_file: `${dir}/key.pem`
             }
         });
-        console.log(hostsYaml);
-        console.log(yaml.safeDump(hostsYaml));
 
         fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
 
