@@ -1,6 +1,8 @@
 ---
 - name: Add elastic repository
-  command: helm repo add elastic https://helm.elastic.co
+    community.kubernetes.helm_repository:
+    name: elastic
+    repo_url: https://helm.elastic.co
 
 - name: Create kube-logging namespace
   k8s:
