@@ -26,6 +26,7 @@ const Network = {
 
             getInfo : function() {
                 const path = this.data.addressPrefix + "/info"
+                console.log("INFO CALL", path)
         
                 this.data.__vue.http.get(path).then(response => {
                     var loadedData = {
@@ -50,7 +51,7 @@ const Network = {
 
             openWebSocket : function(instance, uuid) {
                 // Create the websocket client
-                var url = "ws://" + this.data.host + this.data.port + "?uuid=" + uuid
+                var url = "ws://" + this.data.host + ':' + this.data.port + "?uuid=" + uuid
                 const ws = new WebSocket(url)
                 console.log("Websocket Call: " + url)
 
