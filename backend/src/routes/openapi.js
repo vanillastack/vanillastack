@@ -6,7 +6,7 @@ const swaggerJsDoc = require('swagger-jsdoc');
 
 // Swagger API Documentation
 const port = process.env.PORT;
-const ip = process.env.IP;
+const ip = process.env.IP || 'localhost';
 
 const swaggerOptions = {
     swaggerDefinition: {

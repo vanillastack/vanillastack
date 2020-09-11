@@ -6,7 +6,6 @@ const fs = require('fs');
 const path = require('path');
 
 const wss = new WebSocket.Server({noServer: true});
-
 const clients = {};
 
 wss.on('connection', function connection(ws, client) {
@@ -77,7 +76,7 @@ const setNewKeyPair = function (uuid) {
 }
 
 const getKeyPair = function () {
-    const location = '/usr/workdir/src'
+    const location = '/tmp'
     console.log(randPassword(4, 4, 8));
     const execOptions = {
         cwd: `${location}`,
