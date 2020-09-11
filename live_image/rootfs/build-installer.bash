@@ -5,16 +5,15 @@ set -e
 mkdir -p ${WORKDIR}/build
 cd ${WORKDIR}/build
 
-lb clean
+pwd | tee $OUTPUT/build.log
+
+lb clean | tee -a $OUTPUT/build.log
 
 cp -a $WORKDIR/live-build/auto .
 cp -a $WORKDIR/live-build/config .
 
-apt-cache policy live-build
 
-zcat changelog.gz | head -n 100
-
-lb config --version
+lb config --version | tee -a $OUTPUT/build.log
 
 lb config noauto \
         --apt apt \
@@ -38,8 +37,8 @@ lb config noauto \
         --iso-volume "vanilla prerelase" \
         --memtest none \
         --source false \
-        --verbose
+        --verbose | tee -a $OUTPUT/build.log
 
-lb build 2>&1 | tee build.log
+lb build 2>&1 | tee -a $OUTPUT/build.log
 
 cp vanillastack-installer* $OUTPUT
