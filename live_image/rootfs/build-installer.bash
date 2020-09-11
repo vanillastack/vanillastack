@@ -22,9 +22,10 @@ lb config noauto \
         --apt-recommends false \
         --apt-source-archives false \
         --archive-areas "main contrib non-free" \
+        --bootappend-live "boot=live components username=vanilla locales=de_DE.UTF-8 keyboard-layouts=de debug " \
         --clean \
         --mode debian \
-        --compression gzip \
+        --compression xz \
         --debconf-frontend noninteractive \
         --debug \
         --debootstrap-options "--include=apt-transport-https,ca-certificates,openssl" \

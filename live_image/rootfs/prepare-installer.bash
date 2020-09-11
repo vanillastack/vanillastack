@@ -30,7 +30,7 @@ apt-get update && apt-get install -y --no-install-recommends \
     mtools \
     live-build
 
-apt-get install -y --no-install-recommends mc aptitude screen curl openssl apt-transport-https ca-certificates gnupg-agent software-properties-common less
+apt-get install -y --no-install-recommends mc aptitude screen curl openssl apt-transport-https ca-certificates gnupg-agent software-properties-common less live-boot live-boot-doc live-config live-config-doc live-wrapper-doc
 
 # Monkeypatching because Bug
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
@@ -38,6 +38,8 @@ sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
 
 mkdir -p ${WORKDIR}
 mkdir -p ${OUTPUT}
+
+ls -l $WORKDIR
 
 curl -fsSL https://download.docker.com/linux/debian/gpg > $WORKDIR/live-build/config/archives/docker.key.chroot
 

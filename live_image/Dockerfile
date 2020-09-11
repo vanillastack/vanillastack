@@ -2,20 +2,15 @@ FROM debian:buster as Builder
 MAINTAINER maintainer_name "jan.walzer@cloudical.io"
 
 ARG WORKDIR
-ENV WORKDIR ${WORKDIR:-/LIVE_BOOT}
+ENV WORKDIR ${WORKDIR:-/}
 
 ARG OUTPUT
 ENV OUTPUT=${OUTPUT:-/data}
-
 
 RUN mkdir -p $WORKDIR
 
 COPY rootfs /
 
 RUN bash -x prepare-installer.bash
-
-# Monkeypatching because Bug
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
-RUN sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
 
 VOLUME $OUTPUT
