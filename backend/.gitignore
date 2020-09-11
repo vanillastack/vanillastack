@@ -177,4 +177,5 @@ src/public/css
 src/public/images
 src/public/js
 src/public/index.html
+dist/*
 
