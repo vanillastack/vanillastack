@@ -3,10 +3,10 @@ label live-@FLAVOUR@
 	menu default
 	linux @LINUX@
 	initrd @INITRD@
-	append @APPEND_LIVE@
+	append @APPEND_LIVE@ quiet
 
 label live-@FLAVOUR@-failsafe
 	menu label ^Live (@FLAVOUR@ failsafe)
 	linux @LINUX@
 	initrd @INITRD@
-	append @APPEND_LIVE_FAILSAFE@
+	append @APPEND_LIVE_FAILSAFE@ debug
