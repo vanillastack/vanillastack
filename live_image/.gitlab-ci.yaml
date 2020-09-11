@@ -18,6 +18,7 @@ build_liveimage:
     - cd $WORKDIR/live-build
     - $WORKDIR/prepare-installer.bash
     - $WORKDIR/build-installer.bash
+    - ls -la $OUTPUT
   artifacts:
-    paths:
-      - ./output
+#    paths:
+#      - ./output
