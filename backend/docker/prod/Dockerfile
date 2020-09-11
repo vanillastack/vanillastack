@@ -10,7 +10,7 @@ EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
 ## Install nginx, Ansible and pre-req
-RUN apt update && apt install -y \
+RUN apt update && apt upgrade -y && apt install -y \
     openssh-client python3-pip && \
     rm -rf /var/lib/apt/lists/* && \
     pip3 install ansible && \
