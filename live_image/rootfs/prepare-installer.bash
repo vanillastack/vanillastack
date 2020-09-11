@@ -19,18 +19,22 @@ export LC_TELEPHONE=C.UTF-8
 export LC_MEASUREMENT=C.UTF-8
 export LC_IDENTIFICATION=C.UTF-8
 
-apt-get update && apt-get install -y --no-install-recommends \
-    debootstrap \
-    squashfs-tools \
-    xorriso \
-    isolinux \
-    syslinux-efi \
-    grub-pc-bin \
-    grub-efi-amd64-bin \
-    mtools \
-    live-build
+PACKAGES_NEEDED="live-build xz-utils"
+PACKAGES_NEEDED+=" curl ca-certificates"
+PACKAGES_NEEDED+=" "
 
-apt-get install -y --no-install-recommends mc aptitude screen curl openssl apt-transport-https ca-certificates gnupg-agent software-properties-common less live-boot live-boot-doc live-config live-config-doc live-wrapper-doc
+PACKAGES_DEBUG="mc less"
+PACKAGES_DEBUG+=" aptitude"
+PACKAGES_DEBUG+=" screen"
+PACKAGES_DEBUG+=" live-boot live-boot-doc live-config live-config-doc"
+PACKAGES_DEBUG+=" "
+PACKAGES_DEBUG+=" "
+PACKAGES_DEBUG+=" "
+PACKAGES_DEBUG+=" "
+PACKAGES_DEBUG+=" "
+
+apt-get update && apt-get install -y --no-install-recommends $PACKAGES_NEEDED $PACKAGES_DEBUG
+
 
 # Monkeypatching because Bug
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
