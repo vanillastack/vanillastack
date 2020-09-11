@@ -129,28 +129,12 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
         };
 
         nodes.forEach((node, i) => {
-            // const host = {}
-            // host[`node-${i}`] = {
-            //     ansible_ssh_host: node.host,
-            //     ansible_user: node.user,
-            //     ansible_ssh_private_key_file: `${dir}/key.pem`
-            // }
-            // `${node.host} ansible_ssh_host=${node.host} ansible_user=${node.user} ansible_ssh_private_key_file=${dir}/key.pem`
-            console.log(`index: ${i}`);
             hostsYaml.all.hosts[`node-${i}`] = {
                 ansible_ssh_host: node.host,
                 ansible_user: node.user,
                 ansible_ssh_private_key_file: `${dir}/key.pem`
             }
-
-            // `node-${i}`: {
-            //     ansible_ssh_host: node.host,
-            //     ansible_user: node.user,
-            //     ansible_ssh_private_key_file: `${dir}/key.pem`
-            // }
-
         });
-        console.log(yaml.safeLoad(fs.readFileSync('/tmp/test.yml', 'utf8')));
         console.log(hostsYaml);
         console.log(yaml.safeDump(hostsYaml));
 

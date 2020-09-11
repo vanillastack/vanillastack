@@ -6,6 +6,7 @@ ENV PORT=8080
 ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
+ENV ANSIBLE_HOST_KEY_CHECKING=false
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
