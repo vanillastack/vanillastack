@@ -186,9 +186,9 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
         } else {
             console.log(`${transactionId} Connection check running in dry-run-mode`);
             nodes.forEach((node) => {
-                node.avail = Math.random() >= 0.5;
-                node.raw = Math.random() >= 0.5;
-                node.feediskspace = `${randPassword(0, 2, 0)}000000000`
+                node.avail = true;
+                node.raw = true;
+                node.feediskspace = '30'
 
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = JSON.stringify(node);
