@@ -1,5 +1,6 @@
 import EventBus from './js/eventBus'
 import Constants from './js/constants'
+import Globals from './js/globals'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
@@ -168,6 +169,12 @@ var app = new Vue({
   .$mount("#vanilla")
 
 app.handleNavigation(0, 0, true)
+
+// Store the globals
+Globals.router = router
+Globals.vue = app
+Globals.store = Store
+Globals.routes = routes
 
 console.log("Started Vue");
   

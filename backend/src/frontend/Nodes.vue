@@ -34,7 +34,7 @@
                         <div class="custom-control custom-switch inline-block" v-if="item.isNotFirst">
                             <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">
                             <label class="custom-control-label" :for="item.key">
-                                Use master value
+                                Use first master's value
                             </label>
                         </div>
                     </div>
@@ -74,11 +74,17 @@
                         <input class="form-control" placeholder="0.0.0.0" name="ip" v-on:change="item.triggerValidation()" v-on:blur="item.triggerValidation()" v-model="item.ip" required="required" />
                     </div>
                     <div class="col-6">
-                        <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="item.user" v-on:blur="item.triggerValidation()" v-on:change="item.copyUserNameChanged($event.target.value, item)" :required="item.userNameRequired" :disabled="item.copyUser && item.isNotFirst" /></div>
+                        <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="item.user" v-on:blur="item.triggerValidation()" v-on:change="item.copyUserNameChanged($event.target.value, item)" :required="item.userNameRequired" :disabled="(item.copyUser && item.isNotFirst) || (item.copyMaster && item.isFirst)" /></div>
                         <div class="custom-control custom-switch inline-block" v-if="item.isNotFirst">
                             <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">
                             <label class="custom-control-label" :for="item.key">
                                 Use first worker's value
+                            </label>
+                        </div>
+                        <div class="custom-control custom-switch inline-block" v-if="item.isFirst">
+                            <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyMaster" v-on:click="item.copyUserChanged(item)">
+                            <label class="custom-control-label" :for="item.key">
+                                Use first master's value
                             </label>
                         </div>
                     </div>
@@ -110,6 +116,7 @@
 <script>
 import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
+import Globals from './js/globals'
 
 const LocalEvent_CopyUser = "CopyUser"
 const LocalEvent_RefreshItem = "RefreshItem"
@@ -129,8 +136,59 @@ export default {
             installCF : this.$store.state.installer.installCF,
             installOpenStack : this.$store.state.installer.installOpenStack,
             hasApplications: false,
-            hasMultipleApplications: false
+            hasMultipleApplications: false,
+            nextNavigationItem: null,
+            nodeCheckTransactionId: ''
     }},
+
+    beforeRouteLeave (to, from, next) {
+        var isForward = false
+        var indexMe = 0
+        var indexNext = -1
+
+        if(Globals.routes === undefined || Globals.routes.length == 0)
+            next()
+
+        // Get the indices of the current and the next route
+        for(var i=0; i < Globals.routes.length; i++) {
+            var node = Globals.routes[i]
+            if(node.path == from.path)
+                indexMe = i
+            else if(node.path == to.path)
+                indexNext = i
+        }
+
+        // Check, whether we are going forward or backward
+        isForward = indexNext > indexMe
+        console.log("IS FORWARD", isForward, indexMe, indexNext)
+
+        if(!isForward) // When going backward...
+        {
+            next() // ...just accept it
+            return // Stop here
+        }
+
+        // Store the next object
+        this.nextNavigationItem = next 
+
+        // Build the list of nodes to be checked
+        var nodes = []
+        this.masters.forEach(node => {
+            nodes[nodes.length] = {
+                ip: node.ip,
+                user: node.user
+            }
+        })
+        this.workers.forEach(node => {
+            nodes[nodes.length] = {
+                ip: node.ip,
+                user: node.user
+            }
+        })
+
+        // Call the validation method and wait...
+        this.$network.validateNodes(nodes, this.$store.state.base.uuid)
+    },
 
     mounted : function () {
         this.hasApplications = this.installRook || this.installOpenStack || this.installCF
@@ -153,8 +211,16 @@ export default {
         // Copy a user to a worker or master entry
         EventBus.$on(LocalEvent_CopyUser, value => {
             var list = value.isWorker ? this.workers : this.masters
+            if(value.isWorker && value.isFirst) {
+                list = this.masters
+            }
+
             value.user = list[0].user
             value.copyUser = true
+
+            if(value.isWorker && value.isFirst) {
+                value.copyMaster = true
+            }
 
             // Force refresh
             EventBus.$emit(LocalEvent_RefreshItem, value)
@@ -171,6 +237,16 @@ export default {
 
                         EventBus.$emit(LocalEvent_RefreshItem, list[i])
                     }
+                }
+            }
+
+            // Special check for the workers
+            if(!item.isWorker && item.isFirst) {
+                if(this.workers[0].copyMaster) {
+                    this.workers.forEach(worker => {
+                        if((worker.isNotFirst && worker.copyUser) || (worker.isFirst && worker.copyMaster))
+                            worker.user = item.user
+                    })
                 }
             }
         })
@@ -198,15 +274,12 @@ export default {
         // Trigger the validation
         EventBus.$on(LocalEvent_Validate, () => this.validate())
 
-        EventBus.$on(LocalEvent_ValidateNode, node => {
-            // Execute the call to validate a node
-            this.$network.validateNode(node.ip, node.user, this.$store.state.base.uuid);
-        })
-
-        // Associating a transaction-id to a node
-        EventBus.$on(Constants.Network_CheckingNode, data => {
+        // Associating a transaction-id to a node-check
+        EventBus.$on(Constants.Network_CheckingNodes, data => {
+            this.nodeCheckTransactionId = data.transactionId
             console.log(data)
         })
+
 
         // Define workers and masters
         var workers = this.$store.state.installer.workersList
@@ -234,6 +307,7 @@ export default {
                     cf: false,
                     openstack: false,
                     copyUser: list.length > 0,
+                    copyMaster: list.length == 0,
                     rookChecked: false
                 }
             } 
@@ -252,26 +326,21 @@ export default {
                     ip: item.ip,
                     user: item.user,
                     copyUser: item.copyUser,
+                    copyMaster: item.copyMaster,
                     isNotFirst: i > 0,
+                    isFirst: i == 0,
                     rook: item.rook,
                     cf: item.cf,
                     openstack: item.openstack,
                     isWorker: isWorkersList,
                     rookChecked: item.rookChecked,
-                    isValidRemotely: true,
-                    isValidating: false,
 
                     isValid: function() {
                         var isValidLocally =
                             this.user.length > 0 &&
                                Constants.Validate_IpAddress.test(this.ip)
 
-                        if(isValidLocally && !this.isValidating) {
-                            this.isValidating = true
-                            EventBus.$emit(LocalEvent_ValidateNode, this)
-                        }
-
-                        return isValidLocally && this.isValidRemotely
+                        return isValidLocally
                     },
 
                     triggerValidation: function() {
@@ -283,9 +352,13 @@ export default {
                     },
 
                     copyUserChanged: function(item) {
-                        item.copyUser = !item.copyUser
+                        if(item.isNotFirst) {
+                            item.copyUser = !item.copyUser
+                        } else {
+                            item.copyMaster = !item.copyMaster
+                        }
 
-                        if(item.copyUser) {
+                        if(item.copyUser || item.copyMaster) {
                             EventBus.$emit(LocalEvent_CopyUser, item)
                         } else {
                             EventBus.$emit(LocalEvent_RefreshItem, item)
@@ -359,8 +432,6 @@ export default {
     },
 
     created: function() {
-        console.log("==> Created Home")
-
     }
 }
 </script>

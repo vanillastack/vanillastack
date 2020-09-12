@@ -40,25 +40,17 @@ const Network = {
                 })
             },
 
-            validateNode: function(ip, user, uuid) {
+            validateNodes: function(nodes, uuid) {
                 const path = this.data.addressPrefix + "/connection"
 
                 this.data.__vue.http.post(path, {
                     uuid: uuid,
                     dry: this.data.dryRun,
-                    nodes: [
-                        {
-                            host: ip,
-                            user: user
-                        }
-                    ]
+                    nodes: nodes
                 }).then(response => {
-                    EventBus.$emit(Constants.Network_CheckingNode, {
-                        ip: ip,
+                    EventBus.$emit(Constants.Network_CheckingNodes, {
                         transactionId: response.body.transactionId
                     })
-
-                    console.log(response)
                 })
             },
 
@@ -76,7 +68,6 @@ const Network = {
                 // Create the websocket client
                 var url = "ws://" + this.data.host + ':' + this.data.port + "?uuid=" + uuid
                 const ws = new WebSocket(url)
-                console.log("Websocket Call: " + url)
 
                 // Add the listeners
                 ws.addEventListener('open', function(event) {
@@ -85,8 +76,8 @@ const Network = {
                 })
 
                 ws.addEventListener('message', function(message) {
-                    // Do something
-                    console.log("WS MESSAGE", message)
+                    // Propagate the message to the frontend
+                    EventBus.$emit(Network_WS_Response, message.data)
                 })
 
                 ws.addEventListener('error', function(error) {
