@@ -28,7 +28,7 @@ lb config noauto \
         --apt-recommends false \
         --apt-source-archives false \
         --archive-areas "main contrib non-free" \
-        --bootappend-live "boot=live components hostname=vanilla-installa username=vanilla locales=de_DE.UTF-8 keyboard-layouts=de toram" \
+        --bootappend-live "boot=live components hostname=vanilla-installa username=vanilla locales=de_DE.UTF-8 keyboard-layouts=de" \
         --clean \
         --mode debian \
         --compression xz \
