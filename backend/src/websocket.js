@@ -155,10 +155,11 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
             );
             // todo: filtering response object for raw, freeDiskSpace
             ans.stdout.on('data', stdout => {
+                // const out = JSON.parse(stdout.toString().substring(stdout.toString().indexOf('{')));
                 const out = stdout.toString().substring(stdout.toString().indexOf('{'));
-                console.log(out);
+                // console.log(out.ansible_facts.ansible_memtotal_mb);
                 wsMsg.event = 'EXECUTION';
-                wsMsg.payload = stdout.toString();
+                wsMsg.payload = out;
                 sendMessage(wsMsg, wsClient);
             });
             ans.stderr.on('data', stderr => {
@@ -188,7 +189,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
             nodes.forEach((node) => {
                 node.avail = true;
                 node.raw = true;
-                node.feediskspace = '30';
+                node.freeDiskSpace = '30';
                 node.memory = '2';
 
                 wsMsg.event = 'EXECUTION';
