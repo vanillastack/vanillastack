@@ -188,7 +188,8 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
             nodes.forEach((node) => {
                 node.avail = true;
                 node.raw = true;
-                node.feediskspace = '30'
+                node.feediskspace = '30';
+                node.memory = '2';
 
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = JSON.stringify(node);
