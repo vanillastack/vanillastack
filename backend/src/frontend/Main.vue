@@ -22,8 +22,8 @@
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/kind" class="nav-item button-as-link">Installation Kind</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/key" class="nav-item button-as-link">Public Key</router-link></li>
               <li><router-link tag="button" :disabled="!seededKey" to="/nodes" class="nav-item button-as-link">Nodes</router-link></li>
+              <li><router-link tag="button" :disabled="!seededKey" to="/nodecheck" class="nav-item button-as-link">Node-Check</router-link></li>
               <li><router-link tag="button" :disabled="!seededKey" to="/ip" class="nav-item button-as-link">IP Addresses</router-link></li>
-              <li v-if="hasRook"><router-link tag="button" :disabled="!seededKey" to="/rook" class="nav-item button-as-link">Rook</router-link></li>
               <li v-if="hasOpenStack"><router-link tag="button" :disabled="!seededKey" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
               <li v-if="hasCF"><router-link tag="button" :disabled="!seededKey" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
               <li><router-link tag="button" :disabled="!seededKey" to="/tools" class="nav-item button-as-link">Additional Tools</router-link></li>

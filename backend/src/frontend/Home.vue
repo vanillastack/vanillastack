@@ -14,13 +14,13 @@
             <div class="col">
                 <p><strong>Requirements</strong></p>
                 <p>Please ensure to match the following requirements:</p>
-                <ul>
-                    <li>A minimum of two (2) nodes (VMs, Bare-Metal-machines)</li>
-                    <li>A minimum of 1 GB RAM and 20 GB of HDD / SSD storage for each node</li>
-                    <li>Root access to these nodes</li>
-                    <li>IP-address for the cluster / Hostname for the cluser</li>
-                    <li>A wildcard domain (*.my.cluster) for making components accessible</li>
-                    <li>A small cup of coffee or tea</li>
+                <ul class="fa-ul">
+                    <li><i class="fas fa-check"></i> A minimum of four (4) nodes (VMs, Bare-Metal-machines)</li>
+                    <li><i class="fas fa-check"></i> A minimum of 1 GB RAM and 20 GB of HDD / SSD storage for each node</li>
+                    <li><i class="fas fa-check"></i> Root access to these nodes</li>
+                    <li><i class="fas fa-check"></i> IP-address for the cluster / Hostname for the cluser</li>
+                    <li><i class="fas fa-check"></i> A wildcard domain (*.my.cluster) for making components accessible</li>
+                    <li><i class="fas fa-check"></i> A small cup of coffee or tea</li>
                 </ul>
             </div>
         </div>

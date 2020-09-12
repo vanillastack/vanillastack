@@ -137,58 +137,7 @@ export default {
             installOpenStack : this.$store.state.installer.installOpenStack,
             hasApplications: false,
             hasMultipleApplications: false,
-            nextNavigationItem: null,
-            nodeCheckTransactionId: ''
     }},
-
-    beforeRouteLeave (to, from, next) {
-        var isForward = false
-        var indexMe = 0
-        var indexNext = -1
-
-        if(Globals.routes === undefined || Globals.routes.length == 0)
-            next()
-
-        // Get the indices of the current and the next route
-        for(var i=0; i < Globals.routes.length; i++) {
-            var node = Globals.routes[i]
-            if(node.path == from.path)
-                indexMe = i
-            else if(node.path == to.path)
-                indexNext = i
-        }
-
-        // Check, whether we are going forward or backward
-        isForward = indexNext > indexMe
-        console.log("IS FORWARD", isForward, indexMe, indexNext)
-
-        if(!isForward) // When going backward...
-        {
-            next() // ...just accept it
-            return // Stop here
-        }
-
-        // Store the next object
-        this.nextNavigationItem = next 
-
-        // Build the list of nodes to be checked
-        var nodes = []
-        this.masters.forEach(node => {
-            nodes[nodes.length] = {
-                ip: node.ip,
-                user: node.user
-            }
-        })
-        this.workers.forEach(node => {
-            nodes[nodes.length] = {
-                ip: node.ip,
-                user: node.user
-            }
-        })
-
-        // Call the validation method and wait...
-        this.$network.validateNodes(nodes, this.$store.state.base.uuid)
-    },
 
     mounted : function () {
         this.hasApplications = this.installRook || this.installOpenStack || this.installCF
@@ -273,13 +222,6 @@ export default {
 
         // Trigger the validation
         EventBus.$on(LocalEvent_Validate, () => this.validate())
-
-        // Associating a transaction-id to a node-check
-        EventBus.$on(Constants.Network_CheckingNodes, data => {
-            this.nodeCheckTransactionId = data.transactionId
-            console.log(data)
-        })
-
 
         // Define workers and masters
         var workers = this.$store.state.installer.workersList

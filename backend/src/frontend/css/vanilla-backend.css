@@ -206,3 +206,20 @@ div>.lead-image {
   font-weight: bolder;
   color: black
 }
+
+.fa-ul {
+  margin-left: 1em !important;
+}
+
+.fa-ul li i.fas {
+  margin-right: 0.5em; 
+  font-size: small
+}
+
+.fa-ul.no-margin-left {
+  margin-left: 0 !important;
+}
+
+.fa-ul.inline {
+  margin: 0 !important;
+}

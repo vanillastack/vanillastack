@@ -42,12 +42,13 @@ const Network = {
 
             validateNodes: function(nodes, uuid) {
                 const path = this.data.addressPrefix + "/connection"
-
-                this.data.__vue.http.post(path, {
+                var payload = {
                     uuid: uuid,
                     dry: this.data.dryRun,
                     nodes: nodes
-                }).then(response => {
+                }
+
+                this.data.__vue.http.post(path, payload).then(response => {
                     EventBus.$emit(Constants.Network_CheckingNodes, {
                         transactionId: response.body.transactionId
                     })
@@ -77,7 +78,8 @@ const Network = {
 
                 ws.addEventListener('message', function(message) {
                     // Propagate the message to the frontend
-                    EventBus.$emit(Network_WS_Response, message.data)
+                    console.log("RECEIVED WS RESPONSE", message)
+                    EventBus.$emit(Constants.Network_WS_Response, message.data)
                 })
 
                 ws.addEventListener('error', function(error) {

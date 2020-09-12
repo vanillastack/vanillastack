@@ -13,7 +13,7 @@ import Key from './Key.vue'
 import Nodes from './Nodes.vue'
 import IPs from './IPs.vue'
 import Tools from './AdditionalTools.vue'
-import Rook from './Rook.vue'
+import NodeCheck from './NodeCheck.vue'
 import OpenStack from './OpenStack.vue'
 import CF from './CF.vue'
 import 'es6-promise/auto'
@@ -32,6 +32,7 @@ Vue.use(Network)
 require('bootstrap');
 require('./css/bootstrap.min.css');
 require('./css/vanilla-backend.css');
+require('./css/all.min.css')
 
 // Define the routes
 const routes = [
@@ -40,8 +41,8 @@ const routes = [
     { path: '/kind', component: Kind },
     { path: '/key', component: Key},
     { path: '/nodes', component: Nodes},
+    { path: '/nodecheck', component: NodeCheck},
     { path: '/ip', component: IPs},
-    { path: '/rook', component: Rook},
     { path: '/openstack', component: OpenStack},
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
@@ -112,7 +113,11 @@ var app = new Vue({
 
       // Handle the loading of the base info data
       EventBus.$on(Constants.Network_LoadedInfo, data => {
+        // Store the data
         this.$store.commit(Constants.Store_BaseDataUpdateData, data)
+
+        // Store the UUID globally
+        Globals.UUID = data.uuid
 
         // Open the websocket connection
         this.$network.openWebSocket(this.$network, data.uuid)
