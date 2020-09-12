@@ -6,7 +6,7 @@ Testing: image:https://gitlab.cloudical.net/vanillastack/vanillastack/badges/tes
 == Requirements
 VanillaStack requirements:
 
-* Debian 10
+* Fedora 33
 
 == Documentation
 The documentation is stored at: link:docs/[docs]
