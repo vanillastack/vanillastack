@@ -130,36 +130,40 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
             }
         };
 
-        nodes.forEach((node, i) => {
-            hostsYaml.all.hosts[`node-${i}`] = {
-                ansible_ssh_host: node.host,
+        nodes.forEach((node) => {
+            hostsYaml.all.hosts[node.host] = {
+                ansible_host: node.host,
                 ansible_user: node.user,
                 ansible_ssh_private_key_file: `${dir}/key.pem`
             }
         });
-
+        console.log(hostsYaml);
         fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
 
         // Exec ansible connection test
         if (!Boolean(dryRun)) {
-            const spawnOptions = {
+            const options = {
                 cwd: dir,
                 env: null,
                 detached: false
             };
 
+            // Setting up ENV
+            process.env.ANSIBLE_HOST_KEY_CHECKING = false;
+            process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = true;
+            process.env.ANSIBLE_STDOUT_CALLBACK = 'json';
+
             const ans = proc.spawn(
                 'ansible',
-                ['all', '-i', 'hosts.yml', '-m', 'setup'],
-                spawnOptions
+                ['all', '-i', 'hosts.yml', '-m', 'ping'],
+                options
             );
             // todo: filtering response object for raw, freeDiskSpace
             ans.stdout.on('data', stdout => {
-                // const out = JSON.parse(stdout.toString().substring(stdout.toString().indexOf('{')));
-                const out = stdout.toString().substring(stdout.toString().indexOf('{'));
-                // console.log(out.ansible_facts.ansible_memtotal_mb);
+                const out = JSON.parse(stdout.toString());
+                console.log(out);
                 wsMsg.event = 'EXECUTION';
-                wsMsg.payload = out;
+                wsMsg.payload = '';
                 sendMessage(wsMsg, wsClient);
             });
             ans.stderr.on('data', stderr => {
@@ -168,7 +172,11 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                 wsMsg.payload = stderr.toString();
                 sendMessage(wsMsg, wsClient);
             });
-
+            ans.on('error', error => {
+                console.error(error);
+                // Cleanup
+                cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
+            });
             ans.on('close', code => {
                 console.log(`${wsMsg.transactionId}: Return Code: ${code}`);
                 wsMsg.event = 'DONE';
@@ -176,13 +184,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                 sendMessage(wsMsg, wsClient);
 
                 // Cleanup
-                try {
-                    fs.rmdirSync(dir, {recursive: true});
-                    console.log(`${transactionId} Cleanup done`);
-                    console.log(`${transactionId} Connection check completed`);
-                } catch (cleaningError) {
-                    console.log('Cleaning up gone wrong: ', cleaningError);
-                }
+                cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
             });
         } else {
             console.log(`${transactionId} Connection check running in dry-run-mode`);
@@ -202,13 +204,14 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
             sendMessage(wsMsg, wsClient);
             console.log(`${transactionId} Dry-run complete continuing with cleanup`);
             // Cleanup
-            try {
-                fs.rmdirSync(dir, {recursive: true});
-                console.log(`${transactionId} Cleanup done`);
-                console.log(`${transactionId} Connection check completed`);
-            } catch (cleaningError) {
-                console.log('Cleaning up gone wrong: ', cleaningError);
-            }
+            cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
+            // try {
+            //     fs.rmdirSync(dir, {recursive: true});
+            //     console.log(`${transactionId} Cleanup done`);
+            //     console.log(`${transactionId} Connection check completed`);
+            // } catch (cleaningError) {
+            //     console.log('Cleaning up gone wrong: ', cleaningError);
+            // }
         }
     } catch (e) {
         console.log(`Something went wrong: ${e}`);
@@ -217,15 +220,11 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
         sendMessage(wsMsg, wsClient);
 
         // Cleanup
-        try {
-            fs.rmdirSync(dir, {recursive: true});
-            console.log(`${transactionId} Cleanup done`);
-        } catch (cleaningError) {
-            console.log('Cleaning up gone wrong: ', cleaningError);
-        }
+        cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
     }
 };
 
+// invoke like so: randPassword(5,3,2);
 function randPassword(letters, numbers, either) {
     const chars = [
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", // letters
@@ -242,6 +241,28 @@ function randPassword(letters, numbers, either) {
     }).join('')
 }
 
-// invoke like so: randPassword(5,3,2);
+const cleanUpPath = function (transactionId, baseDir, files) {
+    try {
+        process.env.ANSIBLE_HOST_KEY_CHECKING = '';
+        process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = '';
+        process.env.ANSIBLE_STDOUT_CALLBACK = '';
+        if (fs.existsSync(baseDir)) {
+            files.forEach((file) => {
+                const filePath = path.join(baseDir, file);
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                } else {
+                    console.error(`${file} does not exist`)
+                }
+            });
+            fs.rmdirSync(baseDir, {recursive: true});
+        } else {
+            console.error(`${baseDir} does not exist`)
+        }
+        console.log(`${transactionId} Cleanup done`);
+    } catch (cleaningError) {
+        console.log('Cleaning up gone wrong: ', cleaningError);
+    }
+}
 
 module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck};
