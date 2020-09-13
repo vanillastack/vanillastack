@@ -19,6 +19,7 @@ import CF from './CF.vue'
 import 'es6-promise/auto'
 import Network from './js/network'
 import Subscription from './Subscription.vue'
+import Rook from './Rook.vue'
 
 // Call Vue.use(VueRouter)
 Vue.use(VueRouter)
@@ -44,6 +45,7 @@ const routes = [
     { path: '/nodes', component: Nodes},
     { path: '/nodecheck', component: NodeCheck},
     { path: '/cluster', component: Cluster},
+    { path: '/rook', component: Rook},
     { path: '/openstack', component: OpenStack},
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},

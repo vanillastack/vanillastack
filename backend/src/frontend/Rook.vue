@@ -1,0 +1,81 @@
+<template>
+    <div class="container-fluid">
+        <div class="row margin-2em">
+            <div class="col">
+                <h3>Rook</h3>
+            </div>
+        </div>
+        <div class="row margin-2em">
+            <div class="col">
+                Here you can adjust the settings for the Rook object storage backend.
+                To ease your work, we have prepopulated the settings with useful options.
+            </div>
+        </div>
+        <div class="form-group">
+                <div class="row">
+                    <div class="col-2">
+                        <label for="ip">Domain</label>
+                    </div>
+                    <div class="col">
+                        <label for="user">Stratos</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-2">
+                        <input class="form-control" placeholder="cloudfoundry.my.cluster" name="domainName" v-model="domainName" v-on:change="triggerValidation()" v-on:blur="triggerValidation()" required="required" />
+                    </div>
+                    <div class="col">
+                        <div class="custom-control custom-switch inline-block">
+                            <input class="custom-control-input" disabled="disabled" id="stratos" name="stratos" type="checkbox" v-model="stratos" v-on:click="triggerValidation()">
+                            <label class="custom-control-label" for="stratos">
+                                Stratos Dashboard
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</template>
+<script>
+import Constants from './js/constants.js'
+import EventBus from './js/eventBus.js'
+
+export default {
+    name: 'cf',
+
+    data: function() {
+        return {
+            stratos : this.$store.state.installer.cloudfoundry.stratos,
+            domainName : this.$store.state.installer.cloudfoundry.domainName,
+        }
+    },
+
+    methods: {
+        triggerValidation: function() {
+            var isValid = this.domainName.length > 0;
+
+            // Store the data
+            this.$store.commit(Constants.Store_CloudFoundryUpdateData, this.$data)
+
+            // Inform about changes
+            EventBus.$emit(Constants.Event_PrepareNavigation({
+                allowGoForward: isValid
+            }))
+        }
+    },
+
+    mounted : function () {
+        this.stratos = this.$store.state.installer.cloudfoundry.stratos
+        this.domainName = this.$store.state.installer.cloudfoundry.domainName
+
+        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+            this.$store.state.installer.cloudfoundry.domainName.length == 0)
+            this.domainName = 'cloudfoundry.' + this.$store.state.installer.clusterfqdn
+
+        this.triggerValidation()
+    },
+
+    created: function() {
+    }
+}
+</script>
