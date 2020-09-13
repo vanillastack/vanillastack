@@ -261,7 +261,6 @@ openstack:
     createService: true
     extInterface: "enp3s0"
     tunnelInterface: "enp2s0"
-    tunnelCIDR: "192.168.240.0/24"
     server:
       replicas: 2
     l3:
