@@ -54,6 +54,8 @@ labels:
 pod:
   replicas:
     server: {{openstack.neutron.server.replicas}}
+  use_fqdn:
+    neutron_agent: false
 conf:
   neutron:
     DEFAULT:
