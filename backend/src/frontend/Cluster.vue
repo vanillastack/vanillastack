@@ -16,16 +16,21 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <p><strong>External LoadBalancer</strong></p>
+                    <p><strong>LoadBalancer</strong></p>
                 </div>
             </div>
             <div class="form-group row margin-2em">
                 <div class="col">
+                    <p v-if="useExternalLb">LoadBalancer-Address / IP</p>
+                    <p v-if="!useExternalLb">IP-address of the cluster</p>
                     <div class="inline-block margin-right-2em">
                         <input class="form-control" placeholder="0.0.0.0" name="externalLbIp" v-model="externalLbIp" 
-                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
+                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" v-if="useExternalLb"
                             :disabled="!useExternalLb"
                             required="required" />
+                        <input class="form-control" placeholder="0.0.0.0" name="clusterip" v-model="clusterip" 
+                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
+                            required="required" v-if="!useExternalLb" />
                     </div>
                     <div class="custom-control custom-switch inline-block">
                     <input class="custom-control-input" id="useExternalLb" name="useExternalLb" type="checkbox" v-model="useExternalLb" v-on:change="triggerValidation()">
@@ -37,19 +42,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <p><strong>IP-address of the cluster</strong></p>
-                </div>
-            </div>
-            <div class="form-group row margin-2em">
-                <div class="col-2">
-                    <input class="form-control" placeholder="0.0.0.0" name="clusterip" v-model="clusterip" 
-                        v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
-                        required="required" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <p><strong>Domain of the cluster</strong></p>
+                    <p><strong>Cluster Domain-Name</strong></p>
                 </div>
             </div>
             <div class="form-group row margin-2em">
@@ -117,10 +110,10 @@ export default {
                 this.adminfqdn = "admin." + this.clusterfqdn
 
             // validates the data
-            isValid = Constants.Validate_IpAddress.test(this.clusterip) &&
+            isValid =  
                 (this.useadminfqdn ? this.adminfqdn.length > 0 : true) &&
                 (this.useclusterfqdn ? this.clusterfqdn.length > 0 : true) &&
-                (this.useExternalLb ? this.externalLbIp.length > 0 : true)
+                (this.useExternalLb ? this.externalLbIp.length > 0 : Constants.Validate_IpAddress.test(this.clusterip))
 
             // Store the data
             this.$store.commit(Constants.Store_ClusterUpdateData, {

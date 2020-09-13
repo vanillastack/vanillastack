@@ -18,6 +18,7 @@ import OpenStack from './OpenStack.vue'
 import CF from './CF.vue'
 import 'es6-promise/auto'
 import Network from './js/network'
+import Subscription from './Subscription.vue'
 
 // Call Vue.use(VueRouter)
 Vue.use(VueRouter)
@@ -46,7 +47,7 @@ const routes = [
     { path: '/openstack', component: OpenStack},
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
-    { path: '/subscription', component: Key},
+    { path: '/subscription', component: Subscription},
     { path: '/summary', component: Key}
   ];
 

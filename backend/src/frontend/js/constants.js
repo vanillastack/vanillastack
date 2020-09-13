@@ -21,6 +21,7 @@ export default Object.freeze({
     Event_AdditionalToolsDataUpdated: "Event_AdditionalToolsDataUpdated",
     Event_RookDataUpdated: "Event_RookDataUpdated",
     Event_ClusterDataUpdated: "Event_ClusterDataUpdated",
+    Event_SubscriptionKeyUpdated: "Event_SubscriptionKeyUpdated",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -40,11 +41,13 @@ export default Object.freeze({
     Store_AdditionalToolsUpdateData: "additionalToolsUpdateData", 
     Store_RookUpdateData: "rookUpdateData", 
     Store_ClusterUpdateData: "clusterUpdateData",
+    Store_UpdateSubscriptionKey: "updateSubscriptionKey",
 
     Network_LoadedInfo: "Network_LoadedInfo",
     Network_CheckingNodes: "Network_CheckingNodes",
     Network_WS_Response: "Network_WS_Response",
 
     Validate_IpAddress: /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+    Validate_SubscriptionKeyLength: 6
   })
   

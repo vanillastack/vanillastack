@@ -129,7 +129,8 @@ const baseSettings = {
   state: () => ({
     sshKey: '',
     uuid: '',
-    mode: 'installer'
+    mode: 'installer',
+    key: ''
   }),
 
   mutations: {
@@ -140,6 +141,16 @@ const baseSettings = {
       }
 
       EventBus.$emit(Constants.Event_BaseDataUpdated, state);
+    },
+
+    [Constants.Store_UpdateSubscriptionKey](state, subscriptionKey) {
+      state.key = subscriptionKey
+      var valid = subscriptionKey !== undefined && subscriptionKey.length >= Constants.Validate_SubscriptionKeyLength && subscriptionKey != ''
+
+      EventBus.$emit(Constants.Event_SubscriptionKeyUpdated, {
+        key: state.key,
+        valid: valid
+      })
     }
   }
 }

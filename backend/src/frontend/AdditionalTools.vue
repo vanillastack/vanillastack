@@ -207,7 +207,7 @@ export default {
         this.$store.commit(Constants.Store_AdditionalToolsUpdateData, 
         {
             harbor: this.installHarbor,
-            prometheus: thins.installPrometheus,
+            prometheus: this.installPrometheus,
             grafana: this.installGrafana,
             elastic: this.installElastic,
             fluentd: this.installFluentd,

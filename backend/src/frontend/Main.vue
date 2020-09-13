@@ -135,6 +135,10 @@ export default {
       this.nodesChecked = value 
       this.subscriptionKeyEntered = false
     })
+
+    EventBus.$on(Constants.Event_SubscriptionKeyUpdated, message => {
+      this.subscriptionKeyEntered = message.valid
+    })
   },
 
   mounted: function() {
