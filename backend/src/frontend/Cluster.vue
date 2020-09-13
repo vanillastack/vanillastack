@@ -3,15 +3,36 @@
         <div class="container-fluid">
             <div class="row margin-2em">
                 <div class="col">
-                    <h3>IP-addresses and Domains</h3>
+                    <h3>Cluster-Settings</h3>
                 </div>
             </div>
             <div class="row margin-2em">
                 <div class="col">
                     Here you define the IP-addresses of your cluster and the associated Domain names.<br />
                     The IP-address is required for making the cluster available on your network - and it is not equal to one of the nodes IP-addresses.<br />
-                    Domain names are optional. They allow separating access to the cluster workloads from access to the VanillaStack AppStore.</p>
+                    Domain names are optional. They allow separating access to the cluster workloads from access to the VanillaStack AppStore.
                     <p><em>Note: It is highly recommended to define a separate Domain name for AppStore, e.g. admin.&lt;your-cluster&gt;, otherwise access is restricted to a kubctl-Tunnel!</em></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p><strong>External LoadBalancer</strong></p>
+                </div>
+            </div>
+            <div class="form-group row margin-2em">
+                <div class="col">
+                    <div class="inline-block margin-right-2em">
+                        <input class="form-control" placeholder="0.0.0.0" name="externalLbIp" v-model="externalLbIp" 
+                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
+                            :disabled="!useExternalLb"
+                            required="required" />
+                    </div>
+                    <div class="custom-control custom-switch inline-block">
+                    <input class="custom-control-input" id="useExternalLb" name="useExternalLb" type="checkbox" v-model="useExternalLb" v-on:change="triggerValidation()">
+                    <label class="custom-control-label" for="useExternalLb">
+                        Use External LoadBalancer
+                    </label>
+                </div>
                 </div>
             </div>
             <div class="row">
@@ -78,11 +99,13 @@ export default {
 
     data: function()  {
         return {
-            clusterip: this.$store.state.installer.clusterip,
-            useclusterfqdn: this.$store.state.installer.useclusterfqdn,
-            clusterfqdn: this.$store.state.installer.clusterfqdn,
-            useadminfqdn: this.$store.state.installer.useadminfqdn,
-            adminfqdn: this.$store.state.installer.adminfqdn
+            clusterip: this.$store.state.installer.cluster.ip,
+            useclusterfqdn: this.$store.state.installer.cluster.usefqdn,
+            clusterfqdn: this.$store.state.installer.cluster.fqdn,
+            useadminfqdn: this.$store.state.installer.cluster.useadminfqdn,
+            adminfqdn: this.$store.state.installer.cluster.adminfqdn,
+            externalLbIp: this.$store.state.installer.cluster.externalLbIp,
+            useExternalLb: this.$store.state.installer.cluster.useExternalLb
         }
     },
 
@@ -95,16 +118,19 @@ export default {
 
             // validates the data
             isValid = Constants.Validate_IpAddress.test(this.clusterip) &&
-                this.useadminfqdn ? this.adminfqdn.length > 0 : true &&
-                this.useclusterfqdn ? this.clusterfqdn.length > 0 : true
+                (this.useadminfqdn ? this.adminfqdn.length > 0 : true) &&
+                (this.useclusterfqdn ? this.clusterfqdn.length > 0 : true) &&
+                (this.useExternalLb ? this.externalLbIp.length > 0 : true)
 
             // Store the data
-            this.$store.commit(Constants.Store_UpdateIPAddresses, {
-                clusterip: this.clusterip,
-                useclusterfqdn: this.useclusterfqdn,
-                clusterfqdn: this.clusterfqdn,
+            this.$store.commit(Constants.Store_ClusterUpdateData, {
+                ip: this.clusterip,
+                usefqdn: this.useclusterfqdn,
+                fqdn: this.clusterfqdn,
                 useadminfqdn: this.useadminfqdn,
-                adminfqdn: this.adminfqdn
+                adminfqdn: this.adminfqdn,
+                useExternalLb: this.useExternalLb,
+                externalLbIp: this.useExternalLb
             })
 
             // Notify about the change

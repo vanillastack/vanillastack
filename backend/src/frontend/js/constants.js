@@ -16,6 +16,11 @@ export default Object.freeze({
     Event_OpenStackUpdatedData : "Event_OpenStackUpdatedData",
     Event_CloudFoundryUpdatedData: "Event_CloudFoundryUpdatedData",
     Event_BaseDataUpdated: "Event_InfoDataUpdated",
+    Event_NodesValidated: "Event_NodesValidated",
+    Event_NodesChecked: "Event_NodesChecked",
+    Event_AdditionalToolsDataUpdated: "Event_AdditionalToolsDataUpdated",
+    Event_RookDataUpdated: "Event_RookDataUpdated",
+    Event_ClusterDataUpdated: "Event_ClusterDataUpdated",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -32,6 +37,9 @@ export default Object.freeze({
     Store_OpenStackUpdateData : "openStackUpdateData",
     Store_CloudFoundryUpdateData: "cloudFoundryUpdateData",
     Store_BaseDataUpdateData: "baseDataUpdateData",
+    Store_AdditionalToolsUpdateData: "additionalToolsUpdateData", 
+    Store_RookUpdateData: "rookUpdateData", 
+    Store_ClusterUpdateData: "clusterUpdateData",
 
     Network_LoadedInfo: "Network_LoadedInfo",
     Network_CheckingNodes: "Network_CheckingNodes",

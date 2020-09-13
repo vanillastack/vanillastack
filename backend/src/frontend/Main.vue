@@ -22,13 +22,13 @@
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/kind" class="nav-item button-as-link">Installation Kind</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/key" class="nav-item button-as-link">Public Key</router-link></li>
               <li><router-link tag="button" :disabled="!seededKey" to="/nodes" class="nav-item button-as-link">Nodes</router-link></li>
-              <li><router-link tag="button" :disabled="!seededKey" to="/nodecheck" class="nav-item button-as-link">Node-Check</router-link></li>
-              <li><router-link tag="button" :disabled="!seededKey" to="/ip" class="nav-item button-as-link">IP Addresses</router-link></li>
-              <li v-if="hasOpenStack"><router-link tag="button" :disabled="!seededKey" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
-              <li v-if="hasCF"><router-link tag="button" :disabled="!seededKey" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
-              <li><router-link tag="button" :disabled="!seededKey" to="/tools" class="nav-item button-as-link">Additional Tools</router-link></li>
-              <li><router-link tag="button" :disabled="!seededKey" to="/subscription" class="nav-item button-as-link">Subscription Key</router-link></li>
-              <li><router-link tag="button" :disabled="!seededKey" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
+              <li><router-link tag="button" :disabled="!nodesValid" to="/nodecheck" class="nav-item button-as-link">Node-Check</router-link></li>
+              <li><router-link tag="button" :disabled="!nodesChecked" to="/ip" class="nav-item button-as-link">Cluster-Settings</router-link></li>
+              <li v-if="hasOpenStack"><router-link tag="button" :disabled="!nodesChecked" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
+              <li v-if="hasCF"><router-link tag="button" :disabled="!nodesChecked" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
+              <li><router-link tag="button" :disabled="!nodesChecked" to="/tools" class="nav-item button-as-link">Additional Tools</router-link></li>
+              <li><router-link tag="button" :disabled="!nodesChecked" to="/subscription" class="nav-item button-as-link">Subscription Key</router-link></li>
+              <li><router-link tag="button" :disabled="!subscriptionKeyEntered" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
             </ul>
           </div>
           <div class="col h-100">
@@ -69,6 +69,9 @@ export default {
           canGoForward: this.$store.state.navigation.canGoForward,
           allowGoForward: this.$store.state.navigation.allowGoForward,
           acceptedTerms: this.$store.state.navigation.acceptedTerms,
+          nodesValid: false,
+          nodesChecked: false,
+          subscriptionKeyEntered: false,
           seededKey: this.$store.state.installer.copiedKeyToNodes && this.$store.state.navigation.acceptedTerms,
           hasRook: this.$store.state.installer.installRook,
           hasOpenStack: this.$store.state.installer.installOpenStack,
@@ -120,6 +123,17 @@ export default {
         this.canGoBack = value.canGoBack
         this.canGoForward = value.canGoForward
         this.allowGoForward = value.allowGoForward
+    })
+
+    EventBus.$on(Constants.Event_NodesValidated, value => {
+      this.nodesValid = value
+      this.nodesChecked = false 
+      this.subscriptionKeyEntered = false
+    })
+
+    EventBus.$on(Constants.Event_NodesChecked, value => {
+      this.nodesChecked = value 
+      this.subscriptionKeyEntered = false
     })
   },
 

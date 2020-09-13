@@ -11,7 +11,7 @@ import Terms from "./Terms.vue"
 import Kind from "./Kind.vue"
 import Key from './Key.vue'
 import Nodes from './Nodes.vue'
-import IPs from './IPs.vue'
+import Cluster from './Cluster.vue'
 import Tools from './AdditionalTools.vue'
 import NodeCheck from './NodeCheck.vue'
 import OpenStack from './OpenStack.vue'
@@ -42,7 +42,7 @@ const routes = [
     { path: '/key', component: Key},
     { path: '/nodes', component: Nodes},
     { path: '/nodecheck', component: NodeCheck},
-    { path: '/ip', component: IPs},
+    { path: '/cluster', component: Cluster},
     { path: '/openstack', component: OpenStack},
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},

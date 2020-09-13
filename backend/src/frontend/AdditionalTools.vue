@@ -108,6 +108,54 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
+                <img src="/images/jaeger.png" class="lead-image" />
+            </div>
+            <div class="col-4 valign-center">
+                Jaeger is an open source distributed tracing system. It is often used within microservice-based applications to trace their behaviours and to improve performance. Jaeger was developed by Uber Engineering and donated to the CNCF in 2017.     
+            </div>
+            <div class="col">
+                <div class="custom-control custom-switch inline-block">
+                    <input class="custom-control-input" id="jaeger" name="jaeger" type="checkbox" v-model="installJaeger">
+                    <label class="custom-control-label" for="jaeger">
+                        Install Jaeger Tracing
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row margin-2em form-group">
+            <div class="col-1">
+                <img src="/images/NGINX-logo.png" class="lead-image" />
+            </div>
+            <div class="col-4 valign-center">
+                Nginx is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache. Nginx is free and open-source software. It serves as ingress-controller and therefore routes and manages all incoming HTTP-requests.     
+            </div>
+            <div class="col">
+                <div class="custom-control custom-switch inline-block">
+                    <input class="custom-control-input" id="nginx" name="nginx" type="checkbox" v-model="installNginx">
+                    <label class="custom-control-label" for="nginx">
+                        Install Nginx Ingress
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row margin-2em form-group">
+            <div class="col-1">
+                <img src="/images/cert-manager.png" class="lead-image" />
+            </div>
+            <div class="col-4 valign-center">
+                cert-manager is a native Kubernetes certificate management controller. It can help with issuing certificates from a variety of sources, such as Let’s Encrypt, HashiCorp Vault, Venafi, a simple signing key pair, or self signed.    
+            </div>
+            <div class="col">
+                <div class="custom-control custom-switch inline-block">
+                    <input class="custom-control-input" id="certmgr" name="certmgr" type="checkbox" v-model="installCertmgr" disabled="disabled">
+                    <label class="custom-control-label" for="certmgr">
+                        Install Cert-Manager
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row margin-2em form-group">
+            <div class="col-1">
                 <img src="/images/kubernetes.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
@@ -133,25 +181,44 @@ export default {
 
     data: function() {
         return {
-            installHarbor: this.$store.state.installer.harbor,
-            installPrometheus: this.$store.state.installer.prometheus,
-            installGrafana: this.$store.state.installer.grafana,
-            installElastic: this.$store.state.installer.elastic,
-            installFluentd: this.$store.state.installer.fluentd,
-            installKibana: this.$store.state.installer.kibana,
-            installJaeger: this.$store.state.installer.jaeger,
-            installCertmgr: this.$store.state.installer.certmgr,
-            installDashboard: this.$store.state.installer.dashboard,
+            installHarbor: this.$store.state.installer.additional.harbor,
+            installPrometheus: this.$store.state.installer.additional.prometheus,
+            installGrafana: this.$store.state.installer.additional.grafana,
+            installElastic: this.$store.state.installer.additional.elastic,
+            installFluentd: this.$store.state.installer.additional.fluentd,
+            installKibana: this.$store.state.installer.additional.kibana,
+            installJaeger: this.$store.state.installer.additionaljaeger,
+            installCertmgr: this.$store.state.installer.additional.certmgr,
+            installDashboard: this.$store.state.installer.additional.dashboard,
+            installNginx: this.$store.state.installer.additional.nginx,
         }
     },
 
     mounted : function () {
-        console.log("==> Loaded Home")
 
         // Notify about being loaded
         EventBus.$emit(Constants.Event_NewViewLoaded, {
             allowGoForward: true
         })
+    },
+
+    beforeRouteLeave (to, from, next) {
+        // Store the data
+        this.$store.commit(Constants.Store_AdditionalToolsUpdateData, 
+        {
+            harbor: this.installHarbor,
+            prometheus: thins.installPrometheus,
+            grafana: this.installGrafana,
+            elastic: this.installElastic,
+            fluentd: this.installFluentd,
+            kibana: this.installKibana,
+            dashboard: this.installDashboard,
+            certMgr: this.installCertmgr,
+            nginx: this.installNginx,
+            jaeger: this.installJaeger
+        })
+
+        next()
     },
 
     created: function() {

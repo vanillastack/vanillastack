@@ -3,9 +3,7 @@ import Vuex from 'vuex'
 import Constants from './constants'
 import EventBus from './eventBus'
 
-Vue.use(Vuex);
-
-// Define the modules
+Vue.use(Vuex)
 
 // Navigation Module
 const navigation = {
@@ -52,7 +50,7 @@ const navigation = {
   }
 }
 
-const cloudfoundry = {
+const cloudfoundrySettings = {
   state: () => ({
     domainName: '',
     stratos: true
@@ -71,7 +69,7 @@ const cloudfoundry = {
 }
 
 // OpenStack Module
-const openstack = {
+const openstackSettings = {
   state: () => ({
     domain: '',
     release: 'stein',
@@ -127,7 +125,7 @@ const openstack = {
 }
 
 // Base-Data module
-const baseData = {
+const baseSettings = {
   state: () => ({
     sshKey: '',
     uuid: '',
@@ -146,12 +144,90 @@ const baseData = {
   }
 }
 
+// AddtionalTools-Settings
+const additionalToolsSettings = {
+
+  state: () => ({
+    harbor: true,
+    prometheus: true,
+    grafana: true,
+    elastic: false,
+    fluentd: false,
+    kibana: false,
+    dashboard: true,
+    certMgr: true,
+    nginx: true,
+    jaeger: false
+  }),
+
+  mutations: {
+    [Constants.Store_AdditionalToolsUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_AdditionalToolsDataUpdated, state);
+    }
+  }
+
+}
+
+// Rook-Settings-Module
+const rookSetting = {
+  state: () => ({
+    dashboard: false,
+    monitoring: true,
+    replicaLevel: 3
+  }),
+
+
+  mutations: {
+    [Constants.Store_RookUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_RookDataUpdated, state);
+    }
+  }
+}
+
+// Cluster-Settings Module
+const clusterSettings = {
+  state: () => ({
+    ip: '',
+    fqdn: '',
+    usefqdn: true,
+    adminfqdn: '',
+    useadminfqdn: true,
+    externalLbIp: '',
+    useExternalLb: false
+  }),
+
+
+  mutations: {
+    [Constants.Store_ClusterUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_ClusterDataUpdated, state);
+    }
+  }
+}
+
 // Installer Module
 const installer = {
 
   modules: {
-    openstack: openstack,
-    cloudfoundry: cloudfoundry
+    openstack: openstackSettings,
+    cloudfoundry: cloudfoundrySettings,
+    additional: additionalToolsSettings,
+    rook: rookSetting,
+    cluster: clusterSettings
   },
 
   state: () => ({
@@ -167,11 +243,7 @@ const installer = {
     installOpenStack: false,
     workersList: [],
     mastersList: [],
-    clusterip: '',
-    clusterfqdn: '',
-    useclusterfqdn: true,
-    adminfqdn: '',
-    useadminfqdn: true
+    
   }),
 
   mutations: {
@@ -214,16 +286,6 @@ const installer = {
     [Constants.Store_UpdateInstallationOpenStack](state, install) {
       state.installOpenStack = install
       EventBus.$emit(Constants.Event_InstallationOpenStackUpdated, install)
-    },
-
-    [Constants.Store_UpdateIPAddresses](state, data) {
-      state.clusterip = data.clusterip,
-      state.useadminfqdn = data.useadminfqdn,
-      state.useclusterfqdn = data.useclusterfqdn,
-      state.clusterfqdn = data.clusterfqdn,
-      state.adminfqdn = data.adminfqdn,
-
-      EventBus.$emit(Constants.Event_IpAddressesUpdated, data)
     }
   }
 }
@@ -233,7 +295,7 @@ const Store = new Vuex.Store({
     modules: {
       navigation: navigation,
       installer: installer,
-      base: baseData
+      base: baseSettings
     }
 })
 

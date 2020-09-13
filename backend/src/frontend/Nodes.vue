@@ -341,8 +341,7 @@ export default {
             var cfNodes = 0;
             var openStackNodes = 0;
 
-            for(var i=0; i<this.workers.length; i++) {
-                var worker = this.workers[i]
+            this.workers.forEach(worker => {
                 isValid = isValid && worker.isValid();
 
                 rookNodes += worker.rook ? 1 : 0;
@@ -350,7 +349,7 @@ export default {
                 openStackNodes += worker.openstack ? 1 : 0;
 
                 ipAddresses[ipAddresses.length] = worker.ip
-            }
+            })
 
             // Check for the number of assigned nodes
             if(this.installRook) isValid = isValid && rookNodes >= 3;
@@ -364,6 +363,9 @@ export default {
                 return acc;
             }, []);
             isValid = isValid && duplicates.length == 0
+
+            // Inform about the state
+            EventBus.$emit(Constants.Event_NodesValidated, isValid)
 
             // Inform about the validation
             EventBus.$emit(Constants.Event_NewViewLoaded, {

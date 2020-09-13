@@ -116,6 +116,8 @@ export default {
                 this.isRunning = false
             }
 
+            EventBus.$emit(Constants.Event_NodesChecked, isValid)
+
             EventBus.$emit(Constants.Event_NewViewLoaded, {
                 allowGoForward: isValid
             })
