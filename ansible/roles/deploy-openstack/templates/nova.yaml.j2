@@ -53,6 +53,8 @@ labels:
     node_selector_key: openstack-compute-node
     node_selector_value: enabled
 pod:
+  use_fqdn:
+    compute: false
   replicas:
     api_metadata: {{openstack.nova.apiMetadata.replicas}}
     placement: {{openstack.nova.placement.replicas}}
