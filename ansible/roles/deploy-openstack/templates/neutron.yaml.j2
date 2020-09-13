@@ -40,10 +40,6 @@ images:
     neutron_bagpipe_bgp: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
 {% endif %}
 
-network:
-  interface:
-    tunnel: {{openstack.neutron.tunnelInterface}}
-    tunnel_network_cidr: {{openstack.neutron.tunnelCIDR}}
 labels:
   agent:
     dhcp:
@@ -190,6 +186,9 @@ endpoints:
         project_domain_name: service
 
 network:
+  interface:
+    tunnel: {{openstack.neutron.tunnelInterface}}
+    tunnel_network_cidr: {{openstack.neutron.tunnelCIDR}}
   api:
     ingress:
       public: true
