@@ -223,3 +223,23 @@ div>.lead-image {
 .fa-ul.inline {
   margin: 0 !important;
 }
+
+.summaryLink {
+  text-align: right !important;
+  display: inline-block;
+  padding-top: 0.5em;
+  padding-left: 1em;
+  color:black;
+  font-size: small;
+  vertical-align: middle !important;
+}
+
+.summaryLink::before {
+  content: "[ ";
+  vertical-align: middle !important;
+}
+
+.summaryLink::after {
+  content: " ]";
+  vertical-align: middle !important;
+}

@@ -151,7 +151,7 @@ export default {
         
         // Load the workers with Rook
         var nodes = [];
-        this.$store.state.installer.masters.forEach(node => {
+        this.$store.state.installer.general.mastersList.forEach(node => {
             nodes[nodes.length] = {
                 ip: node.ip,
                 user: node.user,
@@ -164,7 +164,7 @@ export default {
                 checked: false
             }
         })
-        this.$store.state.installer.workers.forEach(node => {
+        this.$store.state.installer.general.workersList.forEach(node => {
             nodes[nodes.length] = {
                 ip: node.ip,
                 user: node.user,
