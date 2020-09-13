@@ -1,0 +1,7 @@
+---
+- name: Connection Check
+  hosts: all
+  tasks:
+    - name: Run Setup to gather facts
+      setup:
+        filter: ansible_memtotal_mb, ansible_mounts
