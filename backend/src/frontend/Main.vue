@@ -19,11 +19,11 @@
             <ul class="secondary-nav">
               <li><router-link to="/start" class="nav-item">Start</router-link></li>
               <li><router-link to="/terms" class="nav-item">Terms</router-link></li>
-              <li><router-link tag="button" :disabled="!acceptedTerms" to="/kind" class="nav-item button-as-link">Installation Kind</router-link></li>
+              <li><router-link tag="button" :disabled="!acceptedTerms" to="/general" class="nav-item button-as-link">General Settings</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/key" class="nav-item button-as-link">Public Key</router-link></li>
               <li><router-link tag="button" :disabled="!seededKey" to="/nodes" class="nav-item button-as-link">Nodes</router-link></li>
               <li><router-link tag="button" :disabled="!nodesValid" to="/nodecheck" class="nav-item button-as-link">Node-Check</router-link></li>
-              <li><router-link tag="button" :disabled="!nodesChecked" to="/ip" class="nav-item button-as-link">Cluster-Settings</router-link></li>
+              <li><router-link tag="button" :disabled="!nodesChecked" to="/cluster" class="nav-item button-as-link">Cluster-Settings</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/rook" class="nav-item button-as-link">Rook</router-link></li>
               <li v-if="hasOpenStack"><router-link tag="button" :disabled="!nodesChecked" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
               <li v-if="hasCF"><router-link tag="button" :disabled="!nodesChecked" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
@@ -117,6 +117,12 @@ export default {
 
     EventBus.$on(Constants.Event_InstallationCFUpdated, value => {
       this.hasCF = value
+    })
+
+    EventBus.$on(Constants.Event_GeneralSettingsChanged, () => {
+      this.nodesValid = false
+      this.nodesChecked = false 
+      this.subscriptionKeyEntered = false
     })
 
     // Handle an update of the navigation options

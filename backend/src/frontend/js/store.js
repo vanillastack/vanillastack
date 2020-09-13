@@ -230,6 +230,40 @@ const clusterSettings = {
   }
 }
 
+const generalSettings = {
+
+  state: () => ({
+    masters: 3,
+    workers: 3, // Default for VS+Rook
+    isHA: true,
+    installRook: true,
+    installCF: false,
+    installOpenStack: false,
+    workersList: [],
+    mastersList: [],
+  }),
+
+  mutations: {
+    [Constants.Store_UpdateGeneralSettings](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_GeneralSettingsChanged, state);
+    },
+
+    [Constants.Store_UpdateWorkers](state, data) {
+      state.workersList = data
+    },
+
+    [Constants.Store_UpdateMasters](state, data) {
+      state.mastersList = data
+    }
+  }
+
+}
+
 // Installer Module
 const installer = {
 
@@ -238,42 +272,18 @@ const installer = {
     cloudfoundry: cloudfoundrySettings,
     additional: additionalToolsSettings,
     rook: rookSetting,
-    cluster: clusterSettings
+    cluster: clusterSettings,
+    general: generalSettings
   },
 
   state: () => ({
-    masters: 3,
-    workers: 3, // Default for VS+Rook
-    isHA: true,
     copiedKeyToNodes: false,
     canGoBack: false,
     canGoForward: false,
     allowGoForward: false,
-    installRook: true,
-    installCF: false,
-    installOpenStack: false,
-    workersList: [],
-    mastersList: [],
-    
   }),
 
   mutations: {
-
-    [Constants.Store_UpdateMasters](state, masters) {
-      state.masters = masters
-      EventBus.$emit(Constants.Event_MastersCountChanged, state.masters);
-    },
-
-    [Constants.Store_UpdateWorkers](state, workers) {
-      state.workers = workers
-      EventBus.$emit(Constants.Event_WorkersCountChanged, state.workers);
-    },
-
-    [Constants.Store_UpdateInstallationKind](state, isHA) {
-      state.isHA = isHA
-      EventBus.$emit(Constants.Event_InstallationKindChanged, state.isHA);
-    },
-
     [Constants.Store_UpdateCopiedKeyToNodes](state, didCopy) {
       state.copiedKeyToNodes = didCopy
       EventBus.$emit(Constants.Event_CopiedKeyToNodes, state.copiedKeyToNodes);
@@ -283,21 +293,6 @@ const installer = {
       state.sshKey = sshKey
       EventBus.$emit(Constants.Event_CopiedKeyToNodes, state.sshKey)
     },
-
-    [Constants.Store_UpdateInstallationRook](state, install) {
-      state.installRook = install
-      EventBus.$emit(Constants.Event_InstallationRookUpdated, install)
-    },
-
-    [Constants.Store_UpdateInstallationCF](state, install) {
-      state.installCF = install
-      EventBus.$emit(Constants.Event_InstallationCFUpdated, install)
-    },
-
-    [Constants.Store_UpdateInstallationOpenStack](state, install) {
-      state.installOpenStack = install
-      EventBus.$emit(Constants.Event_InstallationOpenStackUpdated, install)
-    }
   }
 }
 

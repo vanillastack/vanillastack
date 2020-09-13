@@ -132,9 +132,9 @@ export default {
             accepted: this.$store.state.navigation.acceptedTerms,
             workers: [],
             masters: [],
-            installRook : this.$store.state.installer.installRook,
-            installCF : this.$store.state.installer.installCF,
-            installOpenStack : this.$store.state.installer.installOpenStack,
+            installRook : this.$store.state.installer.general.installRook,
+            installCF : this.$store.state.installer.general.installCF,
+            installOpenStack : this.$store.state.installer.general.installOpenStack,
             hasApplications: false,
             hasMultipleApplications: false,
     }},
@@ -201,63 +201,61 @@ export default {
         })
 
         EventBus.$on(LocalEvent_RefreshItem, item => {
-            // Force refresh
-            this.$set(item.isWorker ? this.workers : this.masters, item.index, item)
-
             // Store the data
             this.$store.commit(Constants.Store_UpdateWorkers, this.workers)
             this.$store.commit(Constants.Store_UpdateMasters, this.masters)
 
             // Validate data
-            this.validate();
-        })
-
-        // Copy the data onto the store
-        EventBus.$on(Constants.Event_PrepareNavigation, value => {
-            if(value.currentRoute == this.name) {
-                this.$store.commit(Constants.Store_UpdateWorkers, this.workers)
-                this.$store.commit(Constants.Store_UpdateMasters, this.masters)
-            }
+            this.validate()
         })
 
         // Trigger the validation
         EventBus.$on(LocalEvent_Validate, () => this.validate())
 
         // Define workers and masters
-        var workers = this.$store.state.installer.workersList
-        var masters = this.$store.state.installer.mastersList
+        var workers = new Array(this.$store.state.installer.general.workers)
+        var masters = new Array(this.$store.state.installer.general.masters)
 
-        this.prepareList(workers, this.$store.state.installer.workers)
-        this.prepareList(masters, this.$store.state.installer.masters)
+        this.prepareList(workers)
+        this.prepareList(masters)
 
-        this.workers = this.fillList(workers, this.$store.state.installer.workersList, true)
-        this.masters = this.fillList(masters, this.$store.state.installer.mastersList, false)
+        this.workers = this.fillList(workers, this.$store.state.installer.general.workersList, true)
+        this.masters = this.fillList(masters, this.$store.state.installer.general.mastersList, false)
 
         // Validate the data
         this.validate();
     },
 
+    beforeRouteLeave (to, from, next) {
+        // Store the state of the data
+        this.$store.commit(Constants.Store_UpdateWorkers, this.workers)
+        this.$store.commit(Constants.Store_UpdateMasters, this.masters)
+
+        next()
+    },
+
     methods: {
 
-        prepareList: function(list, expectedSize) {
-            while(list.length < expectedSize) {
-                list[list.length] = {
-                    index: list.length,
+        prepareList: function(list) {
+            for(var i=0; i<list.length; i++) {
+                list[i] = {
+                    index: i,
                     ip: '',
                     user: '',
                     rook: false,
                     cf: false,
                     openstack: false,
-                    copyUser: list.length > 0,
-                    copyMaster: list.length == 0,
+                    copyUser: i > 0,
+                    copyMaster: i == 0,
                     rookChecked: false
                 }
             } 
         },
 
         fillList: function(list, listInStore, isWorkersList) {
-            for(var i=0; i<listInStore.length; i++) {
-                var item = listInStore[i];
+            for(var i=0; i<list.length; i++) {
+                var item = listInStore.length > i ? listInStore[i] : list[i];
+                item = JSON.parse(JSON.stringify(item))
 
                 var localItem = {
                     key: (isWorkersList ? "w" : "m") + i,
@@ -327,14 +325,14 @@ export default {
             var ipAddresses = []
 
             // Validate the masters
-            for(var i=0; i<this.masters.length; i++) {
-                var masterIsValid = this.masters[i].isValid()
+            this.masters.forEach(master =>  {
+                var masterIsValid = master.isValid()
 
-                if(isValid && !masterIsValid)
-                    isValid = false;
+                if(!masterIsValid)
+                    isValid = false
 
-                ipAddresses[ipAddresses.length] = this.masters[i].ip
-            }
+                ipAddresses[ipAddresses.length] = master.ip
+            })
 
             // Validate the workers
             var rookNodes = 0;
@@ -342,7 +340,10 @@ export default {
             var openStackNodes = 0;
 
             this.workers.forEach(worker => {
-                isValid = isValid && worker.isValid();
+                var workerIsValid = worker.isValid();
+
+                if(!workerIsValid)
+                    isValid = false 
 
                 rookNodes += worker.rook ? 1 : 0;
                 cfNodes += worker.cf ? 1 : 0;

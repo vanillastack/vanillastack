@@ -20,6 +20,7 @@ import 'es6-promise/auto'
 import Network from './js/network'
 import Subscription from './Subscription.vue'
 import Rook from './Rook.vue'
+import Summary from './Summary.vue'
 
 // Call Vue.use(VueRouter)
 Vue.use(VueRouter)
@@ -40,7 +41,7 @@ require('./css/all.min.css')
 const routes = [
     { path: '/', alias: '/start', component: Home},
     { path: '/terms', component: Terms },
-    { path: '/kind', component: Kind },
+    { path: '/general', component: Kind },
     { path: '/key', component: Key},
     { path: '/nodes', component: Nodes},
     { path: '/nodecheck', component: NodeCheck},
@@ -50,7 +51,7 @@ const routes = [
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
     { path: '/subscription', component: Subscription},
-    { path: '/summary', component: Key}
+    { path: '/summary', component: Summary}
   ];
 
 var currentRoute = 0;

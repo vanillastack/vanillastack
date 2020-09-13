@@ -22,6 +22,8 @@ export default Object.freeze({
     Event_RookDataUpdated: "Event_RookDataUpdated",
     Event_ClusterDataUpdated: "Event_ClusterDataUpdated",
     Event_SubscriptionKeyUpdated: "Event_SubscriptionKeyUpdated",
+    Event_GeneralSettingsChanged: "Event_GeneralSettingsChanged",
+    Event_GeneralSettingsDirty: "Event_GeneralSettingsDirty",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -42,6 +44,7 @@ export default Object.freeze({
     Store_RookUpdateData: "rookUpdateData", 
     Store_ClusterUpdateData: "clusterUpdateData",
     Store_UpdateSubscriptionKey: "updateSubscriptionKey",
+    Store_UpdateGeneralSettings: "updateGeneralSettings",
 
     Network_LoadedInfo: "Network_LoadedInfo",
     Network_CheckingNodes: "Network_CheckingNodes",
