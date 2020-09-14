@@ -257,7 +257,7 @@ openstack:
   neutron:
     enabled: true
     chartName: neutron
-    chartVersion: 20200914
+    chartVersion: 20200913
     createService: true
     extInterface: "enp3s0"
     tunnelInterface: "enp2s0"
