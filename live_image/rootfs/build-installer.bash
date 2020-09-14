@@ -22,6 +22,10 @@ sleep 2
 /usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False &sleep 2
 sleep 2
 
+docker pull harbor.cloudical.net/vanillastack/vsinstaller  | tee -a $OUTPUT/build.log
+mkdir -p config/includes.chroot/vanilla | tee -a $OUTPUT/build.log
+docker save harbor.cloudical.net/vanillastack/vsinstaller | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
+
 kill "$(cat /run/dockerd.pid)"
 killall containerd
 
@@ -53,12 +57,12 @@ lb config noauto \
         --source false \
         --verbose | tee -a $OUTPUT/build.log
 
-pwd
+#pwd
 # if this works, it is one of the uggliest hacks ever.
 # dockerd in the chroot will need its / as a dedicated mountpoint, which it
 # wouldn't be, if we wouldn't bind-mount it
-mkdir chroot
-mount -o bind chroot chroot
+#mkdir chroot
+#mount -o bind chroot chroot
 #
 # ensure to umount chroot before binary-stage
 #echo "echo 'Hotpatch: trying to umount bindmount of chroot'" >> config/binary

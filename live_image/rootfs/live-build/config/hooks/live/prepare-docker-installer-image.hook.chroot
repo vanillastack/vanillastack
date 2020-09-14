@@ -38,13 +38,16 @@ stop_docker_svc() {
   killall containerd
 }
 
-mount_cgroups
-start_docker_svc
+if false;
+then
+  mount_cgroups
+  start_docker_svc
 
-docker version  | tee -a $OUTPUT/build.log
-docker pull harbor.cloudical.net/vanillastack/vsinstaller
+  docker version  | tee -a $OUTPUT/build.log
+  docker pull harbor.cloudical.net/vanillastack/vsinstaller
 
-stop_docker_svc
-umount_cgroups
+  stop_docker_svc
+  umount_cgroups
 
-rm -rf /var/lib/docker/runtimes
+  rm -rf /var/lib/docker/runtimes
+fi

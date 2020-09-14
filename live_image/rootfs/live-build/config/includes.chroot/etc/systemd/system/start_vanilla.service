@@ -5,5 +5,5 @@ Requires=docker.service
 
 [Service]
 TimeoutStartSec=0
-#ExecStartPre=-cat /vanilla/vanilla-installer.tar.xz | /usr/bin/xz -d | /usr/bin/docker load
+ExecStartPre=-/usr/local/bin/extract_containerimage.bash /vanilla/vanilla-installer.tar.xz
 ExecStart=/usr/bin/docker run --rm --name vanilla-installa -p 8080:8080 harbor.cloudical.net/vanillastack/vsinstaller
