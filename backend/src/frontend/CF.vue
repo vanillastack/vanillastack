@@ -22,7 +22,7 @@
                 </div>
                 <div class="row">
                     <div class="col-2">
-                        <input class="form-control" placeholder="cloudfoundry.my.cluster" name="domainName" v-model="domainName" v-on:change="triggerValidation()" v-on:blur="triggerValidation()" required="required" />
+                        <input class="form-control" placeholder="cloudfoundry.my.cluster" name="fqdn" v-model="fqdn" v-on:change="triggerValidation()" v-on:blur="triggerValidation()" required="required" />
                     </div>
                     <div class="col">
                         <div class="custom-control custom-switch inline-block">
@@ -46,7 +46,7 @@ export default {
     data: function() {
         return {
             stratos : this.$store.state.installer.cloudfoundry.stratos,
-            domainName : this.$store.state.installer.cloudfoundry.domainName,
+            fqdn : this.$store.state.installer.cloudfoundry.fqdn,
         }
     },
 
@@ -58,19 +58,19 @@ export default {
             this.$store.commit(Constants.Store_CloudFoundryUpdateData, this.$data)
 
             // Inform about changes
-            EventBus.$emit(Constants.Event_PrepareNavigation({
+            EventBus.$emit(Constants.Event_NewViewLoaded,{
                 allowGoForward: isValid
-            }))
+            })
         }
     },
 
     mounted : function () {
         this.stratos = this.$store.state.installer.cloudfoundry.stratos
-        this.domainName = this.$store.state.installer.cloudfoundry.domainName
+        this.fqdn = this.$store.state.installer.cloudfoundry.fqdn
 
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.cloudfoundry.domainName.length == 0)
-            this.domainName = 'cloudfoundry.' + this.$store.state.installer.clusterfqdn
+            this.fqdn = 'cloudfoundry.' + this.$store.state.installer.cluster.fqdn
 
         this.triggerValidation()
     },

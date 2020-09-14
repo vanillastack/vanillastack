@@ -243,3 +243,15 @@ div>.lead-image {
   content: " ]";
   vertical-align: middle !important;
 }
+
+.green {
+  color:green;
+}
+
+.red {
+  color:#DD402D;
+}
+
+.text-align-right {
+  text-align: right;
+}

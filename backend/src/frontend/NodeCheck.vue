@@ -20,7 +20,7 @@
                 <div class="col-2"><strong>IP</strong></div>
                 <div class="col-2"><strong>User</strong></div>
                 <div class="col-2"><strong>Role</strong></div>
-                <div class="col-2"><strong>Workloads</strong></div>
+                <div class="col-3"><strong>Workloads</strong></div>
                 <div class="col"><strong>State</strong></div>
             </div>
             <div class="form-group" v-for="item in nodes" :key="item.ip">
@@ -28,7 +28,7 @@
                     <div class="col-2">{{ item.ip }}</div>
                     <div class="col-2">{{ item.user }}</div>
                     <div class="col-2">{{ item.role }}</div>
-                    <div class="col-2">{{ item.apps }}</div>
+                    <div class="col-3">{{ item.apps }}</div>
                     <div class="col">
                         <div v-if="item.checking" class="spinner-border spinner-border-sm" role="status">
                             <span class="sr-only">Loading...</span>

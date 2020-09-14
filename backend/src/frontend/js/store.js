@@ -52,7 +52,7 @@ const navigation = {
 
 const cloudfoundrySettings = {
   state: () => ({
-    domainName: '',
+    fqdn: '',
     stratos: true
   }),
 
@@ -166,7 +166,7 @@ const additionalToolsSettings = {
     fluentd: false,
     kibana: false,
     dashboard: true,
-    certMgr: true,
+    certmgr: true,
     nginx: true,
     jaeger: false
   }),
