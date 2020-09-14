@@ -187,41 +187,28 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                                     if (!key.toString().indexOf(filter)) {
                                         raw = false;
                                     } else {
-                                        if (!(Object.keys(value.partitions).length === 0 && value.partitions.constructor === Object)) {
+                                        if (!isEmptyObject(value.partitions) || value.holders.length !== 0) {
                                             raw = false;
                                         }
                                     }
                                 }
                                 if (raw) {
                                     console.log(`Key: ${key}`);
+                                    const size = value.size.split(" ");
                                     node.raw = true;
-                                    node.diskSpace = value.size;
+                                    node.diskSpace = convertSizeToGib(size[0], size[1]);
                                 }
                             }
                             if (!node.raw) {
                                 node.raw = false;
-                                node.diskSpace = '0';
+                                node.diskSpace = 0;
                             }
-
-                            // let size = 0;
-                            // //todo: how to test for raw and which disk to use
-                            // ansibleFacts[node.host].ansible_facts.ansible_mounts.forEach(mount => {
-                            //     size += mount.size_available;
-                            //     node.raw = mount.fstype === "ext4";
-                            // });
-                            // node.freeDiskSpace = size / 1073741824;
-                            // node.memory = ansibleFacts[node.host].ansible_facts.ansible_memtotal_mb;
                         }
                         console.log(node);
                         wsMsg.event = 'EXECUTION';
                         wsMsg.payload = JSON.stringify(node);
                         sendMessage(wsMsg, wsClient);
                     });
-
-
-                    // wsMsg.event = 'EXECUTION';
-                    // wsMsg.payload = '-1';
-                    // sendMessage(wsMsg, wsClient);
                 }
                 if (stderr) {
                     console.log('stderr:');
@@ -256,13 +243,6 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
             console.log(`${transactionId} Dry-run complete continuing with cleanup`);
             // Cleanup
             cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
-            // try {
-            //     fs.rmdirSync(dir, {recursive: true});
-            //     console.log(`${transactionId} Cleanup done`);
-            //     console.log(`${transactionId} Connection check completed`);
-            // } catch (cleaningError) {
-            //     console.log('Cleaning up gone wrong: ', cleaningError);
-            // }
         }
     } catch (e) {
         console.log(`Something went wrong: ${e}`);
@@ -294,6 +274,24 @@ function randPassword(letters, numbers, either) {
     }).concat().join('').split('').sort(function () {
         return 0.5 - Math.random();
     }).join('')
+}
+
+const isEmptyObject = function (obj) {
+    return (Object.keys(obj).length === 0 && obj.constructor === Object);
+}
+
+const convertSizeToGib = function (size, format) {
+    if (format === 'GB') {
+        return parseInt(size, 10) / 1.073741824;
+    } else if (format === 'MB') {
+        return parseInt(size, 10) / 1073.741824;
+    } else if (format === 'TB') {
+        return parseInt(size, 10) / 0.001073741824;
+    } else if (format === 'KB') {
+        return parseInt(size, 10) / 1073741824;
+    } else {
+        return parseInt(size, 10);
+    }
 }
 
 const cleanUpPath = function (transactionId, baseDir, files) {
