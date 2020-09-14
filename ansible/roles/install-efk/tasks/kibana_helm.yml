@@ -38,7 +38,7 @@
     release_namespace: kube-logging
     values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
     create_namespace: true
-    wait: false
+    wait: true
 
       #- name: wait for kibana pods to come up
       #  shell: kubectl get pods -n kube-logging -o json
