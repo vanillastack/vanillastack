@@ -16,7 +16,7 @@
         <div class="row h-100">
           <div class="col-2 navigation">
             <!-- Local navigation for the installer -->
-            <ul class="secondary-nav">
+            <ul class="secondary-nav" v-if="!isInstalling">
               <li><router-link to="/start" class="nav-item">Start</router-link></li>
               <li><router-link to="/terms" class="nav-item">Terms</router-link></li>
               <li><router-link tag="button" :disabled="!acceptedTerms" to="/general" class="nav-item button-as-link">General Settings</router-link></li>

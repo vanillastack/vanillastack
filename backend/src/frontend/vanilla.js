@@ -21,6 +21,7 @@ import Rook from './Rook.vue'
 import Summary from './Summary.vue'
 import LetsEncrypt from './LetsEncrypt.vue'
 import CF from './CF.vue'
+import Install from './Install.vue'
 import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
@@ -53,7 +54,8 @@ const routes = [
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
 //    { path: '/subscription', component: Subscription},
-    { path: '/summary', component: Summary}
+    { path: '/summary', component: Summary},
+    { path: '/install', component: Install}
   ];
 
 var currentRoute = 0;
@@ -131,6 +133,11 @@ var app = new Vue({
         this.$network.openWebSocket(this.$network, data.uuid)
       })
 
+      // Force-Navigate to the installation view
+      EventBus.$on(Constants.Network_InstallationInProgress, data => {
+        this.$router.push(routes.find(route => route.path == '/install'))
+      })
+
       // Execute the info-call to the backend
       this.$network.getInfo()
     },
@@ -177,7 +184,7 @@ var app = new Vue({
       
         // Set whether forward or backward navigation was possible
         this.$store.commit(Constants.Store_UpdateGlobalNavigation, {
-          canGoForward: index < routes.length -1,
+          canGoForward: index < routes.length -1 && route.path != '/summary',
           canGoBack: index > 0
         })
       }
