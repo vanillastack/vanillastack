@@ -33,7 +33,15 @@
     state: restarted
     enabled: true
     name: kubelet
-      
+
+- name: Add modules
+  modprobe:
+    name: "{{ item }}"
+    state: present    
+  with_items:
+     - br_netfilter
+     - overlay
+  
 - name: make Modules persistant
   lineinfile:
     path: /etc/modules-load.d/k8s.conf
