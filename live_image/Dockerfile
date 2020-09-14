@@ -11,6 +11,8 @@ RUN mkdir -p $WORKDIR
 
 COPY rootfs /
 
+#COPY ../ $WORKDIR/config/includes.chroot/home/vanilla/vanilla-src
+
 RUN bash -x prepare-installer.bash
 
 VOLUME $OUTPUT
