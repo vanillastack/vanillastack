@@ -56,3 +56,6 @@ curl -fsSL https://download.docker.com/linux/debian/gpg > $WORKDIR/live-build/co
 cat $WORKDIR/live-build/config/archives/docker.key.chroot | apt-key add -
 
 apt-get update && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io
+
+wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mcli
+chmod +x /usr/local/bin/mcli

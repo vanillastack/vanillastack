@@ -71,3 +71,15 @@ lb config noauto \
 lb build 2>&1 | tee -a $OUTPUT/build.log
 
 cp vanillastack-installer* $OUTPUT
+
+mcli config host add vanilla https://s3.cloudical.net \
+  $(echo $AWS_ACCESS_KEY_ID | base64 -d) \
+  $(echo $AWS_SECRET_ACCESS_KEY | base64 -d) \
+  && for I in $OUTPUT/vanillastack-installer*;
+      do
+        mcli cp $I vanilla/vanillastack-downloads-bkt-3d791dcf-fb62-49c7-a4cf-b153203e3ff2/iso/ || :
+      done
+#
+# Content will be available via https://s3.cloudical.net/vanillastack-downloads-bkt-3d791dcf-fb62-49c7-a4cf-b153203e3ff2
+
+

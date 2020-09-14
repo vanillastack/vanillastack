@@ -19,6 +19,8 @@ build_liveimage:
     - $WORKDIR/prepare-installer.bash
     - $WORKDIR/build-installer.bash
     - ls -la $OUTPUT
+    - rm $OUTPUT/vanilla*
   artifacts:
-#    paths:
-#      - ./output
+    expire_in: 2h
+    paths:
+      - ./output
