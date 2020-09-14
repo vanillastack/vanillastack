@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 output:
-  host: elasticsearch-client.default.svc.cluster.local
+  host: elasticsearch-master.kube-logging.svc.cluster.local
   port: 9200
   scheme: http
   sslVersion: TLSv1
@@ -127,8 +127,8 @@ configMaps:
       @log_level info
       include_tag_key true
       # Replace with the host/port to your Elasticsearch cluster.
-      host "#{ENV['OUTPUT_HOST']}"
-      port "#{ENV['OUTPUT_PORT']}"
+      host "elasticsearch-master"
+      port "9200"
       scheme "#{ENV['OUTPUT_SCHEME']}"
       ssl_version "#{ENV['OUTPUT_SSL_VERSION']}"
       logstash_format true
