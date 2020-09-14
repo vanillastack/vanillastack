@@ -3,6 +3,9 @@ fedora-master-1 ansible_host=95.217.63.249 ansible_user=fedora
 fedora-master-2 ansible_host=95.217.63.250 ansible_user=fedora
 fedora-master-3 ansible_host=95.217.63.251 ansible_user=fedora
 
+[localhost]
+localhost ansible_connection=local
+
 [worker]
 fedora-worker-1 ansible_host=95.217.63.252 ansible_user=fedora
 fedora-worker-2 ansible_host=95.217.63.253 ansible_user=fedora
