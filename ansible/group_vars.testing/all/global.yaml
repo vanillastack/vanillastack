@@ -1,7 +1,7 @@
 ---
 global:
   registry: harbor.cloudical.net
-  uuid: {}
+  uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 ingress:
   namespace: nginx-ingress
   enabled: true
