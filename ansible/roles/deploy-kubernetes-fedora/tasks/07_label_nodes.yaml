@@ -12,14 +12,17 @@
     ceph-rgw=enabled openstack-helm-node-class=primary
   with_items:
   - "{{ groups['worker'] }}"
+  ignore_errors: true
 
 - name: label storage nodes
   command: kubectl label nodes "{{ item }}" rook=enabled
   with_items:
   - "{{ groups['storage'] }}"
+  ignore_errors: true
 
 - name: label compute node
   command: kubectl label nodes "{{ item }}" openstack-compute-node=enabled
   with_items:
   - "{{ groups['compute'] }}"
+  ignore_errors: true
 

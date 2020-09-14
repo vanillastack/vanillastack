@@ -11,7 +11,7 @@
     release_namespace: "{{ certmanager.namespace }}"
     create_namespace: true
     values: 
-    installCRDs: true
+      installCRDs: true
     chart_version: "{{certmanager.chartVersion}}"
     wait: true
 
