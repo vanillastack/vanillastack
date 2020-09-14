@@ -212,34 +212,101 @@ const swaggerOptions = {
                 },
                 Cluster: {
                     type: "object",
-                    required: [
-                        "nodes",
-                        "clusterName",
-                        "internalLB",
-                        "externalLB"
-                    ],
+                    required: [],
                     properties: {
-                        client: {
-                            $ref: "#/components/schemas/uuid"
-                        },
-                        nodes: {
-                            $ref: "#/components/schemas/NodesWithRole"
-                        },
-                        clusterName: {
+                        name: {
                             type: "string",
-                            example: "default"
+                            example: "cluster"
                         },
-                        internalLB: {
-                            $ref: "#/components/schemas/InternalLB"
+                        ip: {
+                            type: "string",
+                            example: "1.1.1.1"
                         },
-                        externalLB: {
-                            $ref: "#/components/schemas/ExternalLB"
+                        fqdn: {
+                            type: "string",
+                            example: "cluster"
                         },
-                        tags: {
-                            $ref: "#/components/schemas/Tags"
+                        usefqdn: {
+                            type: "boolean",
+                            example: true
+                        },
+                        adminfqdn: {
+                            type: "string",
+                            example: "admin.cluster"
+                        },
+                        useadminfqdn: {
+                            type: "boolean",
+                            example: true
+                        },
+                        externalLbIp: {
+                            type: "boolean",
+                            example: true
+                        },
+                        useExternalLb: {
+                            type: "boolean",
+                            example: true
                         }
                     }
-                }
+                },
+                General: {
+                    type: "object",
+                    required: [],
+                    properties: {
+                        installRook: {
+                            type: "boolean",
+                            example: true
+                        },
+                        installCF: {
+                            type: "boolean",
+                            example: true
+                        },
+                        installOS: {
+                            type: "boolean",
+                            example: true
+                        },
+                        harborKey: {
+                            type: "string",
+                            example: "123456"
+                        }
+                    }
+                },
+                Rook: {
+                    type: "object",
+                    required: [],
+                    properties: {
+                        dashboard: {
+                            type: "boolean",
+                            example: false
+                        },
+                        monitoring: {
+                            type: "boolean",
+                            example: true
+                        },
+                        replicaLevel: {
+                            type: "number",
+                            example: 3
+                        }
+                    }
+                },
+                cf: {
+                    type: "object",
+                    required: [],
+                    properties: {
+                        dashboard: {
+                            type: "boolean",
+                            example: false
+                        },
+                        monitoring: {
+                            type: "boolean",
+                            example: true
+                        },
+                        replicaLevel: {
+                            type: "number",
+                            example: 3
+                        }
+                    }
+                },
+                testing: {}
             }
         }
     },

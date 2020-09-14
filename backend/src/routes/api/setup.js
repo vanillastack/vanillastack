@@ -13,7 +13,7 @@ const {getClient, setup, sleep, genTransactionId, randPassword} = require('../..
  *             content:
  *                 application/json:
  *                     schema:
- *                         $ref: "#/components/schemas/Cluster"
+ *                         $ref: "#/components/schemas/testing"
  *             required: true
  *         responses:
  *             200:
@@ -43,6 +43,7 @@ router.post('/', function (req, res) {
     const openstack = req.body.openstack;
     const cf = req.body.cf;
     const additional = req.body.additional;
+    const letsencrypt = req.body.letsencrypt;
 
     // Filtering Bad Request Codes; todo: more advance filtering
     if (!client) {
@@ -72,73 +73,84 @@ router.post('/', function (req, res) {
         return;
     }
 
-    try {
-        // Building Inventory
-        const hostsYaml = {
-            all: {
-                master: {},
-                worker: {},
+
+    const basePath = `/usr/workdir/ansible/`;
+    // Building Inventory
+    const hostsYaml = {
+        all: {
+            children: {
+                master: {
+                    hosts: {}
+                },
+                worker: {
+                    hosts: {}
+                },
                 storage: {
-                    rook: ""
+                    hosts: {}
                 },
                 compute: {
-                    os: ""
+                    hosts: {}
+                },
+                cf: {
+                    hosts: {}
                 },
                 kube_cluster: {
                     children: {
-                        master: {},
-                        worker: {}
+                        master: null,
+                        worker: null
                     }
-                },
-                haproxy: {
-                    children: {
-                        master: {}
-                    }
-                },
+                }
+            },
+            vars: {
                 certmanager: {
-                    enabled: true
+                    enabled: additional.certmgr
                 },
                 global: {
-                    registry: 'harbor.cloudical.net'
+                    registry: cluster.registry_endpoint,
+                    uuid: client.uuid,
+                    isHA: req.body.isHA
                 },
                 ingress: {
-                    enabled: true
+                    enabled: additional.nginx
                 },
                 letsEncrypt: {
-                    issuerName: "letsencrypt-staging",
-                    issuerEmail: "testing@test.vanillastack.cloudical.net"
+                    issuerName: letsencrypt.issuer,
+                    issuerEmail: letsencrypt.issuerEmail
                 },
                 kubernetes: {
                     loadBalancer: {
-                        virtualIP: '135.181.48.19',
-                        fqdn: 'test.vanillastack.cloudical.net'
+                        virtualIP: cluster.ip,
+                        clusterDomain: cluster.fqdn
                     },
-                    clusterName: 'kube'
+                    clusterName: 'kube' // todo: not defined
                 },
                 cloudfoundry: {
-                    enabled: false,
-                    storageclass: 'rook-ceph-block'
+                    enabled: general.installCF,
+                    coreDomain: cf.fqdn,
+                    storageclass: 'rook-ceph-block' //  todo: not defined
                 },
                 stratos: {
-                    enabled: true,
-                    adminpassword: randPassword(4, 4, 8)
+                    enabled: cf.stratos,
+                    coreDomain: cf.stratos_endpoint,
+                    adminpassword: randPassword(4, 4, 8) // zurück an ui
                 },
                 openstack: {
-                    enabled: false,
-                    publicDomain: 'test.vanillastack.cloudical.net',
-                    publicProto: 'http',
+                    enabled: general.installOS,
+                    publicDomain: openstack.domain,
+                    publicProto: 'http', // todo: unclear (openstack.tls ? 'https' : 'http')
                     region: 'RegionOne',
-                    release: 'stein',
+                    release: openstack.release,
                     tls: {
-                        enabled: true,
-                        useCertManager: true,
+                        enabled: openstack.tls,
+                        useCertManager: additional.certmgr,
                         letsEncrypt: {
-                            enabled: true
+                            enabled: true // todo: not defined
                         }
                     },
                     mariadb: {
+                        enabled: openstack.mariadb,
                         persistence: {
-                            diskSize: '30Gi'
+                            diskSize: `${openstack.mariadb_size}Gi`
                         },
                         auth: {
                             admin: {
@@ -156,8 +168,9 @@ router.post('/', function (req, res) {
                         }
                     },
                     rabbitmq: {
+                        enabled: openstack.rabbitmq,
                         persistence: {
-                            diskSize: '20Gi'
+                            diskSize: `${openstack.rabbitmq_size}Gi`
                         },
                         auth: {
                             admin: {
@@ -166,9 +179,9 @@ router.post('/', function (req, res) {
                         }
                     },
                     barbican: {
-                        enabled: true,
+                        enabled: openstack.barbican,
                         endpoints: {
-                            publicURLPrefix: 'barbican'
+                            publicURLPrefix: openstack.barbican_endpoint
                         },
                         auth: {
                             service: {
@@ -183,9 +196,9 @@ router.post('/', function (req, res) {
                         }
                     },
                     cinder: {
-                        enabled: true,
+                        enabled: openstack.cinder,
                         endpoints: {
-                            publicURLPrefix: "cinder"
+                            publicURLPrefix: openstack.cinder_endpoint
                         },
                         auth: {
                             service: {
@@ -203,9 +216,9 @@ router.post('/', function (req, res) {
                         }
                     },
                     glance: {
-                        enabled: true,
+                        enabled: openstack.glance,
                         endpoints: {
-                            publicURLPrefix: "glance"
+                            publicURLPrefix: openstack.heat_endpoint
                         },
                         auth: {
                             service: {
@@ -226,10 +239,10 @@ router.post('/', function (req, res) {
                         }
                     },
                     heat: {
-                        enabled: true,
+                        enabled: openstack.heat,
                         endpoints: {
-                            publicURLPrefix: "heat",
-                            cfPublicURLPrefix: "heat-cfn"
+                            publicURLPrefix: openstack.heat_endpoint,
+                            cfnPublicURLPrefix: openstack.cfnPublicURLPrefix
                         },
                         auth: {
                             service: {
@@ -253,10 +266,10 @@ router.post('/', function (req, res) {
                         }
                     },
                     horizon: {
-                        enabled: true,
+                        enabled: openstack.horizon,
                         endpoints: {
-                            useDirectPublicDomain: false,
-                            publicURLPrefix: "horizon"
+                            useDirectPublicDomain: false, //todo: not defined
+                            publicURLPrefix: openstack.horizon_endpoint
                         },
                         auth: {
                             db: {
@@ -265,13 +278,13 @@ router.post('/', function (req, res) {
                         }
                     },
                     keystone: {
-                        enabled: true,
+                        enabled: openstack.keystone,
                         endpoints: {
-                            publicURLPrefix: "keystone"
+                            publicURLPrefix: openstack.keystone_endpoint
                         },
                         auth: {
                             admin: {
-                                password: (randPassword(4, 4, 8) || pass) // todo: password from frontend
+                                password: (randPassword(4, 4, 8) || pass) // todo: password back to frontend
                             },
                             keystoneTest: {
                                 password: randPassword(4, 4, 8)
@@ -285,9 +298,9 @@ router.post('/', function (req, res) {
                         }
                     },
                     mistral: {
-                        enabled: true,
+                        enabled: openstack.mistral,
                         endpoints: {
-                            publicURLPrefix: "mistral"
+                            publicURLPrefix: openstack.mistral_endpoint
                         },
                         auth: {
                             service: {
@@ -305,17 +318,17 @@ router.post('/', function (req, res) {
                         }
                     },
                     neutron: {
-                        enabled: true,
-                        tunnelInterface: "enp2s0",
-                        extInterface: "enp3s0",
+                        enabled: openstack.neutron,
+                        tunnelInterface: openstack.neutron_interface_tunnel,
+                        extInterface: openstack.neutron_interface_external,
                         l3: {
-                            ha: false,
-                            maxAgentsPerRouter: 1,
-                            haNetworkType: "vxlan",
-                            dhcpAgents: 2
+                            ha: openstack.neutron_l3ha,
+                            maxAgentsPerRouter: openstack.neutron_maxAgentsPerRouter,
+                            haNetworkType: openstack.neutron_overlayNetworkType,
+                            dhcpAgents: openstack.neutron_dhcpAgents
                         },
                         endpoints: {
-                            publicURLPrefix: "neutron"
+                            publicURLPrefix: openstack.neutron_endpoint
                         },
                         auth: {
                             service: {
@@ -333,15 +346,15 @@ router.post('/', function (req, res) {
                         }
                     },
                     nova: {
-                        enabled: true,
+                        enabled: openstack.nova,
                         endpoints: {
-                            publicURLPrefix: "nova",
-                            novncURLPrefix: "novnc",
-                            placementURLPrefix: "placement"
+                            publicURLPrefix: openstack.nova_endpoint,
+                            novncURLPrefix: openstack.nova_novnc_endpoint,
+                            placementURLPrefix: openstack.nova_placement_endpoint
                         },
                         libvirt: {
-                            virtType: "kvm",
-                            cpuMode: "host-model"
+                            virtType: openstack.nova_virtType,
+                            cpuMode: openstack.nova_cpuMode
                         },
                         auth: {
                             service: {
@@ -362,9 +375,9 @@ router.post('/', function (req, res) {
                         }
                     },
                     senlin: {
-                        enabled: true,
+                        enabled: openstack.senlin,
                         endpoints: {
-                            publicURLPrefix: "senlin"
+                            publicURLPrefix: openstack.senlin_endpoint
                         },
                         auth: {
                             service: {
@@ -384,42 +397,78 @@ router.post('/', function (req, res) {
                     }
                 },
                 rook: {
-                    enabled: true,
+                    enabled: general.installRook,
                     cluster: {
                         dashboard: {
-                            enabled: false,
-                            ssl: true
+                            enabled: rook.dashboard,
+                            ssl: true // todo: not defined
                         },
                         monitoring: {
-                            enabled: false
+                            enabled: rook.monitoring
                         },
-                        storage: {
-                            useAllNodes: true,
+                        storage: { //todo: unclear
                             useAllDevices: true
                         }
                     },
-                    storageclass: {
-                        enabled: true
+                    storageClassRBD: {
+                        enabled: true,
+                        name: 'rook-ceph-block',
+                        failureDomain: 'host',
+                        poolName: 'replicapool',
+                        replicaLevel: rook.replicaLevel
                     }
                 }
             }
-        };
+        }
+    };
+    const masterNodes = {};
+    const workerNodes = {};
+    const storageNodes = {};
+    const computeNodes = {};
+    const cfNodes = {};
+    let masterCount = 1;
+    let workerCount = 1;
 
-        const transactionId = genTransactionId();
-        sleep(500).then(() => {
-            setup(transactionId, dryRun, client, hostsYaml);
-        });
-        res.status(200).json({
-            transactionId: transactionId
-        });
-
-    } catch (e) {
-        res.status(400).json({
-            message: 'Something went wrong'
-        });
-    }
-
-
+    // filling nodes
+    nodes.forEach((node) => {
+        if (node.role.toUpperCase() === "M") {
+            masterNodes[`vanilla-master-${(masterCount < 10) ? '0' + masterCount : masterCount}`] = {
+                ansible_host: node.host,
+                ansible_user: node.user,
+                ansible_ssh_private_key_file: `${basePath}/${client.uuid}/key.pem`
+            }
+            masterCount += 1;
+        } else {
+            const currentNode = `vanilla-worker-${(workerCount < 10) ? '0' + workerCount : workerCount}`
+            workerNodes[currentNode] = {
+                ansible_host: node.host,
+                ansible_user: node.user,
+                ansible_ssh_private_key_file: `${basePath}/${client.uuid}/key.pem`
+            }
+            node.labels.forEach((label) => {
+                if (label.toUpperCase() === "ROOK") {
+                    storageNodes[currentNode] = null;
+                } else if (label.toUpperCase() === "OS") {
+                    computeNodes[currentNode] = null;
+                } else if (label.toUpperCase() === "CF") {
+                    cfNodes[currentNode] = null;
+                }
+            });
+            workerCount += 1;
+        }
+    });
+    hostsYaml.all.children.master.hosts = masterNodes;
+    hostsYaml.all.children.worker.hosts = workerNodes;
+    hostsYaml.all.children.storage.hosts = storageNodes;
+    hostsYaml.all.children.compute.hosts = computeNodes;
+    hostsYaml.all.children.cf.hosts = cfNodes;
+    const transactionId = genTransactionId();
+    sleep(500).then(() => {
+        setup(transactionId, basePath, dryRun, client, hostsYaml);
+    });
+    res.status(200).json({
+        transactionId: transactionId
+    });
 });
 
 module.exports = router;

@@ -184,6 +184,20 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                                 let raw = true;
                                 for (const filter of filterList) {
                                     // filter for raw devices
+                                    //     devices filtern
+                                    //     dm-*
+                                    //     dm*
+                                    //     sr*
+                                    //     nbd*
+                                    //     rbd*
+                                    //     loop*
+                                    //
+                                    //     anschliend devices.holder.length == 0 && partitions empty-object -> raw
+                                    //     else return
+                                    //     return device.size
+                                    //
+                                    //     devices loop
+                                    //     raw -> empty partitions
                                     if (!key.toString().indexOf(filter)) {
                                         raw = false;
                                     } else {
@@ -204,7 +218,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                                 node.diskSpace = 0;
                             }
                         }
-                        console.log(node);
+                        // console.log(node);
                         wsMsg.event = 'EXECUTION';
                         wsMsg.payload = JSON.stringify(node);
                         sendMessage(wsMsg, wsClient);
@@ -242,7 +256,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
             sendMessage(wsMsg, wsClient);
             console.log(`${transactionId} Dry-run complete continuing with cleanup`);
             // Cleanup
-            cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
+            cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
         }
     } catch (e) {
         console.log(`Something went wrong: ${e}`);
@@ -255,9 +269,84 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
     }
 };
 
-const setup = function (transactionId, dryRun, wsClient, hostsYaml) {
+const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
+    const wsMsg = {
+        event: 'INIT',
+        transactionId: transactionId,
+        payload: ''
+    }
+    // Send init msg through ws
+    // sendMessage(wsMsg, wsClient);
+    const dir = `${basePath}/${wsClient.uuid}`;
+    try {
+        fs.mkdirSync(dir, {recursive: true});
+        fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
+        fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsYaml));
+        // fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
+        // console.log(hostsYaml);
+        // console.log(yaml.safeDump(hostsYaml));
+        if (!Boolean(dryRun)) {
+            const options = {
+                cwd: basePath,
+                env: null
+            };
+
+            // Setting up ENV
+            // process.env.ANSIBLE_TIMEOUT = 3;
+            process.env.ANSIBLE_HOST_KEY_CHECKING = false;
+            // process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = true;
+            // process.env.ANSIBLE_STDOUT_CALLBACK = 'json';
+
+            const ans = proc.spawn('ansible-playbook',
+                ['-i', `${dir}/hosts.json`, 'type_vanillastack_deploy.yaml'], // 'type_vanillastack_deploy.yaml'
+                options
+            );
+
+            ans.stdout.on('data', stdout => {
+                console.log(stdout.toString());
+            });
+
+            ans.stderr.on('data', stderr => {
+                console.log(stderr.toString());
+            });
+
+            ans.on('error', err => {
+                console.log(err);
+            });
+
+            ans.on('close', code => {
+                console.log(code);
+            });
+
+        } else {
+            console.log(`${transactionId} Setup running in dry-run-mode`);
+
+            wsMsg.event = 'EXECUTION';
+            wsMsg.payload = 'Running in dry-run mode';
+            sendMessage(wsMsg, wsClient);
+
+
+            wsMsg.event = 'DONE';
+            wsMsg.payload = '0';
+            sendMessage(wsMsg, wsClient);
+            console.log(`${transactionId} Setup dry-run complete continuing with cleanup`);
+            // Cleanup
+            cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
+        }
+
+    } catch (error) {
+        console.log(error);
+        // console.log(`Something went wrong: ${e}`);
+        // wsMsg.event = 'DONE';
+        // wsMsg.payload = '-1';
+        // sendMessage(wsMsg, wsClient);
+
+        // Cleanup
+        // cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
+    }
 }
+
 
 // invoke like so: randPassword(5,3,2);
 function randPassword(letters, numbers, either) {
