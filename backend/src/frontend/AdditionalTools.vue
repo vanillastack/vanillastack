@@ -177,7 +177,7 @@ import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
 
 export default {
-    name: '/tools',
+    name: 'tools',
 
     data: function() {
         return {
@@ -187,7 +187,7 @@ export default {
             installElastic: this.$store.state.installer.additional.elastic,
             installFluentd: this.$store.state.installer.additional.fluentd,
             installKibana: this.$store.state.installer.additional.kibana,
-            installJaeger: this.$store.state.installer.additionaljaeger,
+            installJaeger: this.$store.state.installer.additional.jaeger,
             installCertmgr: this.$store.state.installer.additional.certmgr,
             installDashboard: this.$store.state.installer.additional.dashboard,
             installNginx: this.$store.state.installer.additional.nginx,
@@ -213,7 +213,7 @@ export default {
             fluentd: this.installFluentd,
             kibana: this.installKibana,
             dashboard: this.installDashboard,
-            certMgr: this.installCertmgr,
+            certmgr: this.installCertmgr,
             nginx: this.installNginx,
             jaeger: this.installJaeger
         })

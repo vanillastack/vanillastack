@@ -62,7 +62,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <p><strong>Domain of the AppStore</strong></p>
+                    <p><strong>Domain for VanillaStore</strong></p>
                 </div>
             </div>
             <div class="form-group row margin-2em">
@@ -110,10 +110,12 @@ export default {
                 this.adminfqdn = "admin." + this.clusterfqdn
 
             // validates the data
-            isValid =  
-                (this.useadminfqdn ? this.adminfqdn.length > 0 : true) &&
-                (this.useclusterfqdn ? this.clusterfqdn.length > 0 : true) &&
-                (this.useExternalLb ? this.externalLbIp.length > 0 : Constants.Validate_IpAddress.test(this.clusterip))
+            var validAdmin = this.useadminfqdn ? this.adminfqdn.length > 0 : true
+            var validCluster = this.useclusterfqdn ? this.clusterfqdn.length > 0 : true
+            var validLb = this.externalLbIp.length > 0
+            var validIp = Constants.Validate_IpAddress.test(this.clusterip)
+
+            isValid =  validAdmin && validCluster && (this.useExternalLb ? validLb : validIp)
 
             // Store the data
             this.$store.commit(Constants.Store_ClusterUpdateData, {
@@ -123,7 +125,7 @@ export default {
                 useadminfqdn: this.useadminfqdn,
                 adminfqdn: this.adminfqdn,
                 useExternalLb: this.useExternalLb,
-                externalLbIp: this.useExternalLb
+                externalLbIp: this.externalLbIp
             })
 
             // Notify about the change

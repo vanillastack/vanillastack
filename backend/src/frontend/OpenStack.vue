@@ -27,7 +27,7 @@
                     <div class="card-body">
                         <div class="row margin-2em">
                             <div class="col-3">
-                                <p><strong>Domain</strong></p>
+                                <p><strong>Endpoint</strong></p>
                                 <input class="form-control" placeholder="openstack.my.cluster" 
                                     name="domain" v-model="domain" v-on:blur="triggerValidation()" 
                                         required="required"  />
@@ -359,7 +359,7 @@
                     <div class="card-body">
                         <div class="row margin-2em">
                             <div class="col-3">
-                                <p><strong>keystone Endpoint</strong></p>
+                                <p><strong>Keystone Endpoint</strong></p>
                                 <input class="form-control" placeholder="keystone.openstack.my.cluster" 
                                     name="keystone_endpoint" v-model="keystone_endpoint" 
                                         v-on:blur="triggerValidation()" 
@@ -728,67 +728,67 @@ export default {
 
     mounted : function () {
         // Set the OpenStack-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.domain.length == 0)
-            this.domain = 'openstack.' + this.$store.state.installer.clusterfqdn
+            this.domain = 'openstack.' + this.$store.state.installer.cluster.fqdn
         
         // Set the Barbican-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.barbican_endpoint.length == 0)
             this.barbican_endpoint = 'barbican.' + this.domain
         
         // Set the Cinder-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.cinder_endpoint.length == 0)
             this.cinder_endpoint = 'cinder.' + this.domain
         
         // Set the Glance-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.glance_endpoint.length == 0)
             this.glance_endpoint = 'glance.' + this.domain
         
         // Set the Heat-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.heat_endpoint.length == 0)
             this.heat_endpoint = 'heat.' + this.domain
         
         // Set the Horizon-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.horizon_endpoint.length == 0)
             this.horizon_endpoint = 'horizon.' + this.domain
         
         // Set the Senlin-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.senlin_endpoint.length == 0)
             this.senlin_endpoint = 'senlin.' + this.domain
         
         // Set the Mistral-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.mistral_endpoint.length == 0)
             this.mistral_endpoint = 'mistral.' + this.domain
         
         // Set the Keystone-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.keystone_endpoint.length == 0)
             this.keystone_endpoint = 'keystone.' + this.domain
         
         // Set the Neutron-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.keystone_endpoint.length == 0)
             this.neutron_endpoint = 'neutron.' + this.domain
         
         // Set the Nova-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.nova_endpoint.length == 0)
             this.nova_endpoint = 'nova.' + this.domain
         
         // Set the NoVNC-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.nova_novnc_endpoint.length == 0)
             this.nova_novnc_endpoint = 'novnc.' + this.domain
         
         // Set the PlacementAPI-Endpoint
-        if(this.$store.state.installer.clusterfqdn.length > 0 && this.$store.state.installer.useclusterfqdn &&
+        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.nova_placement_endpoint.length == 0)
             this.nova_placement_endpoint = 'placement.' + this.domain
 

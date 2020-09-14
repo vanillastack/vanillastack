@@ -106,6 +106,8 @@ var app = new Vue({
         }
 
         currentRoute = index
+        this.handleNavigation(currentRoute, currentRoute, true)
+
         console.log("Current Route Index", currentRoute)
       })
 
@@ -136,13 +138,13 @@ var app = new Vue({
         var route = routes[index];
 
         // Check, whether it is one of the dynamic routes (which might not be visible)
-        if(route.path == '/rook' && !this.$store.state.installer.installRook)
+        if(route.path == '/rook' && !this.$store.state.installer.general.installRook)
           return this.getRoute(forward ? index + 1 : index - 1, forward)
 
-        if(route.path == '/cf' && !this.$store.state.installer.installCF)
+        if(route.path == '/cf' && !this.$store.state.installer.general.installCF)
           return this.getRoute(forward ? index + 1 : index - 1, forward)
 
-        if(route.path == '/openstack' && !this.$store.state.installer.installOpenStack)
+        if(route.path == '/openstack' && !this.$store.state.installer.general.installOpenStack)
           return this.getRoute(forward ? index + 1 : index - 1, forward)
 
         return route

@@ -60,6 +60,7 @@
 <script>
 import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
+import Globals from './js/globals'
 
 export default {
   name: 'app',
@@ -78,7 +79,7 @@ export default {
           hasOpenStack: this.$store.state.installer.installOpenStack,
           hasCF: this.$store.state.installer.installCF
         }
-  },
+    },
 
   methods: {
     goBack : function(e) {
@@ -130,6 +131,8 @@ export default {
         this.canGoBack = value.canGoBack
         this.canGoForward = value.canGoForward
         this.allowGoForward = value.allowGoForward
+
+        console.log("NAVIGATION UPDATED", value)
     })
 
     EventBus.$on(Constants.Event_NodesValidated, value => {
