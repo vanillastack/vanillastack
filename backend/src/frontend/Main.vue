@@ -24,6 +24,7 @@
               <li><router-link tag="button" :disabled="!seededKey" to="/nodes" class="nav-item button-as-link">Nodes</router-link></li>
               <li><router-link tag="button" :disabled="!nodesValid" to="/nodecheck" class="nav-item button-as-link">Node-Check</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/cluster" class="nav-item button-as-link">Cluster-Settings</router-link></li>
+              <li><router-link tag="button" :disabled="!nodesChecked" to="/letsencrypt" class="nav-item button-as-link">Let's Encrypt-Settings</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/rook" class="nav-item button-as-link">Rook</router-link></li>
               <li v-if="hasOpenStack"><router-link tag="button" :disabled="!nodesChecked" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
               <li v-if="hasCF"><router-link tag="button" :disabled="!nodesChecked" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>

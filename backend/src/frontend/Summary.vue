@@ -143,6 +143,44 @@
             </div>
             <!-- /cluster -->
 
+            <!-- letsencrypt -->
+            <div class="card margin-1em">
+                <div class="card-header" id="letsencrypt">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#letsencryptData" 
+                                    aria-expanded="false" aria-controls="letsencryptData">
+                                    Let's Encrypt
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/letsencrypt" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="letsencryptData" class="collapse" aria-labelledby="letsencrypt" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Certificate Kind</div>
+                            <div class="col-2">
+                                {{ getLetsEncryptCertificateKind() }}
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Issuer E-Mail</div>
+                            <div class="col-2">
+                                {{ letsencrypt.issuerEmail }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /letsencrypt -->
+
             <!-- Nodes -->
             <div class="card margin-1em">
                 <div class="card-header" id="nodes">
@@ -448,6 +486,39 @@
                             </div>
                         </div>
 
+                        <div class="row margin-1em"><div class="col"><strong>Nova</strong></div></div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Nova Computing</div>
+                            <div class="col-2">
+                                <i v-if="openstack.nova" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.nova" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.nova">Endpoint</div>
+                            <div class="col-2" v-if="openstack.nova">
+                                {{ openstack.nova_endpoint}} 
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Public Endpoint NoVNC</div>
+                            <div class="col-2">
+                                {{ openstack.nova_novnc_endpoint }}
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Endpoint Placement API</div>
+                            <div class="col-2">
+                                {{ openstack.nova_placement_endpoint}} 
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Virtualization Type</div>
+                            <div class="col-2">
+                                {{ openstack.nova_virtType.toUpperCase() }}
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">CPU Mode</div>
+                            <div class="col-2">
+                                {{ openstack.nova_cpuMode}} 
+                            </div>
+                        </div>
+
                         <div class="row margin-1em"><div class="col"><strong>Senlin</strong></div></div>
                         <div class="row margin-2em">
                             <div class="col-2 text-align-right padding-right-1em">Senlin Clustering</div>
@@ -464,6 +535,50 @@
                 </div>
             </div>
             <!-- /Openstack -->
+
+            <!-- CF -->
+            <div class="card margin-1em" v-if="general.installCF">
+                <div class="card-header" id="cf">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#cfData" 
+                                    aria-expanded="false" aria-controls="cfData">
+                                    Cloud Foundry
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/cf" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cfData" class="collapse" aria-labelledby="cf" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Base URL</div>
+                            <div class="col-2">
+                                {{ cf.fqdn }}
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Stratos Dashboard</div>
+                            <div class="col-2">
+                                <i v-if="cf.stratos" class="fas fa-check-circle green"></i>
+                                <i v-if="!cf.stratos" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" 
+                                v-if="cf.stratos">Stratos Endpoint</div>
+                            <div class="col-2" v-if="cf.stratos">
+                                {{ cf.stratos_endpoint}} 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /cf -->
 
         </div>
     </div>
@@ -484,7 +599,8 @@ export default {
             openstack: {},
             cf: {},
             additional: {},
-            key: ''
+            key: '',
+            letsencrypt: {}
         }
     },
 
@@ -523,6 +639,13 @@ export default {
                 return ''
 
             return this.openstack.release.charAt(0).toUpperCase() + this.openstack.release.slice(1)
+        },
+
+        getLetsEncryptCertificateKind: function() {
+            if(this.letsencrypt.issuer == 'letsencrypt-staging')
+                return "Staging"
+
+            return "Production"
         },
 
         generateCall: function() {
@@ -598,6 +721,9 @@ export default {
 
         // Add the Harbor-Key
         this.key = this.$store.state.base.key
+
+        // Add the Let's Encrypt Data
+        this.letsencrypt = this.$store.state.installer.letsencrypt
 
         console.log("DATA", this.generateCall())
         console.log("DATA-TXT", JSON.stringify(this.generateCall()))

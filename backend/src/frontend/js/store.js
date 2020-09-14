@@ -50,10 +50,29 @@ const navigation = {
   }
 }
 
+const letsencryptSettings = {
+  state: () => ({
+    issuer: 'letsencrypt-staging',
+    issuerEmail: ''
+  }),
+
+  mutations: {
+    [Constants.Store_UpdateLetsEncryptData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_LetsEncryptDataUpdated, state);
+    },
+  }
+}
+
 const cloudfoundrySettings = {
   state: () => ({
     fqdn: '',
-    stratos: true
+    stratos: true,
+    statos_endpoint: ''
   }),
 
   mutations: {
@@ -273,7 +292,8 @@ const installer = {
     additional: additionalToolsSettings,
     rook: rookSetting,
     cluster: clusterSettings,
-    general: generalSettings
+    general: generalSettings,
+    letsencrypt: letsencryptSettings
   },
 
   state: () => ({

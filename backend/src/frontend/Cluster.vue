@@ -53,7 +53,7 @@
                             :required="useclusterfqdn" :disabled="!useclusterfqdn" />
                     </div>
                     <div class="custom-control custom-switch inline-block">
-                        <input class="custom-control-input" id="clusterfqdntrigger" name="clusterfqdntrigger" type="checkbox" v-model="useclusterfqdn" v-on:click="triggerValidation()">
+                        <input class="custom-control-input" id="clusterfqdntrigger" disabled="disabled" name="clusterfqdntrigger" type="checkbox" v-model="useclusterfqdn" v-on:click="triggerValidation()">
                         <label class="custom-control-label" for="clusterfqdntrigger">
                             Assign domain name to cluster
                         </label>

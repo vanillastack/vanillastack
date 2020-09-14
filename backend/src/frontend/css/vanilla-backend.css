@@ -255,3 +255,8 @@ div>.lead-image {
 .text-align-right {
   text-align: right;
 }
+
+::placeholder {
+  color: #c3c3c3 !important;
+  opacity: 1;
+}
