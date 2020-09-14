@@ -260,3 +260,8 @@ div>.lead-image {
   color: #c3c3c3 !important;
   opacity: 1;
 }
+
+.small {
+  width: 7em;
+  display: inline-block
+}

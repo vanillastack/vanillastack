@@ -52,7 +52,7 @@ const routes = [
     { path: '/openstack', component: OpenStack},
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
-    { path: '/subscription', component: Subscription},
+//    { path: '/subscription', component: Subscription},
     { path: '/summary', component: Summary}
   ];
 
@@ -95,6 +95,12 @@ var app = new Vue({
     },
 
     created: function() {
+      // Store the globals
+      Globals.router = router
+      Globals.vue = app
+      Globals.store = Store
+      Globals.routes = routes
+
       // Configure the router
       this.$router.afterEach((to, from) => {
         // Get the new index
@@ -154,6 +160,10 @@ var app = new Vue({
 
       // Handles the navigation
       handleNavigation: function(current, index, forward) {
+        // Fetch the UUID in case it is empty
+        if(Globals.UUID == '') {
+          this.$network.getInfo()
+        }
         
         // Get the route
         var route = this.getRoute(index, forward)
@@ -182,12 +192,6 @@ var app = new Vue({
   .$mount("#vanilla")
 
 app.handleNavigation(0, 0, true)
-
-// Store the globals
-Globals.router = router
-Globals.vue = app
-Globals.store = Store
-Globals.routes = routes
 
 console.log("Started Vue");
   

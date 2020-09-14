@@ -72,7 +72,7 @@ const cloudfoundrySettings = {
   state: () => ({
     fqdn: '',
     stratos: true,
-    statos_endpoint: ''
+    stratos_endpoint: ''
   }),
 
   mutations: {
@@ -114,6 +114,7 @@ const openstackSettings = {
     keystone:  true,
     mistral_endpoint: '',
     mistral:  true,
+    neutron: true,
     neutron_endpoint: '',
     neutron_interface_tunnel: 'eth1',
     neutron_interface_external: 'eth2',

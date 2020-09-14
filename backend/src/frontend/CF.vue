@@ -12,29 +12,21 @@
             </div>
         </div>
         <div class="form-group">
-                <div class="row">
-                    <div class="col-2">
-                        <label for="fqdn">Cloud Foundry Domain</label>
-                    </div>
-                </div>
                 <div class="row margin-2em">
-                    <div class="col-2">
+                    <div class="col-3">
+                        <p><strong>Cloud Foundry Domain</strong></p>
                         <input class="form-control" placeholder="cf.my.cluster" name="fqdn" v-model="fqdn" v-on:change="triggerValidation()" v-on:blur="triggerValidation()" required="required" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <label for="stratos">Stratos</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-2">
+                    <div class="col-3">
+                        <p><strong>Stratos</strong></p>
                         <input class="form-control" placeholder="stratos.my.cluster" name="stratos_endpoint" 
                             v-model="stratos_endpoint" v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
                             required="required" />
                     </div>
                     <div class="col-2">
-                        <div class="custom-control custom-switch inline-block">
+                        <div class="custom-control custom-switch inline-block" style="padding-top:2.8em">
                             <input class="custom-control-input" disabled="disabled" id="stratos" name="stratos" type="checkbox" v-model="stratos" v-on:click="triggerValidation()">
                             <label class="custom-control-label" for="stratos">
                                 Stratos Dashboard
@@ -85,7 +77,7 @@ export default {
 
         if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.cloudfoundry.stratos_endpoint.length == 0)
-            this.fqdn = 'stratos.' + this.$store.state.installer.cluster.fqdn
+            this.stratos_endpoint = 'stratos.' + this.$store.state.installer.cluster.fqdn
 
         this.triggerValidation()
     },

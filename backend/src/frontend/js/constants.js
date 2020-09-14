@@ -25,6 +25,7 @@ export default Object.freeze({
     Event_GeneralSettingsChanged: "Event_GeneralSettingsChanged",
     Event_GeneralSettingsDirty: "Event_GeneralSettingsDirty",
     Event_LetsEncryptDataUpdated: "Event_LetsEncryptDataUpdated",
+    Event_StartInstallation: "Event_StartInstallation",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -51,6 +52,7 @@ export default Object.freeze({
     Network_LoadedInfo: "Network_LoadedInfo",
     Network_CheckingNodes: "Network_CheckingNodes",
     Network_WS_Response: "Network_WS_Response",
+    Network_InstallationInProgress: "Network_InstallationInProgress",
 
     Validate_IpAddress: /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
     Validate_SubscriptionKeyLength: 6,

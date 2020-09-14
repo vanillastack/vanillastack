@@ -26,15 +26,15 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Endpoint</strong></p>
-                                <input class="form-control" placeholder="openstack.my.cluster" 
+                                <input class="form-control" placeholder="openstack" 
                                     name="domain" v-model="domain" v-on:blur="triggerValidation()" 
                                         required="required"  />
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Release</strong></p>
                                 <select class="custom-select"
                                     name="release" v-model="release" v-on:blur="triggerValidation()">
@@ -45,12 +45,12 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>TLS public endpoint</strong></p>
                                 <div class="custom-control custom-switch inline-block">
                                     <input class="custom-control-input" id="tls" name="tls" type="checkbox" 
                                         v-model="tls" 
-                                        v-on:click="triggerValidation()">
+                                        v-on:click="triggerValidation()" />
                                     <label class="custom-control-label">
                                         TLS public endpoint enabled
                                     </label>
@@ -79,7 +79,7 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <label for="mariadb_size">Size in GiB</label>
                                 <input class="form-control" placeholder="20" 
                                     name="mariadb_size" v-model="mariadb_size" v-on:blur="triggerValidation()" 
@@ -105,7 +105,7 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <label for="rabbitmq_size">Size in GiB</label>
                                 <input class="form-control" placeholder="20" 
                                     name="rabbitmq_size" v-model="rabbitmq_size" v-on:blur="triggerValidation()" 
@@ -131,14 +131,14 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
-                                <label for="barbican_endpoint">Endpoint Address</label>
-                                <input class="form-control" placeholder="barbican.openstack.my.cluster" 
+                            <div class="col-4">
+                                <label for="barbican_endpoint">Endpoint Address</label><br />
+                                <input class="form-control small" placeholder="barbican" style="display:inline-block"
                                     name="barbican_endpoint" v-model="barbican_endpoint" 
                                     v-on:blur="triggerValidation()" 
                                     type="text"
                                     :disabled="!barbican"
-                                    :required="barbican"  />
+                                    :required="barbican"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-2_5em" style="padding-top: 2.5em">
@@ -171,12 +171,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Cinder Endpoint</strong></p>
-                                <input class="form-control" placeholder="cinder.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="cinder" 
                                     name="cinder_endpoint" v-model="cinder_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -190,7 +190,7 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Cinder Backend</strong></p>
                                 <select class="custom-select"
                                     name="cinder_backend" v-model="cinder_backend" v-on:blur="triggerValidation()">
@@ -230,12 +230,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Glance Endpoint</strong></p>
-                                <input class="form-control" placeholder="glance.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="glance" 
                                     name="glance_endpoint" v-model="glance_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -249,7 +249,7 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Glance Backend</strong></p>
                                 <select class="custom-select"
                                     name="glance_backend" v-model="glance_backend" v-on:blur="triggerValidation()">
@@ -278,12 +278,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Heat Endpoint</strong></p>
-                                <input class="form-control" placeholder="heat.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="heat" 
                                     name="heat_endpoint" v-model="heat_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -318,12 +318,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Horizon Endpoint</strong></p>
-                                <input class="form-control" placeholder="horizon.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="horizon" 
                                     name="horizon_endpoint" v-model="horizon_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -358,12 +358,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Keystone Endpoint</strong></p>
-                                <input class="form-control" placeholder="keystone.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="keystone" 
                                     name="keystone_endpoint" v-model="keystone_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -398,12 +398,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>mistral Endpoint</strong></p>
-                                <input class="form-control" placeholder="mistral.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="mistral" 
                                     name="mistral_endpoint" v-model="mistral_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -438,12 +438,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Neutron Endpoint</strong></p>
-                                <input class="form-control" placeholder="neutron.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="neutron" 
                                     name="neutron_endpoint" v-model="neutron_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -457,23 +457,23 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Interface Name (Tunnel / Overlay)</strong></p>
-                                <input class="form-control" placeholder="eth1" 
+                                <input class="form-control small" placeholder="eth1" 
                                     name="neutron_interface_tunnel" v-model="neutron_interface_tunnel" 
                                         v-on:blur="triggerValidation()" 
                                         required="required"  />
                             </div>
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Interface Name (External)</strong></p>
-                                <input class="form-control" placeholder="eth2" 
+                                <input class="form-control small" placeholder="eth2" 
                                     name="neutron_interface_external" v-model="neutron_interface_external" 
                                         v-on:blur="triggerValidation()" 
                                         required="required"  />
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Layer3 HA</strong></p>
                                 <div class="custom-control custom-switch">
                                     <input class="custom-control-input" id="neutron_l3ha" name="neutron_l3ha" type="checkbox" 
@@ -484,7 +484,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Overlay Network Type</strong></p>
                                 <select class="custom-select"
                                     name="neutron_overlayNetworkType" v-model="neutron_overlayNetworkType" v-on:blur="triggerValidation()">
@@ -494,7 +494,7 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Max Agents per Router</strong></p>
                                 <select class="custom-select"
                                     name="neutron_maxAgentsPerRouter" v-model="neutron_maxAgentsPerRouter" v-on:blur="triggerValidation()">
@@ -503,7 +503,7 @@
                                     <option value="3">3</option>
                                 </select>
                             </div>
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>DHCP Agents</strong></p>
                                 <select class="custom-select"
                                     name="neutron_dhcpAgents" v-model="neutron_dhcpAgents" v-on:blur="triggerValidation()">
@@ -534,12 +534,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Public Endpoint API</strong></p>
-                                <input class="form-control" placeholder="nova.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="nova" 
                                     name="nova_endpoint" v-model="nova_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -553,23 +553,23 @@
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Public Endpoint NoVNC</strong></p>
-                                <input class="form-control" placeholder="novnc.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="novnc" 
                                     name="nova_novnc_endpoint" v-model="nova_novnc_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Public Endpoint Placement API</strong></p>
-                                <input class="form-control" placeholder="placement.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="placement" 
                                     name="nova_placement_endpoint" v-model="nova_placement_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                         </div>
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>Virtualization Type</strong></p>
                                 
                                 <select class="custom-select"
@@ -580,7 +580,7 @@
                                     <option value="Qemu">QEMU (for virtual machines)</option>
                                 </select>
                             </div>
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>CPU Mode</strong></p>
                                 <select class="custom-select"
                                     name="nova_cpuMode" v-model="nova_cpuMode" 
@@ -614,12 +614,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-2em">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <p><strong>senlin Endpoint</strong></p>
-                                <input class="form-control" placeholder="senlin.openstack.my.cluster" 
+                                <input class="form-control small" placeholder="senlin" 
                                     name="senlin_endpoint" v-model="senlin_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  /><span>.{{ domain }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -735,62 +735,51 @@ export default {
         // Set the Barbican-Endpoint
         if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.barbican_endpoint.length == 0)
-            this.barbican_endpoint = 'barbican.' + this.domain
+            this.barbican_endpoint = 'barbican'
         
         // Set the Cinder-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.cinder_endpoint.length == 0)
-            this.cinder_endpoint = 'cinder.' + this.domain
+        if(this.$store.state.installer.openstack.cinder_endpoint.length == 0)
+            this.cinder_endpoint = 'cinder'
         
         // Set the Glance-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.glance_endpoint.length == 0)
-            this.glance_endpoint = 'glance.' + this.domain
+        if(this.$store.state.installer.openstack.glance_endpoint.length == 0)
+            this.glance_endpoint = 'glance'
         
         // Set the Heat-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.heat_endpoint.length == 0)
-            this.heat_endpoint = 'heat.' + this.domain
+        if(this.$store.state.installer.openstack.heat_endpoint.length == 0)
+            this.heat_endpoint = 'heat'
         
         // Set the Horizon-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.horizon_endpoint.length == 0)
-            this.horizon_endpoint = 'horizon.' + this.domain
+        if(this.$store.state.installer.openstack.horizon_endpoint.length == 0)
+            this.horizon_endpoint = 'horizon'
         
         // Set the Senlin-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.senlin_endpoint.length == 0)
-            this.senlin_endpoint = 'senlin.' + this.domain
+        if(this.$store.state.installer.openstack.senlin_endpoint.length == 0)
+            this.senlin_endpoint = 'senlin'
         
         // Set the Mistral-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.mistral_endpoint.length == 0)
-            this.mistral_endpoint = 'mistral.' + this.domain
+        if(this.$store.state.installer.openstack.mistral_endpoint.length == 0)
+            this.mistral_endpoint = 'mistral'
         
         // Set the Keystone-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.keystone_endpoint.length == 0)
-            this.keystone_endpoint = 'keystone.' + this.domain
+        if(this.$store.state.installer.openstack.keystone_endpoint.length == 0)
+            this.keystone_endpoint = 'keystone'
         
         // Set the Neutron-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.keystone_endpoint.length == 0)
-            this.neutron_endpoint = 'neutron.' + this.domain
+        if(this.$store.state.installer.openstack.keystone_endpoint.length == 0)
+            this.neutron_endpoint = 'neutron'
         
         // Set the Nova-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.nova_endpoint.length == 0)
-            this.nova_endpoint = 'nova.' + this.domain
+        if(this.$store.state.installer.openstack.nova_endpoint.length == 0)
+            this.nova_endpoint = 'nova'
         
         // Set the NoVNC-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.nova_novnc_endpoint.length == 0)
-            this.nova_novnc_endpoint = 'novnc.' + this.domain
+        if(this.$store.state.installer.openstack.nova_novnc_endpoint.length == 0)
+            this.nova_novnc_endpoint = 'novnc'
         
         // Set the PlacementAPI-Endpoint
-        if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.openstack.nova_placement_endpoint.length == 0)
-            this.nova_placement_endpoint = 'placement.' + this.domain
+        if(this.$store.state.installer.openstack.nova_placement_endpoint.length == 0)
+            this.nova_placement_endpoint = 'placement'
 
         // Notify about being loaded
         this.triggerValidation()

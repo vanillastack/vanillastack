@@ -119,8 +119,7 @@
                                 <span v-if="!cluster.usefqdn"></span>
                             </div>
                             <div class="col-2">
-                                <span v-if="cluster.usefqdn">{{ cluster.fqdn }}</span>
-                                <span v-if="!cluster.usefqdn">{{ cluster.fqdn }}</span>
+                                <pre v-if="cluster.usefqdn">{{ cluster.fqdn }}</pre>
                             </div>
                         </div>
                         <div class="row margin-1em">
@@ -130,12 +129,11 @@
                                 <i v-if="!cluster.useadminfqdn" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em">
-                                <span v-if="cluster.useadminfqdn">VanillaStore Domain-Name</span>
+                                <span v-if="cluster.useadminfqdn">VanillaStore Endpoint</span>
                                 <span v-if="!cluster.useadminfqdn"></span>
                             </div>
                             <div class="col-2">
-                                <span v-if="cluster.useadminfqdn">{{ cluster.adminfqdn }}</span>
-                                <span v-if="!cluster.useadminfqdn">{{ cluster.adminfqdn }}</span>
+                                <pre v-if="cluster.useadminfqdn">{{ cluster.adminfqdn }}</pre>
                             </div>
                         </div>
                     </div>
@@ -301,9 +299,7 @@
                         <div class="row margin-1em"><div class="col"><strong>General Settings</strong></div></div>
                         <div class="row margin-1em">
                             <div class="col-2 text-align-right padding-right-1em">Endpoint</div>
-                            <div class="col-2">
-                                {{ openstack.domain }}
-                            </div>
+                            <div class="col-2">{{ openstack.domain }}</div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em">TLS Public Endpoint</div>
                             <div class="col-2">
                                 <i v-if="openstack.tls" class="fas fa-check-circle green"></i>
@@ -347,8 +343,8 @@
                                 <i v-if="!openstack.barbican" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.barbican">Endpoint</div>
-                            <div class="col-2" v-if="openstack.barbican">
-                                {{ openstack.barbican_endpoint }}
+                            <div class="col-3" v-if="openstack.barbican">
+                                {{ openstack.barbican_endpoint }}.{{ openstack.domain }}
                             </div>
                         </div>
 
@@ -360,8 +356,8 @@
                                 <i v-if="!openstack.cinder" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.cinder">Endpoint</div>
-                            <div class="col-2" v-if="openstack.cinder">
-                                {{ openstack.cinder_endpoint}} 
+                            <div class="col-3" v-if="openstack.cinder">
+                                {{ openstack.cinder_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
                         <div class="row margin-2em">
@@ -380,8 +376,8 @@
                                 <i v-if="!openstack.glance" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.glance">Endpoint</div>
-                            <div class="col-2" v-if="openstack.glance">
-                                {{ openstack.glance_endpoint}} 
+                            <div class="col-3" v-if="openstack.glance">
+                                {{ openstack.glance_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
                         <div class="row margin-2em">
@@ -399,8 +395,8 @@
                                 <i v-if="!openstack.heat" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.heat">Endpoint</div>
-                            <div class="col-2" v-if="openstack.heat">
-                                {{ openstack.heat_endpoint}} 
+                            <div class="col-3" v-if="openstack.heat">
+                                {{ openstack.heat_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
 
@@ -412,8 +408,8 @@
                                 <i v-if="!openstack.horizon" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.horizon">Endpoint</div>
-                            <div class="col-2" v-if="openstack.horizon">
-                                {{ openstack.horizon_endpoint}} 
+                            <div class="col-3" v-if="openstack.horizon">
+                                {{ openstack.horizon_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
 
@@ -425,8 +421,8 @@
                                 <i v-if="!openstack.keystone" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.keystone">Endpoint</div>
-                            <div class="col-2" v-if="openstack.keystone">
-                                {{ openstack.keystone_endpoint}} 
+                            <div class="col-3" v-if="openstack.keystone">
+                                {{ openstack.keystone_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
 
@@ -438,20 +434,18 @@
                                 <i v-if="!openstack.mistral" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.mistral">Endpoint</div>
-                            <div class="col-2" v-if="openstack.mistral">
-                                {{ openstack.mistral_endpoint}} 
+                            <div class="col-3" v-if="openstack.mistral">
+                                {{ openstack.mistral_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
 
                         <div class="row margin-1em"><div class="col"><strong>Neutron</strong></div></div>
                         <div class="row margin-1em">
                             <div class="col-2 text-align-right padding-right-1em">Neutron Networking</div>
-                            <div class="col-2">
-                                <i class="fas fa-check-circle green"></i>
-                                                            </div>
-                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Endpoint</div>
-                            <div class="col-2">
-                                {{ openstack.neutron_endpoint}} 
+                            <div class="col-3"><i class="fas fa-check-circle green"></i></div>
+                            <div class="col-2 offset-md-1 text-align-right padding-right-1em">Endpoint</div>
+                            <div class="col-3">
+                                {{ openstack.neutron_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
                         <div class="row margin-1em">
@@ -489,23 +483,23 @@
                         <div class="row margin-1em"><div class="col"><strong>Nova</strong></div></div>
                         <div class="row margin-1em">
                             <div class="col-2 text-align-right padding-right-1em">Nova Computing</div>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <i v-if="openstack.nova" class="fas fa-check-circle green"></i>
                                 <i v-if="!openstack.nova" class="fas fa-times-circle red"></i>
                             </div>
-                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.nova">Endpoint</div>
-                            <div class="col-2" v-if="openstack.nova">
-                                {{ openstack.nova_endpoint}} 
+                            <div class="col-2 offset-md-1 text-align-right padding-right-1em" v-if="openstack.nova">Endpoint</div>
+                            <div class="col-3" v-if="openstack.nova">
+                                {{ openstack.nova_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
                         <div class="row margin-1em">
                             <div class="col-2 text-align-right padding-right-1em">Public Endpoint NoVNC</div>
-                            <div class="col-2">
-                                {{ openstack.nova_novnc_endpoint }}
+                            <div class="col-3">
+                                {{ openstack.nova_novnc_endpoint }}.{{ openstack.domain }}
                             </div>
-                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Endpoint Placement API</div>
-                            <div class="col-2">
-                                {{ openstack.nova_placement_endpoint}} 
+                            <div class="col-2 offset-md-1 text-align-right padding-right-1em">Endpoint Placement API</div>
+                            <div class="col-3">
+                                {{ openstack.nova_placement_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
                         <div class="row margin-2em">
@@ -514,7 +508,7 @@
                                 {{ openstack.nova_virtType.toUpperCase() }}
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em">CPU Mode</div>
-                            <div class="col-2">
+                            <div class="col">
                                 {{ openstack.nova_cpuMode}} 
                             </div>
                         </div>
@@ -527,8 +521,8 @@
                                 <i v-if="!openstack.senlin" class="fas fa-times-circle red"></i>
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.senlin">Endpoint</div>
-                            <div class="col-2" v-if="openstack.senlin">
-                                {{ openstack.senlin_endpoint}} 
+                            <div class="col-3" v-if="openstack.senlin">
+                                {{ openstack.senlin_endpoint}}.{{ openstack.domain }}
                             </div>
                         </div>
                     </div>
@@ -579,6 +573,92 @@
                 </div>
             </div>
             <!-- /cf -->
+
+            <!-- Additional -->
+            <div class="card margin-1em">
+                <div class="card-header" id="additional">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#additionalData" 
+                                    aria-expanded="false" aria-controls="additionalData">
+                                    Additional Tools
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/tools" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="additionalData" class="collapse" aria-labelledby="additional" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Harbor</div>
+                            <div class="col-2">
+                                <i v-if="additional.harbor" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.harbor" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Prometheus</div>
+                            <div class="col-2">
+                                <i v-if="additional.prometheus" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.prometheus" class="fas fa-times-circle red"></i>
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Grafana</div>
+                            <div class="col-2">
+                                <i v-if="additional.grafana" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.grafana" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Elasticsearch</div>
+                            <div class="col-2">
+                                <i v-if="additional.elastic" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.elastic" class="fas fa-times-circle red"></i>
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Kibana</div>
+                            <div class="col-2">
+                                <i v-if="additional.kibana" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.kibana" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Fluentd</div>
+                            <div class="col-2">
+                                <i v-if="additional.fluentd" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.fluentd" class="fas fa-times-circle red"></i>
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Jaeger</div>
+                            <div class="col-2">
+                                <i v-if="additional.jaeger" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.jaeger" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Nginx</div>
+                            <div class="col-2">
+                                <i v-if="additional.nginx" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.nginx" class="fas fa-times-circle red"></i>
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Cert-Manager</div>
+                            <div class="col-2">
+                                <i v-if="additional.certmgr" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.certmgr" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Kubernetes Dashboard</div>
+                            <div class="col-2">
+                                <i v-if="additional.dashboard" class="fas fa-check-circle green"></i>
+                                <i v-if="!additional.dashboard" class="fas fa-times-circle red"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /additional -->
 
         </div>
     </div>
@@ -669,7 +749,8 @@ export default {
                 rook: JSON.parse(JSON.stringify(this.$store.state.installer.rook)),
                 openstack: JSON.parse(JSON.stringify(this.$store.state.installer.openstack)),
                 cf: JSON.parse(JSON.stringify(this.$store.state.installer.cloudfoundry)),
-                additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional))
+                additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional)),
+                letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt))
             }
 
             return data
@@ -681,6 +762,12 @@ export default {
         // Notify about being loaded
         EventBus.$emit(Constants.Event_NewViewLoaded, {
             allowGoForward: false
+        })
+
+        EventBus.$on(Constants.Event_StartInstallation, () => {
+            var payload = this.generateCall()
+            payload.UUID = Globals.UUID
+            payload.
         })
 
         // Set up the general settings

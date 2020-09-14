@@ -131,7 +131,7 @@
             </div>
             <div class="col">
                 <div class="custom-control custom-switch inline-block">
-                    <input class="custom-control-input" id="nginx" name="nginx" type="checkbox" v-model="installNginx">
+                    <input class="custom-control-input" disabled="disabled" id="nginx" name="nginx" type="checkbox" v-model="installNginx">
                     <label class="custom-control-label" for="nginx">
                         Install Nginx Ingress
                     </label>
