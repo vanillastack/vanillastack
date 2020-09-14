@@ -76,7 +76,7 @@ endpoints:
   cloudformation:
     host_fqdn_override:
       public:
-        host: {{openstack.heat.endpoints.cfPublicURLPrefix}}.{{openstack.publicDomain}}
+        host: {{openstack.heat.endpoints.cfnPublicURLPrefix}}.{{openstack.publicDomain}}
 {% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
         tls:
           key: dummy
