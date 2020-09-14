@@ -69,6 +69,17 @@
     - role: deploy-kubernetes-fedora
       action: 05_add_worker
 
+- name: create folder for config
+  hosts: localhost
+  vars:
+    ansible_connection: local
+  tasks:
+    - name: create local uuid directory
+      file:
+        state: directory
+        path: "/tmp/{{ global.uuid }}"
+        recurse: yes
+
 - name: Deploy Networking
   hosts: master[0]
   gather_facts: true

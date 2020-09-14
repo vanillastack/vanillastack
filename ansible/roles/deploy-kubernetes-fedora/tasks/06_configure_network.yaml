@@ -11,7 +11,6 @@
 
 - name: Copy admin.conf to Home directory
   become: true
-  when: init_cluster is succeeded
   copy:
     src: "{{ kubeadmin_config }}"
     dest: ".kube/config"
@@ -20,21 +19,13 @@
     mode: 0640
     remote_src: true
 
-- name: make sure, localhost directory exists
-  hosts: 
-    localhost:
-    vars:
-      ansible_connection: local 
-  file:
-    state: directory
-    path: "/tmp/{{ global.uuid }}"
-    recurse: yes
-
 - name: fetch kubeadm config
+  become: true
   fetch:
     src: "{{ kubeadmin_config }}"
-    dest: "/tmp/{{ global.uuid }}/kubeadm.conf"
-  
+    dest: "/tmp/{{ global.uuid }}/"
+    flat: true
+
 - name: install Cilium repository
   community.kubernetes.helm_repository:
     name: cilium
