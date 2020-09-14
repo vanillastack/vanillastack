@@ -666,6 +666,7 @@
 <script>
 import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
+import Globals from './js/globals'
 
 export default {
     name: 'summaryView',
@@ -766,8 +767,12 @@ export default {
 
         EventBus.$on(Constants.Event_StartInstallation, () => {
             var payload = this.generateCall()
-            payload.UUID = Globals.UUID
-            payload.
+            payload.uuid = this.$store.state.base.uuid
+
+            console.log("DATA", this.generateCall())
+            console.log("DATA-TXT", JSON.stringify(this.generateCall()))
+
+            this.$network.setup(payload)
         })
 
         // Set up the general settings
@@ -811,10 +816,6 @@ export default {
 
         // Add the Let's Encrypt Data
         this.letsencrypt = this.$store.state.installer.letsencrypt
-
-        console.log("DATA", this.generateCall())
-        console.log("DATA-TXT", JSON.stringify(this.generateCall()))
-
     },
 
     created: function() {

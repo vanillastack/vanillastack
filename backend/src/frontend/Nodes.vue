@@ -50,9 +50,9 @@
                 <div class="col">
                     <p>Please assign applications to worker nodes. The following conditions must be met:</p>
                     <ul>
-                        <li v-if="installRook">3 worker nodes for Rook</li>
-                        <li v-if="installOpenStack">4 worker nodes for OpenStack</li>
-                        <li v-if="installCF">3 worker nodes for Cloud Foundry</li>
+                        <li v-if="installRook">3 worker nodes for Rook <a class="summaryLink-inline" href="#" v-on:click="setRook">On all workers</a></li>
+                        <li v-if="installOpenStack">4 worker nodes for OpenStack <a class="summaryLink-inline" href="#" v-on:click="setOS">On all workers</a></li>
+                        <li v-if="installCF">3 worker nodes for Cloud Foundry <a class="summaryLink-inline" href="#" v-on:click="setCF">On all workers</a></li>
                     </ul>
                     <p v-if="hasMultipleApplications"><em>Note: You can assign multiple applications to a worker node.</em></p>
                 </div>
@@ -404,6 +404,21 @@ export default {
                 // Set the name
                 item.user = firstItem.user
             }
+        },
+
+        setRook: function() {
+            // Activate Rook on all Workers
+            this.workers.forEach(worker => worker.rook = true)
+        },
+
+        setCF: function() {
+            // Activate Rook on all Workers
+            this.workers.forEach(worker => worker.cf = true)
+        },
+
+        setOS: function() {
+            // Activate Rook on all Workers
+            this.workers.forEach(worker => worker.openstack = true)
         }
 
     },

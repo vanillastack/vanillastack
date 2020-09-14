@@ -244,6 +244,22 @@ div>.lead-image {
   vertical-align: middle !important;
 }
 
+.summaryLink-inline {
+  text-align: right !important;
+  display: inline-block;
+  padding-left: 3em;
+  color:black;
+  font-size: small;
+}
+
+.summaryLink-inline::before {
+  content: "[ ";
+}
+
+.summaryLink-inline::after {
+  content: " ]";
+}
+
 .green {
   color:green;
 }

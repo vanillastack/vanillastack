@@ -15,13 +15,13 @@ import Cluster from './Cluster.vue'
 import Tools from './AdditionalTools.vue'
 import NodeCheck from './NodeCheck.vue'
 import OpenStack from './OpenStack.vue'
-import CF from './CF.vue'
-import 'es6-promise/auto'
 import Network from './js/network'
 import Subscription from './Subscription.vue'
 import Rook from './Rook.vue'
 import Summary from './Summary.vue'
 import LetsEncrypt from './LetsEncrypt.vue'
+import CF from './CF.vue'
+import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
 Vue.use(VueRouter)
@@ -95,12 +95,6 @@ var app = new Vue({
     },
 
     created: function() {
-      // Store the globals
-      Globals.router = router
-      Globals.vue = app
-      Globals.store = Store
-      Globals.routes = routes
-
       // Configure the router
       this.$router.afterEach((to, from) => {
         // Get the new index
@@ -194,4 +188,10 @@ var app = new Vue({
 app.handleNavigation(0, 0, true)
 
 console.log("Started Vue");
+
+// Store the globals
+Globals.router = router
+Globals.vue = app
+Globals.store = Store
+Globals.routes = routes
   
