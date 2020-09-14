@@ -23,7 +23,7 @@ rook:
     monitoring:
       enabled: false
     storage:
-      useAllNodes: false
+      useAllNodes: true
       useAllDevices: true
   storageClassRBD:
     enabled: true
