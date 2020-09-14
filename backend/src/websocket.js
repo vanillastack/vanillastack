@@ -77,7 +77,7 @@ const setNewKeyPair = function (uuid) {
 
 const getKeyPair = function () {
     const location = '/tmp'
-    console.log(randPassword(4, 4, 8));
+    // console.log(randPassword(4, 4, 8));
     const execOptions = {
         cwd: `${location}`,
         env: null
@@ -137,54 +137,79 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                 ansible_ssh_private_key_file: `${dir}/key.pem`
             }
         });
-        console.log(hostsYaml);
         fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
 
         // Exec ansible connection test
         if (!Boolean(dryRun)) {
             const options = {
                 cwd: dir,
-                env: null,
-                detached: false
+                env: null
             };
 
             // Setting up ENV
+            process.env.ANSIBLE_TIMEOUT = 3;
             process.env.ANSIBLE_HOST_KEY_CHECKING = false;
             process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = true;
             process.env.ANSIBLE_STDOUT_CALLBACK = 'json';
 
-            const ans = proc.spawn(
-                'ansible',
-                ['all', '-i', 'hosts.yml', '-m', 'ping'],
-                options
-            );
-            // todo: filtering response object for raw, freeDiskSpace
-            ans.stdout.on('data', stdout => {
-                const out = JSON.parse(stdout.toString());
-                console.log(out);
-                wsMsg.event = 'EXECUTION';
-                wsMsg.payload = '';
-                sendMessage(wsMsg, wsClient);
-            });
-            ans.stderr.on('data', stderr => {
-                console.log(stderr.toString());
-                wsMsg.event = 'EXECUTION';
-                wsMsg.payload = stderr.toString();
-                sendMessage(wsMsg, wsClient);
-            });
-            ans.on('error', error => {
-                console.error(error);
-                // Cleanup
-                cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
-            });
-            ans.on('close', code => {
-                console.log(`${wsMsg.transactionId}: Return Code: ${code}`);
-                wsMsg.event = 'DONE';
-                wsMsg.payload = 'Execution completed';
-                sendMessage(wsMsg, wsClient);
+            proc.exec('ansible all -i hosts.yml -m setup', options, (err, stdout, stderr) => {
+                if (err) {
+                    if (err.code !== 4) {
+                        console.error(err);
+                        wsMsg.event = 'DONE';
+                        wsMsg.payload = '-1';
+                        sendMessage(wsMsg, wsClient);
+                        cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
+                        return;
+                    }
+                }
+                if (stdout) {
+                    const ansibleFacts = JSON.parse(stdout).plays[0].tasks[0].hosts;
+                    const ansibleStats = JSON.parse(stdout).stats;
+                    console.log('stdout:');
+                    nodes.forEach((node) => {
+                        // console.log(stdoutJson[node.host]);
+                        if (ansibleStats[node.host].unreachable) {
+                            node.avail = false;
+                            node.freeDiskSpace = '0';
+                            node.memory = '0';
+                            node.raw = false;
+                        } else {
+                            node.avail = true;
+                            // console.log(ansibleFacts[node.host]);
+                            let size = 0;
+                            //todo: how to test for raw and which disk to use
+                            ansibleFacts[node.host].ansible_facts.ansible_mounts.forEach(mount => {
+                                size += mount.size_available;
+                                node.raw = mount.fstype === "ext4";
+                            });
+                            node.freeDiskSpace = size / 1073741824;
+                            node.memory = ansibleFacts[node.host].ansible_facts.ansible_memtotal_mb;
+                        }
+                        console.log(node);
+                        wsMsg.event = 'EXECUTION';
+                        wsMsg.payload = JSON.stringify(node);
+                        sendMessage(wsMsg, wsClient);
+                    });
 
-                // Cleanup
+
+                    // wsMsg.event = 'EXECUTION';
+                    // wsMsg.payload = '-1';
+                    // sendMessage(wsMsg, wsClient);
+                }
+                if (stderr) {
+                    console.log('stderr:');
+                    console.log(stderr);
+                    wsMsg.event = 'ERROR';
+                    wsMsg.payload = JSON.stringify(stderr);
+                    sendMessage(wsMsg, wsClient);
+                }
+
+                //CleanUp
                 cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
+                wsMsg.event = 'DONE';
+                wsMsg.payload = '0';
+                sendMessage(wsMsg, wsClient);
             });
         } else {
             console.log(`${transactionId} Connection check running in dry-run-mode`);
