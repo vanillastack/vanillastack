@@ -15,7 +15,7 @@
       action: 01_configure_systems
 
 - name: Install Keepalived
-  hosts: haproxy
+  hosts: master
   become: true
   gather_facts: true
   roles:

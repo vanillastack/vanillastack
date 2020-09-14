@@ -8,4 +8,4 @@
   command: >
     kubeadm join --token {{ token }} \
                  --discovery-token-unsafe-skip-ca-verification \
-                 api.{{ kubernetes.loadBalancer.fqdn }}:6443 
+                 api.{{ kubernetes.loadBalancer.clusterDomain }}:6443 

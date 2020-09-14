@@ -34,14 +34,6 @@
     enabled: true
     name: kubelet
       
-- name: load modules
-  modprobe: 
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - overlay
-    - br_netfilter
-
 - name: make Modules persistant
   lineinfile:
     path: /etc/modules-load.d/k8s.conf

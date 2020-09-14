@@ -1,22 +1,6 @@
 ---
 - name: helm installation kubecf
   block:
-  - name: Increment the retry count
-    set_fact:
-      retry_count: "{{ 0 if retry_count is undefined else retry_count | int + 1 }}"
-
-  - name: delete namespaces
-    k8s:
-      state: absent
-      name: "{{ item }}"
-      api_version: v1
-      kind: namespace
-      wait: true
-    loop:
-      - "kubecf"
-      - "cf-operator"
-      - "eirini"
-
   - name: install CF repository
     community.kubernetes.helm_repository:
       name: cloudfoundry
@@ -41,13 +25,6 @@
       release_namespace: kubecf
       values: "{{ lookup('template', 'kubecf-values.yaml.j2') | from_yaml }}"
     register: kubecf_install
-
-  rescue:
-    - fail: 
-        msg: Maximum retries exceeded
-      when: retry_count | int == 5 
-
-    - include_tasks: main.yml
 
 - name: wait for db to come up
   command: kubectl wait --namespace=kubecf --for=condition=ready pods -l app=database --timeout=10s

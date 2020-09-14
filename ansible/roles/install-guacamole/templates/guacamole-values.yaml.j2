@@ -21,7 +21,7 @@ ingress:
     kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/app-root: /guacamole
   enabled: true
-  host: "guacamole.{{ kubernetes.loadBalancer.fqdn }}"
+  host: "{{ guacamole.coreDomain }}"
   # tls: []
 # nameOverride: ""
 # nodeSelector: {}
