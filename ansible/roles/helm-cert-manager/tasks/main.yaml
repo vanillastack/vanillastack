@@ -1,23 +1,19 @@
 ---
-- name: "create Cert-Manager namespace"
-  k8s:
-    name: "{{ certmanager.namespace }}"
-    api_version: v1
-    kind: Namespace
-    state: present
+- name: add jetstack repository
+  community.kubernetes.helm_repository:
+    repo_url: https://charts.jetstack.io
+    name: jetstack
 
-- name: "add helm repository - cert-manager"
-  shell: "helm repo add jetstack https://charts.jetstack.io"
-
-- name: "update helm repositories"
-  shell: "helm repo update"
-
-- name: "run helm install cert-manager"
-  shell: "helm upgrade --install cert-manager jetstack/cert-manager --namespace {{ certmanager.namespace }} --version {{certmanager.chartVersion}} --set installCRDs=true"
-  retries: 3
-  delay: 10
-  register: result
-  until: result.rc == 0
+- name: Install CertManager
+  community.kubernetes.helm:
+    chart_ref: jetstack/cert-manager
+    name: cert-manager
+    release_namespace: "{{ certmanager.namespace }}"
+    create_namespace: true
+    values: 
+    installCRDs: true
+    chart_version: "{{certmanager.chartVersion}}"
+    wait: true
 
 - name: Copy LetsEncrypt Issuer
   template:
@@ -34,11 +30,11 @@
       register: letsencryptIssuer
   rescue: 
     - name: restart cert-manager
-      shell: "kubectl delete po -n {{certmanager.namespace}} -l app=cert-manager"
+      command: "kubectl delete po -n {{certmanager.namespace}} -l app=cert-manager"
     - name: restart cert-manager webhook
-      shell: "kubectl delete po -n {{certmanager.namespace}} -l app=webhook"
+      command: "kubectl delete po -n {{certmanager.namespace}} -l app=webhook"
     - name: Wait for pods to be ready
-      shell: kubectl wait -n {{certmanager.namespace}} --for=condition=Ready pods --timeout=60s --all 
+      command: kubectl wait -n {{certmanager.namespace}} --for=condition=Ready pods --timeout=60s --all 
 
 - name: Retry LetsEncrypt Issuer
   k8s:

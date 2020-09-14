@@ -20,6 +20,21 @@
     mode: 0640
     remote_src: true
 
+- name: make sure, localhost directory exists
+  hosts: 
+    localhost:
+    vars:
+      ansible_connection: local 
+  file:
+    state: directory
+    path: "/tmp/{{ global.uuid }}"
+    recurse: yes
+
+- name: fetch kubeadm config
+  fetch:
+    src: "{{ kubeadmin_config }}"
+    dest: "/tmp/{{ global.uuid }}/kubeadm.conf"
+  
 - name: install Cilium repository
   community.kubernetes.helm_repository:
     name: cilium

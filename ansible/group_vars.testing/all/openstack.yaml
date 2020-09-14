@@ -3,7 +3,7 @@ openstack:
   enabled: false
   namespace: openstack
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
-  publicDomain: "test.vanillastack.cloudical.net"
+  publicDomain: "{{ kubernetes.loadBalancer.clusterDomain }}"
   publicProto: "http"
   region: RegionOne
   # releases available:

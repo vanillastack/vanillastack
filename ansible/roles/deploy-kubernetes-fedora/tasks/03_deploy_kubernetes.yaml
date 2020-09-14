@@ -8,7 +8,7 @@
   command: > 
     kubeadm init --service-cidr {{ service_cidr }} \
                  --token {{ token }} \
-                 --control-plane-endpoint api.{{ kubernetes.loadBalancer.fqdn }}:6443
+                 --control-plane-endpoint api.{{ kubernetes.loadBalancer.clusterDomain }}:6443
                  --upload-certs \
                  --apiserver-bind-port 8443 \
                  --certificate-key {{ certificate_key }} \

@@ -10,7 +10,7 @@ reset_cluster: false
 kubernetes:
   loadBalancer:
     virtualIP: 135.181.48.19
-    fqdn: test.vanillastack.cloudical.net
+    clusterDomain: test.vanillastack.cloudical.net
   clusterName: kube
   resetCluster: false
   version: "1.19"
