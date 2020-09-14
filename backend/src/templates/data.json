@@ -1,0 +1,145 @@
+{
+  "uuid": "00000000-0000-0000-00000000",
+  "dry": true,
+  "isHA": true,
+  "general": {
+    "installRook": true,
+    "installCF": true,
+    "installOS": true,
+    "harborKey": "123456"
+  },
+  "nodes": [
+    {
+      "host": "1.1.1.1",
+      "user": "root",
+      "role": "M",
+      "labels": [
+      ]
+    },
+    {
+      "host": "1.1.1.2",
+      "user": "root",
+      "role": "M",
+      "labels": [
+      ]
+    },
+    {
+      "host": "1.1.1.3",
+      "user": "root",
+      "role": "M",
+      "labels": [
+      ]
+    },
+    {
+      "host": "1.1.1.4",
+      "user": "root",
+      "role": "W",
+      "labels": [
+        "rook",
+        "os",
+        "cf-not needed"
+      ]
+    },
+    {
+      "host": "1.1.1.5",
+      "user": "root",
+      "role": "W",
+      "labels": [
+        "rook",
+        "os",
+        "cf"
+      ]
+    },
+    {
+      "host": "1.1.1.6",
+      "user": "root",
+      "role": "W",
+      "labels": [
+        "rook",
+        "os",
+        "cf"
+      ]
+    },
+    {
+      "host": "1.1.1.7",
+      "user": "root",
+      "role": "W",
+      "labels": [
+        "rook",
+        "os",
+        "cf"
+      ]
+    }
+  ],
+  "cluster": {
+    "ip": "",
+    "fqdn": "cluster",
+    "usefqdn": true,
+    "adminfqdn": "admin.cluster",
+    "useadminfqdn": true,
+    "externalLbIp": true,
+    "useExternalLb": true
+  },
+  "rook": {
+    "dashboard": false,
+    "monitoring": true,
+    "replicaLevel": 3
+  },
+  "openstack": {
+    "domain": "openstack.cluster",
+    "release": "stein",
+    "tls": true,
+    "mariadb": true,
+    "mariadb_size": 30,
+    "rabbitmq": true,
+    "rabbitmq_size": 30,
+    "barbican": true,
+    "barbican_endpoint": "barbican.openstack.cluster",
+    "cinder_endpoint": "cinder.openstack.cluster",
+    "cinder": true,
+    "cinder_backend": "ceph",
+    "cinder_backup": false,
+    "glance_endpoint": "glance.openstack.cluster",
+    "glance": true,
+    "glance_backend": "ceph",
+    "heat_endpoint": "heat.openstack.cluster",
+    "heat": true,
+    "horizon_endpoint": "horizon.openstack.cluster",
+    "horizon": true,
+    "keystone_endpoint": "keystone.openstack.cluster",
+    "keystone": true,
+    "mistral_endpoint": "mistral.openstack.cluster",
+    "mistral": true,
+    "neutron_endpoint": "neutron.openstack.cluster",
+    "neutron_interface_tunnel": "eth1",
+    "neutron_interface_external": "eth2",
+    "neutron_l3ha": false,
+    "neutron_overlayNetworkType": "VXLAN",
+    "neutron_maxAgentsPerRouter": 2,
+    "neutron_dhcpAgents": 2,
+    "nova_cpuMode": "host-model",
+    "nova_virtType": "Kvm",
+    "nova_placement_endpoint": "placement.openstack.cluster",
+    "nova_novnc_endpoint": "novnc.openstack.cluster",
+    "nova": true,
+    "nova_endpoint": "nova.openstack.cluster",
+    "senlin_endpoint": "senlin.openstack.cluster",
+    "senlin": true
+  },
+  "cf": {
+    "fqdn": "",
+    "stratos": true
+  },
+  "additional": {
+    "harbor": true,
+    "prometheus": true,
+    "grafana": true,
+    "elastic": false,
+    "fluentd": false,
+    "kibana": true,
+    "dashboard": true,
+    "certmgr": true,
+    "nginx": true,
+    "jaeger": true
+  }
+}
