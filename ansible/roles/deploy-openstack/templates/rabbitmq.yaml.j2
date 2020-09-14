@@ -1,0 +1,17 @@
+---
+pod:
+  replicas:
+    server: {{openstack.rabbitmq.replicas}}
+{% if openstack.rabbitmq.persistence.enabled %}
+volume:
+  class_name: {{openstack.rabbitmq.persistence.storageClass}}
+  size: {{openstack.rabbitmq.persistence.diskSize}}
+{% endif %}
+
+endpoints:
+  oslo_messaging:
+    auth:
+      erlang_cookie: openstack-cookie
+      user:
+        username: rabbitmq
+        password: {{openstack.rabbitmq.auth.admin.password}}

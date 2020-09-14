@@ -1,0 +1,25 @@
+---
+pod:
+  replicas:
+    server: {{openstack.mariadb.replicas}}
+{% if openstack.mariadb.persistence.enabled %}
+volume:
+  class_name: {{openstack.mariadb.persistence.storageClass}}
+  size: {{openstack.mariadb.persistence.diskSize}}
+{% endif %}
+
+endpoints:
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+      sst:
+        username: sst
+        password: {{openstack.mariadb.auth.sst.password}}
+      audit:
+        username: audit
+        password: {{openstack.mariadb.auth.audit.password}}
+      exporter:
+        username: exporter
+        password: {{openstack.mariadb.auth.exporter.password}}

@@ -52,7 +52,7 @@ defaults
         timeout server 50000
 
 listen stats 
-        bind {{ loadbalancer_virtualip }}:1936
+        bind {{ kubernetes.loadBalancer.virtualIP }}:1936
         # Stats configuration
         stats hide-version
         stats enable
@@ -61,7 +61,7 @@ listen stats
         stats refresh 30s
 
 frontend kube-api
-        bind {{ loadbalancer_virtualip }}:6443
+        bind {{ kubernetes.loadBalancer.virtualIP }}:6443
         mode tcp
         # Default backend
         default_backend master
@@ -75,4 +75,31 @@ backend master
         server {{ host }} {{ hostvars[host].ansible_host }}:8443 check
 {% endfor %}
 
+frontend worker-http
+        bind {{ kubernetes.loadBalancer.virtualIP }}:80
+        mode tcp
+        # Default backend
+        default_backend worker-http
 
+backend worker-http
+        mode tcp
+        balance roundrobin
+        option tcp-check
+            timeout server 300000
+{% for host in groups['worker'] %}
+        server {{ host }} {{ hostvars[host].ansible_host }}:30080 check
+{% endfor %}
+frontend worker-https
+        bind {{ kubernetes.loadBalancer.virtualIP }}:443
+        mode tcp
+        # Default backend
+        default_backend worker-https
+
+backend worker-https
+        mode tcp
+        balance roundrobin
+        option tcp-check
+            timeout server 300000
+{% for host in groups['worker'] %}
+        server {{ host }} {{ hostvars[host].ansible_host }}:30443 check
+{% endfor %}

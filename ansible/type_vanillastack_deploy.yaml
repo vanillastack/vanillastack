@@ -1,0 +1,174 @@
+---
+- name: Wait for nodes
+  hosts: kube_cluster
+  become: false
+  gather_facts: no
+  roles:
+    - role: wait-for-nodes
+ 
+- name: Configure Servers
+  hosts: kube_cluster
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 01_configure_systems
+
+- name: Install Keepalived
+  hosts: master
+  become: true
+  gather_facts: true
+  roles:
+    - role: install-haproxy
+      action: 01_install_keepalived
+
+- name: Install HaProxy
+  hosts: haproxy
+  become: true
+  gather_facts: true
+  roles:
+    - role: install-haproxy
+      action: 02_install_haproxy
+
+- name: Configure Kube Systems
+  hosts: kube_cluster
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 02_configure_cluster
+
+- name: generate secrets
+  hosts: master[0]
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 02-1-generate-certificate
+
+- name: Init KubeCluster
+  hosts: master[0]
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 03_deploy_kubernetes
+
+- name: Add Master to KubeCluster
+  hosts: master[1:]
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 04_add_nodes
+
+- name: Add worker to KubeCluster
+  hosts: worker
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 05_add_worker
+
+- name: create folder for config
+  hosts: localhost
+  vars:
+    ansible_connection: local
+  tasks:
+    - name: make sure local uuid directory exists
+      file:
+        state: directory
+        path: "/usr/workdir/ansible/{{ global.uuid }}"
+        recurse: yes
+
+- name: Deploy Networking
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 06_configure_network
+
+- name: Label Nodes
+  hosts: master[0]
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 07_label_nodes
+
+- name: Deploy Nginx-Ingress
+  hosts: master[0]
+  become: false
+  gather_facts: false
+  roles:
+    - role: helm-nginx-ingress
+      when: ingress.enabled
+
+- name: Deploy Rook
+  hosts: master[0]
+  become: false
+  gather_facts: false
+  roles:
+    - role: deploy-rook
+
+- name: Deploy Cert Manager
+  hosts: master[0]
+  become: false
+  gather_facts: true
+  roles:
+    - role: helm-cert-manager
+      when: certmanager.enabled
+
+- name: Deploy OpenStack
+  hosts: master[0]
+  become: false
+  gather_facts: no
+  roles:
+    - role: deploy-openstack
+      when: openstack.enabled
+      
+- name: Deploy cloudfoundry
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: install-cloudfoundry
+      when: cloudfoundry.enabled
+
+- name: install stratos
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: install-stratos
+      when: stratos.enabled
+
+- name: Deploy efk
+  hosts: master[0]
+  gather_facts: true
+  roles:
+  - role: install-efk
+    action: init
+  - role: install-efk
+    action: es_deploy
+  - role: install-efk
+    action: kibana_helm
+  - role: install-efk
+    action: fluentd_deploy
+
+- name: Deploy Postgres Operator
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: deploy-postgres-operator
+      when: postgresOperator.enabled
+
+- name: install guacamole
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: install-guacamole
+      when: guacamole.enabled
+
+- name: Deploy Harbor
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: deploy-harbor
+      when: harbor.enabled

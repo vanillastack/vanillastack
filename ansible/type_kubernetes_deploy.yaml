@@ -1,5 +1,12 @@
 ---
-- name: Configure Bastion Host
+#- name: Reset Nodes
+#  hosts: master,worker
+#  become: true
+#  gather_facts: false
+#  roles:
+#    - role: reset-kubernetes
+
+- name: Configure Hosts
   hosts: kube_cluster
   become: true
   gather_facts: true
@@ -14,6 +21,13 @@
   roles:
     - role: deploy-kubernetes
       action: 02_configure_cluster
+
+- name: generate secrets
+  hosts: bastion
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes
+      action: 02-1-generate-certificate
 
 - name: Init KubeCluster
   hosts: master[0]
@@ -40,8 +54,15 @@
       action: 05_add_worker
 
 - name: Deploy Networking
-  hosts: bastion
+  hosts: master[0]
   gather_facts: yes
   roles:
     - role: deploy-kubernetes
       action: 06_configure_network
+
+- name: Label Nodes
+  hosts: master[0]
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes
+      action: 07-label_nodes

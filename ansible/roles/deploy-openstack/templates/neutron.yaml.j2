@@ -1,0 +1,210 @@
+---
+{% if openstack.release == "train" %}
+images:
+  tags:
+    bootstrap: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    db_init: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    db_drop: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_user: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_service: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_endpoints: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    neutron_db_sync: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_dhcp: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_l3: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_l2gw: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_linuxbridge_agent: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_metadata: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_openvswitch_agent: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_server: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_rpc_server: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    neutron_bagpipe_bgp: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+{% endif %}
+{% if openstack.release == "ussuri" %}
+images:
+  tags:
+    bootstrap: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    db_init: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    db_drop: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_user: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_service: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_endpoints: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    neutron_db_sync: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_dhcp: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_l3: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_l2gw: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_linuxbridge_agent: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_metadata: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_openvswitch_agent: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_server: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_rpc_server: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    neutron_bagpipe_bgp: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+{% endif %}
+
+labels:
+  agent:
+    dhcp:
+      node_selector_key: openstack-helm-node-class
+      node_selector_value: primary
+    l3:
+      node_selector_key: openstack-helm-node-class
+      node_selector_value: primary
+    metadata:
+      node_selector_key: openstack-helm-node-class
+      node_selector_value: primary
+pod:
+  replicas:
+    server: {{openstack.neutron.server.replicas}}
+  use_fqdn:
+    neutron_agent: false
+conf:
+  neutron:
+    DEFAULT:
+      l3_ha: {{openstack.neutron.l3.ha}}
+      max_l3_agents_per_router: {{openstack.neutron.l3.maxAgentsPerRouter}}
+      l3_ha_network_type: {{openstack.neutron.l3.haNetworkType}}
+      dhcp_agents_per_network: {{openstack.neutron.l3.dhcpAgents}}
+  plugins:
+    ml2_conf:
+      ml2_type_flat:
+        flat_networks: public
+    openvswitch_agent:
+      agent:
+        tunnel_types: {{openstack.neutron.l3.haNetworkType}}
+      ovs:
+        bridge_mappings: public:br-ex
+    linuxbridge_agent:
+      linux_bridge:
+        bridge_mappings: public:br-ex
+### WORKAROUND
+    tungstenfabric:
+      - dummy: true
+    tf_vnc_api_lib:
+      - dummy: true
+### WORKAROUND END
+  auto_bridge_add:
+    br-ex: {{openstack.neutron.extInterface}}
+#    br-tun: {{openstack.neutron.tunnelInterface}}
+endpoints:
+  network:
+    host_fqdn_override:
+      public:
+        host: {{openstack.neutron.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+          ca: |
+{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% else %}
+          ca: |
+{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% endif %}
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      neutron:
+        secretName: neutron-tls
+        issuerRef:
+          name: {{letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+        secret:
+          tls:
+            internal: mariadb-tls-direct
+      neutron:
+        username: neutron
+        password: {{openstack.neutron.auth.db.password}}
+  oslo_messaging:
+    auth:
+      admin:
+        username: rabbitmq
+        password: {{openstack.rabbitmq.auth.admin.password}}
+      neutron:
+        username: neutron
+        password: {{openstack.neutron.auth.messaging.password}}
+  identity:
+    name: keystone
+    auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
+      admin:
+        region_name: {{openstack.region}}
+        username: admin
+        password: {{openstack.keystone.auth.admin.password}}
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+      neutron:
+        role: admin
+        region_name: {{openstack.region}}
+        username: neutron
+        password: {{openstack.neutron.auth.service.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+      nova:
+        region_name: {{openstack.region}}
+        project_name: service
+        username: nova
+        password: {{openstack.nova.auth.service.password}}
+        user_domain_name: service
+        project_domain_name: service
+      designate:
+        region_name: {{openstack.region}}
+        project_name: service
+        username: designate
+        password: {{openstack.designate.auth.service.password}}
+        user_domain_name: service
+        project_domain_name: service
+      ironic:
+        region_name: {{openstack.region}}
+        project_name: service
+        username: ironic
+        password: {{openstack.ironic.auth.service.password}}
+        user_domain_name: service
+        project_domain_name: service
+      test:
+        role: admin
+        region_name: {{openstack.region}}
+        username: neutron-test
+        password: {{openstack.neutron.auth.neutronTest.password}}
+        project_name: test
+        user_domain_name: service
+        project_domain_name: service
+
+network:
+  interface:
+    tunnel: {{openstack.neutron.tunnelInterface}}
+  api:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% endif %}
+manifests:
+  secret_ingress_tls: false

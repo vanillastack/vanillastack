@@ -1,0 +1,41 @@
+---
+- name: Helm add kubernetes charts repo elastic
+  community.kubernetes.helm_repository: 
+    name: elastic
+    repo_url: https://helm.elastic.co
+
+- name: Create kibana user apache
+  htpasswd:
+    path: /tmp/kibana_auth
+    name: "{{ kibana_user }}"
+    password: "{{ kibana_password }}"
+    owner: "{{ kibana.system_user }}"
+    group: "{{ kibana.system_group }}"
+    mode: 0640
+
+- name: Slurp auth file
+  slurp:
+    src: /tmp/kibana_auth
+  register: kibana_auth_slurp
+
+- name: Create secret kibana
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: kibana-basic-auth
+        namespace: kube-logging
+      type: Opaque
+      data:
+        auth: "{{ kibana_auth_slurp.content }}"
+
+- name: Install kibana
+  community.kubernetes.helm:
+    name: kibana
+    chart_ref: elastic/kibana
+    release_namespace: kube-logging
+    values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
+    create_namespace: true
+    wait: true

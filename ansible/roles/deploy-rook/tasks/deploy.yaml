@@ -1,0 +1,48 @@
+---
+- name: "{{item.name}} | generate config"
+  template:
+    src: "{{item.name}}.yaml.j2"
+    dest: "/tmp/rook_{{item.name}}.yaml"
+  when: rook[item.name]['enabled']
+
+- name: "{{item.name}} | deploy manifest"
+  k8s:
+    src: "/tmp/rook_{{item.name}}.yaml"
+    state: present
+  when: rook[item.name]['enabled']
+
+- name: "{{item.name}} | generate ingress config"
+  template:
+    src: "object-ingress.yaml.j2"
+    dest: "/tmp/rook_object-ingress.yaml"
+  when: rook[item.name]['enabled'] and item.name == "objectStorage"
+
+- name: "{{item.name}} | deploy ingress"
+  k8s:
+    src: "/tmp/rook_object-ingress.yaml"
+    state: present
+  when: rook[item.name]['enabled'] and item.name == "objectStorage"
+
+- name: "{{item.name}} | cleanup ingress"
+  file:
+    path: "/tmp/rook_object-ingress.yaml"
+    state: absent
+  when: rook[item.name]['enabled'] and item.name == "objectStorage"
+
+- name: "{{item.name}} | delay"
+  pause:
+    seconds: "{{item.delay}}"
+
+- name: wait for pods to come up
+  shell: kubectl get pods -o json -n "{{rook.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  retries: 120
+  delay: 10
+  when: item.wait
+
+- name: "{{item.name}} | cleanup"
+  file:
+    path: "/tmp/rook_{{item.name}}.yaml"
+    state: absent
+  when: rook[item.name]['enabled']

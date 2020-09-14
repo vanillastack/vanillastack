@@ -1,0 +1,119 @@
+---
+pod:
+  replicas:
+    api: {{openstack.mistral.api.replicas}}
+    engine: {{openstack.mistral.engine.replicas}}
+    event_engine: {{openstack.mistral.eventEngine.replicas}}
+    executor: {{openstack.mistral.executor.replicas}}
+endpoints:
+  workflowv2:
+    host_fqdn_override:
+      public:
+        host: {{openstack.mistral.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        tls:
+          key: dummy
+          crt: dummy
+{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+          ca: |
+{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% else %}
+          ca: |
+{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% endif %}
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+    certs:
+      mistral:
+        secretName: mistral-tls
+        issuerRef:
+          name: {{letsEncrypt.issuerName}}
+          kind: Issuer
+{% endif %}
+  identity:
+    name: keystone
+    auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
+      admin:
+        region_name: {{openstack.region}}
+        username: admin
+        password: {{openstack.keystone.auth.admin.password}}
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+      mistral:
+        role: admin
+        region_name: {{openstack.region}}
+        username: mistral
+        password: {{openstack.mistral.auth.service.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+      test:
+        role: admin
+        region_name: {{openstack.region}}
+        username: mistral-test
+        password: {{openstack.mistral.auth.mistralTest.password}}
+        project_name: test
+        user_domain_name: service
+        project_domain_name: service
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}} 
+      mistral:
+        username: mistral
+        password: {{openstack.mistral.auth.db.password}}
+  oslo_messaging:
+    auth:
+      admin:
+        username: rabbitmq
+        password: {{openstack.rabbitmq.auth.admin.password}}
+      mistral:
+        username: mistral
+        password: {{openstack.mistral.auth.messaging.password}}
+network:
+  api:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% endif %}
+secrets:
+  identity:
+    admin: mistral-keystone-admin
+    mistral: mistral-keystone-user
+    test: mistral-keystone-test
+  oslo_db:
+    admin: mistral-db-admin
+    mistral: mistral-db-user
+  oslo_messaging:
+    admin: mistral-rabbitmq-admin
+    mistral: mistral-rabbitmq-user
+  tls:
+    workflowv2:
+      api:
+        public: mistral-tls
+manifests:
+  secret_ingress_tls: false

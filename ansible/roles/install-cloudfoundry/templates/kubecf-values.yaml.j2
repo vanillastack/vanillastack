@@ -1,0 +1,20 @@
+system_domain: "{{ cloudfoundry.coreDomain }}"
+
+kube:
+  storage_class: {{ cloudfoundry.storageclass }}
+
+high_availability: {{ global.isHA }}
+
+features:
+  ingress:
+    enabled: true
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: {{ letsEncrypt.issuerName }}
+      kubernetes.io/tls-acme: "true"
+  eirini:
+    enabled: true
+
+install_stacks: [sle15]
+

@@ -1,5 +1,8 @@
 = VanillaStack
 
+== CI/CD status
+Testing: image:https://gitlab.cloudical.net/vanillastack/vanillastack/badges/testing/pipeline.svg[link="https://gitlab.cloudical.net/vanillastack/vanillastack/-/commits/testing",title="pipeline status"]
+
 == Requirements
 VanillaStack requirements:
 
@@ -11,6 +14,16 @@ The documentation is stored at: link:docs/[docs]
 We will use the ASCIIDocs-Format for documentation, a reference regarding ASCII-Docs can be found at:
 
 https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
+
+
+== Report a Bug
+For filing bugs, suggesting improvements, or requesting new features, please open an issue.
+
+
+== Contact
+Please use the following to reach members of the community:
+
+Rocketchat: Join our #vanillastack public channel at rocketchat.cloudical.net
 
 
 == Contribute
@@ -55,3 +68,11 @@ Please read and apply the following rules to contribute to this project:
 * Playbooks don't execute any tasks, they are used to call roles.
   ** Every Role is used for one part and should include multiple tasks
   ** tasks should not be to complex, f.e. you do not provision a bastion host and install kubernetes on top in one task
+
+=== Workflow
+* Create a feature / personal branch based on the master branch
+* Change your stuff
+* Create a merge request to "testing" branch
+* Two Developers / Maintainers needs to review and ACK the changes by +1
+* One of the Maintainers merge the branch to "testing"
+* Pipeline is starting. If successful the testing branch will be merged to master automatically.
