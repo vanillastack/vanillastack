@@ -23,7 +23,7 @@
   become: true
   fetch:
     src: "{{ kubeadmin_config }}"
-    dest: "/tmp/{{ global.uuid }}/"
+    dest: "/usr/workdir/ansible/{{ global.uuid }}/"
     flat: true
 
 - name: install Cilium repository
@@ -40,6 +40,22 @@
     create_namespace: true
     wait: true
 
+- name: save vars to kubeconfig
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: cluster-config
+        namespace: kube-system
+      data:
+        clusterConfig: |
+          {{ hostvars[inventory_hostname] | to_json }}
+
+### To get running config, execute 
+### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq
+          
 - name: Wait for control-plane pods become ready
   command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
 
