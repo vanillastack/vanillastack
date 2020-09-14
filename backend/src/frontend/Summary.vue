@@ -79,7 +79,7 @@
                         <div class="col">
                             <h5 class="mb-0">
                                 <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#clusterData" 
-                                    aria-expanded="true" aria-controls="clusterData">
+                                    aria-expanded="false" aria-controls="clusterData">
                                     Cluster-Settings
                                 </button>
                             </h5>
@@ -150,7 +150,7 @@
                         <div class="col">
                             <h5 class="mb-0">
                                 <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#nodesData" 
-                                    aria-expanded="true" aria-controls="nodesData">
+                                    aria-expanded="false" aria-controls="nodesData">
                                     Nodes
                                 </button>
                             </h5>
@@ -196,6 +196,275 @@
                 </div>
             </div>
             <!-- /Nodes -->
+
+            <!-- Rook -->
+            <div class="card margin-1em">
+                <div class="card-header" id="rook">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#rookData" 
+                                    aria-expanded="false" aria-controls="rookData">
+                                    Rook
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/rook" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="rookData" class="collapse" aria-labelledby="rook" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Rook Dashboard</div>
+                            <div class="col-2">
+                                <i v-if="rook.dashboard" class="fas fa-check-circle green"></i>
+                                <i v-if="!rook.dashboard" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Replica Level</div>
+                            <div class="col-2">{{ rook.replicaLevel }}</div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Rook Monitoring</div>
+                            <div class="col-2">
+                                <i v-if="rook.monitoring" class="fas fa-check-circle green"></i>
+                                <i v-if="!rook.monitoring" class="fas fa-times-circle red"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /rook -->
+
+            <!-- Openstack -->
+            <div class="card margin-1em" v-if="general.installOpenStack">
+                <div class="card-header" id="openstack">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#openstackData" 
+                                    aria-expanded="false" aria-controls="openstackData">
+                                    OpenStack
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/openstack" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="openstackData" class="collapse" aria-labelledby="openstack" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em"><div class="col"><strong>General Settings</strong></div></div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Endpoint</div>
+                            <div class="col-2">
+                                {{ openstack.domain }}
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">TLS Public Endpoint</div>
+                            <div class="col-2">
+                                <i v-if="openstack.tls" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.tls" class="fas fa-times-circle red"></i>
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Release</div>
+                            <div class="col-2">
+                                {{ getOpenStackReleaseName() }}
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Components</strong></div></div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">MariaDB</div>
+                            <div class="col-2">
+                                <i v-if="openstack.mariadb" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.mariadb" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.mariadb">Size</div>
+                            <div class="col-2" v-if="openstack.mariadb">
+                                {{ openstack.mariadb_size}} GiB
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">RabbitMQ</div>
+                            <div class="col-2">
+                                <i v-if="openstack.rabbitmq" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.rabbitmq" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.rabbitmq">Size</div>
+                            <div class="col-2" v-if="openstack.rabbitmq">
+                                {{ openstack.rabbitmq_size}} GiB
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Barbican</div>
+                            <div class="col-2">
+                                <i v-if="openstack.barbican" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.barbican" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.barbican">Endpoint</div>
+                            <div class="col-2" v-if="openstack.barbican">
+                                {{ openstack.barbican_endpoint }}
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Cinder</strong></div></div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Cinder Block Storage</div>
+                            <div class="col-2">
+                                <i v-if="openstack.cinder" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.cinder" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.cinder">Endpoint</div>
+                            <div class="col-2" v-if="openstack.cinder">
+                                {{ openstack.cinder_endpoint}} 
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Cinder Backup</div>
+                            <div class="col-2">
+                                <i v-if="openstack.cinder_backup" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.cinder_backup" class="fas fa-times-circle red"></i>
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Glance</strong></div></div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Glance Image Service</div>
+                            <div class="col-2">
+                                <i v-if="openstack.glance" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.glance" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.glance">Endpoint</div>
+                            <div class="col-2" v-if="openstack.glance">
+                                {{ openstack.glance_endpoint}} 
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Glance Backend</div>
+                            <div class="col-2">
+                                Ceph
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Heat</strong></div></div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Heat Orchestration Service</div>
+                            <div class="col-2">
+                                <i v-if="openstack.heat" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.heat" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.heat">Endpoint</div>
+                            <div class="col-2" v-if="openstack.heat">
+                                {{ openstack.heat_endpoint}} 
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Horizon</strong></div></div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Horizon Dashboard</div>
+                            <div class="col-2">
+                                <i v-if="openstack.horizon" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.horizon" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.horizon">Endpoint</div>
+                            <div class="col-2" v-if="openstack.horizon">
+                                {{ openstack.horizon_endpoint}} 
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Keystone</strong></div></div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Keystone Auth Service</div>
+                            <div class="col-2">
+                                <i v-if="openstack.keystone" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.keystone" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.keystone">Endpoint</div>
+                            <div class="col-2" v-if="openstack.keystone">
+                                {{ openstack.keystone_endpoint}} 
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Mistral</strong></div></div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Mistral Workflow Service</div>
+                            <div class="col-2">
+                                <i v-if="openstack.mistral" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.mistral" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.mistral">Endpoint</div>
+                            <div class="col-2" v-if="openstack.mistral">
+                                {{ openstack.mistral_endpoint}} 
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Neutron</strong></div></div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Neutron Networking</div>
+                            <div class="col-2">
+                                <i class="fas fa-check-circle green"></i>
+                                                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Endpoint</div>
+                            <div class="col-2">
+                                {{ openstack.neutron_endpoint}} 
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Interface (Tunnel / Overlay)</div>
+                            <div class="col-2">
+                                {{ openstack.neutron_interface_tunnel }}
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Interface (External)</div>
+                            <div class="col-2">
+                                {{ openstack.neutron_interface_external }}
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Layer3 HA</div>
+                            <div class="col-2">
+                                <i v-if="openstack.neutron_l3ha" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.neutron_l3ha" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Overlay Network Type</div>
+                            <div class="col-2">
+                                {{ openstack.neutron_overlayNetworkType }} 
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Max Agents per Router</div>
+                            <div class="col-2">
+                                {{ openstack.neutron_maxAgentsPerRouter }}
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">DHCP Agents</div>
+                            <div class="col-2">
+                                {{ openstack.neutron_dhcpAgents }} 
+                            </div>
+                        </div>
+
+                        <div class="row margin-1em"><div class="col"><strong>Senlin</strong></div></div>
+                        <div class="row margin-2em">
+                            <div class="col-2 text-align-right padding-right-1em">Senlin Clustering</div>
+                            <div class="col-2">
+                                <i v-if="openstack.senlin" class="fas fa-check-circle green"></i>
+                                <i v-if="!openstack.senlin" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.senlin">Endpoint</div>
+                            <div class="col-2" v-if="openstack.senlin">
+                                {{ openstack.senlin_endpoint}} 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Openstack -->
+
         </div>
     </div>
 </template>
@@ -247,6 +516,13 @@ export default {
                 node.key = key
              
             list[list.length] = node
+        },
+
+        getOpenStackReleaseName: function() {
+            if(this.openstack === undefined || this.openstack.release === undefined || this.openstack.release.length <2)
+                return ''
+
+            return this.openstack.release.charAt(0).toUpperCase() + this.openstack.release.slice(1)
         },
 
         generateCall: function() {

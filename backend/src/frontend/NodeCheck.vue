@@ -198,12 +198,17 @@ export default {
                     this.validate()
                 }
 
-                if(data.event == 'EXECUTION') {
+                if(data.event == 'EXECUTION' || data.event == 'EXEC') {
                     var payload = JSON.parse(data.payload)
                     var node = this.getNode(payload.host)
 
                     console.log("PAYLOAD", payload)
                     console.log("NODE", node)
+
+                    if(node === undefined || node == null) {
+                        console.log("NODE NOT FOUND", payload.host, this.nodes)
+                        return
+                    }
 
                     // Just for testing
                     if(node.ip == "1.1.1.99")

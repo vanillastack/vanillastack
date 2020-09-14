@@ -41,15 +41,15 @@
             </div>
             <div class="row">
                 <div class="col-1">
-                    <input type="number" min="1" max="5" v-model="replicaLevel" v-on:input="triggerValidation()"
+                    <input type="number" min="2" max="5" v-model="replicaLevel" v-on:input="triggerValidation()"
                         required="required" size="3em" class="form-control padding-1em margin-top-1em" />
                 </div>
             </div>
             <div class="row margin-2em" >
                 <div class="col-2">
                     <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" 
-                        id="replicaCount" v-model="replicaLevel" size="5em"
-                        min="1" max="5">
+                        id="replicaCount" v-model="replicaLevel" size="5em" v-on:change="triggerValidation()"
+                        min="2" max="5">
                 </div>
             </div>
         </div>

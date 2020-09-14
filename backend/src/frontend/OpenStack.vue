@@ -27,7 +27,7 @@
                     <div class="card-body">
                         <div class="row margin-2em">
                             <div class="col-3">
-                                <p><strong>Domain</strong></p>
+                                <p><strong>Endpoint</strong></p>
                                 <input class="form-control" placeholder="openstack.my.cluster" 
                                     name="domain" v-model="domain" v-on:blur="triggerValidation()" 
                                         required="required"  />
@@ -359,7 +359,7 @@
                     <div class="card-body">
                         <div class="row margin-2em">
                             <div class="col-3">
-                                <p><strong>keystone Endpoint</strong></p>
+                                <p><strong>Keystone Endpoint</strong></p>
                                 <input class="form-control" placeholder="keystone.openstack.my.cluster" 
                                     name="keystone_endpoint" v-model="keystone_endpoint" 
                                         v-on:blur="triggerValidation()" 

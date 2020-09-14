@@ -326,6 +326,9 @@ export default {
 
             // Validate the masters
             this.masters.forEach(master =>  {
+                // Ensure, a name is set
+                this.ensureNameIsSet(master)
+
                 var masterIsValid = master.isValid()
 
                 if(!masterIsValid)
@@ -340,6 +343,9 @@ export default {
             var openStackNodes = 0;
 
             this.workers.forEach(worker => {
+                // Ensure, a name is set
+                this.ensureNameIsSet(worker)
+
                 var workerIsValid = worker.isValid();
 
                 if(!workerIsValid)
@@ -372,6 +378,32 @@ export default {
             EventBus.$emit(Constants.Event_NewViewLoaded, {
                 allowGoForward: isValid
             })
+        },
+
+        ensureNameIsSet: function(item) {
+            // Check, if it is an item who is supposed to copy his name from the first item
+            if(item.index > 0 && item.copyUser) {
+                // Reference the first worker
+                var firstItem = item.isWorker ? this.workers[0] : this.masters[0]
+
+                // Ensure the name is set
+                this.ensureNameIsSet(firstItem)
+
+                // Set the name
+                item.user = firstItem.user
+            }
+
+            // Handle the first worker
+            if(item.index == 0 && item.isWorker && item.copyMaster) {
+                // Get the first item
+                var firstItem = this.masters[0]
+
+                // Ensure the name is set
+                this.ensureNameIsSet(firstItem)
+
+                // Set the name
+                item.user = firstItem.user
+            }
         }
 
     },

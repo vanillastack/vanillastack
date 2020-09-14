@@ -115,7 +115,7 @@ export default {
             var validLb = this.externalLbIp.length > 0
             var validIp = Constants.Validate_IpAddress.test(this.clusterip)
 
-            isValid =  validAdmin && validCluster && validLb && (this.useExternalLb ? validLb : validIp)
+            isValid =  validAdmin && validCluster && (this.useExternalLb ? validLb : validIp)
 
             // Store the data
             this.$store.commit(Constants.Store_ClusterUpdateData, {
