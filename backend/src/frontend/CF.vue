@@ -52,7 +52,7 @@ export default {
 
     methods: {
         triggerValidation: function() {
-            var isValid = this.domainName.length > 0;
+            var isValid = this.fqdn.length > 0;
 
             // Store the data
             this.$store.commit(Constants.Store_CloudFoundryUpdateData, this.$data)
@@ -69,7 +69,7 @@ export default {
         this.fqdn = this.$store.state.installer.cloudfoundry.fqdn
 
         if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
-            this.$store.state.installer.cloudfoundry.domainName.length == 0)
+            this.$store.state.installer.cloudfoundry.fqdn.length == 0)
             this.fqdn = 'cloudfoundry.' + this.$store.state.installer.cluster.fqdn
 
         this.triggerValidation()
