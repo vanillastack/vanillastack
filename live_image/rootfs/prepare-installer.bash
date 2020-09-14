@@ -19,7 +19,7 @@ export LC_TELEPHONE=C.UTF-8
 export LC_MEASUREMENT=C.UTF-8
 export LC_IDENTIFICATION=C.UTF-8
 
-PACKAGES_NEEDED="live-build xz-utils pixz"
+PACKAGES_NEEDED="live-build xz-utils pixz procps psmisc"
 PACKAGES_NEEDED+=" curl ca-certificates"
 PACKAGES_NEEDED+=" gnupg gnupg-agent software-properties-common"
 
@@ -38,6 +38,12 @@ apt-get update && apt-get install -y --no-install-recommends $PACKAGES_NEEDED $P
 # Monkeypatching because Bug
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
 sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
+
+
+# try to avoid caching
+sed -i '40s%lb bootstrap_cache save%#lb bootstrap_cache save%' /usr/lib/live/build/bootstrap
+
+
 
 mkdir -p ${WORKDIR}
 mkdir -p ${OUTPUT}
