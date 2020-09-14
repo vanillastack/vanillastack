@@ -72,6 +72,77 @@
                 </div>
             </div>
 
+            <!-- Cluster -->
+            <div class="card margin-1em">
+                <div class="card-header" id="cluster">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#clusterData" 
+                                    aria-expanded="true" aria-controls="clusterData">
+                                    Cluster-Settings
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/cluster" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="clusterData" class="collapse" aria-labelledby="cluster" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Use external LoadBalancer</div>
+                            <div class="col-2">
+                                <i v-if="cluster.useExternalLb" class="fas fa-check-circle green"></i>
+                                <i v-if="!cluster.useExternalLb" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">
+                                <span v-if="cluster.useExternalLb">Hostname / IP of the external LoadBalancer</span>
+                                <span v-if="!cluster.useExternalLb">IP of the clusterCluster</span>
+                            </div>
+                            <div class="col-2">
+                                <span v-if="cluster.useExternalLb">{{ cluster.externalLbIp }}</span>
+                                <span v-if="!cluster.useExternalLb">{{ cluster.ip }}</span>
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Use Cluster Domain-Name</div>
+                            <div class="col-2">
+                                <i v-if="cluster.usefqdn" class="fas fa-check-circle green"></i>
+                                <i v-if="!cluster.usefqdn" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">
+                                <span v-if="cluster.usefqdn">Cluster Domain-Name</span>
+                                <span v-if="!cluster.usefqdn"></span>
+                            </div>
+                            <div class="col-2">
+                                <span v-if="cluster.usefqdn">{{ cluster.fqdn }}</span>
+                                <span v-if="!cluster.usefqdn">{{ cluster.fqdn }}</span>
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Use Domain for VanillaStore</div>
+                            <div class="col-2">
+                                <i v-if="cluster.useadminfqdn" class="fas fa-check-circle green"></i>
+                                <i v-if="!cluster.useadminfqdn" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">
+                                <span v-if="cluster.useadminfqdn">VanillaStore Domain-Name</span>
+                                <span v-if="!cluster.useadminfqdn"></span>
+                            </div>
+                            <div class="col-2">
+                                <span v-if="cluster.useadminfqdn">{{ cluster.adminfqdn }}</span>
+                                <span v-if="!cluster.useadminfqdn">{{ cluster.adminfqdn }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /cluster -->
+
             <!-- Nodes -->
             <div class="card margin-1em">
                 <div class="card-header" id="nodes">
