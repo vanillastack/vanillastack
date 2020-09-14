@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getClient, connectionCheck} = require('../../websocket');
+const {getClient, connectionCheck, sleep, genTransactionId} = require('../../websocket');
 
 /**
  * POST Connection Check for given Node
@@ -57,13 +57,5 @@ router.post('/', function (req, res) {
         transactionId: transactionId
     });
 });
-
-const genTransactionId = function () {
-    return Math.floor(Math.random() * (999999999 - 100000000)) + 100000000;
-};
-
-function sleep(millis) {
-    return new Promise(resolve => setTimeout(resolve, millis));
-}
 
 module.exports = router;

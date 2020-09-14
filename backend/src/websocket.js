@@ -177,14 +177,40 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                         } else {
                             node.avail = true;
                             // console.log(ansibleFacts[node.host]);
-                            let size = 0;
-                            //todo: how to test for raw and which disk to use
-                            ansibleFacts[node.host].ansible_facts.ansible_mounts.forEach(mount => {
-                                size += mount.size_available;
-                                node.raw = mount.fstype === "ext4";
-                            });
-                            node.freeDiskSpace = size / 1073741824;
-                            node.memory = ansibleFacts[node.host].ansible_facts.ansible_memtotal_mb;
+                            const devices = ansibleFacts[node.host].ansible_facts.ansible_devices;
+                            // todo: expand list to match all possible excluded devices
+                            const filterList = ['dm', 'sr', 'nbd', 'rbd', 'loop'];
+                            for (const [key, value] of Object.entries(devices)) {
+                                let raw = true;
+                                for (const filter of filterList) {
+                                    // filter for raw devices
+                                    if (!key.toString().indexOf(filter)) {
+                                        raw = false;
+                                    } else {
+                                        if (!(Object.keys(value.partitions).length === 0 && value.partitions.constructor === Object)) {
+                                            raw = false;
+                                        }
+                                    }
+                                }
+                                if (raw) {
+                                    console.log(`Key: ${key}`);
+                                    node.raw = true;
+                                    node.diskSpace = value.size;
+                                }
+                            }
+                            if (!node.raw) {
+                                node.raw = false;
+                                node.diskSpace = '0';
+                            }
+
+                            // let size = 0;
+                            // //todo: how to test for raw and which disk to use
+                            // ansibleFacts[node.host].ansible_facts.ansible_mounts.forEach(mount => {
+                            //     size += mount.size_available;
+                            //     node.raw = mount.fstype === "ext4";
+                            // });
+                            // node.freeDiskSpace = size / 1073741824;
+                            // node.memory = ansibleFacts[node.host].ansible_facts.ansible_memtotal_mb;
                         }
                         console.log(node);
                         wsMsg.event = 'EXECUTION';
@@ -249,6 +275,10 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
     }
 };
 
+const setup = function (transactionId, dryRun, wsClient, hostsYaml) {
+
+}
+
 // invoke like so: randPassword(5,3,2);
 function randPassword(letters, numbers, either) {
     const chars = [
@@ -290,4 +320,23 @@ const cleanUpPath = function (transactionId, baseDir, files) {
     }
 }
 
-module.exports = {wss, sendMessage, getClient, createClient, setNewKeyPair, connectionCheck};
+const genTransactionId = function () {
+    return Math.floor(Math.random() * (999999999 - 100000000)) + 100000000;
+};
+
+function sleep(millis) {
+    return new Promise(resolve => setTimeout(resolve, millis));
+}
+
+module.exports = {
+    wss,
+    sendMessage,
+    getClient,
+    createClient,
+    setNewKeyPair,
+    connectionCheck,
+    setup,
+    sleep,
+    genTransactionId,
+    randPassword
+};
