@@ -4,4 +4,4 @@
 @xset s off
 @xset -dpms
 @xset s noblank
-@chromium --start-fullscreen --app=http://localhost:8080
+@chromium --start-fullscreen --app=http://localhost
