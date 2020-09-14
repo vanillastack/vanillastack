@@ -173,7 +173,7 @@ openstack:
       replicas: 2
     endpoints:
       publicURLPrefix: "heat"
-      cfPublicURLPrefix: "heat-cfn"
+      cfnPublicURLPrefix: "heat-cfn"
     auth:
       service:
         password: Fv2ZXIEb5V5jZTpyA856vkJhB
