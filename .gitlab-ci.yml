@@ -1,6 +1,6 @@
 image: "harbor.cloudical.net/vanillastack/vanilla-ubuntu-base:latest"
 services:
-  - docker:18.09.7-dind  
+  - docker:18.09.7-dind
 variables:
   DOCKER_HOST: tcp://localhost:2375
 
@@ -19,7 +19,7 @@ build_docker_image_prod:
     - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
-    - cd vanillastack/backend
+    - cd vanillastack
     - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/vsinstaller:$DATE -t harbor.cloudical.net/vanillastack/vsinstaller:latest .
     - docker push harbor.cloudical.net/vanillastack/vsinstaller:$DATE
     - docker push harbor.cloudical.net/vanillastack/vsinstaller:latest
@@ -39,10 +39,9 @@ run_playbook:
       - testing
   stage: run_playbook
   interruptible: true
-  script: 
+  script:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack/ansible
     - mv group_vars.testing group_vars
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
-

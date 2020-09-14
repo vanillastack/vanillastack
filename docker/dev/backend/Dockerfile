@@ -6,28 +6,27 @@ ENV PORT=8080
 ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
+#ENV ANSIBLE_HOST_KEY_CHECKING=false
+#ENV ANSIBLE_LOAD_CALLBACK_PLUGINS=true
+#ENV ANSIBLE_STDOUT_CALLBACK=json
+
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
 ## Install nginx, Ansible and pre-req
-RUN apt update && apt upgrade -y && apt install -y \
+RUN apt update && apt install -y \
     openssh-client python3-pip && \
-    rm -rf /var/lib/apt/lists/* && \
     pip3 install ansible && \
-    ansible-galaxy collection install community.kubernetes
+    ansible-galaxy collection install community.kubernetes && \
+    rm -rf /var/lib/apt/lists/*
 
 ## copy app files
-COPY ./package.json ./
-COPY ./vue.config.js ./
-COPY ./src ./src/
-COPY ./public ./public/
+COPY ./backend/package.json /usr/workdir/
+COPY ./backend/src /usr/workdir/src/
+COPY ./ansible /usr/workdir/ansible/
 
 ## Install npm Modules
 RUN npm install && npm audit fix
 
-## Build and prep Frontend
-RUN rm -rf ./dist/* && npm run build
-RUN rm -rf ./src/public/* && cp -r ./dist/* ./src/public
-
 ## Run nginx and backend
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dockerdev"]
