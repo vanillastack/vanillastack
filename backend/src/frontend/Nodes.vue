@@ -49,12 +49,23 @@
             <div v-if="hasApplications" class="row margin-1em">
                 <div class="col">
                     <p>Please assign applications to worker nodes. The following conditions must be met:</p>
-                    <ul>
-                        <li v-if="installRook">3 worker nodes for Rook</li>
-                        <li v-if="installOpenStack">4 worker nodes for OpenStack</li>
-                        <li v-if="installCF">3 worker nodes for Cloud Foundry</li>
-                    </ul>
-                    <p v-if="hasMultipleApplications"><em>Note: You can assign multiple applications to a worker node.</em></p>
+                </div>
+            </div>
+            <div v-if="hasApplications && installRook" class="row margin-1em">
+                <div class="col-3"><i class="fas fa-check small"></i> 3 worker nodes for Rook</div>
+                <div class="col-3"><a class="btn btn-sm btn-primary margin-left-3em" role="button" v-on:click="setRook()">Assign to all workers</a></div>
+            </div>
+            <div v-if="hasApplications && installOpenStack" class="row margin-1em">
+                <div class="col-3"><i class="fas fa-check small"></i> 4 worker nodes for OpenStack</div>
+                <div class="col-3"><a class="btn btn-sm btn-primary margin-left-3em" role="button" v-on:click="setOS()">Assign to all workers</a></div>
+            </div>
+            <div v-if="hasApplications && installCF" class="row margin-1em">
+                <div class="col-3"><i class="fas fa-check small"></i> 3 worker nodes for Cloud Foundry</div>
+                <div class="col-3"><a class="btn btn-sm btn-primary margin-left-3em" role="button" v-on:click="setCF()">Assign to all workers</a></div>
+            </div>
+            <div class="row margin-2em" v-if="hasMultipleApplications">
+                <div class="col">
+                    <em>Note: You can assign multiple applications to a worker node.</em>
                 </div>
             </div>
             <div class="form-group" v-for="item in workers" :key="item.key">
@@ -404,6 +415,21 @@ export default {
                 // Set the name
                 item.user = firstItem.user
             }
+        },
+
+        setRook: function() {
+            // Activate Rook on all Workers
+            this.workers.forEach(worker => worker.rook = true)
+        },
+
+        setCF: function() {
+            // Activate Rook on all Workers
+            this.workers.forEach(worker => worker.cf = true)
+        },
+
+        setOS: function() {
+            // Activate Rook on all Workers
+            this.workers.forEach(worker => worker.openstack = true)
         }
 
     },

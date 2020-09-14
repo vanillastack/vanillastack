@@ -13,7 +13,7 @@
         </div>
         <div class="form-group">
             <div class="row margin-2em">
-                <div class="col-2">
+                <div class="col-3">
                     <p><strong>Rook Dashboard</strong></p>
                     <div class="custom-control custom-switch">
                         <input class="custom-control-input" id="dashboard" name="dashboard" type="checkbox" 
@@ -24,7 +24,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-3 offset-md-1">
+                <div class="col-3">
                     <p><strong>Monitoring</strong></p>
                     <div class="custom-control custom-switch">
                         <input class="custom-control-input" id="monitoring" name="monitoring" type="checkbox" 

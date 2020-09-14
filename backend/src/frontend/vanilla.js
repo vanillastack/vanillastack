@@ -15,12 +15,14 @@ import Cluster from './Cluster.vue'
 import Tools from './AdditionalTools.vue'
 import NodeCheck from './NodeCheck.vue'
 import OpenStack from './OpenStack.vue'
-import CF from './CF.vue'
-import 'es6-promise/auto'
 import Network from './js/network'
 import Subscription from './Subscription.vue'
 import Rook from './Rook.vue'
 import Summary from './Summary.vue'
+import LetsEncrypt from './LetsEncrypt.vue'
+import CF from './CF.vue'
+import Install from './Install.vue'
+import 'es6-promise/auto'
 
 // Call Vue.use(VueRouter)
 Vue.use(VueRouter)
@@ -46,12 +48,14 @@ const routes = [
     { path: '/nodes', component: Nodes},
     { path: '/nodecheck', component: NodeCheck},
     { path: '/cluster', component: Cluster},
+    { path: '/letsencrypt', component: LetsEncrypt},
     { path: '/rook', component: Rook},
     { path: '/openstack', component: OpenStack},
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
-    { path: '/subscription', component: Subscription},
-    { path: '/summary', component: Summary}
+//    { path: '/subscription', component: Subscription},
+    { path: '/summary', component: Summary},
+    { path: '/install', component: Install}
   ];
 
 var currentRoute = 0;
@@ -129,6 +133,11 @@ var app = new Vue({
         this.$network.openWebSocket(this.$network, data.uuid)
       })
 
+      // Force-Navigate to the installation view
+      EventBus.$on(Constants.Network_InstallationInProgress, data => {
+        this.$router.push(routes.find(route => route.path == '/install'))
+      })
+
       // Execute the info-call to the backend
       this.$network.getInfo()
     },
@@ -152,6 +161,10 @@ var app = new Vue({
 
       // Handles the navigation
       handleNavigation: function(current, index, forward) {
+        // Fetch the UUID in case it is empty
+        if(Globals.UUID == '') {
+          this.$network.getInfo()
+        }
         
         // Get the route
         var route = this.getRoute(index, forward)
@@ -171,7 +184,7 @@ var app = new Vue({
       
         // Set whether forward or backward navigation was possible
         this.$store.commit(Constants.Store_UpdateGlobalNavigation, {
-          canGoForward: index < routes.length -1,
+          canGoForward: index < routes.length -1 && route.path != '/summary',
           canGoBack: index > 0
         })
       }
@@ -181,11 +194,11 @@ var app = new Vue({
 
 app.handleNavigation(0, 0, true)
 
+console.log("Started Vue");
+
 // Store the globals
 Globals.router = router
 Globals.vue = app
 Globals.store = Store
 Globals.routes = routes
-
-console.log("Started Vue");
   

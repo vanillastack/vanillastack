@@ -162,6 +162,14 @@ ul.secondary-nav {
   padding-bottom:3em
 }
 
+.margin-left-3em {
+  margin-left: 3em;
+}
+
+.margin-bottom-10px {
+  margin-bottom: 10px
+}
+
 .padding-left-3em {
   padding-left: 3em;
 }
@@ -254,4 +262,19 @@ div>.lead-image {
 
 .text-align-right {
   text-align: right;
+}
+
+::placeholder {
+  color: #c3c3c3 !important;
+  opacity: 1;
+}
+
+.small {
+  width: 7em;
+  display: inline-block
+}
+
+.fas.small {
+  width: 2em;
+  display: inline-block;
 }

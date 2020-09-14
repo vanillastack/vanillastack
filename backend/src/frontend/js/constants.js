@@ -24,6 +24,8 @@ export default Object.freeze({
     Event_SubscriptionKeyUpdated: "Event_SubscriptionKeyUpdated",
     Event_GeneralSettingsChanged: "Event_GeneralSettingsChanged",
     Event_GeneralSettingsDirty: "Event_GeneralSettingsDirty",
+    Event_LetsEncryptDataUpdated: "Event_LetsEncryptDataUpdated",
+    Event_StartInstallation: "Event_StartInstallation",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -45,12 +47,15 @@ export default Object.freeze({
     Store_ClusterUpdateData: "clusterUpdateData",
     Store_UpdateSubscriptionKey: "updateSubscriptionKey",
     Store_UpdateGeneralSettings: "updateGeneralSettings",
+    Store_UpdateLetsEncryptData: "updateLetsEncryptData",
 
     Network_LoadedInfo: "Network_LoadedInfo",
     Network_CheckingNodes: "Network_CheckingNodes",
     Network_WS_Response: "Network_WS_Response",
+    Network_InstallationInProgress: "Network_InstallationInProgress",
 
     Validate_IpAddress: /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
-    Validate_SubscriptionKeyLength: 6
+    Validate_SubscriptionKeyLength: 6,
+    Validate_Email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   })
   

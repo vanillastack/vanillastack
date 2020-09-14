@@ -55,6 +55,19 @@ const Network = {
                 })
             },
 
+            setup: function(data) {
+                // Indicate, whether a dry-run takes place
+                data.dry = this.data.dryRun
+
+                // Do the call
+                const path = this.data.addressPrefix + "/setup"
+                this.data.__vue.http.post(path, data).then(response => {
+                    EventBus.$emit(Constants.Network_InstallationInProgress, {
+                        transactionId: response.body.transactionId
+                    })
+                })
+            },
+
             construct: function(Vue) {
                 this.data.__vue = Vue
 
