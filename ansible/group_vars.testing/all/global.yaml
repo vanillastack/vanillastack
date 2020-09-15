@@ -23,7 +23,7 @@ kubernetes:
   version: "1.19"
   crioVersion: "1.18"
 cloudfoundry:
-  enabled: false
+  enabled: true
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
@@ -122,3 +122,4 @@ efkstack:
   imageTag: "7.9.1"
   kibana: 
     coreDomain: "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"
+  enabled: true
