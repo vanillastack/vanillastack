@@ -115,6 +115,11 @@ var app = new Vue({
         console.log("Current Route Index", currentRoute)
       })
 
+      // Bind to the closing of the window and remove the WS-socket
+      window.addEventListener('beforeunload', () => {
+        this.$network.closeWebSocket()
+      })
+
       // Handle the NewViewLoaded-event
       EventBus.$on(Constants.Event_NewViewLoaded, data => {
         // Store the data
@@ -139,7 +144,8 @@ var app = new Vue({
       })
 
       // Execute the info-call to the backend
-      this.$network.getInfo()
+      if(this.$store.state.base.uuid === undefined || this.$store.state.base.uuid === '' || this.$store.state.base.sshKey === undefined || this.$store.state.base.sshKey === '')
+        this.$network.getInfo()
     },
     
     methods: {

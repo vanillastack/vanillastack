@@ -119,6 +119,18 @@ const Network = {
                 })
 
                 this.__ws = ws 
+            },
+
+            closeWebSocket : function() {
+                // Close the Websocket-Client
+                if(this.__ws !== undefined && this.__ws !== null)
+                    try {
+                        console.log("CLOSING WEBSOCKET")
+                        this.__ws.close()
+                        this.__ws = null
+                    } catch (e) {
+                        console.log("ERROR CLOSING WEBSOCKET", e)
+                    }
             }
         }
         

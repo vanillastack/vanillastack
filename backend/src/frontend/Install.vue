@@ -138,12 +138,12 @@ export default {
                 if(data.event == 'EXECUTION' || data.event == 'EXEC') {
                     this.installing = false
                     this.installed = true
-                    
+
                     var message = '<pre class="pre-install">' + data.payload + '</pre>'
 
                     var list = document.getElementById('list')
                     list.innerHTML += message
-                    list.scrollTop += 10000
+                    list.scrollIntoView(false)
                 }
 
                 if(data.event == 'DONE') {
