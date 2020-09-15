@@ -48,7 +48,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12 align-center">
-              <span v-if="!isInstalling || isInstalling">
+              <span v-if="!isInstalling">
                 <span v-if="!canGoBack" class="block-width-100 margin-right-2em"></span>
                 <a v-if="canGoBack" class="btn btn-primary min-width-100 margin-right-2em" role="button" v-on:click="goBack">Back</a>
                 <a v-if="canGoForward" class="btn btn-success min-width-100" :class="{disabled: !allowGoForward}" role="button" v-on:click="goNext">Next</a>
