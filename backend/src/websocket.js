@@ -280,7 +280,12 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
     // sendMessage(wsMsg, wsClient);
     const dir = `${basePath}/${wsClient.uuid}`;
     try {
-        fs.mkdirSync(dir, {recursive: true});
+        fs.mkdirSync(`${dir}/group_vars/all`, {recursive: true});
+        fs.copyFileSync(`${basePath}/group_vars.testing/all/cert-manager.yaml`, `${dir}/group_vars/all/cert-manager.yaml`);
+        fs.copyFileSync(`${basePath}/group_vars.testing/all/global.yaml`, `${dir}/group_vars/all/global.yaml`);
+        fs.copyFileSync(`${basePath}/group_vars.testing/all/openstack.yaml`, `${dir}/group_vars/all/openstack.yaml`);
+        fs.copyFileSync(`${basePath}/group_vars.testing/all/rook.yaml`, `${dir}/group_vars/all/rook.yaml`);
+        // fs.mkdirSync(`${dir}/group_vars`, {recursive: true});
         fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
         fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsYaml));
         // fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));

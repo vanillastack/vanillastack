@@ -118,6 +118,8 @@ router.post('/', function (req, res) {
                     issuerEmail: letsencrypt.issuerEmail
                 },
                 kubernetes: {
+                    version: '1.19',
+                    crioVersion: '1.18',
                     loadBalancer: {
                         virtualIP: cluster.ip,
                         clusterDomain: cluster.fqdn
