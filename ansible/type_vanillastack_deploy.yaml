@@ -23,7 +23,7 @@
       action: 01_install_keepalived
 
 - name: Install HaProxy
-  hosts: haproxy
+  hosts: master
   become: true
   gather_facts: true
   roles:

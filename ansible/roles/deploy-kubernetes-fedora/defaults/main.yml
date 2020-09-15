@@ -14,5 +14,5 @@ kubernetes:
   clusterName: kube
   resetCluster: false
   version: "1.19"
-  crioVersion: "{{ kubernetes.version }}"
+  crioVersion: "1.18"
 
