@@ -25,7 +25,7 @@ COPY ./backend/package.json /usr/workdir/
 COPY ./backend/src /usr/workdir/src/
 COPY ./ansible /usr/workdir/ansible/
 
-RUN echo  $'\n\
+RUN echo  '\n\
     #!/bin/bash\n\
     filename=$1\n\
     while read line; do\n\
