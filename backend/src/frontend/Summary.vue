@@ -119,7 +119,7 @@
                                 <span v-if="!cluster.usefqdn"></span>
                             </div>
                             <div class="col-2">
-                                <pre v-if="cluster.usefqdn">{{ cluster.fqdn }}</pre>
+                                <span v-if="cluster.usefqdn">{{ cluster.fqdn }}</span>
                             </div>
                         </div>
                         <div class="row margin-1em">
@@ -133,7 +133,7 @@
                                 <span v-if="!cluster.useadminfqdn"></span>
                             </div>
                             <div class="col-2">
-                                <pre v-if="cluster.useadminfqdn">{{ cluster.adminfqdn }}</pre>
+                                <span v-if="cluster.useadminfqdn">{{ cluster.adminfqdn }}</span>
                             </div>
                         </div>
                     </div>
@@ -170,7 +170,7 @@
                         </div>
                         <div class="row margin-2em">
                             <div class="col-2 text-align-right padding-right-1em">Issuer E-Mail</div>
-                            <div class="col-2">
+                            <div class="col-4">
                                 {{ letsencrypt.issuerEmail }}
                             </div>
                         </div>
@@ -554,7 +554,7 @@
                         <div class="row margin-1em">
                             <div class="col-2 text-align-right padding-right-1em">Base URL</div>
                             <div class="col-2">
-                                {{ cf.fqdn }}
+                                *.{{ cf.fqdn }}
                             </div>
                         </div>
                         <div class="row margin-1em">
@@ -729,50 +729,12 @@ export default {
             return "Production"
         },
 
-        generateCall: function() {
-            var nodes = []
-
-            this.$store.state.installer.general.mastersList.forEach(
-                node => this.transformNode(nodes, node, false, true))
-            this.$store.state.installer.general.workersList.forEach(
-                node => this.transformNode(nodes, node, true, true))
-
-            var data = {
-                isHA: this.$store.state.installer.general.isHA,
-                general: {
-                    installRook: this.$store.state.installer.general.installRook,
-                    installCF: this.$store.state.installer.general.installCF,
-                    installOS: this.$store.state.installer.general.installOpenStack,
-                    harborKey: this.$store.state.base.key
-                },
-                nodes: nodes,
-                cluster: JSON.parse(JSON.stringify(this.$store.state.installer.cluster)),
-                rook: JSON.parse(JSON.stringify(this.$store.state.installer.rook)),
-                openstack: JSON.parse(JSON.stringify(this.$store.state.installer.openstack)),
-                cf: JSON.parse(JSON.stringify(this.$store.state.installer.cloudfoundry)),
-                additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional)),
-                letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt))
-            }
-
-            return data
-        },
-
     },
 
     mounted : function () {
         // Notify about being loaded
         EventBus.$emit(Constants.Event_NewViewLoaded, {
             allowGoForward: false
-        })
-
-        EventBus.$on(Constants.Event_StartInstallation, () => {
-            var payload = this.generateCall()
-            payload.uuid = this.$store.state.base.uuid
-
-            console.log("DATA", this.generateCall())
-            console.log("DATA-TXT", JSON.stringify(this.generateCall()))
-
-            this.$network.setup(payload)
         })
 
         // Set up the general settings

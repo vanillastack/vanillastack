@@ -91,7 +91,7 @@ const Network = {
 
                 ws.addEventListener('message', function(message) {
                     // Propagate the message to the frontend
-                    console.log("RECEIVED WS RESPONSE", message)
+                    //console.log("RECEIVED WS RESPONSE", message)
                     EventBus.$emit(Constants.Network_WS_Response, message.data)
                 })
 

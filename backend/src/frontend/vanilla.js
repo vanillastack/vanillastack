@@ -134,7 +134,7 @@ var app = new Vue({
       })
 
       // Force-Navigate to the installation view
-      EventBus.$on(Constants.Network_InstallationInProgress, data => {
+      EventBus.$on(Constants.Event_StartInstallation, data => {
         this.$router.push(routes.find(route => route.path == '/install'))
       })
 

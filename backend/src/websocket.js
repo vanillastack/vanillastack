@@ -276,22 +276,26 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
         transactionId: transactionId,
         payload: ''
     }
+
+    console.log('Dry-Run Mode', dryRun)
+
     // Send init msg through ws
     // sendMessage(wsMsg, wsClient);
     const dir = `${basePath}/${wsClient.uuid}`;
     try {
-        fs.mkdirSync(`${dir}/group_vars/all`, {recursive: true});
-        fs.copyFileSync(`${basePath}/group_vars.testing/all/cert-manager.yaml`, `${dir}/group_vars/all/cert-manager.yaml`);
-        fs.copyFileSync(`${basePath}/group_vars.testing/all/global.yaml`, `${dir}/group_vars/all/global.yaml`);
-        fs.copyFileSync(`${basePath}/group_vars.testing/all/openstack.yaml`, `${dir}/group_vars/all/openstack.yaml`);
-        fs.copyFileSync(`${basePath}/group_vars.testing/all/rook.yaml`, `${dir}/group_vars/all/rook.yaml`);
-        // fs.mkdirSync(`${dir}/group_vars`, {recursive: true});
-        fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
-        fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsYaml));
-        // fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
-        // console.log(hostsYaml);
-        // console.log(yaml.safeDump(hostsYaml));
         if (!Boolean(dryRun)) {
+            fs.mkdirSync(`${dir}/group_vars/all`, {recursive: true});
+            fs.copyFileSync(`${basePath}/group_vars.testing/all/cert-manager.yaml`, `${dir}/group_vars/all/cert-manager.yaml`);
+            fs.copyFileSync(`${basePath}/group_vars.testing/all/global.yaml`, `${dir}/group_vars/all/global.yaml`);
+            fs.copyFileSync(`${basePath}/group_vars.testing/all/openstack.yaml`, `${dir}/group_vars/all/openstack.yaml`);
+            fs.copyFileSync(`${basePath}/group_vars.testing/all/rook.yaml`, `${dir}/group_vars/all/rook.yaml`);
+            // fs.mkdirSync(`${dir}/group_vars`, {recursive: true});
+            fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
+            fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsYaml));
+            // fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
+            // console.log(hostsYaml);
+            // console.log(yaml.safeDump(hostsYaml));
+
             const options = {
                 cwd: basePath,
                 env: null
@@ -345,7 +349,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
         } else {
             console.log(`${transactionId} Setup running in dry-run-mode`);
-            const testOutput = fs.readFileSync('/usr/workdir/src/templates/helper.txt',
+            const testOutput = fs.readFileSync('/tmp/helper.txt', //'/usr/workdir/src/templates/helper.txt',
                 'utf8').split(/\r?\n/);
 
             wsMsg.event = 'EXECUTION';
