@@ -124,7 +124,11 @@
   roles:
     - role: deploy-openstack
       when: openstack.enabled
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> testing
 - name: Deploy cloudfoundry
   hosts: master[0]
   gather_facts: true
@@ -145,6 +149,7 @@
   roles:
   - role: install-efk
     action: init
+<<<<<<< HEAD
     when: efkstack.enabled
   - role: install-efk
     action: es_deploy
@@ -155,6 +160,14 @@
   - role: install-efk
     action: fluentd_deploy
     when: efkstack.enabled
+=======
+  - role: install-efk
+    action: es_deploy
+  - role: install-efk
+    action: kibana_helm
+  - role: install-efk
+    action: fluentd_deploy
+>>>>>>> testing
 
 - name: Deploy Postgres Operator
   hosts: master[0]
