@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 
 const connectionRouter = require('./api/connection');
-const setupRouter = require('./api/setup')
+const setupRouter = require('./api/setup');
+const kubeConfigRouter = require('./api/kubeconfig');
 const infoRouter = require('./api/info');
 const docuRouter = require('./openapi');
 
 router.use('/connection', connectionRouter);
 router.use('/setup', setupRouter);
+router.use('/config', kubeConfigRouter);
 router.use('/info', infoRouter);
 router.use('/api-docs', docuRouter);
 
