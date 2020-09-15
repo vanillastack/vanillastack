@@ -309,28 +309,57 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
             );
 
             ans.stdout.on('data', stdout => {
-                console.log(stdout.toString());
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = stdout.toString();
+                sendMessage(wsMsg, wsClient);
+                // console.log(stdout.toString());
             });
 
             ans.stderr.on('data', stderr => {
-                console.log(stderr.toString());
+                // console.log(stderr.toString());
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = stderr.toString();
+                sendMessage(wsMsg, wsClient);
             });
 
             ans.on('error', err => {
-                console.log(err);
+                // console.log(err);
+                wsMsg.event = 'ERROR';
+                wsMsg.payload = err;
+                sendMessage(wsMsg, wsClient);
             });
 
             ans.on('close', code => {
-                console.log(code);
+                // todo: read kubeconfig kubeadm.conf
+                const kubeConf = fs.readFileSync(`${dir}/kubeadm.conf`, 'utf8');
+                wsClient['kubeConfig'] = kubeConf;
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = kubeConf;
+                sendMessage(wsMsg, wsClient);
+
+                wsMsg.event = 'DONE';
+                wsMsg.payload = code;
+                sendMessage(wsMsg, wsClient);
+                cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
             });
 
         } else {
             console.log(`${transactionId} Setup running in dry-run-mode`);
+            const testOutput = fs.readFileSync('/usr/workdir/src/templates/helper.txt',
+                'utf8').split(/\r?\n/);
 
             wsMsg.event = 'EXECUTION';
             wsMsg.payload = 'Running in dry-run mode';
             sendMessage(wsMsg, wsClient);
 
+            testOutput.forEach(line => {
+                sleep(200).then(() => {
+                    console.log(line);
+                    wsMsg.event = 'EXECUTION';
+                    wsMsg.payload = line;
+                    sendMessage(wsMsg, wsClient);
+                });
+            });
 
             wsMsg.event = 'DONE';
             wsMsg.payload = '0';
@@ -341,14 +370,13 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
         }
 
     } catch (error) {
-        console.log(error);
-        // console.log(`Something went wrong: ${e}`);
-        // wsMsg.event = 'DONE';
-        // wsMsg.payload = '-1';
-        // sendMessage(wsMsg, wsClient);
+        console.log(`Something went wrong: ${error}`);
+        wsMsg.event = 'DONE';
+        wsMsg.payload = '-1';
+        sendMessage(wsMsg, wsClient);
 
         // Cleanup
-        // cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
+        cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
     }
 }
 
