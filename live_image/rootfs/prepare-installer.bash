@@ -27,13 +27,8 @@ PACKAGES_DEBUG="mc less"
 PACKAGES_DEBUG+=" aptitude"
 PACKAGES_DEBUG+=" screen"
 PACKAGES_DEBUG+=" live-boot live-boot-doc live-config live-config-doc"
-PACKAGES_DEBUG+=" "
-PACKAGES_DEBUG+=" "
-PACKAGES_DEBUG+=" "
-PACKAGES_DEBUG+=" "
-PACKAGES_DEBUG+=" "
 
-apt-get update && apt-get install -y --no-install-recommends $PACKAGES_NEEDED $PACKAGES_DEBUG
+apt-get update && apt-get install -y --no-install-recommends $PACKAGES_NEEDED #$PACKAGES_DEBUG
 
 # Monkeypatching because Bug
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
@@ -41,7 +36,7 @@ sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
 
 
 # try to avoid caching
-sed -i '40s%lb bootstrap_cache save%#lb bootstrap_cache save%' /usr/lib/live/build/bootstrap
+#sed -i '40s%lb bootstrap_cache save%#lb bootstrap_cache save%' /usr/lib/live/build/bootstrap
 
 
 

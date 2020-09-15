@@ -1,6 +1,6 @@
 #!/bin/bash -x
+#set -e
 
-set -e
 #
 #  Initialize build
 #
@@ -61,24 +61,17 @@ lb config noauto \
         --source false \
         --verbose | tee -a $OUTPUT/build.log
 
-#pwd
-# if this works, it is one of the uggliest hacks ever.
-# dockerd in the chroot will need its / as a dedicated mountpoint, which it
-# wouldn't be, if we wouldn't bind-mount it
-#mkdir chroot
-#mount -o bind chroot chroot
+
 #
 # build the ISO
 #
-# ensure to umount chroot before binary-stage
-#echo "echo 'Hotpatch: trying to umount bindmount of chroot'" >> config/binary
-#echo "umount ${WORKDIR}/build/chroot || true" >> config/binary
 
 lb build 2>&1 | tee -a $OUTPUT/build.log
 
 #
 # upload and export
 #
+
 cp vanillastack-installer* $OUTPUT
 
 if [[ -n "$AWS_SECRET_ACCESS_KEY" ]]
