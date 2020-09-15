@@ -23,7 +23,7 @@
       action: 01_install_keepalived
 
 - name: Install HaProxy
-  hosts: haproxy
+  hosts: master
   become: true
   gather_facts: true
   roles:
@@ -74,10 +74,10 @@
   vars:
     ansible_connection: local
   tasks:
-    - name: create local uuid directory
+    - name: make sure local uuid directory exists
       file:
         state: directory
-        path: "/tmp/{{ global.uuid }}"
+        path: "/usr/workdir/ansible/{{ global.uuid }}"
         recurse: yes
 
 - name: Deploy Networking
