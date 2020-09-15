@@ -9,12 +9,32 @@ ENV MODE=installer
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
+ENV \
+  DEBIAN_FRONTEND=noninteractive \
+  DEBIAN_CHROOT=docker \
+  LANG=C.UTF-8 \
+  LANGUAGE=C.UTF-8 \
+  LC_CTYPE=C.UTF-8 \
+  LC_NUMERIC=C.UTF-8 \
+  LC_TIME=C.UTF-8 \
+  LC_COLLATE=C.UTF-8 \
+  LC_MONETARY=C.UTF-8 \
+  LC_MESSAGES=C \
+  LC_PAPER=C.UTF-8 \
+  LC_NAME=C.UTF-8 \
+  LC_ADDRESS=C.UTF-8 \
+  LC_TELEPHONE=C.UTF-8 \
+  LC_MEASUREMENT=C.UTF-8 \
+  LC_IDENTIFICATION=C.UTF-8
+
 ## Install nginx, Ansible and pre-req
-RUN apt update && apt upgrade -y && apt install -y \
+RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y \
     openssh-client python3-pip && \
     rm -rf /var/lib/apt/lists/* && \
     pip3 install ansible && \
     ansible-galaxy collection install community.kubernetes
+
+FROM Base
 
 ## copy app files
 COPY ./backend/package.json ./
@@ -35,11 +55,10 @@ RUN echo  '\n\
     chmod +x /usr/workdir/src/templates/dry-run_setup.sh
 
 ## Install npm Modules
-RUN npm install && npm audit fix
-
 ## Build and prep Frontend
-RUN rm -rf ./dist/* && npm run build
-RUN rm -rf ./src/public/* && cp -r ./dist/* ./src/public
+RUN npm install && npm audit fix \
+    && rm -rf ./dist/* && npm run build \
+    && rm -rf ./src/public/* && cp -r ./dist/* ./src/public
 
 ## Run nginx and backend
 CMD ["npm", "run", "start"]
