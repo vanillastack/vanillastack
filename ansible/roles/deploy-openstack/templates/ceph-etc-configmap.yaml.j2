@@ -10,7 +10,7 @@ data:
   [global]
   cluster network = 10.0.0.0/8
   fsid = {{openstack.ceph.rook.fsid}}
-  mon host = {{openstack.ceph.rook.cephMonitors | list | join (',')}}
+  mon host = rook-ceph-mon-a.{{rook.namespace}}.svc.cluster.local:6789,rook-ceph-mon-b.{{rook.namespace}}.svc.cluster.local:6789,rook-ceph-mon-c.{{rook.namespace}}.svc.cluster.local:6789
   osd pool default crush rule = -1
   public network = 10.0.0.0/8
   [osd]

@@ -1,6 +1,8 @@
 ---
 global:
   registry: harbor.cloudical.net
+  isHA: true
+  uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 ingress:
   namespace: nginx-ingress
   enabled: true
@@ -16,21 +18,23 @@ letsEncrypt:
 kubernetes:
   loadBalancer:
     virtualIP: 135.181.48.19
-    fqdn: test.vanillastack.cloudical.net
+    clusterDomain: test.vanillastack.cloudical.net
   clusterName: kube
-  resetCluster: false
-
+  version: "1.19"
+  crioVersion: "1.18"
 cloudfoundry:
-  enabled: true
+  enabled: false
   storageclass: rook-ceph-block
-
+  coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
   enabled: true
   adminpassword: 4JOA4l8DK7Sr
+  coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"  
 guacamole:
   imageTag: 202009100849
-  enabled: true
+  enabled: false
   namespace: guacamole
+  coreDomain: "guacamole.{{ kubernetes.loadBalancer.clusterDomain }}"
   postgres:
     maxConnections: 400
     backup:
@@ -114,3 +118,7 @@ harbor:
     backup:
       enabled: false
       cronjob: "30 */2 * * *"
+efkstack:
+  imageTag: "7.9.1"
+  kibana: 
+    coreDomain: "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"

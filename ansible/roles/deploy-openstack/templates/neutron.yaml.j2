@@ -40,9 +40,6 @@ images:
     neutron_bagpipe_bgp: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
 {% endif %}
 
-network:
-  interface:
-    tunnel: {{openstack.neutron.tunnelInterface}}
 labels:
   agent:
     dhcp:
@@ -57,6 +54,8 @@ labels:
 pod:
   replicas:
     server: {{openstack.neutron.server.replicas}}
+  use_fqdn:
+    neutron_agent: false
 conf:
   neutron:
     DEFAULT:
@@ -72,6 +71,9 @@ conf:
       agent:
         tunnel_types: {{openstack.neutron.l3.haNetworkType}}
       ovs:
+        bridge_mappings: public:br-ex
+    linuxbridge_agent:
+      linux_bridge:
         bridge_mappings: public:br-ex
 ### WORKAROUND
     tungstenfabric:
@@ -186,6 +188,8 @@ endpoints:
         project_domain_name: service
 
 network:
+  interface:
+    tunnel: {{openstack.neutron.tunnelInterface}}
   api:
     ingress:
       public: true

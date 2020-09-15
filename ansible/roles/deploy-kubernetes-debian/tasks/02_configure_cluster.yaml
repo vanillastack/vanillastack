@@ -1,6 +1,6 @@
 ---
 - name: get latest kube version
-  shell: apt-cache madison kubeadm | grep {{ kube_version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
   register: apt_output
 
 - name: get kubeversion
@@ -13,7 +13,7 @@
       - "kubelet={{ versions }}"
       - "kubeadm={{ versions }}"
       - "kubectl={{ versions }}"
-      - "cri-o-{{ kube_version }}"
+      - "cri-o"
       - libgtk2.0-0
     update_cache: yes
 
@@ -25,7 +25,7 @@
     - "kubelet"
     - "kubeadm"
     - "kubectl"
-    - "cri-o-{{ kube_version }}"
+    - "cri-o"
 
 - name: configure crio
   lineinfile:
@@ -40,6 +40,13 @@
     path: /etc/crio/crio.conf
     regexp: '^(.*)seccomp_profile =(.*)$'
     line: 'seccomp_profile = ""'
+    backrefs: yes
+
+- name: fix runc runtime path in crio config
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^  runtime_path =(.*)$'
+    line: '  runtime_path = "/usr/sbin/runc"'
     backrefs: yes
 
 - name: configure kubelet
@@ -103,6 +110,17 @@
     - net.bridge.bridge-nf-call-ip6tables
     - net.bridge.bridge-nf-call-iptables
     - net.ipv4.ip_forward
+
+# See https://github.com/cilium/cilium/issues/10645
+- name: set net.ipv4.conf.*.rp_filter to 0 for systemd 245 workaround
+  sysctl:
+    name: "{{ item }}"
+    value: '0'
+    sysctl_file: /etc/sysctl.d/99-z-rp_filter.conf
+    reload: yes
+  with_items:
+    - net.ipv4.conf.all.rp_filter
+    - net.ipv4.conf.default.rp_filter
 
 - name: load Modules
   lineinfile:

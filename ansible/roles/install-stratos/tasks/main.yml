@@ -12,3 +12,4 @@
     create_namespace: true
     values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
     wait: true
+

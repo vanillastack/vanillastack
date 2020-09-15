@@ -1,7 +1,9 @@
-system_domain: "cf.{{ kubernetes.loadBalancer.fqdn }}"
+system_domain: "{{ cloudfoundry.coreDomain }}"
 
 kube:
   storage_class: {{ cloudfoundry.storageclass }}
+
+high_availability: {{ global.isHA }}
 
 features:
   ingress:

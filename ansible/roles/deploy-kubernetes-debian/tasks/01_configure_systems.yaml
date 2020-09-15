@@ -77,3 +77,61 @@
   apt:
     name: "*"
     state: latest
+
+- name: get latest kube version
+  shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  register: apt_output
+
+- name: get kubeversion
+  set_fact:
+    versions: "{{ apt_output.stdout }}"
+
+- name: Install packages
+  apt:
+    pkg:
+      - "kubelet={{ versions }}"
+      - "kubeadm={{ versions }}"
+      - "kubectl={{ versions }}"
+      - "cri-o"
+      - libgtk2.0-0
+    update_cache: yes
+
+- name: mark packages as hold
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o"
+
+- name: configure crio
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^(.*)conmon =(.*)$'
+    line: 'conmon = "/usr/bin/conmon"'
+    backrefs: yes
+
+## Bug needs to be tracked
+- name: remove seccomp from crio
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^(.*)seccomp_profile =(.*)$'
+    line: 'seccomp_profile = ""'
+    backrefs: yes
+
+- name: fix runc runtime path in crio config
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^  runtime_path =(.*)$'
+    line: '  runtime_path = "/usr/sbin/runc"'
+    backrefs: yes
+
+- name: configure kubelet
+  lineinfile:
+    path: /etc/default/kubelet
+    regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
+    line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
+    create: true
+

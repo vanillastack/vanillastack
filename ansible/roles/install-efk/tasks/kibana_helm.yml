@@ -1,7 +1,8 @@
 ---
 - name: Helm add kubernetes charts repo elastic
-  command: helm repo add elastic https://helm.elastic.co
-  changed_when: false
+  community.kubernetes.helm_repository: 
+    name: elastic
+    repo_url: https://helm.elastic.co
 
 - name: Create kibana user apache
   htpasswd:
@@ -30,29 +31,11 @@
       data:
         auth: "{{ kibana_auth_slurp.content }}"
 
-- name: create kibana values
-  template:
-    src: kibana_values.yml.j2
-    dest: /tmp/kibana_values.yml
-
 - name: Install kibana
-  command: >
-    helm upgrade -i kibana elastic/kibana
-    --namespace kube-logging
-    --values /tmp/kibana_values.yml
-
-- name: wait for kibana pods to come up
-  shell: kubectl get pods -n kube-logging -o json
-  register: kubectl_get_kibana_pods
-  until: >
-    kubectl_get_kibana_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"] or
-    kubectl_get_kibana_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running", "Failed"] or
-    kubectl_get_kibana_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running", "Succeeded"] or
-    kubectl_get_kibana_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running", "Failed", "Succeeded"]
-  retries: 720
-  delay: 10
-
-- name: Clean kibana files
-  file:
-    state: absent
-    path: /tmp/kibana_values.yml
+  community.kubernetes.helm:
+    name: kibana
+    chart_ref: elastic/kibana
+    release_namespace: kube-logging
+    values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
+    create_namespace: true
+    wait: true

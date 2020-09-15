@@ -1,9 +1,9 @@
 ---
 openstack:
-  enabled: false
+  enabled: true
   namespace: openstack
   chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
-  publicDomain: "test.vanillastack.cloudical.net"
+  publicDomain: "{{ kubernetes.loadBalancer.clusterDomain }}"
   publicProto: "http"
   region: RegionOne
   # releases available:
@@ -56,7 +56,6 @@ openstack:
   ceph:
     enabled: true
     rook:
-      cephMonitors: [rook-ceph-mon-a.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-b.rook-ceph.svc.cluster.local:6789, rook-ceph-mon-c.rook-ceph.svc.cluster.local:6789]
       namespace: "rook-ceph"
       fsid: "602a7124-e4ba-43fd-a6f7-00bd574329d8"
   barbican:
@@ -174,7 +173,7 @@ openstack:
       replicas: 2
     endpoints:
       publicURLPrefix: "heat"
-      cfPublicURLPrefix: "heat-cfn"
+      cfnPublicURLPrefix: "heat-cfn"
     auth:
       service:
         password: Fv2ZXIEb5V5jZTpyA856vkJhB
@@ -258,10 +257,10 @@ openstack:
   neutron:
     enabled: true
     chartName: neutron
-    chartVersion: 20200903
+    chartVersion: 20200913
     createService: true
-    tunnelInterface: "enp2s0"
     extInterface: "enp3s0"
+    tunnelInterface: "enp2s0"
     server:
       replicas: 2
     l3:

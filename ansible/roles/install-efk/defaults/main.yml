@@ -1,0 +1,5 @@
+efkstack:
+  imageTag: "7.9.1"
+  kibana:
+    coreDomain: "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"
+  enabled: false

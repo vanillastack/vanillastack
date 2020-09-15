@@ -20,8 +20,19 @@
     mode: 0640
     remote_src: true
 
-- name: install weave
-  shell: kubectl apply --wait -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+- name: install Cilium repository
+  community.kubernetes.helm_repository:
+    name: cilium
+    repo_url: https://helm.cilium.io/
+
+- name: Deploy latest version of Cilium
+  community.kubernetes.helm:
+    name: cilium
+    chart_ref: cilium/cilium
+    release_namespace: kube-system
+    values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
+    create_namespace: true
+    wait: true
 
 - name: Wait for control-plane pods become ready
   command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"

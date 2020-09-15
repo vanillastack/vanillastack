@@ -6,15 +6,16 @@
   roles:
     - role: wait-for-nodes
  
-- name: Prepare Deployment node
-  hosts: master[0]
+- name: Configure Servers
+  hosts: kube_cluster
   become: true
-  gather_facts: no
+  gather_facts: true
   roles:
-    - role: prepare-node
+    - role: deploy-kubernetes-fedora
+      action: 01_configure_systems
 
 - name: Install Keepalived
-  hosts: haproxy
+  hosts: master
   become: true
   gather_facts: true
   roles:
@@ -22,34 +23,26 @@
       action: 01_install_keepalived
 
 - name: Install HaProxy
-  hosts: haproxy
+  hosts: master
   become: true
   gather_facts: true
   roles:
     - role: install-haproxy
       action: 02_install_haproxy
 
-- name: Configure Servers
-  hosts: kube_cluster
-  become: true
-  gather_facts: true
-  roles:
-    - role: deploy-kubernetes
-      action: 01_configure_systems
-
 - name: Configure Kube Systems
   hosts: kube_cluster
   become: true
   gather_facts: no
   roles:
-    - role: deploy-kubernetes
+    - role: deploy-kubernetes-fedora
       action: 02_configure_cluster
 
 - name: generate secrets
   hosts: master[0]
   gather_facts: yes
   roles:
-    - role: deploy-kubernetes
+    - role: deploy-kubernetes-fedora
       action: 02-1-generate-certificate
 
 - name: Init KubeCluster
@@ -57,7 +50,7 @@
   become: true
   gather_facts: no
   roles:
-    - role: deploy-kubernetes
+    - role: deploy-kubernetes-fedora
       action: 03_deploy_kubernetes
 
 - name: Add Master to KubeCluster
@@ -65,7 +58,7 @@
   become: true
   gather_facts: no
   roles:
-    - role: deploy-kubernetes
+    - role: deploy-kubernetes-fedora
       action: 04_add_nodes
 
 - name: Add worker to KubeCluster
@@ -73,21 +66,32 @@
   become: true
   gather_facts: no
   roles:
-    - role: deploy-kubernetes
+    - role: deploy-kubernetes-fedora
       action: 05_add_worker
+
+- name: create folder for config
+  hosts: localhost
+  vars:
+    ansible_connection: local
+  tasks:
+    - name: make sure local uuid directory exists
+      file:
+        state: directory
+        path: "/usr/workdir/ansible/{{ global.uuid }}"
+        recurse: yes
 
 - name: Deploy Networking
   hosts: master[0]
   gather_facts: true
   roles:
-    - role: deploy-kubernetes
+    - role: deploy-kubernetes-fedora
       action: 06_configure_network
 
 - name: Label Nodes
   hosts: master[0]
   gather_facts: yes
   roles:
-    - role: deploy-kubernetes
+    - role: deploy-kubernetes-fedora
       action: 07_label_nodes
 
 - name: Deploy Nginx-Ingress
@@ -120,7 +124,7 @@
   roles:
     - role: deploy-openstack
       when: openstack.enabled
-      
+
 - name: Deploy cloudfoundry
   hosts: master[0]
   gather_facts: true
@@ -141,12 +145,16 @@
   roles:
   - role: install-efk
     action: init
+    when: efkstack.enabled
   - role: install-efk
     action: es_deploy
+    when: efkstack.enabled
   - role: install-efk
     action: kibana_helm
+    when: efkstack.enabled
   - role: install-efk
     action: fluentd_deploy
+    when: efkstack.enabled
 
 - name: Deploy Postgres Operator
   hosts: master[0]

@@ -51,11 +51,6 @@
 - debug:
     msg: "{{ postgrespassword.stdout }}"
 
-- name: create values
-  template:
-    src: guacamole-values.yaml.j2
-    dest: /tmp/guacamole-values.yaml
-
 - name: install guacamole
   community.kubernetes.helm:
     name: guacamole
