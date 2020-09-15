@@ -1,5 +1,5 @@
 FROM node:lts-buster-slim as Base
-MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
+LABEL maintainer_name="jeff.chousterman@cloudical.io"
 
 ## Setting up Env
 ENV PORT=8080
