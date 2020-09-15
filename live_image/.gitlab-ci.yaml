@@ -2,6 +2,8 @@ build_liveimage:
   only:
     refs:
       - live-image
+      - master
+      - testing
   stage: build_liveimage
   image: debian:buster
   variables:
