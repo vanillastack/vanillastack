@@ -12,7 +12,4 @@ guacamole:
     version: "12"
     replicas: "2"
     size: "20Gi"
-<<<<<<< HEAD
-=======
 
->>>>>>> b203a886eee8acb1773ce7e559a5527d80c9e8ef

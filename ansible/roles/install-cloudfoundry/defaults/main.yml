@@ -3,8 +3,5 @@
 cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
-<<<<<<< HEAD
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
-=======
->>>>>>> b203a886eee8acb1773ce7e559a5527d80c9e8ef
 
