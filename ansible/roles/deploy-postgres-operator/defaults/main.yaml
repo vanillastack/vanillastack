@@ -1,0 +1,15 @@
+postgresOperator:
+  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
+  enabled: true
+  chartName: "postgres-operator"
+  chartVersion: "1.5.0"
+  namespace: "postgres-operator"
+  backup:
+    enabled: false
+    s3:
+      accessKey: nul
+      secretKey: nul
+      regionName: nul
+      endpoint: nul
+      bucketName: nul
+    cron: "30 00 * * *"
