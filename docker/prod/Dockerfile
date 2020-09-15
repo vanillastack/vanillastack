@@ -1,4 +1,4 @@
-FROM node:lts-buster-slim
+FROM node:lts-buster-slim as base
 LABEL maintainer_name="jeff.chousterman@cloudical.io"
 
 ## Setting up Env
@@ -34,7 +34,7 @@ RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y \
     pip3 install ansible && \
     ansible-galaxy collection install community.kubernetes
 
-FROM Base
+FROM base
 
 ## copy app files
 COPY ./backend/package.json ./
