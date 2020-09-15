@@ -1,5 +1,5 @@
 FROM node:lts-buster-slim
-MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
+LABEL maintainer_name="jeff.chousterman@cloudical.io"
 
 ## Setting up Env
 ENV PORT=8080
@@ -18,12 +18,23 @@ RUN apt update && apt install -y \
     openssh-client python3-pip && \
     pip3 install ansible && \
     ansible-galaxy collection install community.kubernetes && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* 
 
 ## copy app files
 COPY ./backend/package.json /usr/workdir/
 COPY ./backend/src /usr/workdir/src/
 COPY ./ansible /usr/workdir/ansible/
+
+RUN echo  $'\n\
+    #!/bin/bash\n\
+    filename=$1\n\
+    while read line; do\n\
+    echo "$line"\n\
+    sleep 0.2\n\
+    done <$filename\n\
+    \n'\
+    > /usr/workdir/src/templates/dry-run_setup.sh && \
+    chmod +x /usr/workdir/src/templates/dry-run_setup.sh
 
 ## Install npm Modules
 RUN npm install && npm audit fix

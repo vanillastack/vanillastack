@@ -1,5 +1,5 @@
 FROM node:lts-buster-slim
-MAINTAINER maintainer_name "jeff.chousterman@cloudical.io"
+LABEL maintainer_name="jeff.chousterman@cloudical.io"
 
 ## Setting up Env
 ENV PORT=8080
@@ -22,6 +22,17 @@ COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
 COPY ./backend/public ./public/
 COPY ./ansible /usr/workdir/ansible/
+
+RUN echo  '\n\
+    #!/bin/bash\n\
+    filename=$1\n\
+    while read line; do\n\
+    echo "$line"\n\
+    sleep 0.2\n\
+    done <$filename\n\
+    \n'\
+    > /usr/workdir/src/templates/dry-run_setup.sh && \
+    chmod +x /usr/workdir/src/templates/dry-run_setup.sh
 
 ## Install npm Modules
 RUN npm install && npm audit fix
