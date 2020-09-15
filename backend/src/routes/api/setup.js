@@ -134,7 +134,7 @@ router.post('/', function (req, res) {
                 stratos: {
                     enabled: cf.stratos,
                     coreDomain: cf.stratos_endpoint,
-                    adminpassword: randPassword(4, 4, 8) // zurück an ui
+                    adminpassword: randPassword(4, 4, 8)
                 },
                 openstack: {
                     enabled: general.installOS,
@@ -286,7 +286,7 @@ router.post('/', function (req, res) {
                         },
                         auth: {
                             admin: {
-                                password: (randPassword(4, 4, 8) || pass) // todo: password back to frontend
+                                password: (randPassword(4, 4, 8))
                             },
                             keystoneTest: {
                                 password: randPassword(4, 4, 8)
@@ -469,7 +469,9 @@ router.post('/', function (req, res) {
         setup(transactionId, basePath, dryRun, client, hostsYaml);
     });
     res.status(200).json({
-        transactionId: transactionId
+        transactionId: transactionId,
+        keyStonePass: hostsYaml.all.vars.openstack.keystone.auth.admin.password,
+        stratosPass: hostsYaml.all.vars.stratos.adminpassword
     });
 });
 

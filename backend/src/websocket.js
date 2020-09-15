@@ -349,20 +349,22 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
         } else {
             console.log(`${transactionId} Setup running in dry-run-mode`);
-            const testOutput = fs.readFileSync('/tmp/helper.txt', //'/usr/workdir/src/templates/helper.txt',
+            // const testOutput = fs.readFileSync('/tmp/helper.txt', //'/usr/workdir/src/templates/helper.txt',
+            //     'utf8').split(/\r?\n/);
+
+            const testOutput = fs.readFileSync(path.join(__dirname, 'templates/helper.txt'), //'/usr/workdir/src/templates/helper.txt',
                 'utf8').split(/\r?\n/);
 
             wsMsg.event = 'EXECUTION';
             wsMsg.payload = 'Running in dry-run mode';
             sendMessage(wsMsg, wsClient);
 
+            // todo: async/await need to be included
             testOutput.forEach(line => {
-                sleep(200).then(() => {
-                    console.log(line);
-                    wsMsg.event = 'EXECUTION';
-                    wsMsg.payload = line;
-                    sendMessage(wsMsg, wsClient);
-                });
+                console.log(line);
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = line;
+                sendMessage(wsMsg, wsClient);
             });
 
             wsMsg.event = 'DONE';
@@ -370,7 +372,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
             sendMessage(wsMsg, wsClient);
             console.log(`${transactionId} Setup dry-run complete continuing with cleanup`);
             // Cleanup
-            cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
+            // cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
         }
 
     } catch (error) {
