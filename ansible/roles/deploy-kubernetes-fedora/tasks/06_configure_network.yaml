@@ -12,7 +12,7 @@
 - name: Copy admin.conf to Home directory
   become: true
   copy:
-    src: "{{ kubeadmin_config }}"
+    src: "{{ kubernetes.kubeadmin_config }}"
     dest: ".kube/config"
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
@@ -22,7 +22,7 @@
 - name: fetch kubeadm config
   become: true
   fetch:
-    src: "{{ kubeadmin_config }}"
+    src: "{{ kubernetes.kubeadmin_config }}"
     dest: "/usr/workdir/ansible/{{ global.uuid }}/"
     flat: true
 
