@@ -73,9 +73,23 @@ const Network = {
 
                 this.data.host = window.location.hostname
                 this.data.protocol = window.location.protocol
-                this.data.port = window.location.search.indexOf("local=true") > 0 ? 3000 : window.location.port
-                this.data.dryRun = window.location.search.indexOf("local=true") > 0
+                this.data.port = this.getPort() 
+                this.data.dryRun = window.location.search.indexOf("local=true") > 0 || window.location.search.indexOf("dry=true") > 0
                 this.data.addressPrefix = this.data.protocol + "//" + this.data.host + ":" + this.data.port + "/api/v1" 
+            },
+
+            getPort: function() {
+                var port = window.location.port
+
+                if(window.location.search.indexOf("local=true") > 0) 
+                     port = 3000
+
+                if(window.location.search.indexOf("port=") > 0) {
+                    var params = new URLSearchParams(window.location.search)
+                    port = parseInt(params.get('port'))
+                }
+
+                return port
             },
 
             openWebSocket : function(instance, uuid) {
@@ -91,7 +105,6 @@ const Network = {
 
                 ws.addEventListener('message', function(message) {
                     // Propagate the message to the frontend
-                    //console.log("RECEIVED WS RESPONSE", message)
                     EventBus.$emit(Constants.Network_WS_Response, message.data)
                 })
 

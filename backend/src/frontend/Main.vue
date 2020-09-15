@@ -29,7 +29,7 @@
               <li v-if="hasOpenStack"><router-link tag="button" :disabled="!nodesChecked" to="/openstack" class="nav-item button-as-link">OpenStack</router-link></li>
               <li v-if="hasCF"><router-link tag="button" :disabled="!nodesChecked" to="/cf" class="nav-item button-as-link">Cloud Foundry</router-link></li>
               <li><router-link tag="button" :disabled="!nodesChecked" to="/tools" class="nav-item button-as-link">Additional Tools</router-link></li>
-              <li><router-link tag="button" :disabled="!subscriptionKeyEntered" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
+              <li><router-link tag="button" :disabled="!nodesChecked" to="/summary" class="nav-item button-as-link">Summary</router-link></li>
             </ul>
           </div>
           <div class="col h-100">

@@ -278,3 +278,7 @@ div>.lead-image {
   width: 2em;
   display: inline-block;
 }
+
+.pre-install {
+  line-height: 1em;
+}
