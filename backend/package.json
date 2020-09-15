@@ -6,7 +6,6 @@
     "start": "node src/bin/www",
     "dev": "nodemon src/bin/www",
     "dockerdev": "nodemon -L --ignore ansible/ --ignore node_modules/ src/bin/www",
-    "dockerdetached": "forever start -f src/bin/www",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },

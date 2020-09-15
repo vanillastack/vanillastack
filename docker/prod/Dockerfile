@@ -40,7 +40,6 @@ FROM base
 COPY ./backend/package.json ./
 COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
-COPY ./backend/public ./public/
 COPY ./ansible /usr/workdir/ansible/
 
 RUN echo  '\n\
