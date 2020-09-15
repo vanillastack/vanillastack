@@ -31,7 +31,9 @@ redeploy_debian:
   stage: redeploy
   interruptible: true
   script:
+    - apt update && apt install -y curl
     - curl $WEBHOOK_REDEPLOY
+
 
 run_playbook:
   only:

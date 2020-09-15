@@ -6,15 +6,10 @@ Testing: image:https://gitlab.cloudical.net/vanillastack/vanillastack/badges/tes
 == Requirements
 VanillaStack requirements:
 
-* Debian 10
+* Fedora 33
 
 == Documentation
-The documentation is stored at: link:docs/[docs]
-
-We will use the ASCIIDocs-Format for documentation, a reference regarding ASCII-Docs can be found at:
-
-https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
-
+The dev documentation is stored at: [docs.vanillastack.io]
 
 == Report a Bug
 For filing bugs, suggesting improvements, or requesting new features, please open an issue.
@@ -23,8 +18,7 @@ For filing bugs, suggesting improvements, or requesting new features, please ope
 == Contact
 Please use the following to reach members of the community:
 
-Rocketchat: Join our #vanillastack public channel at rocketchat.cloudical.net
-
+[Discource](https://discourse.vanillastack.io/)
 
 == Contribute
 Please read and apply the following rules to contribute to this project:

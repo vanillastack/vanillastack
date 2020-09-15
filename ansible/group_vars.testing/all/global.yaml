@@ -20,11 +20,10 @@ kubernetes:
     virtualIP: 135.181.48.19
     clusterDomain: test.vanillastack.cloudical.net
   clusterName: kube
-  resetCluster: false
   version: "1.19"
   crioVersion: "1.18"
 cloudfoundry:
-  enabled: true
+  enabled: false
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
