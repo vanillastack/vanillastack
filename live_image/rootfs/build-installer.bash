@@ -24,9 +24,9 @@ sleep 2
 /usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False &sleep 2
 sleep 2
 
-docker pull harbor.cloudical.net/vanillastack/vsinstaller  | tee -a $OUTPUT/build.log
+docker pull harbor.cloudical.net/vanillastack/installer  | tee -a $OUTPUT/build.log
 mkdir -p config/includes.chroot/vanilla | tee -a $OUTPUT/build.log
-docker save harbor.cloudical.net/vanillastack/vsinstaller | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
+docker save harbor.cloudical.net/vanillastack/installer | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
 
 kill "$(cat /run/dockerd.pid)"
 killall containerd
