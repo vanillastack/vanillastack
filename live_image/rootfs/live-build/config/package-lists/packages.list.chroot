@@ -1,4 +1,3 @@
-atop mc openssh-client screen
 procps psmisc apt-transport-https ca-certificates curl gnupg-agent xz-utils software-properties-common docker-ce docker-ce-cli containerd.io
 task-lxde-desktop task-german task-german-desktop
 live-tools user-setup sudo eject
