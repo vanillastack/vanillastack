@@ -13,7 +13,7 @@
   become: true
   when: init_cluster is succeeded
   copy:
-    src: "{{ kubeadmin_config }}"
+    src: "{{ kubernetes.kubeadmin_config }}"
     dest: ".kube/config"
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
