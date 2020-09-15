@@ -20,6 +20,10 @@ kubernetes:
     virtualIP: 135.181.48.19
     clusterDomain: test.vanillastack.cloudical.net
   clusterName: kube
+<<<<<<< HEAD
+=======
+  resetCluster: false
+>>>>>>> b203a886eee8acb1773ce7e559a5527d80c9e8ef
   version: "1.19"
   crioVersion: "1.18"
 cloudfoundry:
@@ -32,7 +36,11 @@ stratos:
   coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"  
 guacamole:
   imageTag: 202009100849
+<<<<<<< HEAD
   enabled: false
+=======
+  enabled: true
+>>>>>>> b203a886eee8acb1773ce7e559a5527d80c9e8ef
   namespace: guacamole
   coreDomain: "guacamole.{{ kubernetes.loadBalancer.clusterDomain }}"
   postgres:
