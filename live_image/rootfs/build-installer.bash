@@ -1,6 +1,9 @@
 #!/bin/bash -x
 
 set -e
+#
+#  Initialize build
+#
 
 pwd | tee $OUTPUT/build.log
 
@@ -12,11 +15,10 @@ lb clean | tee -a $OUTPUT/build.log
 cp -a $WORKDIR/live-build/auto .
 cp -a $WORKDIR/live-build/config .
 
+#
+# Preload installer image by starting docker and pulling it
+#
 
-#
-#. The lazy way of making sure all necessary modules are loaded, by simply starting docker
-#. and killing it again
-#
 /usr/bin/containerd &
 sleep 2
 /usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False &sleep 2
@@ -29,7 +31,9 @@ docker save harbor.cloudical.net/vanillastack/vsinstaller | pixz -p 8 -9 > confi
 kill "$(cat /run/dockerd.pid)"
 killall containerd
 
-
+#
+# Config live-build
+#
 lb config --version | tee -a $OUTPUT/build.log
 
 lb config noauto \
@@ -64,12 +68,17 @@ lb config noauto \
 #mkdir chroot
 #mount -o bind chroot chroot
 #
+# build the ISO
+#
 # ensure to umount chroot before binary-stage
 #echo "echo 'Hotpatch: trying to umount bindmount of chroot'" >> config/binary
 #echo "umount ${WORKDIR}/build/chroot || true" >> config/binary
 
 lb build 2>&1 | tee -a $OUTPUT/build.log
 
+#
+# upload and export
+#
 cp vanillastack-installer* $OUTPUT
 
 if [[ -n "$AWS_SECRET_ACCESS_KEY" ]]
