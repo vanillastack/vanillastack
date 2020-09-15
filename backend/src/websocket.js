@@ -349,28 +349,54 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
         } else {
             console.log(`${transactionId} Setup running in dry-run-mode`);
-            const testOutput = fs.readFileSync('/tmp/helper.txt', //'/usr/workdir/src/templates/helper.txt',
-                'utf8').split(/\r?\n/);
+            const dryRunScriptsPath = path.join(__dirname, 'templates');
+            const options = {
+                cwd: dryRunScriptsPath,
+                env: null
+            };
 
-            wsMsg.event = 'EXECUTION';
-            wsMsg.payload = 'Running in dry-run mode';
-            sendMessage(wsMsg, wsClient);
+            const dryExec = proc.spawn('sh',
+                [path.join(dryRunScriptsPath, 'dry-run_setup.sh'), path.join(dryRunScriptsPath, 'helper.txt')], // 'type_vanillastack_deploy.yaml'
+                options
+            );
 
-            testOutput.forEach(line => {
-                sleep(200).then(() => {
-                    console.log(line);
-                    wsMsg.event = 'EXECUTION';
-                    wsMsg.payload = line;
-                    sendMessage(wsMsg, wsClient);
-                });
+            dryExec.stdout.on('data', stdout => {
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = stdout.toString();
+                sendMessage(wsMsg, wsClient);
+                console.log(stdout.toString());
             });
 
-            wsMsg.event = 'DONE';
-            wsMsg.payload = '0';
-            sendMessage(wsMsg, wsClient);
+            dryExec.stderr.on('data', stderr => {
+                console.log(stderr.toString());
+                wsMsg.event = 'EXECUTION';
+                wsMsg.payload = stderr.toString();
+                sendMessage(wsMsg, wsClient);
+            });
+
+            dryExec.on('error', err => {
+                console.log(err);
+                wsMsg.event = 'ERROR';
+                wsMsg.payload = err;
+                sendMessage(wsMsg, wsClient);
+            });
+
+            dryExec.on('close', code => {
+                // todo: read kubeconfig kubeadm.conf
+                // const kubeConf = fs.readFileSync(`${dir}/kubeadm.conf`, 'utf8');
+                // wsClient['kubeConfig'] = kubeConf;
+                // wsMsg.event = 'EXECUTION';
+                // wsMsg.payload = kubeConf;
+                // sendMessage(wsMsg, wsClient);
+                console.log(code);
+                wsMsg.event = 'DONE';
+                wsMsg.payload = code;
+                sendMessage(wsMsg, wsClient);
+                // cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
+            });
             console.log(`${transactionId} Setup dry-run complete continuing with cleanup`);
             // Cleanup
-            cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
+            // cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
         }
 
     } catch (error) {
@@ -383,7 +409,6 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
         cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
     }
 }
-
 
 // invoke like so: randPassword(5,3,2);
 function randPassword(letters, numbers, either) {

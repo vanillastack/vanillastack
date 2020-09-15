@@ -20,9 +20,9 @@ build_docker_image_prod:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack
-    - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/vsinstaller:$DATE -t harbor.cloudical.net/vanillastack/vsinstaller:latest .
-    - docker push harbor.cloudical.net/vanillastack/vsinstaller:$DATE
-    - docker push harbor.cloudical.net/vanillastack/vsinstaller:latest
+    - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$DATE -t harbor.cloudical.net/vanillastack/installer:latest .
+    - docker push harbor.cloudical.net/vanillastack/installer:$DATE
+    - docker push harbor.cloudical.net/vanillastack/installer:latest
 
 redeploy_debian:
   only:
@@ -31,7 +31,9 @@ redeploy_debian:
   stage: redeploy
   interruptible: true
   script:
+    - apt update && apt install -y curl
     - curl $WEBHOOK_REDEPLOY
+
 
 run_playbook:
   only:

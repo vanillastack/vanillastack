@@ -3,7 +3,7 @@ system_domain: "{{ cloudfoundry.coreDomain }}"
 kube:
   storage_class: {{ cloudfoundry.storageclass }}
 
-high_availability: {{ global.isHA }}
+high_availability: false
 
 features:
   ingress:
