@@ -145,12 +145,16 @@
   roles:
   - role: install-efk
     action: init
+    when: efkstack.enabled
   - role: install-efk
     action: es_deploy
+    when: efkstack.enabled
   - role: install-efk
     action: kibana_helm
+    when: efkstack.enabled
   - role: install-efk
     action: fluentd_deploy
+    when: efkstack.enabled
 
 - name: Deploy Postgres Operator
   hosts: master[0]
