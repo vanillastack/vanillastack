@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <div class="row margin-2em">
+        <div class="row margin-2em ">
             <div class="col">
                 <h3 v-if="!installed">VanillaStack is installing!</h3>
                 <h3 v-if="installed">VanillaStack is installed!</h3>
@@ -10,19 +10,23 @@
             <div class="col">
                 <h5>Congratulations!</h5>
                 <p>You may now use your newly installed VanillaStack Cluster!</p>
-                <p>To connect to Kubernetes directly, please use this .kubeconfig:</p>
-                <pre>{{ kubeconfig }}</pre>
                 <p>To access your installed components via their Web-UIs, you can use their respective DNS-Names</p>
                 <p>Enjoy your VanillaStack!</p>
             </div>
         </div>
-        <div class="row margin-2em">
+        <div class="row margin-2em" v-if="installed">
+            <div class="col-1" v-if="isDryRun"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Restart</a></div>
+        </div>
+        <div class="row" v-if="installed">
+            <div class="col"><pre style="width: 100%; overflow: hidden !important" class="pre-install" id="logs">{{ display }}</pre></div>
+        </div>
+        <div class="row margin-2em" v-if="installing">
             <div class="col">
                 Here you can find all the output from the installation process.
             </div>
         </div>
-        <div class="row margin-2em">
-            <div class="col" id="list" v:model="display" style="overflow:auto" />
+        <div class="row margin-2em" style="width; 80%; position: absolute; top: 5em; left: 2em; height: 30em; margin-top:2em; padding-bottom: 5em; overflow: auto !important" v-if="installing">
+            <div class="col" style="width: 100%;"><pre style="width: 100%; overflow: hidden !important" class="pre-install" id="list">{{ display }}</pre></div>
         </div>
     </div>
 </template>
@@ -39,11 +43,25 @@ export default {
             display: 'Installation started...',
             installing: false,
             installed: false,
-            kubeconfig: ''
+            kubeconfig: '',
+            isDryRun: window.location.search.indexOf('dry=true') > 0,
         }
     },
 
     methods: {
+
+        startInstallation: function() {
+            this.display = ''
+            this.showLog = false
+
+            var payload = this.generateCall()
+            payload.uuid = this.$store.state.base.uuid
+
+            console.log("DATA", this.generateCall())
+            console.log("DATA-TXT", JSON.stringify(this.generateCall()))
+
+            this.$network.setup(payload)
+        },
 
         // Adds a node to the list
         transformNode: function(list, item, isWorker, short) {
@@ -111,13 +129,7 @@ export default {
         })
 
         // Start the installation
-        var payload = this.generateCall()
-        payload.uuid = this.$store.state.base.uuid
-
-        console.log("DATA", this.generateCall())
-        console.log("DATA-TXT", JSON.stringify(this.generateCall()))
-
-        this.$network.setup(payload)
+        this.startInstallation()
     },
 
     created: function() {
@@ -132,17 +144,18 @@ export default {
             var data = JSON.parse(message)
 
             // Process only data to be displayed for this transaction-id
-            //console.log(this.transactionId, data.transactionId, data)
+            // console.log(this.transactionId, data.transactionId, data)
 
             if(data.transactionId == this.transactionId) {
                 if(data.event == 'EXECUTION' || data.event == 'EXEC') {
-                    this.installing = false
-                    this.installed = true
+                    this.installing = true
+                    this.installed = false
 
-                    var message = '<pre class="pre-install">' + data.payload + '</pre>'
+                    var message = data.payload
 
                     var list = document.getElementById('list')
-                    list.innerHTML += message
+                    this.display += message
+                    //list.body.innerHTML += message
                     list.scrollIntoView(false)
                 }
 

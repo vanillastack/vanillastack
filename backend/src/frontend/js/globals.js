@@ -3,7 +3,8 @@ const data = {
     routes: [],
     vue: null,
     store: null,
-    UUID: ''
+    UUID: '',
+    version: ''
 }
 
 global.Globals = data

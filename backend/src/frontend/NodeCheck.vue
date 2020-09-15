@@ -62,7 +62,7 @@
             <div class="row margin-2em">
                 <div class="col">
                     <p>You can use the <pre style="display: inline">lsblk -f</pre> command to verify the filesystem-information on your machines:</p>
-                    <p><img src="/images/rook-prerequisites.png" style="max-width: 800px" /></p>
+                    <p><img src="./images/rook-prerequisites.png" style="max-width: 800px" /></p>
                     <p>In the given image, volume <strong>vdb</strong> is in a raw state, and can therefore be used for Rook.</p>
                 </div>
             </div>

@@ -12,7 +12,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/harbor.png" class="lead-image" />
+                <img src="./images/harbor.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 Harbor is an open source container registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted.
@@ -28,7 +28,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/prometheus.png" class="lead-image" />
+                <img src="./images/prometheus.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 Prometheus is an open-source event-monitoring and -alerting software. It records real-time metrics in a time series database built using a HTTP pull model, with flexible queries and real-time alerting. Prometheus is widely used in operational environments.
@@ -44,7 +44,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/grafana.png" class="lead-image" />
+                <img src="./images/grafana.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 Grafana is an open-source analytics and data-visualization-tool. It runs on multiple platforms, integrates very well with many time-based databases and tools, such as grafana, and is highly customizable and expandable. By the help of a custom query syntax, even complex visualizations and dashboards can be generated.
@@ -60,7 +60,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/elastic.png" class="lead-image" />
+                <img src="./images/elastic.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 Elasticsearch is a search engine, providing a distributed, multi-tenant-capable fulltext-engine accessible via an HTTP-interface. Elasticsearch is one of the most widely used search engines and is enabled for high-availability scenarios and distributed operations. Elasticsearch is very often used with log-aggregation, but can actually process nearly every text-driven data-format.
@@ -76,7 +76,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/fluentd.png" class="lead-image" />
+                <img src="./images/fluentd.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 Fluentd is a cross platform open-source data collection software. It is typically used for collecting and transforming log data, before they get stored in Elasticsearch. Fluentd is available on different platforms, such as Windows, Linux and Mac OS X.
@@ -92,7 +92,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/kibana.png" class="lead-image" />
+                <img src="./images/kibana.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 Kibana is a free and open user interface that lets you visualize Elasticsearch data.  Kibana is used as part of the Elastic stack to store, query and visualize log data. One can create bar, line and scatter plots, or pie charts and maps on top of large volumes of data.
@@ -108,7 +108,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/jaeger.png" class="lead-image" />
+                <img src="./images/jaeger.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 Jaeger is an open source distributed tracing system. It is often used within microservice-based applications to trace their behaviours and to improve performance. Jaeger was developed by Uber Engineering and donated to the CNCF in 2017.     
@@ -124,7 +124,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/NGINX-logo.png" class="lead-image" />
+                <img src="./images/NGINX-logo.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 Nginx is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache. Nginx is free and open-source software. It serves as ingress-controller and therefore routes and manages all incoming HTTP-requests.     
@@ -140,7 +140,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/cert-manager.png" class="lead-image" />
+                <img src="./images/cert-manager.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 cert-manager is a native Kubernetes certificate management controller. It can help with issuing certificates from a variety of sources, such as Let’s Encrypt, HashiCorp Vault, Venafi, a simple signing key pair, or self signed.    
@@ -156,7 +156,7 @@
         </div>
         <div class="row margin-2em form-group">
             <div class="col-1">
-                <img src="/images/kubernetes.png" class="lead-image" />
+                <img src="./images/kubernetes.png" class="lead-image" />
             </div>
             <div class="col-4 valign-center">
                 The Kubernetes Dashboard allows to easily manage your Kubernetes installation. It is perhaps not the most feature-rich solution out there, but it gives you a jump-start with managing your workloads    

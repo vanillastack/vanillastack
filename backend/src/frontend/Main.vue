@@ -3,7 +3,7 @@
     <!-- Header area -->
     <header class="header">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <router-link to="/" class="navbar-brand"><img src="/images/vanilla-logo.png" class="logo" /></router-link>
+        <router-link to="/" class="navbar-brand"><img src="./images/vanilla-logo.png" class="logo" /></router-link>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -35,7 +35,7 @@
           <div class="col h-100">
             <div class="content h-100">
               <div class="row h-100">
-                <div class="col scroll-area"><router-view></router-view></div>
+                <div class="col scroll-area" id="view"><router-view></router-view></div>
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@
                 <span v-if="!canGoBack" class="block-width-100 margin-right-2em"></span>
                 <a v-if="canGoBack" class="btn btn-primary min-width-100 margin-right-2em" role="button" v-on:click="goBack">Back</a>
                 <a v-if="canGoForward" class="btn btn-success min-width-100" :class="{disabled: !allowGoForward}" role="button" v-on:click="goNext">Next</a>
-                <a v-if="isInstallationPage || isInstalling" class="btn btn-success min-width-100" role="button" v-on:click="startInstallation">Install</a>
+                <a v-if="isInstallationPage" class="btn btn-success min-width-100" role="button" v-on:click="startInstallation">Install</a>
               </span>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default {
   },
 
   created : function () {
-    EventBus.$on(Constants.Event_StartInstallation, () => {
+    EventBus.$on(Constants.Network_InstallationInProgress, () => {
       this.isInstalling = true
     })
 
