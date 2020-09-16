@@ -154,7 +154,7 @@
     when: efkstack.enabled
   - role: install-efk
     action: "{{ efkstack.logaggregator.name }}_deploy"
-    when: efkstack.enabled"
+    when: efkstack.enabled
 
 - name: Deploy Postgres Operator
   hosts: master[0]
