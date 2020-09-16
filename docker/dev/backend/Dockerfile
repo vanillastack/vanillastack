@@ -7,6 +7,7 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DOCKER=true
+ENV DEBUG=true
 #ENV ANSIBLE_HOST_KEY_CHECKING=false
 #ENV ANSIBLE_LOAD_CALLBACK_PLUGINS=true
 #ENV ANSIBLE_STDOUT_CALLBACK=json
@@ -28,6 +29,7 @@ RUN npm install && npm audit fix
 ## copy app files
 COPY ./backend/src /usr/workdir/src/
 COPY ./ansible /usr/workdir/ansible/
+COPY ./version /usr/workdir/src/
 
 RUN echo  '\n\
     #!/bin/bash\n\

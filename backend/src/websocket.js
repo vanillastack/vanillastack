@@ -172,6 +172,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                     nodes.forEach((node) => {
                         // console.log(stdoutJson[node.host]);
                         if (ansibleStats[node.host].unreachable) {
+                            console.log(`${transactionId} connecting to: ${node.host} failed`);
                             node.avail = false;
                             node.freeDiskSpace = '0';
                             node.memory = '0';
@@ -209,7 +210,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                                     }
                                 }
                                 if (raw) {
-                                    console.log(`Key: ${key}`);
+                                    console.log(`${transactionId} Found RAW Device: ${key} on ${node.host}`);
                                     const size = value.size.split(" ");
                                     node.raw = true;
                                     node.diskSpace = convertSizeToGib(size[0], size[1]);
@@ -269,7 +270,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
     }
 };
 
-const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
+const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
 
     const wsMsg = {
         event: 'INIT',
@@ -278,66 +279,78 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
     }
 
     // Send init msg through ws
-    // sendMessage(wsMsg, wsClient);
+    sendMessage(wsMsg, wsClient);
     const dir = `${basePath}/${wsClient.uuid}`;
+
     try {
 
         console.log(`${transactionId} Setup started`);
 
         // create ansible env
         process.env.ANSIBLE_HOST_KEY_CHECKING = false;
+        process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = false;
+        process.env.ANSIBLE_STDOUT_CALLBACK = 'default';
+
+        // Copy necessary files for Ansible
         fs.mkdirSync(`${dir}/group_vars/all`, {recursive: true});
         fs.copyFileSync(`${basePath}/group_vars.testing/all/cert-manager.yaml`, `${dir}/group_vars/all/cert-manager.yaml`);
         fs.copyFileSync(`${basePath}/group_vars.testing/all/global.yaml`, `${dir}/group_vars/all/global.yaml`);
         fs.copyFileSync(`${basePath}/group_vars.testing/all/openstack.yaml`, `${dir}/group_vars/all/openstack.yaml`);
         fs.copyFileSync(`${basePath}/group_vars.testing/all/rook.yaml`, `${dir}/group_vars/all/rook.yaml`);
-        // fs.mkdirSync(`${dir}/group_vars`, {recursive: true});
+
         fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
-        fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsYaml));
-        // fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
-        // console.log(hostsYaml);
-        // console.log(yaml.safeDump(hostsYaml));
+        fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsJson));
 
         if (!Boolean(dryRun)) { //&& (process.env.DOCKER || process.env.DOCKER != null)
             const options = {
-                cwd: basePath,
+                cwd: `${basePath}`,
                 env: null
             };
+
             console.log(`${transactionId} Calling Ansible`);
             const ans = proc.spawn('ansible-playbook',
-                ['-i', `${dir}/hosts.json`, 'type_vanillastack_deploy.yaml'], // 'type_vanillastack_deploy.yaml'
+                ['-i', `${dir}/hosts.json`, `${basePath}/type_vanillastack_deploy.yaml`], // 'type_vanillastack_deploy.yaml'
                 options
             );
 
-            ans.stdout.on('data', stdout => {
-                console.log(`${transactionId} STDOUT: ${stdout}`);
+            ans.stdout.on('data', (data) => {
+                if (process.env.DEBUG) {
+                    console.log(`${transactionId} STDOUT: ${data.toString()}`);
+                }
                 wsMsg.event = 'EXECUTION';
-                wsMsg.payload = stdout.toString();
+                wsMsg.payload = data.toString();
                 sendMessage(wsMsg, wsClient);
             });
 
-            ans.stderr.on('data', stderr => {
-                console.log(`${transactionId} STDERR: ${stderr}`);
+
+            ans.stderr.on('data', (data) => {
+                if (process.env.DEBUG) {
+                    console.log(`${transactionId} STDERR: ${data.toString()}`);
+                }
                 wsMsg.event = 'EXECUTION';
-                wsMsg.payload = stderr.toString();
+                wsMsg.payload = data.toString();
                 sendMessage(wsMsg, wsClient);
             });
 
-            ans.on('error', err => {
-                // console.log(err);
-                console.log(`${transactionId} Setup received an Error: ${err}`);
-                wsMsg.event = 'ERROR';
-                wsMsg.payload = err;
-                sendMessage(wsMsg, wsClient);
-            });
+            // ans.on('error', err => {
+            //     console.log(`${transactionId} Setup received an Error: ${err}`);
+            //     wsMsg.event = 'ERROR';
+            //     wsMsg.payload = err;
+            //     sendMessage(wsMsg, wsClient);
+            // });
 
             ans.on('close', code => {
                 // todo: fail safety missing
-                console.log(`${transactionId} Setup completed with Status Code ${code} reading kube config`);
+                console.log(`${transactionId} Setup completed with Status Code ${code}`);
                 if (fs.existsSync(`${dir}/kubeadm.conf`)) {
+                    console.log(`${transactionId} Reading Kube Config`);
                     wsClient.setup = fs.readFileSync(`${dir}/kubeadm.conf`, 'utf8');
+                } else {
+                    console.log(`${transactionId} Kube Config not found`);
+                    wsClient.setup = null;
                 }
 
+                // Last exec msg with kubeConfig
                 // wsMsg.event = 'EXECUTION';
                 // wsMsg.payload = wsClient.setup;
                 // sendMessage(wsMsg, wsClient);
@@ -345,7 +358,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
                 wsMsg.event = 'DONE';
                 wsMsg.payload = code;
                 sendMessage(wsMsg, wsClient);
-                // cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
+                cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
             });
 
         } else {
@@ -364,17 +377,21 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
                 options
             );
 
-            dryExec.stdout.on('data', stdout => {
+            dryExec.stdout.on('data', data => {
+                if (process.env.DEBUG) {
+                    console.log(`${transactionId} Dry-Run STDOUT: ${data.toString()}`);
+                }
                 wsMsg.event = 'EXECUTION';
-                wsMsg.payload = stdout.toString();
+                wsMsg.payload = data.toString();
                 sendMessage(wsMsg, wsClient);
-                console.log(stdout.toString());
             });
 
-            dryExec.stderr.on('data', stderr => {
-                console.log(stderr.toString());
+            dryExec.stderr.on('data', data => {
+                if (process.env.DEBUG) {
+                    console.log(`${transactionId} Dry-Run STDOUT: ${data.toString()}`);
+                }
                 wsMsg.event = 'EXECUTION';
-                wsMsg.payload = stderr.toString();
+                wsMsg.payload = data.toString();
                 sendMessage(wsMsg, wsClient);
             });
 
@@ -460,9 +477,9 @@ const convertSizeToGib = function (size, format) {
 
 const cleanUpPath = function (transactionId, baseDir, files) {
     try {
-        process.env.ANSIBLE_HOST_KEY_CHECKING = '';
-        process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = '';
-        process.env.ANSIBLE_STDOUT_CALLBACK = '';
+        // process.env.ANSIBLE_HOST_KEY_CHECKING = '';
+        process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = false;
+        process.env.ANSIBLE_STDOUT_CALLBACK = 'default';
         if (fs.existsSync(baseDir)) {
             if (files != null) {
                 files.forEach((file) => {

@@ -6,6 +6,7 @@ ENV PORT=8080
 ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
+ENV DEBUG=true
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
