@@ -84,8 +84,7 @@ global:
   # pullPolicy is the container image pull policy
   pullPolicy: IfNotPresent
 
-  k8sServiceHost: "api.{{ kubernetes.loadBalancer.fqdn }}"
-  k8sServicePort: 6443
+  enableHealthCheckNodeport: false
 
   devices: []
 
@@ -341,7 +340,7 @@ global:
   hostFirewall: false
 
   # kubeProxyReplacement enables kube-proxy replacement in Cilium BPF datapath
-  kubeProxyReplacement: "strict"
+  kubeProxyReplacement: "partial"
 
   # hostServices is the configuration for ClusterIP service handling in host namespace
   hostServices:
