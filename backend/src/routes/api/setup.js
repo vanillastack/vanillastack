@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const {getClient, setup, sleep, genTransactionId, randPassword} = require('../../websocket');
 
 /**
@@ -74,7 +75,7 @@ router.post('/', function (req, res) {
     }
 
 
-    const basePath = `/usr/workdir/ansible/`;
+    const basePath = path.join(__dirname, '../../../ansible');
     // Building Inventory
     const hostsYaml = {
         all: {
