@@ -23,16 +23,16 @@ kubernetes:
   version: "1.19"
   crioVersion: "1.18"
 cloudfoundry:
-  enabled: true
+  enabled: false
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
-  enabled: true
+  enabled: false
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"  
 guacamole:
   imageTag: 202009100849
-  enabled: true
+  enabled: false
   namespace: guacamole
   coreDomain: "guacamole.{{ kubernetes.loadBalancer.clusterDomain }}"
   postgres:
@@ -122,4 +122,4 @@ efkstack:
   imageTag: "7.9.1"
   kibana: 
     coreDomain: "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"
-  enabled: true
+  enabled: false
