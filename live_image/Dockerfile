@@ -16,3 +16,5 @@ COPY rootfs /
 RUN bash -x prepare-installer.bash
 
 VOLUME $OUTPUT
+
+CMD /build-installer.bash
