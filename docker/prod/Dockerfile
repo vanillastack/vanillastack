@@ -6,6 +6,7 @@ ENV PORT=8080
 ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
+ENV DEBUG=false
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
@@ -40,7 +41,6 @@ FROM base
 COPY ./backend/package.json ./
 COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
-COPY ./backend/public ./public/
 COPY ./ansible /usr/workdir/ansible/
 
 RUN echo  '\n\

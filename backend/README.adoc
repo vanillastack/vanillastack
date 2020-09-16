@@ -8,7 +8,9 @@ Got to VanillaStack/backend and execute docker build and run command
 
 [source,shell script]
 ----
-cd VanillaStack/backend
+mkdir VanillaStack
+cd VanillaStack
+git clone vs .
 docker build -f docker/prod/Dockerfile \
   -t vanillastack-installer . && \
   docker run \

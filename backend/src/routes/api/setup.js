@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const {getClient, setup, sleep, genTransactionId, randPassword} = require('../../websocket');
 
 /**
@@ -34,6 +35,7 @@ const {getClient, setup, sleep, genTransactionId, randPassword} = require('../..
  *                 content: {}
  */
 router.post('/', function (req, res) {
+
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry;
     const cluster = req.body.cluster;
@@ -74,7 +76,7 @@ router.post('/', function (req, res) {
     }
 
 
-    const basePath = `/usr/workdir/ansible/`;
+    const basePath = path.join(__dirname, '../../../ansible');
     // Building Inventory
     const hostsYaml = {
         all: {
