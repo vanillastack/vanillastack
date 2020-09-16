@@ -1,8 +1,6 @@
 ---
 # defaults file for deploy-kubernetes
 
-reset_cluster: false
-
 kubernetes:
   init_opts: ""
   kubeadm_opts: ""
@@ -11,6 +9,7 @@ kubernetes:
     virtualIP: 135.181.48.19
     clusterDomain: ""
   clusterName: kube
+  resetCluster: false
   version: "1.19"
   crioVersion: "1.18"
   kubeadmin_config: /etc/kubernetes/admin.conf

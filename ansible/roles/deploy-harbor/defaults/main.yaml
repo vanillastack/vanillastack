@@ -47,12 +47,12 @@ harbor:
     chartVersion: 10.8.1
     password: ""
     persistence:
-      storageClass: "rook-ceph-block"
+      storageClass: rook-ceph-block
       size: 8Gi
   postgres:
-    size: "20Gi"
+    size: 20Gi
     replicas: 2
-    version: "12"
+    version: 12
     maxConnections: 400
     backup:
       enabled: false
