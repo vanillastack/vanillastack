@@ -24,12 +24,14 @@ RUN apt update && apt install -y \
 
 ## Install npm Modules
 COPY ./backend/package.json /usr/workdir/
-RUN npm install && npm audit fix
+COPY ./ansible /usr/workdir/ansible/
+COPY ./version /usr/workdir/src/
+
+RUN npm install && npm audit fix && \
+    pip3 install -r /usr/workdir/ansible/requirements.txt
 
 ## copy app files
 COPY ./backend/src /usr/workdir/src/
-COPY ./ansible /usr/workdir/ansible/
-COPY ./version /usr/workdir/src/
 
 RUN echo  '\n\
     #!/bin/bash\n\

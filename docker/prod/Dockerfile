@@ -56,7 +56,8 @@ RUN echo  '\n\
 
 ## Install npm Modules
 ## Build and prep Frontend
-RUN npm install && npm audit fix \
+RUN pip3 install -r /usr/workdir/ansible/requirements.txt \
+    && npm install && npm audit fix \
     && rm -rf ./dist/* && npm run build \
     && rm -rf ./src/public/* && cp -r ./dist/* ./src/public
 
