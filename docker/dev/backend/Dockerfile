@@ -6,6 +6,7 @@ ENV PORT=8080
 ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
+ENV DOCKER=true
 #ENV ANSIBLE_HOST_KEY_CHECKING=false
 #ENV ANSIBLE_LOAD_CALLBACK_PLUGINS=true
 #ENV ANSIBLE_STDOUT_CALLBACK=json
@@ -20,8 +21,11 @@ RUN apt update && apt install -y \
     ansible-galaxy collection install community.kubernetes && \
     rm -rf /var/lib/apt/lists/* 
 
-## copy app files
+## Install npm Modules
 COPY ./backend/package.json /usr/workdir/
+RUN npm install && npm audit fix
+
+## copy app files
 COPY ./backend/src /usr/workdir/src/
 COPY ./ansible /usr/workdir/ansible/
 
@@ -35,9 +39,6 @@ RUN echo  '\n\
     \n'\
     > /usr/workdir/src/templates/dry-run_setup.sh && \
     chmod +x /usr/workdir/src/templates/dry-run_setup.sh
-
-## Install npm Modules
-RUN npm install && npm audit fix
 
 ## Run nginx and backend
 CMD ["npm", "run", "dockerdev"]
