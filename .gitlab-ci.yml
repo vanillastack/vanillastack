@@ -5,22 +5,52 @@ variables:
   DOCKER_HOST: tcp://localhost:2375
 
 stages:
+  - build_docker_image_dev
+  - build_docker_image_testing
   - build_docker_image_prod
   - redeploy
   - run_playbook
 
-build_docker_image_prod:
+build_docker_image_dev:
   only:
     refs:
       - backend
-  stage: build_docker_image_prod
+  stage: build_docker_image_dev
   interruptible: true
   script:
     - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack
-    - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$DATE -t harbor.cloudical.net/vanillastack/installer:latest .
+    - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:dev-$DATE .
+    - docker push harbor.cloudical.net/vanillastack/installer:dev-$DATE
+
+build_docker_image_testing:
+  only:
+    refs:
+      - backend_testing
+  stage: build_docker_image_testing
+  interruptible: true
+  script:
+    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - cd vanillastack
+    - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:testing-$DATE .
+    - docker push harbor.cloudical.net/vanillastack/installer:testing-$DATE
+
+build_docker_image_dev:
+  only:
+    refs:
+      - master
+  stage: build_docker_image_dev
+  interruptible: true
+  script:
+    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - cd vanillastack
+    - export DATE=$(date +'%Y%m%d%H%M') && docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$DATE -t -t harbor.cloudical.net/vanillastack/installer:lates .
     - docker push harbor.cloudical.net/vanillastack/installer:$DATE
     - docker push harbor.cloudical.net/vanillastack/installer:latest
 
