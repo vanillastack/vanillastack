@@ -120,6 +120,27 @@ harbor:
       cronjob: "30 */2 * * *"
 efkstack:
   imageTag: "7.9.1"
-  kibana: 
+  kibana:
+    system_user: "{{ ansible_user }}"
+    system_group: "{{ ansible_user }}"
     coreDomain: "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"
-  enabled: false
+  enabled: true
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+  es:
+    replicas: 3
+    storage:
+      class_name: "rook-ceph-block"
+      size: "30Gi"
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "2Gi"
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"

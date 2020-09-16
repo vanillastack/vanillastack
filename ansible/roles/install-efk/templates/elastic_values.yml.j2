@@ -1,7 +1,7 @@
 ---
 clusterName: "elasticsearch"
 
-replicas: 3
+replicas: {{ efkstack.es.replicas }}
 minimumMasterNodes: 2
 
 esConfig: {}
@@ -27,8 +27,8 @@ secretMounts: []
 #    path: /usr/share/elasticsearch/config/certs
 #    defaultMode: 0755
 
-image: "docker.elastic.co/elasticsearch/elasticsearch"
-imageTag: "7.9.1"
+image: "docker.elastic.co/elasticsearch/elasticsearch-oss"
+imageTag: "{{ efkstack.imageTag }}"
 imagePullPolicy: "IfNotPresent"
 
 podAnnotations: {}
@@ -41,11 +41,11 @@ esJavaOpts: "-Xmx1g -Xms1g"
 
 resources:
   requests:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "{{ efkstack.es.resources.requests.cpu }}"
+    memory: "{{ efkstack.es.resources.requests.memory }}"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "{{ efkstack.es.resources.limits.cpu }}"
+    memory: "{{ efkstack.es.resources.limits.memory }}"
 
 initResources: {}
   # limits:
@@ -67,9 +67,10 @@ networkHost: "0.0.0.0"
 
 volumeClaimTemplate:
   accessModes: [ "ReadWriteOnce" ]
+  storageClassName: "{{ efkstack.es.storage.class_name }}"
   resources:
     requests:
-      storage: 30Gi
+      storage: {{ efkstack.es.storage.size }}
 
 rbac:
   create: true
@@ -252,4 +253,3 @@ keystore: []
 # Deprecated
 # please use the above podSecurityContext.fsGroup instead
 fsGroup: ""
-

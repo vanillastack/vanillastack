@@ -9,8 +9,8 @@ replicas: 1
 extraEnvs:
   - name: "NODE_OPTIONS"
     value: "--max-old-space-size=1800"
-#  - name: MY_ENVIRONMENT_VAR
-#    value: the_value_goes_here
+  - name: XPACK_SECURITY_ENABLED
+    value: "false"
 
 # Allows you to load environment variables from kubernetes secret or config map
 envFrom: []
@@ -28,7 +28,7 @@ secretMounts: []
 #    path: /usr/share/kibana/data/kibana.keystore
 #    subPath: kibana.keystore # optional
 
-image: "docker.elastic.co/kibana/kibana"
+image: "docker.elastic.co/kibana/kibana-oss"
 imageTag: "{{ efkstack.imageTag }}"
 imagePullPolicy: "IfNotPresent"
 
@@ -40,11 +40,11 @@ podAnnotations: {}
 
 resources:
   requests:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "{{ efkstack.kibana.resources.requests.cpu }}"
+    memory: "{{ efkstack.kibana.resources.requests.memory }}"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "{{ efkstack.kibana.resources.limits.cpu }}"
+    memory: "{{ efkstack.kibana.resources.limits.memory }}"
 
 protocol: http
 
@@ -148,4 +148,3 @@ lifecycle: {}
   # postStart:
   #   exec:
   #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
-
