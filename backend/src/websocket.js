@@ -41,12 +41,16 @@ const sendMessage = function (msgObject, wsClient) {
     // console.log(wsClient);
     if (wsClient.ws) {
         if (wsClient.ws.readyState === WebSocket.OPEN) {
-            console.log(`${msgObject.transactionId}: Sending Message`);
+            if (!Boolean(process.env.DEBUG)) {
+                console.log(`${msgObject.transactionId}: Sending Message`);
+            }
             wsClient.ws.send(JSON.stringify(msgObject));
             return true;
         }
     }
-    console.log(`${msgObject.transactionId}: Client not Connected`);
+    if (process.env.DEBUG) {
+        console.log(`${msgObject.transactionId}: Client not Connected`);
+    }
     return false;
 };
 
@@ -210,7 +214,9 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                                     }
                                 }
                                 if (raw) {
-                                    console.log(`${transactionId} Found RAW Device: ${key} on ${node.host}`);
+                                    if (!Boolean(process.env.DEBUG)) {
+                                        console.log(`${transactionId} Found RAW Device: ${key} on ${node.host}`);
+                                    }
                                     const size = value.size.split(" ");
                                     node.raw = true;
                                     node.diskSpace = convertSizeToGib(size[0], size[1]);
@@ -314,7 +320,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
             );
 
             ans.stdout.on('data', (data) => {
-                if (process.env.DEBUG) {
+                if (!Boolean(process.env.DEBUG)) {
                     console.log(`${transactionId} STDOUT: ${data.toString()}`);
                 }
                 wsMsg.event = 'EXECUTION';
@@ -324,20 +330,13 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
 
 
             ans.stderr.on('data', (data) => {
-                if (process.env.DEBUG) {
+                if (!Boolean(process.env.DEBUG)) {
                     console.log(`${transactionId} STDERR: ${data.toString()}`);
                 }
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = data.toString();
                 sendMessage(wsMsg, wsClient);
             });
-
-            // ans.on('error', err => {
-            //     console.log(`${transactionId} Setup received an Error: ${err}`);
-            //     wsMsg.event = 'ERROR';
-            //     wsMsg.payload = err;
-            //     sendMessage(wsMsg, wsClient);
-            // });
 
             ans.on('close', code => {
                 // todo: fail safety missing
