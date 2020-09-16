@@ -281,33 +281,28 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
     // sendMessage(wsMsg, wsClient);
     const dir = `${basePath}/${wsClient.uuid}`;
     try {
-        if (!Boolean(dryRun)) {
-            console.log(`${transactionId} Setup started`);
 
-            // create ansible env
-            process.env.ANSIBLE_HOST_KEY_CHECKING = false;
-            fs.mkdirSync(`${dir}/group_vars/all`, {recursive: true});
-            fs.copyFileSync(`${basePath}/group_vars.testing/all/cert-manager.yaml`, `${dir}/group_vars/all/cert-manager.yaml`);
-            fs.copyFileSync(`${basePath}/group_vars.testing/all/global.yaml`, `${dir}/group_vars/all/global.yaml`);
-            fs.copyFileSync(`${basePath}/group_vars.testing/all/openstack.yaml`, `${dir}/group_vars/all/openstack.yaml`);
-            fs.copyFileSync(`${basePath}/group_vars.testing/all/rook.yaml`, `${dir}/group_vars/all/rook.yaml`);
-            // fs.mkdirSync(`${dir}/group_vars`, {recursive: true});
-            fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
-            fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsYaml));
-            // fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
-            // console.log(hostsYaml);
-            // console.log(yaml.safeDump(hostsYaml));
+        console.log(`${transactionId} Setup started`);
 
+        // create ansible env
+        process.env.ANSIBLE_HOST_KEY_CHECKING = false;
+        fs.mkdirSync(`${dir}/group_vars/all`, {recursive: true});
+        fs.copyFileSync(`${basePath}/group_vars.testing/all/cert-manager.yaml`, `${dir}/group_vars/all/cert-manager.yaml`);
+        fs.copyFileSync(`${basePath}/group_vars.testing/all/global.yaml`, `${dir}/group_vars/all/global.yaml`);
+        fs.copyFileSync(`${basePath}/group_vars.testing/all/openstack.yaml`, `${dir}/group_vars/all/openstack.yaml`);
+        fs.copyFileSync(`${basePath}/group_vars.testing/all/rook.yaml`, `${dir}/group_vars/all/rook.yaml`);
+        // fs.mkdirSync(`${dir}/group_vars`, {recursive: true});
+        fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
+        fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsYaml));
+        // fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
+        // console.log(hostsYaml);
+        // console.log(yaml.safeDump(hostsYaml));
+
+        if (!Boolean(dryRun)) { //&& (process.env.DOCKER || process.env.DOCKER != null)
             const options = {
                 cwd: basePath,
                 env: null
             };
-
-            // Setting up ENV
-            // process.env.ANSIBLE_TIMEOUT = 3;
-
-            // process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = true;
-            // process.env.ANSIBLE_STDOUT_CALLBACK = 'json';
 
             const ans = proc.spawn('ansible-playbook',
                 ['-i', `${dir}/hosts.json`, 'type_vanillastack_deploy.yaml'], // 'type_vanillastack_deploy.yaml'
@@ -388,6 +383,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
             dryExec.on('close', code => {
                 // todo: read kubeconfig kubeadm.conf
+                console.log(`${transactionId} Setup dry-run complete continuing with reading KubeConfig`);
                 wsClient.setup = fs.readFileSync(path.join(__dirname,
                     'templates/kube.config.template'),
                     'utf8');
@@ -395,11 +391,10 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
                 wsMsg.event = 'DONE';
                 wsMsg.payload = code;
                 sendMessage(wsMsg, wsClient);
-                // cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
+                console.log(`${transactionId} Setup dry-run reading KubeConfig complete continuing with cleanup`);
+                // Cleanup
+                cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
             });
-            console.log(`${transactionId} Setup dry-run complete continuing with cleanup`);
-            // Cleanup
-            // cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
         }
 
     } catch (error) {
