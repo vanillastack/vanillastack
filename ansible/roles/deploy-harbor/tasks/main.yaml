@@ -27,6 +27,9 @@
     name: bitnami
     repo_url: "https://charts.bitnami.com/bitnami"
 
+- name: refresh helm repo
+  command: helm repo update
+
 - name: Deploy Redis
   community.kubernetes.helm:
     name: redis
