@@ -2,6 +2,9 @@ efkstack:
   enabled: true
   imageTag: "7.9.1"
   kibana:
+    user: kibana_test
+    password: secretlysecretpassword
+    replicas: 2
     system_user: "{{ ansible_user }}"
     system_group: "{{ ansible_user }}"
     coreDomain: "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"
@@ -24,3 +27,13 @@ efkstack:
       limits:
         cpu: "1000m"
         memory: "2Gi"
+  logaggregator:
+    # Choice of filebeat and fluentd
+    name: filebeat
+    resources:
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+      requests:
+        cpu: "100m"
+        memory: "200Mi"
