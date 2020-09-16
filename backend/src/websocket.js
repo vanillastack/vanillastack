@@ -303,7 +303,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
                 cwd: basePath,
                 env: null
             };
-
+            console.log(`${transactionId} Calling Ansible`);
             const ans = proc.spawn('ansible-playbook',
                 ['-i', `${dir}/hosts.json`, 'type_vanillastack_deploy.yaml'], // 'type_vanillastack_deploy.yaml'
                 options
@@ -332,6 +332,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
             ans.on('close', code => {
                 // todo: fail safety missing
+                console.log(`${transactionId} Setup completed reading kube config`);
                 wsClient.setup = fs.readFileSync(`${dir}/kubeadm.conf`, 'utf8');
                 wsClient['kubeConfig'] = kubeConf;
                 wsMsg.event = 'EXECUTION';
