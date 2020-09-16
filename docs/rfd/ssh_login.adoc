@@ -94,6 +94,24 @@ Contra:::
 
 * Detecting SSH-Agent is indeed quite easy, and the installer-script should at least give this a try: If the environment variable `SSH_AUTH_SOCK` is set, then it points to the socket. If the user can read this file, then he has access to the SSH-Agent. Injecting this socket into the container is possible, and relaying the variable into the container is no problem.
 
+== Jurlind: Summary of my thoughts, based on the elaborated information from Jan.
+
+Option 1): As ssh-keys might be "uncommon" to the client, we should support this option. From an implementation perspective we have following options:
+
+1a) User enters on the installer UI the same username/password for all systems to log via ssh.
+
+This is the "easiest" option, for us as well as for the client. I would also refrain from creating additional ssh-key pairs, because this would add complexity, and not increase security. Username/passwords still exist on those systems, even after we install and delete the created ssh-keys. Therefore, we do not really need this extra step. 
+
+1b) User enters on the installer UI different username/password for each system to log via ssh.
+
+This could be a client internal requirement, to not use the same username/password in different systems. Therefore, it seems necessary to support this option also. If we want to do it, is another question. From a security perspective, I would argue that is even better to go with option a) i.e. have the same temporary, username/password on the different systems for the installation process, and delete that user from the systems when finished. However, I see this as the responsibilty of the client, as the tool is being installed at the client, and the client is initiating installation process. We are only responsible to provide this argument, and make cleare where responsibilites lie.
+
+Option 2): As the client might have internal requirments forbbiding username/password via ssh, we should support this option. From an implement perspective we have similar cases as above, i.e 2a) one key-pair for all systems; 2b) different key-pair for each system. As the key-pair is, ideally must be only temporary as the username/password in 1), I would recommend to implement only 2a. This means that the client is responsible to delete/remove the keys from the systems after the installation is finished.
+
+As ssh-keys might be protected with a passphrase, due to internal requirements, it should be supported to enter this passphrase on the UI. If left blank, than installer assumes ssh-key has no phassphrase. In this case I would refrain from extracting the ssh-key from an ssh-agent, this only adds complexity, and it does not really increase security. If ssh-keys are uncommon, ssh-agents even more. Adding the passphrase once at the agent, or once more in the UI of the installer, it does not make a big difference. 
+
+At the end we recommend to use temporary credentials, be those username/password, or ssh-key (with or without phassphrase), that should be removed/deleted by the client after installation is finished. Thus, we could implement a warning at the end of the intallation, like "Warning: Please make sure to remove/delete credentials used for the installation from the systems."
+
 
 == Decision
 
