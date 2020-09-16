@@ -310,14 +310,14 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
             );
 
             ans.stdout.on('data', stdout => {
+                console.log(`${transactionId} STDOUT: ${stdout}`);
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = stdout.toString();
                 sendMessage(wsMsg, wsClient);
-                // console.log(stdout.toString());
             });
 
             ans.stderr.on('data', stderr => {
-                // console.log(stderr.toString());
+                console.log(`${transactionId} STDERR: ${stderr}`);
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = stderr.toString();
                 sendMessage(wsMsg, wsClient);
@@ -325,6 +325,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
             ans.on('error', err => {
                 // console.log(err);
+                console.log(`${transactionId} Setup received an Error: ${err}`);
                 wsMsg.event = 'ERROR';
                 wsMsg.payload = err;
                 sendMessage(wsMsg, wsClient);
@@ -332,17 +333,19 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
             ans.on('close', code => {
                 // todo: fail safety missing
-                console.log(`${transactionId} Setup completed reading kube config`);
-                wsClient.setup = fs.readFileSync(`${dir}/kubeadm.conf`, 'utf8');
-                wsClient['kubeConfig'] = kubeConf;
-                wsMsg.event = 'EXECUTION';
-                wsMsg.payload = kubeConf;
-                sendMessage(wsMsg, wsClient);
+                console.log(`${transactionId} Setup completed with Status Code ${code} reading kube config`);
+                if (fs.existsSync(`${dir}/kubeadm.conf`)) {
+                    wsClient.setup = fs.readFileSync(`${dir}/kubeadm.conf`, 'utf8');
+                }
+
+                // wsMsg.event = 'EXECUTION';
+                // wsMsg.payload = wsClient.setup;
+                // sendMessage(wsMsg, wsClient);
 
                 wsMsg.event = 'DONE';
                 wsMsg.payload = code;
                 sendMessage(wsMsg, wsClient);
-                cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
+                // cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
             });
 
         } else {
@@ -384,15 +387,15 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsYaml) {
 
             dryExec.on('close', code => {
                 // todo: read kubeconfig kubeadm.conf
-                console.log(`${transactionId} Setup dry-run complete continuing with reading KubeConfig`);
-                wsClient.setup = fs.readFileSync(path.join(__dirname,
-                    'templates/kube.config.template'),
-                    'utf8');
-                console.log(code);
+                console.log(`${transactionId} Setup dry-run complete with Status Code ${code}`);
+                const kubeConfTemplate = path.join(__dirname, 'templates/kube.config.template');
+                if (fs.existsSync(kubeConfTemplate)) {
+                    wsClient.setup = fs.readFileSync(kubeConfTemplate, 'utf8');
+                }
                 wsMsg.event = 'DONE';
                 wsMsg.payload = code;
                 sendMessage(wsMsg, wsClient);
-                console.log(`${transactionId} Setup dry-run reading KubeConfig complete continuing with cleanup`);
+                console.log(`${transactionId} Setup dry-run reading KubeConfig complete`);
                 // Cleanup
                 cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
             });
