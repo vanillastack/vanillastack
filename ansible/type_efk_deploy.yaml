@@ -3,15 +3,15 @@
   hosts: master[0]
   gather_facts: true
   roles:
-  # EFK init
   - role: install-efk
     action: init
-  # EFK elasticsearch
+    when: efkstack.enabled
   - role: install-efk
     action: es_deploy
-  # EFK kibana
+    when: efkstack.enabled
   - role: install-efk
-    action: kibana_helm
-  # EFK fluentd
+    action: kibana_deploy
+    when: efkstack.enabled
   - role: install-efk
-    action: fluentd_deploy
+    action: "{{ efkstack.logaggregator.name }}_deploy"
+    when: efkstack.enabled

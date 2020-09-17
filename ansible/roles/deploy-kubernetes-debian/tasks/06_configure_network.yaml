@@ -13,7 +13,7 @@
   become: true
   when: init_cluster is succeeded
   copy:
-    src: "{{ kubeadmin_config }}"
+    src: "{{ kubernetes.kubeadmin_config }}"
     dest: ".kube/config"
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
@@ -22,13 +22,13 @@
 
 - name: install Cilium repository
   community.kubernetes.helm_repository:
-    name: cilium
-    repo_url: https://helm.cilium.io/
+    name: vsinfrastructure
+    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-infrastructure
 
 - name: Deploy latest version of Cilium
   community.kubernetes.helm:
     name: cilium
-    chart_ref: cilium/cilium
+    chart_ref: vsinfrastructure/cilium
     release_namespace: kube-system
     values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
     create_namespace: true

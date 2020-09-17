@@ -1,18 +1,21 @@
 ---
 # defaults file for deploy-kubernetes
-kubeadmin_config: /etc/kubernetes/admin.conf
-service_cidr: "10.96.0.0/12"
-pod_network_cidr: "10.244.0.0/16"
-cidr: "10.244.0.0/16"
-kubeadm_opts: ""
-init_opts: ""
-reset_cluster: false
+
 kubernetes:
+  init_opts: ""
+  kubeadm_opts: ""
+  service_cidr: "10.96.0.0/12"
   loadBalancer:
     virtualIP: 135.181.48.19
-    clusterDomain: test.vanillastack.cloudical.net
+    clusterDomain: ""
   clusterName: kube
   resetCluster: false
   version: "1.19"
   crioVersion: "1.18"
+  kubeadmin_config: /etc/kubernetes/admin.conf
 
+## the following may be historic keys that are no longer needed
+
+#pod_network_cidr: "10.244.0.0/16"
+#cidr: "10.244.0.0/16"
+#reset_cluster: false

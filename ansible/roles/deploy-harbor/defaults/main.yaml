@@ -1,0 +1,59 @@
+harbor:
+  enabled: true
+  chartVersion: 1.4.0
+  namespace: harbor
+  ingress:
+    coreDomain: ""
+    notaryDomain: ""
+  tls:
+    enabled: true
+  portal:
+    replicas: 1
+  core:
+    replicas: 1
+  jobservice:
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 15Gi
+  registry:
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 10Gi
+  chartmuseum:
+    enabled: true
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 5Gi
+  clair:
+    enabled: true
+    replicas: 1
+  trivy:
+    enabled: true
+    replicas: 1
+    persistence:
+      storageClass: rook-ceph-block
+      size: 5Gi
+  notary:
+    enabled: true
+    replicas: 1
+  auth:
+    password: ""
+    # secret lenght must be 16
+    secret: ""
+  redis:
+    chartVersion: 10.8.1
+    password: ""
+    persistence:
+      storageClass: rook-ceph-block
+      size: 8Gi
+  postgres:
+    size: 20Gi
+    replicas: 2
+    version: 12
+    maxConnections: 400
+    backup:
+      enabled: false
+      cronjob: "30 */2 * * *"

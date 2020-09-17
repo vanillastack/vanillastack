@@ -12,7 +12,7 @@
 - name: Copy admin.conf to Home directory
   become: true
   copy:
-    src: "{{ kubeadmin_config }}"
+    src: "{{ kubernetes.kubeadmin_config }}"
     dest: ".kube/config"
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
@@ -22,19 +22,23 @@
 - name: fetch kubeadm config
   become: true
   fetch:
-    src: "{{ kubeadmin_config }}"
-    dest: "/usr/workdir/ansible/{{ global.uuid }}/"
+    src: "{{ kubernetes.kubeadmin_config }}"
+    dest: "/tmp/ansible/{{ global.uuid }}/"
     flat: true
 
 - name: install Cilium repository
   community.kubernetes.helm_repository:
-    name: cilium
+    name: vsinfrastructure
+    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-infrastructure
     repo_url: https://helm.cilium.io/
+
+- name: refresh repo
+  command: helm repo update
 
 - name: Deploy latest version of Cilium
   community.kubernetes.helm:
     name: cilium
-    chart_ref: cilium/cilium
+    chart_ref: vsinfrastructure/cilium
     release_namespace: kube-system
     values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
     create_namespace: true
