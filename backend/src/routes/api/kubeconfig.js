@@ -3,11 +3,11 @@ const router = express.Router();
 const {getClient, downloadKubeConf, cleanUpPath} = require('../../websocket');
 
 /**
- * Get Specific Info Object
+ * Get KubeConfig to Download
  * @swagger
  * /config/{uuid}:
  *     get:
- *         summary: Object with basic user and runtime info of a specific client
+ *         summary: Endpoint to download KubeConfig after successful setup run
  *         parameters:
  *             - name: "uuid"
  *               in: "path"

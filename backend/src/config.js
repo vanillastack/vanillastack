@@ -3,21 +3,24 @@ const path = require('path');
 
 const getVersion = function () {
     try {
-        if (fs.existsSync(path.join(__dirname, '../../version'))) {
-            return fs.readFileSync(path.join(__dirname, '../../version'), 'utf8');
+        const versionPath = path.join(__dirname, '../version');
+        if (fs.existsSync(versionPath)) {
+            return fs.readFileSync(versionPath, 'utf8').replace(/(\r\n|\n|\r)/gm, "");
         } else {
-            console.log(`Version File does not exists: ${path.join(__dirname, '../../version')}`);
+            console.log(`Version File does not exists: ${versionPath}`);
         }
     } catch (e) {
         console.log(`Reading Version File gone wrong:\n${e}`);
     }
 }
 
+const currentVersion = getVersion();
+
 const config = {
-    ansibleBasePath: process.env.ANSIBLEPATH || '/something/ansible',
+    ansibleBasePath: process.env.ANSIBLEPATH || '/tmp/ansible',
     mode: process.env.MODE || 'installer',
     debug: Boolean(process.env.DEBUG || 'false'),
-    version: getVersion()
+    version: currentVersion
 }
 
 module.exports = config;
