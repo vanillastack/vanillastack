@@ -1,0 +1,56 @@
+rook:
+  enabled: true
+  namespace: rook-ceph
+  common:
+    enabled: true
+  operator:
+    enabled: true
+    csiEnableCephFS: true
+    csiEnableRBD: true
+    csiEnableGRPC: true
+    image: rook/ceph:v1.4.1
+  cluster:
+    enabled: true
+    image: ceph/ceph:v15.2.4
+    name: rook-ceph
+    dataHostDir: /var/lib/rook
+    mon:
+      count: 3
+      allowMultiplePerNode: false
+    dashboard:
+      enabled: false
+      ssl: true
+    monitoring:
+      enabled: false
+    storage:
+      useAllNodes: true
+      useAllDevices: true
+  storageClassRBD:
+    enabled: true
+    name: rook-ceph-block
+    failureDomain: host
+    poolName: replicapool
+    replicaLevel: 3
+  storageClassObject:
+    enabled: false
+  storageClassFile:
+    enabled: false
+  toolbox:
+    enabled: true
+    name: rook-ceph-tools
+    image: rook/ceph:v1.4.1
+  objectStorage:
+    enabled: false
+    ingress:
+      domain: ""
+      tls:
+        enabled: true
+        issuerName: "{{ letsEncrypt.issuerName }}"
+    name: cephobjectn1
+    failureDomain: host
+    replicaLevel: 2
+  filesystem:
+    enabled: false
+    name: cephfsn1
+    replicaLevel: 2
+    failureDomain: host
