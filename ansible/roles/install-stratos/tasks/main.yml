@@ -1,12 +1,12 @@
 ---
-- name: add stratos repository
+- name: install CF repository
   community.kubernetes.helm_repository:
-    repo_url: https://cloudfoundry.github.io/stratos
-    name: stratos
+    name: cloudfoundry
+    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-cloudfoundry
 
 - name: Install stratos
   community.kubernetes.helm:
-    chart_ref: stratos/console
+    chart_ref: cloudfoundry/console
     name: console
     release_namespace: console
     create_namespace: true

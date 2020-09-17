@@ -22,6 +22,11 @@ kubernetes:
   clusterName: kube
   version: "1.19"
   crioVersion: "1.18"
+  service_cidr: "10.96.0.0/12"
+  init_opts: ""
+  kubeadm_opts: ""
+  resetCluster: false
+  kubeadmin_config: /etc/kubernetes/admin.conf
 cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
