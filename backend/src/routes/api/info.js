@@ -27,10 +27,9 @@ const {createClient, getClient, setNewKeyPair} = require('../../websocket');
  */
 router.get('/', function (req, res) {
     const newClient = createClient();
-    // writeHosts('info:');
     res.json({
         uuid: newClient.uuid,
-        mode: process.env.MODE || 'installer',
+        mode: req.app.locals.config.mode,
         sshPublicKey: newClient.sshPublicKey
     });
 });
@@ -77,7 +76,7 @@ router.get('/:uuid', function (req, res) {
     }
     res.json({
         uuid: client.uuid,
-        mode: process.env.MODE || 'installer',
+        mode: req.app.locals.config.mode,
         sshPublicKey: client.sshPublicKey
     });
 });
@@ -124,7 +123,7 @@ router.post('/', function (req, res) {
     }
     res.json({
         uuid: client.uuid,
-        mode: process.env.MODE || 'installer',
+        mode: req.app.locals.config.mode,
         sshPublicKey: client.sshPublicKey
     });
 });

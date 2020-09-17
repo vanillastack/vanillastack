@@ -7,6 +7,8 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DEBUG=false
+ARG ANSIBLEPATH='/tmp/ansible'
+ENV ANSIBLEPATH ${ANSIBLEPATH}
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
@@ -28,20 +30,26 @@ ENV \
   LC_MEASUREMENT=C.UTF-8 \
   LC_IDENTIFICATION=C.UTF-8
 
-## Install nginx, Ansible and pre-req
+## Copy package files
+COPY ./backend/package.json ./
+COPY ./ansible/requirements.txt ./
+
+## Install Ansible and pre-req
 RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y \
     openssh-client python3-pip && \
     rm -rf /var/lib/apt/lists/* && \
     pip3 install ansible && \
-    ansible-galaxy collection install community.kubernetes
+    pip3 install -r requirements.txt && \
+    ansible-galaxy collection install community.kubernetes && \
+    npm install && npm audit fix
 
 FROM base
 
 ## copy app files
-COPY ./backend/package.json ./
 COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
-COPY ./ansible /usr/workdir/ansible/
+COPY ./ansible ${ANSIBLEPATH}
+COPY ./version ./src/
 
 RUN echo  '\n\
     #!/bin/bash\n\
@@ -56,8 +64,7 @@ RUN echo  '\n\
 
 ## Install npm Modules
 ## Build and prep Frontend
-RUN npm install && npm audit fix \
-    && rm -rf ./dist/* && npm run build \
+RUN  rm -rf ./dist/* && npm run build \
     && rm -rf ./src/public/* && cp -r ./dist/* ./src/public
 
 ## Run nginx and backend
