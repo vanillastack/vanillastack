@@ -150,10 +150,10 @@
     action: es_deploy
     when: efkstack.enabled
   - role: install-efk
-    action: kibana_helm
+    action: kibana_deploy
     when: efkstack.enabled
   - role: install-efk
-    action: fluentd_deploy
+    action: "{{ efkstack.logaggregator.name }}_deploy"
     when: efkstack.enabled
 
 - name: Deploy Postgres Operator

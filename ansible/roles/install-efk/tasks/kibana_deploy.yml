@@ -7,10 +7,10 @@
 - name: Create kibana user apache
   htpasswd:
     path: /tmp/kibana_auth
-    name: "{{ kibana_user }}"
-    password: "{{ kibana_password }}"
-    owner: "{{ kibana.system_user }}"
-    group: "{{ kibana.system_group }}"
+    name: "{{ efkstack.kibana.user }}"
+    password: "{{ efkstack.kibana.password }}"
+    owner: "{{ efkstack.kibana.system_user }}"
+    group: "{{ efkstack.kibana.system_group }}"
     mode: 0640
 
 - name: Slurp auth file

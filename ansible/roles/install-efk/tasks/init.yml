@@ -4,6 +4,9 @@
     name: elastic
     repo_url: https://helm.elastic.co
 
+- name: refresh helm repo
+  command: helm repo update
+
 - name: Create kube-logging namespace
   k8s:
     wait: yes

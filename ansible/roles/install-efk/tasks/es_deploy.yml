@@ -10,4 +10,3 @@
     chart_ref: elastic/elasticsearch
     release_namespace: kube-logging
     values: "{{ lookup('template', 'elastic_values.yml.j2') | from_yaml }}"
-
