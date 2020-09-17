@@ -1,8 +1,8 @@
 ---
 - name: install vanillastack base repository
   community.kubernetes.helm_repository:
-    name: vanillastack
-    repo_url: "https://{{ global.registry }}/chartrepo/vanillastack"
+    name: guacamole
+    repo_url: "https://{{ global.registry }}/chartrepo/vanillastack-guacamole"
 
 - name: create postgres-config
   template:
@@ -54,7 +54,7 @@
 - name: install guacamole
   community.kubernetes.helm:
     name: guacamole
-    chart_ref: vanillastack/guacamole
+    chart_ref: guacamole/guacamole
     release_namespace: guacamole
     create_namespace: true
     wait: true

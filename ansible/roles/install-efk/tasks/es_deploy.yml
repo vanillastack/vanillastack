@@ -2,7 +2,7 @@
 - name: Helm add kubernetes charts repo elastic
   community.kubernetes.helm_repository:
     name: elastic
-    repo_url: https://helm.elastic.co
+    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-logging
 
 - name: Install elasticsearch
   community.kubernetes.helm:
@@ -10,4 +10,3 @@
     chart_ref: elastic/elasticsearch
     release_namespace: kube-logging
     values: "{{ lookup('template', 'elastic_values.yml.j2') | from_yaml }}"
-
