@@ -11,6 +11,11 @@
                 <h5>Congratulations!</h5>
                 <p>You may now use your newly installed VanillaStack Cluster!</p>
                 <p>To access your installed components via their Web-UIs, you can use their respective DNS-Names</p>
+                <p>To access your Kubernetes-Cluster via the kubectl command line tool, please press the button below to download the config.</p>
+                <p class="margin-2em"><a class="btn btn-success" role="button" :click="downloadConfig()">Download Config</a></p>
+                <p v-if="isOpenStack">To access your OpenStack-installation, please use the default password <pre>{{ openStackDefaultPassword }}</pre></p>
+                <p v-if="isCloudFoundry">To access your CloudFoundry-installation, please use the default password <pre>{{ cloudFoundryDefaultPassword }}</pre></p>
+                <p v-if="isOpenStack || isCloudFoundry"><em>Note: Default Passwords are only displayed here! Please change them at first usage!</em></p>
                 <p>Enjoy your VanillaStack!</p>
             </div>
         </div>
@@ -31,6 +36,7 @@
     </div>
 </template>
 <script>
+import { response } from 'express'
 import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
 
@@ -91,6 +97,10 @@ export default {
             list[list.length] = node
         },
 
+        downloadConfig: function() {
+            this.$network.downloadConfig(this.$store.state.base.uuid)
+        },
+
         generateCall: function() {
             var nodes = []
 
@@ -135,6 +145,8 @@ export default {
     created: function() {
         EventBus.$on(Constants.Network_InstallationInProgress, data => {
             console.log("RECEIVED TRANSACTION-ID", data.transactionId)
+            console.log("COMPLETE data", data.body)
+
             this.installing = true
             this.installed = false
             this.transactionId = data.transactionId

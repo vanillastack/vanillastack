@@ -62,8 +62,21 @@ const Network = {
                 // Do the call
                 const path = this.data.addressPrefix + "/setup"
                 this.data.__vue.http.post(path, data).then(response => {
+                    console.log("SETUP", response.body)
+
                     EventBus.$emit(Constants.Network_InstallationInProgress, {
                         transactionId: response.body.transactionId
+                    })
+                })
+            },
+
+            downloadConfig: function(uuid) {
+                const path = this.data.addressPrefix + "/config?uuid=" + uuid
+                this.data.__vue.http.get(path).then(response => {
+                    console.log("K8S", response.body)
+
+                    EventBus.$emit(Constants.Network_KubernetesConfig, {
+                        key: response.body
                     })
                 })
             },
