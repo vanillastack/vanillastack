@@ -77,7 +77,7 @@
     - name: make sure local uuid directory exists
       file:
         state: directory
-        path: "/usr/workdir/ansible/{{ global.uuid }}"
+        path: "/tmp/ansible/{{ global.uuid }}"
         recurse: yes
 
 - name: Deploy Networking
