@@ -7,7 +7,7 @@
 - name: Init Cluster
   command: > 
     kubeadm init --service-cidr {{ kubernetes.service_cidr }} \
-                 --token {{ token }} \
+                 --token {{ token }} --node-name {{ inventory_hostname_short }} \
                  --control-plane-endpoint api.{{ kubernetes.loadBalancer.clusterDomain }}:6443
                  --upload-certs \
                  --apiserver-bind-port 8443 \
