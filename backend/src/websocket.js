@@ -37,18 +37,18 @@ wss.on('connection', function connection(ws, client) {
     // ws.send('something');
 });
 
-const sendMessage = function (msgObject, wsClient) {
+const sendMessage = function (msgObject, wsClient, debug) {
     // console.log(wsClient);
     if (wsClient.ws) {
         if (wsClient.ws.readyState === WebSocket.OPEN) {
-            if (!Boolean(process.env.DEBUG)) {
+            if (debug) {
                 console.log(`${msgObject.transactionId}: Sending Message`);
             }
             wsClient.ws.send(JSON.stringify(msgObject));
             return true;
         }
     }
-    if (process.env.DEBUG) {
+    if (debug) {
         console.log(`${msgObject.transactionId}: Client not Connected`);
     }
     return false;
@@ -113,14 +113,14 @@ const getKeyPair = function () {
     }
 }
 
-const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
+const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug) {
     const wsMsg = {
         event: 'INIT',
         transactionId: transactionId,
         payload: ''
     }
     // Send init msg through ws
-    sendMessage(wsMsg, wsClient);
+    sendMessage(wsMsg, wsClient, debug);
 
 
     const dir = `/tmp/${wsClient.uuid}`;
@@ -165,7 +165,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                         console.error(err);
                         wsMsg.event = 'DONE';
                         wsMsg.payload = '-1';
-                        sendMessage(wsMsg, wsClient);
+                        sendMessage(wsMsg, wsClient, debug);
                         cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
                         return;
                     }
@@ -214,7 +214,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                                     }
                                 }
                                 if (raw) {
-                                    if (!Boolean(process.env.DEBUG)) {
+                                    if (debug) {
                                         console.log(`${transactionId} Found RAW Device: ${key} on ${node.host}`);
                                     }
                                     const size = value.size.split(" ");
@@ -230,20 +230,20 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
                         // console.log(node);
                         wsMsg.event = 'EXECUTION';
                         wsMsg.payload = JSON.stringify(node);
-                        sendMessage(wsMsg, wsClient);
+                        sendMessage(wsMsg, wsClient, debug);
                     });
                 }
                 if (stderr) {
                     wsMsg.event = 'ERROR';
                     wsMsg.payload = JSON.stringify(stderr);
-                    sendMessage(wsMsg, wsClient);
+                    sendMessage(wsMsg, wsClient, debug);
                 }
 
                 //CleanUp
                 cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
                 wsMsg.event = 'DONE';
                 wsMsg.payload = '0';
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
             });
         } else {
             console.log(`${transactionId} Connection check running in dry-run-mode`);
@@ -255,12 +255,12 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
 
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = JSON.stringify(node);
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
 
             });
             wsMsg.event = 'DONE';
             wsMsg.payload = '0';
-            sendMessage(wsMsg, wsClient);
+            sendMessage(wsMsg, wsClient, debug);
             console.log(`${transactionId} Dry-run complete continuing with cleanup`);
             // Cleanup
             cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
@@ -269,14 +269,14 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun) {
         console.log(`Something went wrong: ${e}`);
         wsMsg.event = 'DONE';
         wsMsg.payload = '-1';
-        sendMessage(wsMsg, wsClient);
+        sendMessage(wsMsg, wsClient, debug);
 
         // Cleanup
         cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
     }
 };
 
-const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
+const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, debug) {
 
     const wsMsg = {
         event: 'INIT',
@@ -285,7 +285,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
     }
 
     // Send init msg through ws
-    sendMessage(wsMsg, wsClient);
+    sendMessage(wsMsg, wsClient, debug);
     const dir = `${basePath}/${wsClient.uuid}`;
 
     try {
@@ -320,22 +320,22 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
             );
 
             ans.stdout.on('data', (data) => {
-                if (!Boolean(process.env.DEBUG)) {
+                if (debug) {
                     console.log(`${transactionId} STDOUT: ${data.toString()}`);
                 }
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = data.toString();
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
             });
 
 
             ans.stderr.on('data', (data) => {
-                if (!Boolean(process.env.DEBUG)) {
+                if (debug) {
                     console.log(`${transactionId} STDERR: ${data.toString()}`);
                 }
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = data.toString();
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
             });
 
             ans.on('close', code => {
@@ -352,11 +352,11 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
                 // Last exec msg with kubeConfig
                 // wsMsg.event = 'EXECUTION';
                 // wsMsg.payload = wsClient.setup;
-                // sendMessage(wsMsg, wsClient);
+                // sendMessage(wsMsg, wsClient, debug);
 
                 wsMsg.event = 'DONE';
                 wsMsg.payload = code;
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
                 cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
             });
 
@@ -377,28 +377,28 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
             );
 
             dryExec.stdout.on('data', data => {
-                if (process.env.DEBUG) {
+                if (debug) {
                     console.log(`${transactionId} Dry-Run STDOUT: ${data.toString()}`);
                 }
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = data.toString();
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
             });
 
             dryExec.stderr.on('data', data => {
-                if (process.env.DEBUG) {
+                if (debug) {
                     console.log(`${transactionId} Dry-Run STDOUT: ${data.toString()}`);
                 }
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = data.toString();
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
             });
 
             dryExec.on('error', err => {
                 console.log(err);
                 wsMsg.event = 'ERROR';
                 wsMsg.payload = err;
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
             });
 
             dryExec.on('close', code => {
@@ -410,7 +410,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
                 }
                 wsMsg.event = 'DONE';
                 wsMsg.payload = code;
-                sendMessage(wsMsg, wsClient);
+                sendMessage(wsMsg, wsClient, debug);
                 console.log(`${transactionId} Setup dry-run reading KubeConfig complete`);
                 // Cleanup
                 cleanUpPath(transactionId, dir, ['hosts.json', 'key.pem']);
@@ -421,7 +421,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson) {
         console.log(`Something went wrong: ${error}`);
         wsMsg.event = 'DONE';
         wsMsg.payload = '-1';
-        sendMessage(wsMsg, wsClient);
+        sendMessage(wsMsg, wsClient, debug);
 
         // Cleanup
         cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);

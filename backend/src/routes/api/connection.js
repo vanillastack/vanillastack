@@ -51,7 +51,7 @@ router.post('/', function (req, res) {
 
     const transactionId = genTransactionId();
     sleep(500).then(() => {
-        connectionCheck(transactionId, nodes, client, dryRun);
+        connectionCheck(transactionId, nodes, client, dryRun, req.app.locals.config.debug);
     });
     res.status(200).json({
         transactionId: transactionId
