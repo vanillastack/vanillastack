@@ -1,7 +1,7 @@
 ---
 elasticsearchHosts: "http://elasticsearch-master:9200"
 
-replicas: 1
+replicas: {{ efkstack.kibana.replicas }}
 
 # Extra environment variables to append to this nodeGroup
 # This will be appended to the current 'env:' key. You can use any of the kubernetes env
@@ -9,8 +9,6 @@ replicas: 1
 extraEnvs:
   - name: "NODE_OPTIONS"
     value: "--max-old-space-size=1800"
-#  - name: MY_ENVIRONMENT_VAR
-#    value: the_value_goes_here
 
 # Allows you to load environment variables from kubernetes secret or config map
 envFrom: []
@@ -28,7 +26,7 @@ secretMounts: []
 #    path: /usr/share/kibana/data/kibana.keystore
 #    subPath: kibana.keystore # optional
 
-image: "docker.elastic.co/kibana/kibana"
+image: "docker.elastic.co/kibana/kibana-oss"
 imageTag: "{{ efkstack.imageTag }}"
 imagePullPolicy: "IfNotPresent"
 
@@ -40,11 +38,11 @@ podAnnotations: {}
 
 resources:
   requests:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "{{ efkstack.kibana.resources.requests.cpu }}"
+    memory: "{{ efkstack.kibana.resources.requests.memory }}"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "{{ efkstack.kibana.resources.limits.cpu }}"
+    memory: "{{ efkstack.kibana.resources.limits.memory }}"
 
 protocol: http
 
@@ -125,6 +123,7 @@ ingress:
   tls: 
     - hosts:
       - "{{ efkstack.kibana.coreDomain }}"
+      secretName: kibana-ingress-tls
 
 readinessProbe:
   failureThreshold: 3
@@ -138,8 +137,8 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: "kibana"
+fullnameOverride: "kibana"
 
 lifecycle: {}
   # preStop:
@@ -148,4 +147,3 @@ lifecycle: {}
   # postStart:
   #   exec:
   #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
-
