@@ -3,7 +3,7 @@
 = VanillaStack Governance
 
 
-This document defines the Governance-Policies of the  VanillaStack-Project. It represents the responsibilities and what roles are taken. It also delimits which tasks are assigned to which role. It also sets out the conditions under which and how to contribute to the project.
+This document defines the Governance-Policies of the VanillaStack-Project. It introduces the different roles in the project, their corresponding responsibilities, and the assigned tasks to each role. In addition, it defines the terms and conditions for contributing to the project.
 
 ---
 
@@ -13,8 +13,8 @@ This document defines the Governance-Policies of the  VanillaStack-Project. It r
 
 - Owners own, represent and market the VanillaStack
 - Owners own the rights to the VanillaStack brand
-- Owners own the provided domain's related to this project
-- Owners decide on the license used
+- Owners own the provided domains related to this project
+- Owners decide on the used licenses
 - Owners define the expectation of the project
 - Funds contributed to the project are the responsibility and management of the owners
 - Owners appoint or remove maintainers and developers
@@ -22,20 +22,20 @@ This document defines the Governance-Policies of the  VanillaStack-Project. It r
 
 === Maintainer
 
-- Owners can be Maintainers
+- Owners can be maintainers
 - Maintainers are used or removed by owners
 - Maintainers are not responsible for the idea and the project
 - Maintainers control the project and decision-making processes
-- Maintainers determine the timing of  the project
+- Maintainers determine the timing of the project
 - Maintainers evaluate submitted content and ideas
 - Maintainers prioritize tasks
 - Maintainers check submitted content before it is integrated
-- The list of Maintainers is listed in the Roles.adoc  file
+- The list of maintainers is listed in the Roles.adoc file
 
 === Developer
 
 - Maintainer can be Developers
-- Developers are added or removed by Owners
+- Developers are added or removed by owners
 - Developers are responsible for not counteracting the idea and the project
 - Developers review submitted content before it is incorporated
 - Developers keep the project flow alive
@@ -43,17 +43,17 @@ This document defines the Governance-Policies of the  VanillaStack-Project. It r
 === Contributor
 
 - Contributor can be anyone
-- Contributors are interested in advancing project progress
+- Contributors are interested in advancing the project's progress
 - Contributors contribute to the project with content
 - Contributors observe the licenses and are subject to these
 - Contributors provide content for the project without any expected consideration
 - Contributors can vote on content needs
 
-=== Sponsors
+=== Sponsor
 
 - Sponsor can be anyone
-- Sponsors support by donationsd's project
-- Sponsors can ensure that the project can be successfully driven
+- Sponsors support by donations for the project
+- Sponsors can ensure that the project can be driven successfully
 - Sponsors do not gain any special benefits to keep the project independent
 
 NOTE: Here a special thanks to our sponsors!
@@ -61,7 +61,7 @@ NOTE: Here a special thanks to our sponsors!
 === Provider
 
 - Contracts are concluded with providers
-- Providers provide services that are used in the project run (e.g. storage, infrastructure, consultations...) in accordance with the contract.
+- Providers provide services that are used in the project run (e.g. storage, infrastructure, consultancy) in accordance to the corresponding contract.
 
 ---
 
@@ -70,7 +70,7 @@ NOTE: Here a special thanks to our sponsors!
 === Content
 
 - Content is contributed in the community
-- Content is viewed and evaluated by developers and maintainers, taking into account the need
+- Content is evaluated by developers and maintainers, taking into account the necessities
 - Content is reviewed by developers and maintainers
 - Content is used by developers and maintainers
 - Content is packaged in milestones
@@ -80,19 +80,19 @@ NOTE: Here a special thanks to our sponsors!
 
 - Sprint defines the work package to be delivered over a certain period of time
 - A sprint ends with a milestone
-- Sprint content is defined by the maintainers based on the expectations of the owners
-- The size of work packages in sprints may vary based on resources contributed
+- Sprint content is defined by the developers and maintainers based on the expectations of the owners
+- The size of work packages in sprints may vary based on available resources
 
 === Milestones
 
-- Milestones  definieren the time target of work packages to be delivered
-- Milestones are assigned to milestones according to expectations
-- The contents of the milestones can be changed
+- Milestones define the time interval of sprints, i.e. of work packages to be delivered
+- Milestones are assigned to sprints according to expectations
+- The content of the milestones may changed
 
 === Release
 
 - Requires a completed milestone
-- Releases the delivered work package for use
+- Releases the delivered work packages for use
 
 ---
 
@@ -101,15 +101,15 @@ NOTE: Here a special thanks to our sponsors!
 === How can I participate?
 
 - The participation takes place through content. The content will be provided in the intended platform.
-- The need for provided can be supported by other contributors.
-- Theprovided  content is reviewed and evaluated by developers and maintainers, taking into account the need...
+- The necessity for provisioning can be supported by other contributors.
+- The provided content is reviewed and evaluated by developers and maintainers, taking into account the necessities
 
 === How can I become a developer/maintainer?
 
 - An application will be submitted by e-mail to the owners.
-- The owners evaluate the application and take it in placeaccordingly.
+- The owners evaluate the application and respond within adequate time.
 
 === How can I become a sponsor?
 
 - An application will be submitted by e-mail to the owners.
-- The owners contact us accordingly.
+- The owners evaluate the application and respond within adequate time.
