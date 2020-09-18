@@ -1,0 +1,28 @@
+---
+- name: Wait for nodes
+  hosts: kube_cluster
+  become: false
+  gather_facts: no
+  roles:
+    - role: wait-for-nodes
+ 
+- name: Configure Servers
+  hosts: kube_cluster
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes-fedora
+      action: 01_configure_systems
+
+- name: create folder for config
+  hosts: localhost
+  vars:
+    ansible_connection: local
+  tasks:
+    - name: make sure local uuid directory exists
+      file:
+        state: directory
+        path: "/tmp/ansible/{{ global.uuid }}"
+        recurse: yes
+      register: success
+      failed_when: success
