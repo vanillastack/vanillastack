@@ -6,51 +6,60 @@
                 <h3 v-if="installed">VanillaStack is installed!</h3>
             </div>
         </div>
-        <div class="row margin-2em" v-if="installed">
+        <div class="row margin-2em" v-if="installed && !installationError">
             <div class="col">
                 <h5>Congratulations!</h5>
                 You may now use your newly installed VanillaStack Cluster!<br />
                 To access your installed components via their Web-UIs, you can use their respective DNS-Names
             </div>
         </div>
-        <div class="row margin-1em" v-if="installed && isOpenStack">
+        <div class="row margin-1em" v-if="installed && isOpenStack && !installationError">
             <div class="col-5">
                 <p><strong>OpenStack Password</strong></p>
                 To access your OpenStack-installation, please use the default password</div>
             <div class="col"><pre>{{ keystonePass }}</pre></div>
         </div>
-        <div class="row margin-1em" v-if="installed && isCloudFoundry">
+        <div class="row margin-1em" v-if="installed && isCloudFoundry && !installationError">
             <div class="col-5">
                 <p><strong>Cloud Foundry Password</strong></p>
                 To access your CloudFoundry-installation, please use the default password</div>
             <div class="col"><pre>{{ stratosPass }}</pre></div>
         </div>
-        <div class="row margin-1em" v-if="installed">
+        <div class="row margin-1em" v-if="installed && !installationError">
             <div class="col">
                 <p><strong>kubectl Config</strong></p>
                 To access your Kubernetes-Cluster via the <em>kubectl</em> command line tool, please press the button <em>Download Config</em> to download the config.
             </div>
         </div>
-        <div class="row margin-2em" v-if="installed">
+        <div class="row margin-2em" v-if="installed && !installationError">
             <div class="col-2"><a class="btn btn-success" role="button" v-on:click="downloadConfig()">Download Config</a></div>
         </div>
-         <div class="row margin-2em" v-if="installed">
+         <div class="row margin-2em" v-if="installed && !installationError">
             <div class="col">
                 <p><strong>Enjoy your VanillaStack!</strong></p>
                 For your reference, the full log output is available after you pressed the button <em>Show Logs</em>
             </div>
         </div>
-        <div class="row margin-2em" v-if="installed">
+        <div class="row margin-2em" v-if="installed && !installationError">
             <div class="col-1" v-if="isDryRun"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Restart</a></div>
             <div class="col-1"><a class="btn btn-small btn-success" v-on:click="showLog = !showLog">Show Logs</a></div>
         </div>
-        <div class="row" v-if="installed && showLog">
+        <div class="row" v-if="installed && showLog && !installationError">
             <div class="col"><pre style="width: 100%; overflow: hidden !important" class="pre-install" id="logs">{{ display }}</pre></div>
         </div>
         <div class="row margin-2em" v-if="installing">
             <div class="col">
                 Here you can find all the output from the installation process. Now is a good time to enjoy your coffee or tea!
             </div>
+        </div>
+        <div class="row margin-2em" v-if="installed  && installationError">
+            <div class="col">
+                <p><strong class="red">VanillaStack installation failed</strong></p>
+                Your installation failed. For your reference, the full log output is available below. Please correct the errors depicted and try again.
+            </div>
+        </div>
+        <div class="row margin-2em" v-if="installed && installationError">
+            <div class="col-1"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Retry</a></div>
         </div>
         <div class="row margin-2em">
             <div class="col" v-if="installing">
@@ -78,7 +87,8 @@ export default {
             stratosPass: '',
             isOpenStack: false,
             isCloudFoundry: false,
-            showLog: false
+            showLog: false,
+            installationError: false
         }
     },
 
@@ -87,6 +97,7 @@ export default {
         startInstallation: function() {
             this.display = ''
             this.showLog = false
+            this.installationError = false
 
             var payload = this.generateCall()
             payload.uuid = this.$store.state.base.uuid
@@ -167,6 +178,15 @@ export default {
                 el = el.offsetParent;
             }
             return { top: _y, left: _x };
+        },
+
+        htmlEncode: function(str) {
+        return str
+            .replace(/&/g, '&')
+            .replace(/'/g, "'")
+            .replace(/"/g, '"')
+            .replace(/>/g, '>')   
+            .replace(/</g, '<');    
         }
 
     },
@@ -226,7 +246,7 @@ export default {
                         }
                     }
 
-                    var message = data.payload
+                    var message = this.htmlEncode(data.payload)
                     this.display += message
                     
                     //list.body.innerHTML += messagevar 
@@ -234,6 +254,10 @@ export default {
 
                     if(null != list)
                         list.scrollTop = list.scrollHeight;
+                }
+
+                if(data.event == 'ERROR') {
+                    this.installationError = true
                 }
 
                 if(data.event == 'DONE') {
