@@ -467,7 +467,7 @@ router.post('/', function (req, res) {
     hostsYaml.all.children.cf.hosts = cfNodes;
     const transactionId = genTransactionId();
     sleep(500).then(() => {
-        setup(transactionId, basePath, dryRun, client, hostsYaml);
+        setup(transactionId, basePath, dryRun, client, hostsYaml, req.app.locals.config.debug);
     });
     res.status(200).json({
         transactionId: transactionId,

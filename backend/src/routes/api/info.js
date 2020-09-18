@@ -30,6 +30,7 @@ router.get('/', function (req, res) {
     res.json({
         uuid: newClient.uuid,
         mode: req.app.locals.config.mode,
+        version: req.app.locals.config.version,
         sshPublicKey: newClient.sshPublicKey
     });
 });
@@ -77,6 +78,7 @@ router.get('/:uuid', function (req, res) {
     res.json({
         uuid: client.uuid,
         mode: req.app.locals.config.mode,
+        version: req.app.locals.config.version,
         sshPublicKey: client.sshPublicKey
     });
 });
@@ -113,7 +115,7 @@ router.get('/:uuid', function (req, res) {
  *                 content: {}
  */
 router.post('/', function (req, res) {
-    const client = setNewKeyPair(req.body.uuid);
+    const client = setNewKeyPair(req.body.uuid, req.app.locals.config.debug);
     if (!client) {
         console.log("Not Found");
         res.status(400).json({
@@ -124,6 +126,7 @@ router.post('/', function (req, res) {
     res.json({
         uuid: client.uuid,
         mode: req.app.locals.config.mode,
+        version: req.app.locals.config.version,
         sshPublicKey: client.sshPublicKey
     });
 });

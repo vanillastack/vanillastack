@@ -51,7 +51,7 @@ envFrom: []
 # Root directory where Filebeat will write data to in order to persist registry data across pod restarts (file position and other metadata).
 hostPathRoot: /var/lib
 hostNetworking: false
-image: "docker.elastic.co/beats/filebeat"
+image: "docker.elastic.co/beats/filebeat-oss"
 imageTag: "7.9.1"
 imagePullPolicy: "IfNotPresent"
 imagePullSecrets: []
@@ -100,12 +100,12 @@ podSecurityContext:
   privileged: false
 
 resources:
-  requests:
-    cpu: "100m"
-    memory: "100Mi"
   limits:
-    cpu: "1000m"
-    memory: "200Mi"
+    cpu: "{{ efkstack.logaggregator.resources.limits.cpu }}"
+    memory: "{{ efkstack.logaggregator.resources.limits.memory }}"
+  requests:
+    cpu: "{{ efkstack.logaggregator.resources.requests.cpu }}"
+    memory: "{{ efkstack.logaggregator.resources.requests.memory }}"
 
 # Custom service account override that the pod will use
 serviceAccount: ""
@@ -124,7 +124,9 @@ secretMounts: []
 # How long to wait for Filebeat pods to stop gracefully
 terminationGracePeriod: 30
 
-tolerations: []
+tolerations:
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
 
 nodeSelector: {}
 
@@ -138,6 +140,5 @@ updateStrategy: RollingUpdate
 
 # Override various naming aspects of this chart
 # Only edit these if you know what you're doing
-nameOverride: ""
-fullnameOverride: ""
-
+nameOverride: "filebeat"
+fullnameOverride: "filebeat"

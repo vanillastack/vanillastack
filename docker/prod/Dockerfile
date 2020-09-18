@@ -49,7 +49,7 @@ FROM base
 COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
 COPY ./ansible ${ANSIBLEPATH}
-COPY ./version ./src/
+COPY ./version ./
 
 RUN echo  '\n\
     #!/bin/bash\n\
