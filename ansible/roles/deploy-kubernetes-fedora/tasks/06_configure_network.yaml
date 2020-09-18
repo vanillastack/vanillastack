@@ -30,7 +30,7 @@
   community.kubernetes.helm_repository:
     name: vsinfrastructure
     repo_url: https://{{ global.registry }}/chartrepo/vanillastack-infrastructure
-               https://harbor.cloudical.net/chartrepo/vanillastack-infrastructure
+
 - name: refresh repo
   command: helm repo update
 
