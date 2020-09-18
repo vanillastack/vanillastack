@@ -1,10 +1,10 @@
-= VanillaStack Governance**
+= VanillaStack Governance
 
 
 This document defines the Governance-Policies of the  VanillaStack-Project. It represents the responsibilities and what roles are taken. It also delimits which tasks are assigned to which role. It also sets out the conditions under which and how to contribute to the project.
 Roles
 
-== Owner**
+== Owner
 
 - Owners own, represent and market the VanillaStack
 - Owners own the rights to the VanillaStack brand
@@ -15,7 +15,7 @@ Roles
 - Owners appoint or remove maintainers and developers
 - The list of owners is listed in the Roles.adoc file
 
-=== Maintainer**
+=== Maintainer
 
 - Owners can be Maintainers
 - Maintainers are used or removed by owners
