@@ -1,24 +1,6 @@
-group_vars
-hosts
-*.retry
-*.log
-*[_.]local[_.]*
-.idea
-*.kate-swp
-.*.swp
-*~
-tests/junit_xml/*.xml
-# macbook auto generated file
-*[_.]DS_Store
-# auto generated python files after compilation
-*[_.]pyc
-*[_.]pyo
-*[_/]__pycache__/*
-.vscode/settings.json
-
-
 # Logs
 logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -51,8 +33,8 @@ bower_components
 build/Release
 
 # Dependency directories
-backend/node_modules/
-backend/jspm_packages/
+node_modules/
+jspm_packages/
 
 # Typescript v1 declaration files
 typings/
@@ -191,8 +173,9 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-backend/src/public/css
-backend/src/public/images
-backend/src/public/js
-backend/src/public/index.html
-backend/dist/*
+src/public/css
+src/public/images
+src/public/js
+src/public/index.html
+dist/*
+

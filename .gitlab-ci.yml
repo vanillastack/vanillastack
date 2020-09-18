@@ -1,8 +1,63 @@
-image: "ubuntu:latest"
+image: "harbor.cloudical.net/vanillastack/vanilla-ubuntu-base:latest"
+services:
+  - docker:18.09.7-dind
+variables:
+  DOCKER_HOST: tcp://localhost:2375
 
 stages:
+  - build_docker_image_dev
+  - build_docker_image_testing
+  - build_docker_image_prod
   - redeploy
   - run_playbook
+
+build_docker_image_dev:
+  only:
+    refs:
+      - backend
+  stage: build_docker_image_dev
+  interruptible: true
+  script:
+    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - cd vanillastack
+    - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
+    - docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:dev-$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-latest .
+    - docker push harbor.cloudical.net/vanillastack/installer:dev-$VERSION
+    - docker push harbor.cloudical.net/vanillastack/installer:dev-latest
+
+build_docker_image_testing:
+  only:
+    refs:
+      - backend_testing
+  stage: build_docker_image_testing
+  interruptible: true
+  script:
+    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - cd vanillastack
+    - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
+    - docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:testing-$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-latest .
+    - docker push harbor.cloudical.net/vanillastack/installer:testing-$VERSION
+    - docker push harbor.cloudical.net/vanillastack/installer:testing-latest
+
+build_docker_image_prod:
+  only:
+    refs:
+      - master
+  stage: build_docker_image_prod
+  interruptible: true
+  script:
+    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
+    - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - cd vanillastack
+    - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
+    - docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$VERSION -t -t harbor.cloudical.net/vanillastack/installer:latest .
+    - docker push harbor.cloudical.net/vanillastack/installer:$VERSION
+    - docker push harbor.cloudical.net/vanillastack/installer:latest
 
 redeploy_debian:
   only:
@@ -21,9 +76,7 @@ run_playbook:
       - testing
   stage: run_playbook
   interruptible: true
-  script: 
-    - apt update && apt install -y git ansible ssh-client
-    - ansible-galaxy collection install community.kubernetes
+  script:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack/ansible
