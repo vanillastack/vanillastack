@@ -303,6 +303,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
         process.env.ANSIBLE_HOST_KEY_CHECKING = false;
         process.env.ANSIBLE_LOAD_CALLBACK_PLUGINS = false;
         process.env.ANSIBLE_STDOUT_CALLBACK = 'default';
+        process.env.ANSIBLE_HASH_BEHAVIOUR = 'merge';
 
         // Copy necessary files for Ansible
         fs.mkdirSync(`${dir}/group_vars/all`, {recursive: true});
