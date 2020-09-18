@@ -141,6 +141,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                 ansible_ssh_private_key_file: `${dir}/key.pem`
             }
         });
+        // todo: switch from yaml to json
         fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
 
         // Exec ansible connection test
@@ -163,6 +164,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                 if (err) {
                     if (err.code !== 4) {
                         console.error(err);
+                        wsClient.verifiedNodes = null;
                         wsMsg.event = 'DONE';
                         wsMsg.payload = '-1';
                         sendMessage(wsMsg, wsClient, debug);
@@ -171,6 +173,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                     }
                 }
                 if (stdout) {
+                    wsClient.verifiedNodes = {};
                     const ansibleFacts = JSON.parse(stdout).plays[0].tasks[0].hosts;
                     const ansibleStats = JSON.parse(stdout).stats;
                     nodes.forEach((node) => {
@@ -183,7 +186,10 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                             node.raw = false;
                         } else {
                             node.avail = true;
-                            // console.log(ansibleFacts[node.host]);
+                            // Setting verified nodes with hostnames
+                            wsClient.verifiedNodes[node.host] = ansibleFacts[node.host].ansible_facts.ansible_hostname;
+
+                            // Searching for raw devices
                             const devices = ansibleFacts[node.host].ansible_facts.ansible_devices;
                             // todo: expand list to match all possible excluded devices
                             const filterList = ['dm', 'sr', 'nbd', 'rbd', 'loop'];
@@ -234,11 +240,11 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                     });
                 }
                 if (stderr) {
+                    wsClient.verifiedNodes = null;
                     wsMsg.event = 'ERROR';
                     wsMsg.payload = JSON.stringify(stderr);
                     sendMessage(wsMsg, wsClient, debug);
                 }
-
                 //CleanUp
                 cleanUpPath(transactionId, dir, ['hosts.yml', 'key.pem']);
                 wsMsg.event = 'DONE';
@@ -247,6 +253,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
             });
         } else {
             console.log(`${transactionId} Connection check running in dry-run-mode`);
+            wsClient.verifiedNodes = null;
             nodes.forEach((node) => {
                 node.avail = true;
                 node.raw = true;
@@ -276,7 +283,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
     }
 };
 
-const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, debug) {
+const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, extraVars, debug) {
 
     const wsMsg = {
         event: 'INIT',
@@ -306,6 +313,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, de
 
         fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
         fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsJson));
+        fs.writeFileSync(`${dir}/extra_vars.json`, JSON.stringify(extraVars));
 
         if (!Boolean(dryRun)) { //&& (process.env.DOCKER || process.env.DOCKER != null)
             const options = {
@@ -315,7 +323,9 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, de
 
             console.log(`${transactionId} Calling Ansible`);
             const ans = proc.spawn('ansible-playbook',
-                ['-i', `${dir}/hosts.json`, `${basePath}/type_vanillastack_deploy.yaml`], // 'type_vanillastack_deploy.yaml'
+                ['-i', `${dir}/hosts.json`,
+                    `${basePath}/type_vanillastack_deploy.yaml`,
+                    "--extra-vars", `@${dir}/extra_vars.json`],
                 options
             );
 
@@ -341,9 +351,9 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, de
             ans.on('close', code => {
                 // todo: fail safety missing
                 console.log(`${transactionId} Setup completed with Status Code ${code}`);
-                if (fs.existsSync(`${dir}/kubeadm.conf`)) {
+                if (fs.existsSync(`${dir}/admin.conf`)) {
                     console.log(`${transactionId} Reading Kube Config`);
-                    wsClient.setup = fs.readFileSync(`${dir}/kubeadm.conf`, 'utf8');
+                    wsClient.setup = fs.readFileSync(`${dir}/admin.conf`, 'utf8');
                 } else {
                     console.log(`${transactionId} Kube Config not found`);
                     wsClient.setup = null;
