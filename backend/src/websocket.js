@@ -415,7 +415,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
             dryExec.on('close', code => {
                 // todo: read kubeconfig kubeadm.conf
                 console.log(`${transactionId} Setup dry-run complete with Status Code ${code}`);
-                const kubeConfTemplate = path.join(__dirname, 'templates/kube.config.template');
+                const kubeConfTemplate = path.join(__dirname, 'templates/admin.conf.template');
                 if (fs.existsSync(kubeConfTemplate)) {
                     wsClient.setup = fs.readFileSync(kubeConfTemplate, 'utf8');
                 }
