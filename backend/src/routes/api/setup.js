@@ -35,6 +35,8 @@ const {getClient, setup, sleep, genTransactionId, randPassword} = require('../..
  */
 router.post('/', function (req, res) {
 
+    console.log(req.body);
+
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry;
     const cluster = req.body.cluster;
@@ -89,7 +91,8 @@ router.post('/', function (req, res) {
         global: {
             registry: cluster.registry_endpoint,
             uuid: client.uuid,
-            isHA: req.body.isHA
+            isHA: req.body.isHA,
+            externalLB: cluster.useExternalLb
         },
         ingress: {
             enabled: additional.nginx
@@ -101,8 +104,11 @@ router.post('/', function (req, res) {
         kubernetes: {
             version: '1.19',
             crioVersion: '1.18',
+            dashboard: {
+                enabled: additional.dashboard
+            },
             loadBalancer: {
-                virtualIP: cluster.ip,
+                virtualIP: `${cluster.useExternalLb ? cluster.externalLbIp : cluster.ip}`,
                 clusterDomain: cluster.fqdn
             },
             clusterName: 'kube' // todo: not defined
@@ -400,6 +406,9 @@ router.post('/', function (req, res) {
                 poolName: 'replicapool',
                 replicaLevel: rook.replicaLevel
             }
+        },
+        guacamole: {
+            enabled: false // todo: mapping required; to be implemented
         }
     }
     // Building Inventory
