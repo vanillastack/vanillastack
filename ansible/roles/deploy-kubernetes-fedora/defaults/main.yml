@@ -13,6 +13,7 @@ kubernetes:
   version: "1.19"
   crioVersion: "1.18"
   kubeadmin_config: /etc/kubernetes/admin.conf
+  helm_version: "v3.3.1"
 
 ## the following may be historic keys that are no longer needed
 
