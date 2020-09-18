@@ -147,7 +147,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
         // Exec ansible connection test
         if (!Boolean(dryRun)) {
 
-            wsClient.dryRun = true;
+            wsClient.dryRun = false;
 
             const options = {
                 cwd: dir,
@@ -252,6 +252,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                 sendMessage(wsMsg, wsClient, debug);
             });
         } else {
+            wsClient.dryRun = true;
             console.log(`${transactionId} Connection check running in dry-run-mode`);
             wsClient.verifiedNodes = null;
             nodes.forEach((node) => {

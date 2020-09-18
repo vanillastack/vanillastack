@@ -454,35 +454,37 @@ router.post('/', function (req, res) {
         msg: ''
     };
     nodes.forEach((node) => {
-        if (client.verifiedNodes[node.host]) {
-            if (node.role.toUpperCase() === "M") {
-                masterNodes[client.verifiedNodes[node.host]] = {
-                    ansible_host: node.host,
-                    ansible_user: node.user,
-                    ansible_ssh_private_key_file: `${basePath}/${client.uuid}/key.pem`
-                }
-                masterCount += 1;
-            } else {
-                const currentNode = client.verifiedNodes[node.host];
-                workerNodes[currentNode] = {
-                    ansible_host: node.host,
-                    ansible_user: node.user,
-                    ansible_ssh_private_key_file: `${basePath}/${client.uuid}/key.pem`
-                }
-                node.labels.forEach((label) => {
-                    if (label.toUpperCase() === "ROOK") {
-                        storageNodes[currentNode] = null;
-                    } else if (label.toUpperCase() === "OS") {
-                        computeNodes[currentNode] = null;
-                    } else if (label.toUpperCase() === "CF") {
-                        cfNodes[currentNode] = null;
+        if (!client.dryRun) {
+            if (client.verifiedNodes[node.host]) {
+                if (node.role.toUpperCase() === "M") {
+                    masterNodes[client.verifiedNodes[node.host]] = {
+                        ansible_host: node.host,
+                        ansible_user: node.user,
+                        ansible_ssh_private_key_file: `${basePath}/${client.uuid}/key.pem`
                     }
-                });
-                workerCount += 1;
+                    masterCount += 1;
+                } else {
+                    const currentNode = client.verifiedNodes[node.host];
+                    workerNodes[currentNode] = {
+                        ansible_host: node.host,
+                        ansible_user: node.user,
+                        ansible_ssh_private_key_file: `${basePath}/${client.uuid}/key.pem`
+                    }
+                    node.labels.forEach((label) => {
+                        if (label.toUpperCase() === "ROOK") {
+                            storageNodes[currentNode] = null;
+                        } else if (label.toUpperCase() === "OS") {
+                            computeNodes[currentNode] = null;
+                        } else if (label.toUpperCase() === "CF") {
+                            cfNodes[currentNode] = null;
+                        }
+                    });
+                    workerCount += 1;
+                }
+            } else {
+                status.failed = true;
+                status.msg = `Connection check on Node: ${node.host} not successfully performed yet`;
             }
-        } else {
-            status.failed = true;
-            status.msg = `Connection check on Node: ${node.host} not successfully performed yet`;
         }
     });
 
