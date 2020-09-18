@@ -16,7 +16,7 @@
     dest: ".kube/config"
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
-    mode: 0640
+    mode: 0600
     remote_src: true
 
 - name: fetch kubeadm config
@@ -30,7 +30,7 @@
   community.kubernetes.helm_repository:
     name: vsinfrastructure
     repo_url: https://{{ global.registry }}/chartrepo/vanillastack-infrastructure
-
+               https://harbor.cloudical.net/chartrepo/vanillastack-infrastructure
 - name: refresh repo
   command: helm repo update
 
