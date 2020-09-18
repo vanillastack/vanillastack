@@ -30,7 +30,6 @@
   community.kubernetes.helm_repository:
     name: vsinfrastructure
     repo_url: https://{{ global.registry }}/chartrepo/vanillastack-infrastructure
-    repo_url: https://helm.cilium.io/
 
 - name: refresh repo
   command: helm repo update
