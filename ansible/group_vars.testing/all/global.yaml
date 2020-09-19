@@ -68,7 +68,6 @@ postgresOperator:
       endpoint: nul
       bucketName: nul
     cron: "30 00 * * *"
-
 harbor:
   enabled: true
   chartVersion: 1.4.0

@@ -21,6 +21,7 @@
   roles:
     - role: install-haproxy
       action: 01_install_keepalived
+      when: not global.externalLB
 
 - name: Install HaProxy
   hosts: master
@@ -29,6 +30,7 @@
   roles:
     - role: install-haproxy
       action: 02_install_haproxy
+      when: not global.externalLB
 
 - name: Configure Kube Systems
   hosts: kube_cluster
