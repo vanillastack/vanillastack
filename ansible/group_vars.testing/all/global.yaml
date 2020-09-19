@@ -3,6 +3,7 @@ global:
   registry: harbor.cloudical.net
   isHA: true
   uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
+  externalLB: false
 ingress:
   namespace: nginx-ingress
   enabled: true
@@ -19,6 +20,9 @@ kubernetes:
   loadBalancer:
     virtualIP: 135.181.48.19
     clusterDomain: test.vanillastack.cloudical.net
+  dashboard:
+    enabled: true
+    prefix: "k8sboard"
   clusterName: kube
   version: "1.19"
   crioVersion: "1.18"
@@ -64,7 +68,6 @@ postgresOperator:
       endpoint: nul
       bucketName: nul
     cron: "30 00 * * *"
-
 harbor:
   enabled: true
   chartVersion: 1.4.0
