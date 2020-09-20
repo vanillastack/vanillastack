@@ -35,8 +35,6 @@ const {getClient, setup, sleep, genTransactionId, randPassword} = require('../..
  */
 router.post('/', function (req, res) {
 
-    console.log(req.body);
-
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry;
     const cluster = req.body.cluster;
