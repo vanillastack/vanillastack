@@ -7,27 +7,28 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DOCKER=true
-#ENV ANSIBLE_HOST_KEY_CHECKING=false
-#ENV ANSIBLE_LOAD_CALLBACK_PLUGINS=true
-#ENV ANSIBLE_STDOUT_CALLBACK=json
-
+ENV DEBUG=true
+ARG ANSIBLEPATH='/tmp/ansible'
+ENV ANSIBLEPATH ${ANSIBLEPATH}
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
-## Install nginx, Ansible and pre-req
-RUN apt update && apt install -y \
+## Copy package files
+COPY ./backend/package.json ./
+COPY ./ansible/requirements.txt ./
+
+## Install Packages, Ansible and pre-req
+RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y \
     openssh-client python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
     pip3 install ansible && \
+    pip3 install -r requirements.txt && \
     ansible-galaxy collection install community.kubernetes && \
-    rm -rf /var/lib/apt/lists/* 
+    npm install && npm audit fix
 
-## Install npm Modules
-COPY ./backend/package.json /usr/workdir/
-RUN npm install && npm audit fix
-
-## copy app files
-COPY ./backend/src /usr/workdir/src/
-COPY ./ansible /usr/workdir/ansible/
+COPY ./backend/src ./src/
+COPY ./ansible ${ANSIBLEPATH}
+COPY ./version ./
 
 RUN echo  '\n\
     #!/bin/bash\n\

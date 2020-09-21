@@ -127,7 +127,7 @@ export default {
             var requiredMinimumMasters = this.isHA ? 3 : 1
             var requiredMinimumWorkers = 1
             if(this.isHA || this.installRook || this.installCF) requiredMinimumWorkers = 3
-            if(this.installOpenStack) requiredMinimumWorkers = 4;
+            if(this.installOpenStack) requiredMinimumWorkers = 3;
 
             this.minMaster = requiredMinimumMasters;
             this.minWorker = requiredMinimumWorkers;

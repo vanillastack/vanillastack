@@ -6,6 +6,6 @@
 
 - name: Join to Kubernetes cluster
   command: >
-    kubeadm join --token {{ token }} \
+    kubeadm join --token {{ token }} --node-name {{ inventory_hostname_short }} \
                  --discovery-token-unsafe-skip-ca-verification \
                  api.{{ kubernetes.loadBalancer.clusterDomain }}:6443 

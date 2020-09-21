@@ -22,17 +22,23 @@ kubernetes:
   clusterName: kube
   version: "1.19"
   crioVersion: "1.18"
+  helm_version: "v3.3.1"    
+  service_cidr: "10.96.0.0/12"
+  init_opts: ""
+  kubeadm_opts: ""
+  resetCluster: false
+  kubeadmin_config: /etc/kubernetes/admin.conf
 cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
-  enabled: true
+  enabled: false
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"  
 guacamole:
   imageTag: 202009100849
-  enabled: true
+  enabled: false
   namespace: guacamole
   coreDomain: "guacamole.{{ kubernetes.loadBalancer.clusterDomain }}"
   postgres:
@@ -119,6 +125,41 @@ harbor:
       enabled: false
       cronjob: "30 */2 * * *"
 efkstack:
+  enabled: true
   imageTag: "7.9.1"
-  kibana: 
+  kibana:
+    user: kibana_test
+    password: secretlysecretpassword
+    replicas: 2
+    system_user: "{{ ansible_user }}"
+    system_group: "{{ ansible_user }}"
     coreDomain: "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "1Gi"
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+  es:
+    replicas: 3
+    storage:
+      class_name: "rook-ceph-block"
+      size: "30Gi"
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "2Gi"
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+  logaggregator:
+    # Choice of filebeat and fluentd
+    name: filebeat
+    resources:
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+      requests:
+        cpu: "100m"
+        memory: "200Mi"

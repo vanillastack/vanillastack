@@ -6,27 +6,65 @@
                 <h3 v-if="installed">VanillaStack is installed!</h3>
             </div>
         </div>
-        <div class="row margin-2em" v-if="installed">
+        <div class="row margin-2em" v-if="installed && !installationError">
             <div class="col">
                 <h5>Congratulations!</h5>
-                <p>You may now use your newly installed VanillaStack Cluster!</p>
-                <p>To access your installed components via their Web-UIs, you can use their respective DNS-Names</p>
-                <p>Enjoy your VanillaStack!</p>
+                You may now use your newly installed VanillaStack Cluster!<br />
+                To access your installed components via their Web-UIs, you can use their respective DNS-Names
             </div>
         </div>
-        <div class="row margin-2em" v-if="installed">
-            <div class="col-1" v-if="isDryRun"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Restart</a></div>
+        <div class="row margin-1em" v-if="installed && isOpenStack && !installationError">
+            <div class="col-5">
+                <p><strong>OpenStack Password</strong></p>
+                To access your OpenStack-installation, please use the default password</div>
+            <div class="col"><pre>{{ keystonePass }}</pre></div>
         </div>
-        <div class="row" v-if="installed">
+        <div class="row margin-1em" v-if="installed && isCloudFoundry && !installationError">
+            <div class="col-5">
+                <p><strong>Cloud Foundry Password</strong></p>
+                To access your CloudFoundry-installation, please use the default password</div>
+            <div class="col"><pre>{{ stratosPass }}</pre></div>
+        </div>
+        <div class="row margin-1em" v-if="installed && !installationError">
+            <div class="col">
+                <p><strong>kubectl Config</strong></p>
+                To access your Kubernetes-Cluster via the <em>kubectl</em> command line tool, please press the button <em>Download Config</em> to download the config.
+            </div>
+        </div>
+        <div class="row margin-2em" v-if="installed && !installationError">
+            <div class="col-2"><a class="btn btn-success" role="button" v-on:click="downloadConfig()">Download Config</a></div>
+        </div>
+         <div class="row margin-2em" v-if="installed && !installationError">
+            <div class="col">
+                <p><strong>Enjoy your VanillaStack!</strong></p>
+                For your reference, the full log output is available after you pressed the button <em>Show Logs</em>
+            </div>
+        </div>
+        <div class="row margin-2em" v-if="installed && !installationError">
+            <div class="col-1" v-if="isDryRun"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Restart</a></div>
+            <div class="col-1"><a class="btn btn-small btn-success" v-on:click="showLog = !showLog">Show Logs</a></div>
+        </div>
+        <div class="row" v-if="installed && showLog && !installationError">
             <div class="col"><pre style="width: 100%; overflow: hidden !important" class="pre-install" id="logs">{{ display }}</pre></div>
         </div>
         <div class="row margin-2em" v-if="installing">
             <div class="col">
-                Here you can find all the output from the installation process.
+                Here you can find all the output from the installation process. Now is a good time to enjoy your coffee or tea!
             </div>
         </div>
-        <div class="row margin-2em" style="width; 80%; position: absolute; top: 5em; left: 2em; height: 30em; margin-top:2em; padding-bottom: 5em; overflow: auto !important" v-if="installing">
-            <div class="col" style="width: 100%;"><pre style="width: 100%; overflow: hidden !important" class="pre-install" id="list">{{ display }}</pre></div>
+        <div class="row margin-2em" v-if="installed  && installationError">
+            <div class="col">
+                <p><strong class="red">VanillaStack installation failed</strong></p>
+                Your installation failed. For your reference, the full log output is available below. Please correct the errors depicted and try again.
+            </div>
+        </div>
+        <div class="row margin-2em" v-if="installed && installationError">
+            <div class="col-1"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Retry</a></div>
+        </div>
+        <div class="row margin-2em">
+            <div class="col" v-if="installing">
+                <textarea class="form-control" id="output" style="width:100%; border: 0 !important; font-family: Courier, monospace !important" v-model="display" />
+            </div>
         </div>
     </div>
 </template>
@@ -45,6 +83,12 @@ export default {
             installed: false,
             kubeconfig: '',
             isDryRun: window.location.search.indexOf('dry=true') > 0,
+            keystonePass: '',
+            stratosPass: '',
+            isOpenStack: false,
+            isCloudFoundry: false,
+            showLog: false,
+            installationError: false
         }
     },
 
@@ -53,12 +97,10 @@ export default {
         startInstallation: function() {
             this.display = ''
             this.showLog = false
+            this.installationError = false
 
             var payload = this.generateCall()
             payload.uuid = this.$store.state.base.uuid
-
-            console.log("DATA", this.generateCall())
-            console.log("DATA-TXT", JSON.stringify(this.generateCall()))
 
             this.$network.setup(payload)
         },
@@ -91,6 +133,10 @@ export default {
             list[list.length] = node
         },
 
+        downloadConfig: function() {
+            this.$network.downloadConfig(this.$store.state.base.uuid)
+        },
+
         generateCall: function() {
             var nodes = []
 
@@ -114,10 +160,34 @@ export default {
                 cf: JSON.parse(JSON.stringify(this.$store.state.installer.cloudfoundry)),
                 additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional)),
                 letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt))
+
             }
 
+            this.isOpenStack = data.general.installOS
+            this.isCloudFoundry = data.general.installCF
+            
             return data
         },
+
+        getOffset: function( el ) {
+            var _x = 0;
+            var _y = 0;
+            while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+                _x += el.offsetLeft - el.scrollLeft;
+                _y += el.offsetTop - el.scrollTop;
+                el = el.offsetParent;
+            }
+            return { top: _y, left: _x };
+        },
+
+        htmlEncode: function(str) {
+        return str
+            .replace(/&/g, '&')
+            .replace(/'/g, "'")
+            .replace(/"/g, '"')
+            .replace(/>/g, '>')   
+            .replace(/</g, '<');    
+        }
 
     },
 
@@ -134,10 +204,15 @@ export default {
 
     created: function() {
         EventBus.$on(Constants.Network_InstallationInProgress, data => {
-            console.log("RECEIVED TRANSACTION-ID", data.transactionId)
             this.installing = true
             this.installed = false
             this.transactionId = data.transactionId
+            this.keystonePass = data.keystonePass
+            this.stratosPass = data.stratosPass
+            this.setListAttributes = false
+
+            console.log("DATA", this.generateCall())
+            console.log("DATA-TXT", JSON.stringify(this.generateCall()))
         })
 
         EventBus.$on(Constants.Network_WS_Response, message => {
@@ -151,12 +226,38 @@ export default {
                     this.installing = true
                     this.installed = false
 
-                    var message = data.payload
+                    if(!this.setListAttributes) {
+                        var output = document.getElementById('output')
 
-                    var list = document.getElementById('list')
+                        if(null != output) {
+                            // Get the position of the output window
+                            var offset = this.getOffset(output)
+
+                            // Get the visible width and height of the browser window
+                            var width = window.innerWidth
+                            var height = window.innerHeight
+
+                            var outputWidth = width - 30 - offset.left
+                            var outputHeight = height - 50 - offset.top
+
+                            output.setAttribute("style","height:" + outputHeight + "px")
+
+                            this.setListAttributes = true
+                        }
+                    }
+
+                    var message = this.htmlEncode(data.payload)
                     this.display += message
-                    //list.body.innerHTML += message
-                    list.scrollIntoView(false)
+                    
+                    //list.body.innerHTML += messagevar 
+                    var list = document.getElementById('output')
+
+                    if(null != list)
+                        list.scrollTop = list.scrollHeight;
+                }
+
+                if(data.event == 'ERROR') {
+                    this.installationError = true
                 }
 
                 if(data.event == 'DONE') {
@@ -165,6 +266,29 @@ export default {
                     this.installed = true
                 }
             }
+        })
+
+        // Kubeconfig was loaded, we allow to download it
+        EventBus.$on(Constants.Network_KubeConfigLoaded, data => {
+            // Create a virtual download-element
+            var uuid = 'download_' + this.$store.state.base.uuid
+
+            // Check, whether the element already exists
+            var download = document.getElementById(uuid)
+            if(download == null) {
+                download = document.createElement('a')
+                download.setAttribute('id', uuid)
+                download.style.display = 'node'
+
+                document.body.appendChild(download)
+            }
+
+            // Set the data
+            download.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)))
+            download.setAttribute('download', this.$store.state.installer.cluster.fqdn + '.config')
+
+            // Execute the download
+            download.click()
         })
     }
 }

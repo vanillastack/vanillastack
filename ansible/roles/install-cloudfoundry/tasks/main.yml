@@ -4,7 +4,7 @@
   - name: install CF repository
     community.kubernetes.helm_repository:
       name: cloudfoundry
-      repo_url: https://harbor.cloudical.net/chartrepo/vanillastack-cloudfoundry
+      repo_url: https://{{ global.registry }}/chartrepo/vanillastack-cloudfoundry
         
   - name: Deploy latest version of CloudFoundry
     community.kubernetes.helm:

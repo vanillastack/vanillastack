@@ -56,7 +56,7 @@
                 <div class="col-3"><a class="btn btn-sm btn-primary margin-left-3em" role="button" v-on:click="setRook()">Assign to all workers</a></div>
             </div>
             <div v-if="hasApplications && installOpenStack" class="row margin-1em">
-                <div class="col-3"><i class="fas fa-check small"></i> 4 worker nodes for OpenStack</div>
+                <div class="col-3"><i class="fas fa-check small"></i> 3 worker nodes for OpenStack</div>
                 <div class="col-3"><a class="btn btn-sm btn-primary margin-left-3em" role="button" v-on:click="setOS()">Assign to all workers</a></div>
             </div>
             <div v-if="hasApplications && installCF" class="row margin-1em">
@@ -372,7 +372,7 @@ export default {
             // Check for the number of assigned nodes
             if(this.installRook) isValid = isValid && rookNodes >= 3;
             if(this.installCF) isValid = isValid && cfNodes >= 3;
-            if(this.installOpenStack) isValid = isValid && openStackNodes >= 4;
+            if(this.installOpenStack) isValid = isValid && openStackNodes >= 3;
 
             // Check for duplicate IP-addresses
             let duplicates = ipAddresses.reduce((acc,currentValue,index, array) => {
@@ -420,16 +420,22 @@ export default {
         setRook: function() {
             // Activate Rook on all Workers
             this.workers.forEach(worker => worker.rook = true)
+
+            this.validate()
         },
 
         setCF: function() {
             // Activate Rook on all Workers
             this.workers.forEach(worker => worker.cf = true)
+
+            this.validate()
         },
 
         setOS: function() {
             // Activate Rook on all Workers
             this.workers.forEach(worker => worker.openstack = true)
+
+            this.validate()
         }
 
     },

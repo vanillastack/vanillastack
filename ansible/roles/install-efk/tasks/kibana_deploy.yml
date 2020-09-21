@@ -2,15 +2,15 @@
 - name: Helm add kubernetes charts repo elastic
   community.kubernetes.helm_repository: 
     name: elastic
-    repo_url: https://helm.elastic.co
+    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-logging
 
 - name: Create kibana user apache
   htpasswd:
     path: /tmp/kibana_auth
-    name: "{{ kibana_user }}"
-    password: "{{ kibana_password }}"
-    owner: "{{ kibana.system_user }}"
-    group: "{{ kibana.system_group }}"
+    name: "{{ efkstack.kibana.user }}"
+    password: "{{ efkstack.kibana.password }}"
+    owner: "{{ efkstack.kibana.system_user }}"
+    group: "{{ efkstack.kibana.system_group }}"
     mode: 0640
 
 - name: Slurp auth file
