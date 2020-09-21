@@ -284,7 +284,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
     }
 };
 
-const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, extraVars, debug) {
+const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, extraVars, debug, testing) {
 
     const wsMsg = {
         event: 'INIT',
@@ -351,33 +351,37 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
             });
 
             ans.on('close', code => {
-                // todo: fail safety missing
-                if (code === 0) {
-                    if (debug) {
-                        console.log(`${transactionId} Setup completed with Status Code ${code}`);
-                    }
-                    if (fs.existsSync(`${dir}/admin.conf`)) {
-                        console.log(`${transactionId} Reading Kube Config`);
-                        wsClient.setup = fs.readFileSync(`${dir}/admin.conf`, 'utf8');
-                        wsMsg.event = 'DONE';
-                        wsMsg.payload = code;
-                        sendMessage(wsMsg, wsClient, debug);
+                if (!testing) {
+                    // todo: fail safety missing
+                    if (code === 0) {
+                        if (debug) {
+                            console.log(`${transactionId} Setup completed with Status Code ${code}`);
+                        }
+                        if (fs.existsSync(`${dir}/admin.conf`)) {
+                            console.log(`${transactionId} Reading Kube Config`);
+                            wsClient.setup = fs.readFileSync(`${dir}/admin.conf`, 'utf8');
+                            wsMsg.event = 'DONE';
+                            wsMsg.payload = code;
+                            sendMessage(wsMsg, wsClient, debug);
+                        } else {
+                            console.log(`${transactionId} Kube Config not found`);
+                            wsClient.setup = null;
+                            wsMsg.event = 'ERROR';
+                            wsMsg.payload = -1;
+                            sendMessage(wsMsg, wsClient, debug);
+                        }
                     } else {
-                        console.log(`${transactionId} Kube Config not found`);
-                        wsClient.setup = null;
+                        if (debug) {
+                            console.log(`${transactionId} Setup failed with Status Code ${code}`);
+                        }
                         wsMsg.event = 'ERROR';
                         wsMsg.payload = -1;
                         sendMessage(wsMsg, wsClient, debug);
                     }
+                    cleanUpPath(debug, transactionId, dir, ['hosts.json', 'key.pem']);
                 } else {
-                    if (debug) {
-                        console.log(`${transactionId} Setup failed with Status Code ${code}`);
-                    }
-                    wsMsg.event = 'ERROR';
-                    wsMsg.payload = -1;
-                    sendMessage(wsMsg, wsClient, debug);
+                    process.exit(code);
                 }
-                cleanUpPath(debug, transactionId, dir, ['hosts.json', 'key.pem']);
             });
 
         } else {

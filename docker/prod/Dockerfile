@@ -9,6 +9,7 @@ ENV MODE=installer
 ENV DEBUG=false
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
+ENV TESTING=false
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
