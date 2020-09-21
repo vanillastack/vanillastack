@@ -1,6 +1,6 @@
 ---
 # defaults file for install-stratos
 stratos:
-  enabled: true
+  enabled: false
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"
