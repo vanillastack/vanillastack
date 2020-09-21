@@ -311,7 +311,7 @@ router.post('/', function (req, res) {
                 l3: {
                     ha: openstack.neutron_l3ha,
                     maxAgentsPerRouter: openstack.neutron_maxAgentsPerRouter,
-                    haNetworkType: openstack.neutron_overlayNetworkType,
+                    haNetworkType: openstack.neutron_overlayNetworkType.toLowerCase(),
                     dhcpAgents: openstack.neutron_dhcpAgents
                 },
                 endpoints: {
@@ -340,7 +340,7 @@ router.post('/', function (req, res) {
                     placementURLPrefix: openstack.nova_placement_endpoint
                 },
                 libvirt: {
-                    virtType: openstack.nova_virtType,
+                    virtType: openstack.nova_virtType.toLowerCase(),
                     cpuMode: openstack.nova_cpuMode
                 },
                 auth: {
@@ -494,7 +494,15 @@ router.post('/', function (req, res) {
         hostsJson.all.children.cf.hosts = cfNodes;
         const transactionId = genTransactionId();
         sleep(500).then(() => {
-            setup(transactionId, basePath, dryRun, client, hostsJson, extraVars, req.app.locals.config.debug);
+            setup(transactionId,
+                basePath,
+                dryRun,
+                client,
+                hostsJson,
+                extraVars,
+                req.app.locals.config.debug,
+                req.app.locals.config.testing
+            );
         });
         res.status(200).json({
             transactionId: transactionId,
