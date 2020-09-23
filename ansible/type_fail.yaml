@@ -1,19 +1,4 @@
 ---
-- name: Wait for nodes
-  hosts: kube_cluster
-  become: false
-  gather_facts: no
-  roles:
-    - role: wait-for-nodes
- 
-- name: Configure Servers
-  hosts: kube_cluster
-  become: true
-  gather_facts: true
-  roles:
-    - role: deploy-kubernetes-fedora
-      action: 01_configure_systems
-
 - name: create folder for config
   hosts: localhost
   vars:

@@ -20,7 +20,8 @@ const config = {
     ansibleBasePath: process.env.ANSIBLEPATH || '/tmp/ansible',
     mode: process.env.MODE || 'installer',
     debug: Boolean(process.env.DEBUG || 'false'),
-    version: currentVersion
+    version: currentVersion,
+    testing: Boolean(process.env.TESTING || 'false'),
 }
 
 module.exports = config;
