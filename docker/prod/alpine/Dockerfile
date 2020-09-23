@@ -17,10 +17,15 @@ COPY ./backend/package.json ./
 COPY ./ansible/requirements.txt ./
 
 ## Install nginx, Ansible and pre-req
-RUN apk update && apk upgrade --available && sync && apk add \
-    --update --no-cache openssh-client musl-dev libffi-dev openssl-dev ca-certificates python3 py3-pip python3-dev gcc make --virtual build-dependencies build-base && \
+RUN apk update && \
+    apk upgrade --available && \
+    sync && apk add --update --no-cache \
+    openssh-client musl-dev libffi-dev openssl-dev ca-certificates \
+    python3 py3-pip python3-dev \
+    gcc make --virtual build-dependencies build-base && \
     pip3 install cffi && \ 
     pip3 install ansible && \
+    pip3 install -r requirements.txt && \
     ansible-galaxy collection install community.kubernetes && \
     npm install && npm audit fix && \
     rm -rf /var/cache/apk*
