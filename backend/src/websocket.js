@@ -145,7 +145,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
         fs.writeFileSync(`${dir}/hosts.yml`, yaml.safeDump(hostsYaml));
 
         // Exec ansible connection test
-        if (!Boolean(dryRun)) {
+        if (!JSON.parse(dryRun)) {
 
             wsClient.dryRun = false;
 
@@ -317,7 +317,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
         fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsJson));
         fs.writeFileSync(`${dir}/extra_vars.json`, JSON.stringify(extraVars));
 
-        if (!Boolean(dryRun)) { //&& (process.env.DOCKER || process.env.DOCKER != null)
+        if (!JSON.parse(dryRun)) { //&& (process.env.DOCKER || process.env.DOCKER != null)
             const options = {
                 cwd: `${basePath}`,
                 env: null

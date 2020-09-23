@@ -16,12 +16,13 @@ const getVersion = function () {
 
 const currentVersion = getVersion();
 
+
 const config = {
     ansibleBasePath: process.env.ANSIBLEPATH || '/tmp/ansible',
     mode: process.env.MODE || 'installer',
-    debug: Boolean(process.env.DEBUG || 'false'),
+    debug: JSON.parse(process.env.DEBUG || 'false'),
     version: currentVersion,
-    testing: Boolean(process.env.TESTING || 'false'),
+    testing: JSON.parse(process.env.TESTING || 'false')
 }
 
 module.exports = config;
