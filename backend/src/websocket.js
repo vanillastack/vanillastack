@@ -208,7 +208,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                                     //     rbd*
                                     //     loop*
                                     //
-                                    //     anschliend devices.holder.length == 0 && partitions empty-object -> raw
+                                    //     danach devices.holder.length == 0 && partitions empty-object -> raw
                                     //     else return
                                     //     return device.size
                                     //
