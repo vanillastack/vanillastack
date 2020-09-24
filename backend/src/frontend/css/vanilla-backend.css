@@ -73,6 +73,10 @@ ul.secondary-nav {
   margin-bottom: 2em;
 }
 
+.margin-4em {
+  margin-bottom: 4em;
+}
+
 .margin-1em {
   margin-bottom: 1em;
 }
@@ -187,7 +191,7 @@ ul.secondary-nav {
 }
 
 .inline-block {
-  display: inline-block
+  display: inline-block !important
 }
 
 .lead-image {
@@ -260,6 +264,10 @@ div>.lead-image {
   color:#DD402D;
 }
 
+.gray {
+  color: #999;
+}
+
 .text-align-right {
   text-align: right;
 }
@@ -270,7 +278,12 @@ div>.lead-image {
 }
 
 .small {
-  width: 7em;
+  width: 5em;
+  display: inline-block
+}
+
+.medium {
+  width: 8em;
   display: inline-block
 }
 
@@ -281,4 +294,17 @@ div>.lead-image {
 
 .pre-install {
   line-height: 1em;
+}
+
+.width-5em {
+  width: 5em;
+}
+
+.width-20em {
+  width: 20em;
+}
+
+h5.mb-0 button {
+  font-size: 1.25rem !important;
+  padding-left: 0;
 }

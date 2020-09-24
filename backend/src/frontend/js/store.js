@@ -70,9 +70,9 @@ const letsencryptSettings = {
 
 const cloudfoundrySettings = {
   state: () => ({
-    fqdn: '',
+    fqdn: 'cf',
     stratos: true,
-    stratos_endpoint: ''
+    stratos_endpoint: 'stratos'
   }),
 
   mutations: {
@@ -231,9 +231,9 @@ const clusterSettings = {
     ip: '',
     fqdn: '',
     usefqdn: true,
-    adminfqdn: '',
+    adminfqdn: 'admin',
     useadminfqdn: true,
-    useExternalLb: false
+    useExternalLb: true
   }),
 
 
