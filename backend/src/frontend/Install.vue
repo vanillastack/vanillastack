@@ -42,7 +42,7 @@
         </div>
         <div class="row margin-2em" v-if="installed && !installationError">
             <div class="col-1" v-if="isDryRun"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Restart</a></div>
-            <div class="col-1"><a class="btn btn-small btn-success" v-on:click="showLog = !showLog">Show Logs</a></div>
+            <div class="col-2"><a class="btn btn-small btn-success" v-on:click="showLog = !showLog">Show Logs</a></div>
         </div>
         <div class="row" v-if="installed && showLog && !installationError">
             <div class="col"><pre style="width: 100%; overflow: hidden !important" class="pre-install" id="logs">{{ display }}</pre></div>
