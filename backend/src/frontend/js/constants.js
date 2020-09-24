@@ -54,6 +54,8 @@ export default Object.freeze({
     Network_WS_Response: "Network_WS_Response",
     Network_InstallationInProgress: "Network_InstallationInProgress",
     Network_KubeConfigLoaded: "Network_KubeConfigLoaded",
+    Network_State_Error: "Network_State_Error",
+    Network_State_Progress: "Network_State_Progress",
 
     Validate_IpAddress: /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
     Validate_SubscriptionKeyLength: 6,

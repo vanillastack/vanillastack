@@ -65,9 +65,15 @@ const Network = {
                     // console.log("SETUP", response.body)
 
                     EventBus.$emit(Constants.Network_InstallationInProgress, {
+                        state: Constants.Network_State_Progress,
                         keystonePass: response.body.keyStonePass,
                         stratosPass: response.body.stratosPass,
                         transactionId: response.body.transactionId
+                    }, error => {
+                        EventBus.$emit(Constants.Network.Network_InstallationInProgress, {
+                            state: Constants.Network_State_Error,
+                            message: error.message
+                        })
                     })
                 })
             },

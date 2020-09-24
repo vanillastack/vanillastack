@@ -23,7 +23,7 @@ build_docker_image_dev:
     - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack
     - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
-    - docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:dev-$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-latest .
+    - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:dev-$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-latest .
     - docker push harbor.cloudical.net/vanillastack/installer:dev-$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:dev-latest
 
@@ -36,10 +36,10 @@ build_docker_image_testing:
   script:
     - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - git clone -b backend_testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack
     - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
-    - docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:testing-$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-latest .
+    - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:testing-$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-latest .
     - docker push harbor.cloudical.net/vanillastack/installer:testing-$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:testing-latest
 
@@ -52,10 +52,10 @@ build_docker_image_prod:
   script:
     - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - git clone -b backend https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - git clone -b master https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack
     - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
-    - docker build -f docker/prod/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$VERSION -t -t harbor.cloudical.net/vanillastack/installer:latest .
+    - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$VERSION -t harbor.cloudical.net/vanillastack/installer:latest .
     - docker push harbor.cloudical.net/vanillastack/installer:$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:latest
 

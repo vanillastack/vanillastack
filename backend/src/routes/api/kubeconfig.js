@@ -35,14 +35,19 @@ const {getClient, downloadKubeConf, cleanUpPath} = require('../../websocket');
  */
 router.get('/:uuid', function (req, res) {
     const client = getClient(req.params.uuid);
+    const debug = req.app.locals.config.debug;
     if (!client) {
-        console.log("Client not Found");
+        if (debug) {
+            console.log("Client not Found");
+        }
         res.status(400).json({
             message: 'uuid invalid'
         });
         return;
     } else if (client.setup == null) {
-        console.log("Client has not run setup yet");
+        if (debug) {
+            console.log("Client has not run setup yet");
+        }
         res.status(400).json({
             message: 'setup has not run yet'
         });
@@ -51,7 +56,7 @@ router.get('/:uuid', function (req, res) {
 
     const kubeConfigPath = downloadKubeConf(client);
     res.on('finish', () => {
-        cleanUpPath(null, kubeConfigPath, ['kubeconfig']);
+        cleanUpPath(debug, null, kubeConfigPath, ['kubeconfig']);
     });
     res.download(`${kubeConfigPath}/kubeconfig`);
     // res.end();

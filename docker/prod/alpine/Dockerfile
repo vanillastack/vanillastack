@@ -1,5 +1,5 @@
-FROM node:lts-buster-slim as base
-LABEL maintainer_name="jeff.chousterman@cloudical.io"
+FROM node:alpine3.12 as base
+MAINTAINER maintainer_name "jurlind.budurushi@cloudical.io"
 
 ## Setting up Env
 ENV PORT=8080
@@ -7,41 +7,29 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DEBUG=false
+ENV TESTING=false
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
-ENV \
-  DEBIAN_FRONTEND=noninteractive \
-  DEBIAN_CHROOT=docker \
-  LANG=C.UTF-8 \
-  LANGUAGE=C.UTF-8 \
-  LC_CTYPE=C.UTF-8 \
-  LC_NUMERIC=C.UTF-8 \
-  LC_TIME=C.UTF-8 \
-  LC_COLLATE=C.UTF-8 \
-  LC_MONETARY=C.UTF-8 \
-  LC_MESSAGES=C \
-  LC_PAPER=C.UTF-8 \
-  LC_NAME=C.UTF-8 \
-  LC_ADDRESS=C.UTF-8 \
-  LC_TELEPHONE=C.UTF-8 \
-  LC_MEASUREMENT=C.UTF-8 \
-  LC_IDENTIFICATION=C.UTF-8
-
 ## Copy package files
 COPY ./backend/package.json ./
 COPY ./ansible/requirements.txt ./
 
-## Install Ansible and pre-req
-RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y \
-    openssh-client python3-pip && \
-    rm -rf /var/lib/apt/lists/* && \
+## Install nginx, Ansible and pre-req
+RUN apk update && \
+    apk upgrade --available && \
+    sync && apk add --update --no-cache \
+    openssh-client musl-dev libffi-dev openssl-dev ca-certificates \
+    python3 py3-pip python3-dev \
+    gcc make --virtual build-dependencies build-base && \
+    pip3 install cffi && \ 
     pip3 install ansible && \
     pip3 install -r requirements.txt && \
     ansible-galaxy collection install community.kubernetes && \
-    npm install && npm audit fix
+    npm install && npm audit fix && \
+    rm -rf /var/cache/apk*
 
 FROM base
 
