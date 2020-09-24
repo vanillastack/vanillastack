@@ -66,7 +66,11 @@ run_playbook_centos8:
   only:
     refs:
       - testing
+<<<<<<< HEAD
   stage: run_playbook_centos8
+=======
+  stage: redeploy_centos8
+>>>>>>> 93cfd0b... FIX: stage
   interruptible: true
   allow_failure: true
   script:
@@ -81,7 +85,11 @@ run_playbook_debian10:
   only:
     refs:
       - testing
+<<<<<<< HEAD
   stage: run_playbook_debian10
+=======
+  stage: redeploy_debian10
+>>>>>>> 93cfd0b... FIX: stage
   interruptible: true
   allow_failure: true
   script:
@@ -96,7 +104,11 @@ run_playbook_fedora32:
   only:
     refs:
       - testing
+<<<<<<< HEAD
   stage: run_playbook_fedora32
+=======
+  stage: redeploy_fedora32
+>>>>>>> 93cfd0b... FIX: stage
   interruptible: true
   allow_failure: true
   script:
