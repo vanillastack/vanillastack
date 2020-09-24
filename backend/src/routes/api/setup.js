@@ -501,7 +501,8 @@ router.post('/', function (req, res) {
                 client,
                 hostsJson,
                 extraVars,
-                req.app.locals.config.debug,
+                fail,
+                req.app.locals.config.debug
             );
         });
         res.status(200).json({

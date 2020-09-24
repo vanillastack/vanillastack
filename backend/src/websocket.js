@@ -284,7 +284,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
     }
 };
 
-const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, extraVars, debug) {
+const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, extraVars, fail, debug) {
 
     const wsMsg = {
         event: 'INIT',
@@ -384,26 +384,30 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
 
             console.log(`${transactionId} Setup running in dry-run-mode`);
             wsClient.dryRun = true;
+            let dryExec;
 
-            const dryRunScriptsPath = path.join(__dirname, 'templates');
-            const options = {
-                cwd: dryRunScriptsPath,
-                env: null
-            };
+            if (!fail) {
+                const dryRunScriptsPath = path.join(__dirname, 'templates');
+                const options = {
+                    cwd: dryRunScriptsPath,
+                    env: null
+                };
 
-            const dryExec = proc.spawn('sh',
-                [path.join(dryRunScriptsPath, 'dry-run_setup.sh'), path.join(dryRunScriptsPath, 'helper.txt')], // 'type_vanillastack_deploy.yaml'
-                options
-            );
-
-            // const options = {
-            //     cwd: `${basePath}`,
-            //     env: null
-            // };
-            // const dryExec = proc.spawn('ansible-playbook',
-            //     [`${basePath}/type_fail.yaml`,],
-            //     options
-            // );
+                dryExec = proc.spawn('sh',
+                    [path.join(dryRunScriptsPath, 'dry-run_setup.sh'), path.join(dryRunScriptsPath, 'helper.txt')], // 'type_vanillastack_deploy.yaml'
+                    options
+                );
+            } else {
+                const options = {
+                    cwd: `${basePath}`,
+                    env: null
+                };
+                dryExec = proc.spawn('ansible-playbook',
+                    ['-i', 'localhost',
+                        `${basePath}/type_fail.yaml`],
+                    options
+                );
+            }
 
             dryExec.stdout.on('data', data => {
                 if (debug) {
@@ -420,15 +424,6 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
                 }
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = data.toString();
-                sendMessage(wsMsg, wsClient, debug);
-            });
-
-            dryExec.on('error', err => {
-                if (debug) {
-                    console.log(`${transactionId} Dry-Run ERROR: ${err}`);
-                }
-                wsMsg.event = 'ERROR';
-                wsMsg.payload = err;
                 sendMessage(wsMsg, wsClient, debug);
             });
 
