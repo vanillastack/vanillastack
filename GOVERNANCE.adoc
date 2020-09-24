@@ -17,6 +17,15 @@ This document defines the Governance-Policies of the VanillaStack-Project. It in
 - Owners appoint or remove maintainers and developers
 - The list of owners is listed in the link:ASSIGNEDROLES.adoc[ASSIGNEDROLES.ADOC] file
 
+=== Steering Committee Member
+
+- Steering Commitee Members steer the project and its relation
+- Steering Commitee Members make decisions related obstacles and changes interfering
+the Project flow (e.g. used OS, used versions, used Libraries and so on) following
+expectation of Owners
+- Steering Commitee Member used or removed by owners
+- The list of Steering Commitee Member is listed in the link:ASSIGNEDROLES.adoc[ASSIGNEDROLES.ADOC] file
+
 === Maintainer
 
 - Owners can be Maintainers
