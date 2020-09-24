@@ -71,15 +71,15 @@ redeploy_centos8:
     - apt update && apt install -y curl
     - curl $WEBHOOK_REDEPLOY_CENTOS8
 
-redeploy_debian10:
-  only:
-    refs:
-      - testing
-  stage: redeploy_debian10
-  interruptible: true
-  script:
-    - apt update && apt install -y curl
-    - curl $WEBHOOK_REDEPLOY_DEBIAN10
+#redeploy_debian10:
+#  only:
+#    refs:
+#      - testing
+#  stage: redeploy_debian10
+#  interruptible: true
+#  script:
+#    - apt update && apt install -y curl
+#    - curl $WEBHOOK_REDEPLOY_DEBIAN10
 
 redeploy_fedora32:
   only:
@@ -91,25 +91,25 @@ redeploy_fedora32:
     - apt update && apt install -y curl
     - curl $WEBHOOK_REDEPLOY_FEDORA32
 
-redeploy_opensuse15_2:
-  only:
-    refs:
-      - testing
-  stage: redeploy_opensuse15_2
-  interruptible: true
-  script:
-    - apt update && apt install -y curl
-    - curl $WEBHOOK_REDEPLOY_OPENSUSE15_2
-
-redeploy_ubnutu_bionic:
-  only:
-    refs:
-      - testing
-  stage: redeploy_ubuntu_bionic
-  interruptible: true
-  script:
-    - apt update && apt install -y curl
-    - curl $WEBHOOK_REDEPLOY_UBUNTU_BIONIC
+#redeploy_opensuse15_2:
+#  only:
+#    refs:
+#      - testing
+#  stage: redeploy_opensuse15_2
+#  interruptible: true
+#  script:
+#    - apt update && apt install -y curl
+#    - curl $WEBHOOK_REDEPLOY_OPENSUSE15_2
+#
+#redeploy_ubnutu_bionic:
+#  only:
+#    refs:
+#      - testing
+#  stage: redeploy_ubuntu_bionic
+#  interruptible: true
+#  script:
+#    - apt update && apt install -y curl
+#    - curl $WEBHOOK_REDEPLOY_UBUNTU_BIONIC
 
 run_playbook:
   only:
