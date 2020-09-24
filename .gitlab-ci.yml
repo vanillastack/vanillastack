@@ -135,3 +135,4 @@ run_playbook_ubuntu_bionic:
     - cd vanillastack/ansible
     - mv group_vars.testing group_vars
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+
