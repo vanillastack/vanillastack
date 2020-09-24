@@ -65,7 +65,7 @@ redeploy_centos8:
   only:
     refs:
       - testing
-  stage: redeploy
+  stage: redeploy_centos8
   interruptible: true
   script:
     - apt update && apt install -y curl
@@ -75,7 +75,7 @@ redeploy_debian10:
   only:
     refs:
       - testing
-  stage: redeploy
+  stage: redeploy_debian10
   interruptible: true
   script:
     - apt update && apt install -y curl
@@ -85,7 +85,7 @@ redeploy_fedora32:
   only:
     refs:
       - testing
-  stage: redeploy
+  stage: redeploy_fedora32
   interruptible: true
   script:
     - apt update && apt install -y curl
@@ -95,7 +95,7 @@ redeploy_opensuse15_2:
   only:
     refs:
       - testing
-  stage: redeploy
+  stage: redeploy_opensuse15_2
   interruptible: true
   script:
     - apt update && apt install -y curl
@@ -105,7 +105,7 @@ redeploy_ubnutu_bionic:
   only:
     refs:
       - testing
-  stage: redeploy
+  stage: redeploy_ubuntu_bionic
   interruptible: true
   script:
     - apt update && apt install -y curl
