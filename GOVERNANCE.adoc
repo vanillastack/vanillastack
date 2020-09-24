@@ -15,7 +15,7 @@ This document defines the Governance-Policies of the VanillaStack-Project. It in
 - Owners define the expectation of the project
 - Funds contributed to the project are the responsibility and management of the owners
 - Owners appoint or remove maintainers and developers
-- The list of owners is listed in the link:ASSIGNEDROLES.adoc[ASSIGNEDROLES.ADOC] file
+- The list of owners is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
 
 === Steering Committee Member
 
@@ -24,7 +24,7 @@ This document defines the Governance-Policies of the VanillaStack-Project. It in
 the Project flow (e.g. used OS, used versions, used Libraries and so on) following
 expectation of Owners
 - Steering Commitee Member used or removed by owners
-- The list of Steering Commitee Member is listed in the link:ASSIGNEDROLES.adoc[ASSIGNEDROLES.ADOC] file
+- The list of Steering Commitee Member is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
 
 === Maintainer
 
@@ -36,7 +36,7 @@ expectation of Owners
 - Maintainers evaluate submitted content and ideas
 - Maintainers prioritize tasks
 - Maintainers submit content in Master-Branch as soon as content is approved
-- The list of maintainers is listed in the link:ASSIGNEDROLES.adoc[ASSIGNEDROLES.ADOC] file
+- The list of maintainers is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
 
 === Approvers
 
@@ -45,7 +45,7 @@ expectation of Owners
 - Approvers check submitted content before it is integrated and assign approval stage
 - Approvers ensure the proper working integration
 - Approvers ensure the expectation is targeted
-- The list of Approvers is listed in the link:ASSIGNEDROLES.adoc[ASSIGNEDROLES.ADOC] file
+- The list of Approvers is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
 
 === Developer
 
