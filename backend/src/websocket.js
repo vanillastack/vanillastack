@@ -189,6 +189,9 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                             // Setting verified nodes with hostnames
                             wsClient.verifiedNodes[node.host] = ansibleFacts[node.host].ansible_facts.ansible_hostname;
 
+                            // Adding CPU count
+                            node.cpus = ansibleFacts[node.host].ansible_facts.ansible_processor_vcpus;
+
                             // Searching for raw devices
                             const devices = ansibleFacts[node.host].ansible_facts.ansible_devices;
                             // todo: expand list to match all possible excluded devices
@@ -257,6 +260,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
             wsClient.verifiedNodes = null;
             nodes.forEach((node) => {
                 node.avail = true;
+                node.cpus = 4;
                 node.raw = true;
                 node.freeDiskSpace = '30';
                 node.memory = '2';
