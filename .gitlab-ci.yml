@@ -8,10 +8,8 @@ stages:
   - build_docker_image_dev
   - build_docker_image_testing
   - build_docker_image_prod
-  - redeploy_fedora32
-  - run_playbook
-  - redeploy_centos8
-  - run_playbook
+  - run_playbook_fedor32
+  - run_playbook_centos8
 
 build_docker_image_dev:
   only:
@@ -61,65 +59,72 @@ build_docker_image_prod:
     - docker push harbor.cloudical.net/vanillastack/installer:$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:latest
 
-redeploy_centos8:
+run_playbook_centos8:
   only:
     refs:
       - testing
-  stage: redeploy_centos8
+  stage: run_playbook_centos8
   interruptible: true
   script:
-    - apt update && apt install -y curl
     - curl $WEBHOOK_REDEPLOY_CENTOS8
-
-#redeploy_debian10:
-#  only:
-#    refs:
-#      - testing
-#  stage: redeploy_debian10
-#  interruptible: true
-#  script:
-#    - apt update && apt install -y curl
-#    - curl $WEBHOOK_REDEPLOY_DEBIAN10
-
-redeploy_fedora32:
-  only:
-    refs:
-      - testing
-  stage: redeploy_fedora32
-  interruptible: true
-  script:
-    - apt update && apt install -y curl
-    - curl $WEBHOOK_REDEPLOY_FEDORA32
-
-#redeploy_opensuse15_2:
-#  only:
-#    refs:
-#      - testing
-#  stage: redeploy_opensuse15_2
-#  interruptible: true
-#  script:
-#    - apt update && apt install -y curl
-#    - curl $WEBHOOK_REDEPLOY_OPENSUSE15_2
-#
-#redeploy_ubnutu_bionic:
-#  only:
-#    refs:
-#      - testing
-#  stage: redeploy_ubuntu_bionic
-#  interruptible: true
-#  script:
-#    - apt update && apt install -y curl
-#    - curl $WEBHOOK_REDEPLOY_UBUNTU_BIONIC
-
-run_playbook:
-  only:
-    refs:
-      - testing
-  stage: run_playbook
-  interruptible: true
-  script:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack/ansible
     - mv group_vars.testing group_vars
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+
+#run_playbook_debian10:
+#  only:
+#    refs:
+#      - testing
+#  stage: run_playbook_debian10
+#  interruptible: true
+#  script:
+#    - curl $WEBHOOK_REDEPLOY_DEBIAN10
+#    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+#    - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+#    - cd vanillastack/ansible
+#    - mv group_vars.testing group_vars
+#    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+
+run_playbook_fedora32:
+  only:
+    refs:
+      - testing
+  stage: run_playbook_fedora32
+  interruptible: true
+  script:
+    - curl $WEBHOOK_REDEPLOY_FEDORA32
+    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+    - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - cd vanillastack/ansible
+    - mv group_vars.testing group_vars
+    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+
+#run_playbook_opensuse15_2:
+#  only:
+#    refs:
+#      - testing
+#  stage: run_playbook_opensuse15_2
+#  interruptible: true
+#  script:
+#    - curl $WEBHOOK_REDEPLOY_OPENSUSE15_2
+#    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+#    - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+#    - cd vanillastack/ansible
+#    - mv group_vars.testing group_vars
+#    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+#
+#run_playbook_ubuntu_bionic:
+#  only:
+#    refs:
+#      - testing
+#  stage: run_playbook_ubuntu_bionic
+#  interruptible: true
+#  script:
+#    - curl $WEBHOOK_REDEPLOY_UBUNTU_BIONIC
+#    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+#    - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+#    - cd vanillastack/ansible
+#    - mv group_vars.testing group_vars
+#    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
