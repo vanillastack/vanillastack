@@ -200,6 +200,15 @@ ul.secondary-nav {
   text-align: center !important;
 }
 
+.lead-image-hor {
+  max-width: 120px;
+  text-align: center !important;
+}
+
+div.center {
+  text-align: center !important;
+}
+
 div>.lead-image {
   text-align: center !important;
 }
@@ -268,6 +277,14 @@ div>.lead-image {
   color: #999;
 }
 
+.black {
+  color: #000;
+}
+
+a.black {
+  text-decoration: underline;
+}
+
 .text-align-right {
   text-align: right;
 }
@@ -307,4 +324,8 @@ div>.lead-image {
 h5.mb-0 button {
   font-size: 1.25rem !important;
   padding-left: 0;
+}
+
+.col-2 input[type='range'] {
+  margin-top: 0.5em;
 }

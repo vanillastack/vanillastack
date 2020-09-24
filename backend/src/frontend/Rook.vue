@@ -69,7 +69,7 @@
                         <div class="form-group row">
                             <div class="col">
                                 <input type="number" min="2" max="5" v-model="replicaLevel" v-on:input="triggerValidation()"
-                                    required="required" size="3em" class="form-control width-5em" />
+                                    required="required" size="3em" class="form-control small" />
                             </div>
                         </div>
                         <div class="row" >
