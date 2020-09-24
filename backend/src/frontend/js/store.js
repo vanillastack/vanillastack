@@ -233,7 +233,6 @@ const clusterSettings = {
     usefqdn: true,
     adminfqdn: '',
     useadminfqdn: true,
-    externalLbIp: '',
     useExternalLb: false
   }),
 

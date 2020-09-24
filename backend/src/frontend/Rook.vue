@@ -18,7 +18,7 @@
                     <div class="custom-control custom-switch">
                         <input class="custom-control-input" id="dashboard" name="dashboard" type="checkbox" 
                             v-model="dashboard" 
-                            v-on:click="triggerValidation()">
+                            v-on:click="toggleDashboard()">
                         <label class="custom-control-label" for="dashboard">
                             Enable Rook Dashboard
                         </label>
@@ -29,7 +29,7 @@
                     <div class="custom-control custom-switch">
                         <input class="custom-control-input" id="monitoring" name="monitoring" type="checkbox" 
                             v-model="monitoring" 
-                            v-on:click="triggerValidation()">
+                            v-on:click="toggleMonitoring()">
                         <label class="custom-control-label" for="monitoring">
                             Enable Rook Monitoring
                         </label>
@@ -64,13 +64,23 @@ export default {
 
     data: function() {
         return {
-            dashboard: false,
-            monitoring: true,
-            replicaLevel: 3
+            dashboard: this.$store.state.installer.rook.dashboard,
+            monitoring: this.$store.state.installer.rook.monitoring,
+            replicaLevel: this.$store.state.installer.rook.replicaLevel
         }
     },
 
     methods: {
+        toggleDashboard: function() {
+            this.dashboard = !this.dashboard
+            this.triggerValidation()
+        },
+
+        toggleMonitoring: function() {
+            this.monitoring = !this.monitoring
+            this.triggerValidation()
+        },
+
         triggerValidation: function() {
             // Store the data
             this.$store.commit(Constants.Store_RookUpdateData, this.$data)
@@ -79,7 +89,7 @@ export default {
             EventBus.$emit(Constants.Event_NewViewLoaded,{
                 allowGoForward: true
             })
-        }
+        },
     },
 
     mounted : function () {

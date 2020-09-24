@@ -232,6 +232,9 @@ export default {
 
                         if(node.rook && !payload.raw) 
                             errors[errors.length] = "No RAW-device detected"
+
+                        if(payload.cpus !== undefined && parseInt(payload.cpus) < 2) 
+                            errors[errors.length] = "Minimum required (v)CPUs is 2"
                     }
 
                     node.success = errors.length == 0

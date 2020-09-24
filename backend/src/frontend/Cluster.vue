@@ -24,13 +24,9 @@
                     <p v-if="useExternalLb">LoadBalancer-Address / IP</p>
                     <p v-if="!useExternalLb">IP-address of the cluster</p>
                     <div class="inline-block margin-right-2em">
-                        <input class="form-control" placeholder="0.0.0.0" name="externalLbIp" v-model="externalLbIp" 
-                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" v-if="useExternalLb"
-                            :disabled="!useExternalLb"
-                            required="required" />
-                        <input class="form-control" placeholder="0.0.0.0" name="clusterip" v-model="clusterip" 
+                        <input class="form-control" placeholder="0.0.0.0" name="ip" v-model="ip" 
                             v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
-                            required="required" v-if="!useExternalLb" />
+                            required="required" />
                     </div>
                     <div class="custom-control custom-switch inline-block">
                     <input class="custom-control-input" id="useExternalLb" name="useExternalLb" type="checkbox" v-model="useExternalLb" v-on:change="triggerValidation()">
@@ -92,12 +88,11 @@ export default {
 
     data: function()  {
         return {
-            clusterip: this.$store.state.installer.cluster.ip,
+            ip: this.$store.state.installer.cluster.ip,
             useclusterfqdn: this.$store.state.installer.cluster.usefqdn,
             clusterfqdn: this.$store.state.installer.cluster.fqdn,
             useadminfqdn: this.$store.state.installer.cluster.useadminfqdn,
             adminfqdn: this.$store.state.installer.cluster.adminfqdn,
-            externalLbIp: this.$store.state.installer.cluster.externalLbIp,
             useExternalLb: this.$store.state.installer.cluster.useExternalLb
         }
     },
@@ -112,10 +107,9 @@ export default {
             // validates the data
             var validAdmin = this.useadminfqdn ? this.adminfqdn.length > 0 : true
             var validCluster = this.useclusterfqdn ? this.clusterfqdn.length > 0 : true
-            var validLb = this.externalLbIp.length > 0
-            var validIp = Constants.Validate_IpAddress.test(this.clusterip)
+            var validIp = Constants.Validate_IpAddress.test(this.ip)
 
-            isValid =  validAdmin && validCluster && (this.useExternalLb ? validLb : validIp)
+            isValid =  validAdmin && validCluster && validIp
 
             // Store the data
             this.$store.commit(Constants.Store_ClusterUpdateData, {
@@ -124,7 +118,6 @@ export default {
                 fqdn: this.clusterfqdn,
                 useadminfqdn: this.useadminfqdn,
                 adminfqdn: this.adminfqdn,
-                useExternalLb: this.useExternalLb,
                 externalLbIp: this.externalLbIp
             })
 
