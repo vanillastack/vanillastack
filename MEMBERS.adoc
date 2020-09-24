@@ -2,8 +2,7 @@
 
 This page lists all Members assigned to a Role to make it possible to address PRs, questions, etc. to the right place.
 
-- See [CODE](CONTRIBUTING.md) for general contribution guidelines.
-- See [GOVERNANCE.md](GOVERNANCE.md) for governance guidelines and steering committee and maintainer responsibilities.
+- See link:GOVERANCE.adoc[GOVERNANCE.adoc] for governance guidelines and steering committee and maintainer responsibilities.
 
 == Owners
 
