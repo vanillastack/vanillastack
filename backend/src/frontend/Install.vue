@@ -187,6 +187,13 @@ export default {
             .replace(/"/g, '"')
             .replace(/>/g, '>')   
             .replace(/</g, '<');    
+        },
+
+        showNetworkError: function(message) {
+            this.installing = false
+            this.installed = false 
+            this.installationError = true
+            this.display += message
         }
 
     },
@@ -204,15 +211,19 @@ export default {
 
     created: function() {
         EventBus.$on(Constants.Network_InstallationInProgress, data => {
-            this.installing = true
-            this.installed = false
-            this.transactionId = data.transactionId
-            this.keystonePass = data.keystonePass
-            this.stratosPass = data.stratosPass
-            this.setListAttributes = false
+            if(data.state == Constants.Network_State_Progress) {
+                this.installing = true
+                this.installed = false
+                this.transactionId = data.transactionId
+                this.keystonePass = data.keystonePass
+                this.stratosPass = data.stratosPass
+                this.setListAttributes = false
+            } else if(data.state == Constants.Network_State_Error) {
 
-            console.log("DATA", this.generateCall())
-            console.log("DATA-TXT", JSON.stringify(this.generateCall()))
+                console.log("ERROR", data.message)
+                this.showNetworkError(data.message)
+                this.installationError = true
+            }
         })
 
         EventBus.$on(Constants.Network_WS_Response, message => {
