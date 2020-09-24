@@ -21,7 +21,7 @@
   roles:
     - role: install-haproxy
       action: 01_install_keepalived
-      when: not global.externalLB and global.isHA
+      when: not global.externalLB or not global.isHA
 
 - name: Install HaProxy
   hosts: master
