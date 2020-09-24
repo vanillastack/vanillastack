@@ -37,6 +37,7 @@ router.post('/', function (req, res) {
 
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry;
+    const fail = req.body.fail || false;
     const cluster = req.body.cluster;
     const nodes = req.body.nodes;
     const general = req.body.general;
@@ -501,7 +502,6 @@ router.post('/', function (req, res) {
                 hostsJson,
                 extraVars,
                 req.app.locals.config.debug,
-                req.app.locals.config.testing
             );
         });
         res.status(200).json({
