@@ -39,8 +39,8 @@ COPY ./backend/src ./src/
 COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
 
-RUN echo  '\n\
-    #!/bin/bash\n\
+RUN echo -e '\n\
+    #!/bin/sh\n\
     filename=$1\n\
     while read line; do\n\
     echo "$line"\n\
