@@ -189,6 +189,9 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                             // Setting verified nodes with hostnames
                             wsClient.verifiedNodes[node.host] = ansibleFacts[node.host].ansible_facts.ansible_hostname;
 
+                            // Adding CPU count
+                            node.cpus = ansibleFacts[node.host].ansible_facts.ansible_processor_vcpus;
+
                             // Searching for raw devices
                             const devices = ansibleFacts[node.host].ansible_facts.ansible_devices;
                             // todo: expand list to match all possible excluded devices
@@ -205,7 +208,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                                     //     rbd*
                                     //     loop*
                                     //
-                                    //     anschliend devices.holder.length == 0 && partitions empty-object -> raw
+                                    //     danach devices.holder.length == 0 && partitions empty-object -> raw
                                     //     else return
                                     //     return device.size
                                     //
@@ -257,6 +260,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
             wsClient.verifiedNodes = null;
             nodes.forEach((node) => {
                 node.avail = true;
+                node.cpus = 4;
                 node.raw = true;
                 node.freeDiskSpace = '30';
                 node.memory = '2';
@@ -284,7 +288,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
     }
 };
 
-const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, extraVars, debug, testing) {
+const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, extraVars, fail, debug) {
 
     const wsMsg = {
         event: 'INIT',
@@ -351,63 +355,63 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
             });
 
             ans.on('close', code => {
-                if (!testing) {
-                    // todo: fail safety missing
-                    if (code === 0) {
-                        if (debug) {
-                            console.log(`${transactionId} Setup completed with Status Code ${code}`);
-                        }
-                        if (fs.existsSync(`${dir}/admin.conf`)) {
-                            console.log(`${transactionId} Reading Kube Config`);
-                            wsClient.setup = fs.readFileSync(`${dir}/admin.conf`, 'utf8');
-                            wsMsg.event = 'DONE';
-                            wsMsg.payload = code;
-                            sendMessage(wsMsg, wsClient, debug);
-                        } else {
-                            console.log(`${transactionId} Kube Config not found`);
-                            wsClient.setup = null;
-                            wsMsg.event = 'ERROR';
-                            wsMsg.payload = -1;
-                            sendMessage(wsMsg, wsClient, debug);
-                        }
+                // todo: fail safety missing
+                if (code === 0) {
+                    if (debug) {
+                        console.log(`${transactionId} Setup completed with Status Code ${code}`);
+                    }
+                    if (fs.existsSync(`${dir}/admin.conf`)) {
+                        console.log(`${transactionId} Reading Kube Config`);
+                        wsClient.setup = fs.readFileSync(`${dir}/admin.conf`, 'utf8');
+                        wsMsg.event = 'DONE';
+                        wsMsg.payload = code;
+                        sendMessage(wsMsg, wsClient, debug);
                     } else {
-                        if (debug) {
-                            console.log(`${transactionId} Setup failed with Status Code ${code}`);
-                        }
+                        console.log(`${transactionId} Kube Config not found`);
+                        wsClient.setup = null;
                         wsMsg.event = 'ERROR';
                         wsMsg.payload = -1;
                         sendMessage(wsMsg, wsClient, debug);
                     }
-                    cleanUpPath(debug, transactionId, dir, ['hosts.json', 'key.pem']);
                 } else {
-                    process.exit(code);
+                    if (debug) {
+                        console.log(`${transactionId} Setup failed with Status Code ${code}`);
+                    }
+                    wsMsg.event = 'ERROR';
+                    wsMsg.payload = -1;
+                    sendMessage(wsMsg, wsClient, debug);
                 }
+                cleanUpPath(debug, transactionId, dir, ['hosts.json', 'key.pem']);
             });
 
         } else {
 
             console.log(`${transactionId} Setup running in dry-run-mode`);
             wsClient.dryRun = true;
+            let dryExec;
 
-            const dryRunScriptsPath = path.join(__dirname, 'templates');
-            const options = {
-                cwd: dryRunScriptsPath,
-                env: null
-            };
+            if (!fail) {
+                const dryRunScriptsPath = path.join(__dirname, 'templates');
+                const options = {
+                    cwd: dryRunScriptsPath,
+                    env: null
+                };
 
-            const dryExec = proc.spawn('sh',
-                [path.join(dryRunScriptsPath, 'dry-run_setup.sh'), path.join(dryRunScriptsPath, 'helper.txt')], // 'type_vanillastack_deploy.yaml'
-                options
-            );
-
-            // const options = {
-            //     cwd: `${basePath}`,
-            //     env: null
-            // };
-            // const dryExec = proc.spawn('ansible-playbook',
-            //     [`${basePath}/type_fail.yaml`,],
-            //     options
-            // );
+                dryExec = proc.spawn('sh',
+                    [path.join(dryRunScriptsPath, 'dry-run_setup.sh'), path.join(dryRunScriptsPath, 'helper.txt')], // 'type_vanillastack_deploy.yaml'
+                    options
+                );
+            } else {
+                const options = {
+                    cwd: `${basePath}`,
+                    env: null
+                };
+                dryExec = proc.spawn('ansible-playbook',
+                    ['-i', 'localhost',
+                        `${basePath}/type_fail.yaml`],
+                    options
+                );
+            }
 
             dryExec.stdout.on('data', data => {
                 if (debug) {
@@ -424,15 +428,6 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
                 }
                 wsMsg.event = 'EXECUTION';
                 wsMsg.payload = data.toString();
-                sendMessage(wsMsg, wsClient, debug);
-            });
-
-            dryExec.on('error', err => {
-                if (debug) {
-                    console.log(`${transactionId} Dry-Run ERROR: ${err}`);
-                }
-                wsMsg.event = 'ERROR';
-                wsMsg.payload = err;
                 sendMessage(wsMsg, wsClient, debug);
             });
 

@@ -10,71 +10,140 @@
                 Please select the kind of installation you want to execute. Based on this information, the required amount of master and worker nodes will be defined.
             </div>
         </div>
-        <form>
-            <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" name="installAsHA" id="installAsHA" value="HA" v-model="isHA" :checked="isHA" v-on:change="installationKindChanged">
-                <label class="custom-control-label" for="installAsHA">
-                    Install as HA-cluster for productive workloads
-                </label>
-            </div>
-            <div class="row margin-2em"></div>
-            <div class="row">
-                <div class="col"><strong>Master Nodes</strong></div>
-            </div>
-            <div class="row">
-                <div class="col-1">
-                    <input type="number" max="99" :min="minMaster" v-model="masters" size="3em" class="form-control padding-1em margin-top-1em" />
+        <div class="form-group">
+            <div class="card margin-2em">
+                <div class="card-header" id="haSettings">
+                    <h5 class="mb-0">HA-Installation</h5>
+                </div>
+                <div id="haSettingsData" class="show" aria-labelledby="haSettings">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col">
+                                <i class="fas fa-info-circle gray"></i>
+                                A HA-installation implies you will have a minimum of three master nodes for additional fail-over functionality. This kind of installation 
+                                is strongly recommended for productive clusters. For development clusters, a non-HA-installation might be sufficient.
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="custom-control custom-switch">
+                                    <input class="custom-control-input" type="checkbox" name="installAsHA" id="installAsHA" value="HA" v-model="isHA" :checked="isHA" v-on:change="installationKindChanged">
+                                    <label class="custom-control-label" for="installAsHA">
+                                        Install as HA-cluster for productive workloads
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row margin-2em" >
-                <div class="col-2">
-                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" id="MasterNodeCount" v-model="masters" :min="minMaster" max="99">
+            <div class="form-group">
+                <div class="card margin-2em">
+                    <div class="card-header" id="masterNodes">
+                        <h5 class="mb-0">Master Nodes</h5>
+                    </div>
+                    <div id="masterNodesData" class="show" aria-labelledby="masterNodes">
+                        <div class="card-body">
+                            <div class="row margin-1em">
+                                <div class="col-1">
+                                    <input type="number" max="99" :min="minMaster" v-model="masters" class="form-control" />
+                                </div>
+                                <div class="col-2">
+                                    <input type="range" class="form-control-range" id="MasterNodeCount" v-model="masters" :min="minMaster" max="99">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row margin-1em" >
-                <div class="col"><strong>Additional Workloads</strong></div>
-            </div>
-            <div class="row margin-1em">
-                <div class="col">
-                    <p>Please check any additional workload you want to initially install and deploy on your environment. 
-                    This might impact the number of required worker nodes.<br />
-                        <em>Note: Depending on your workloads, the amount of nodes required to run these workloads might be higher than the displayed minimum values!</em>
-                    </p>
+            <div class="form-group">
+                <div class="card margin-2em">
+                    <div class="card-header" id="masterNodes">
+                        <h5 class="mb-0">Initial Workloads</h5>
+                    </div>
+                    <div id="masterNodesData" class="show" aria-labelledby="masterNodes">
+                        <div class="card-body">
+                            <div class="row margin-2em">
+                                <div class="col">
+                                    <p>Please check any additional workload you want to initially install and deploy on your environment.</p>
+                                    <i class="fas fa-info-circle gray"></i> Depending on your workloads, the amount of nodes required to <em>properly</em> run these workloads might be higher than the displayed minimum values!
+                                </div>
+                            </div>
+                            <div class="row margin-2em form-group">
+                                <div class="col-1 center">
+                                    <img src="./images/rook.png" class="lead-image" />
+                                </div>
+                                <div class="col-4 valign-center">
+                                    <p>Rook is open-source, cloud-native storage for Kubernetes, it provides production ready management for File, Block and Object Storage. Rook abstracts underlying storage providers, such as Ceph, EdgeFS, CockroachDB, Cassandra, NFS or Yogabyte DB. With Rook, storage becomes as easy as deploying a config file onto Kubernetes. Cloudical is amongst the biggest Rook contributors.</p>  
+                                    <a href="https://www.rook.io" class="black" target="_blank">https://www.rook.io</a> 
+                               </div>
+                                <div class="col">
+                                     <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" disabled="disabled" name="installRook" id="installRook" value="Rook" v-model="installRook" :checked="installRook">
+                                        <label class="custom-control-label" for="installRook">
+                                            Install Rook as persistent storage
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row margin-2em form-group">
+                                <div class="col-1" style="text-align:center !important">
+                                    <img src="./images/openstack.jpg" class="lead-image" />
+                                </div>
+                                <div class="col-4 valign-center">
+                                    <p>OpenStack provides a complete Infrastructure-as-a-Service-layer, providing you with the ability to provision virtual machines, databases and storage. It has its own management UIs and perfectly runs on top of Kubernetes.</p>
+                                    <a href="https://www.openstack.org" class="black" target="_blank">https://www.openstack.org</a>    
+                                </div>
+                                <div class="col">
+                                     <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" name="installOpenStack" id="installOpenStack" v-model="installOpenStack" value="OpenStack" :checked="installOpenStack" v-on:change="installationOpenStackChanged">
+                                        <label class="custom-control-label" for="installOpenStack">
+                                            Install OpenStack as Infrastructure-as-a-Server (IaaS)-layer
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row margin-2em form-group">
+                                <div class="col-1" style="text-align:center !important">
+                                    <img src="./images/cloudfoundry.png" class="lead-image-hor" />
+                                </div>
+                                <div class="col-4 valign-center">
+                                    <p>Cloud Foundry is an amazing Platform-as-a-Service-layer, completely automating deployment and operations of your code. It supports programming languages such as Java, .NET, Node, Python and many more. It has its own management UIs and perfectly runs on top of Kubernetes.</p>   
+                                    <a href="https://www.cloudfoundry.org" class="black" target="_blank">https://www.cloudfoundry.org</a> 
+                                </div>
+                                <div class="col">
+                                     <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" name="installCF" id="installCF" value="CF" v-model="installCF" :checked="installCF" v-on:change="installationCFChanged">
+                                        <label class="custom-control-label" for="installCF">
+                                            Install Cloud Foundry as Platform-as-a-Server (PaaS)-layer
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" disabled="disabled" name="installRook" id="installRook" value="Rook" v-model="installRook" :checked="installRook">
-                <label class="custom-control-label" for="installRook">
-                    Install Rook as persistent storage
-                </label>
-            </div>
-            <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" name="installOpenStack" id="installOpenStack" v-model="installOpenStack" value="OpenStack" :checked="installOpenStack" v-on:change="installationOpenStackChanged">
-                <label class="custom-control-label" for="installOpenStack">
-                    Install OpenStack as Infrastructure-as-a-Server (IaaS)-layer
-                </label>
-            </div>
-            <div class="custom-control custom-switch">
-                <input class="custom-control-input" type="checkbox" name="installCF" id="installCF" value="CF" v-model="installCF" :checked="installCF" v-on:change="installationCFChanged">
-                <label class="custom-control-label" for="installCF">
-                    Install Cloud Foundry as Platform-as-a-Server (PaaS)-layer
-                </label>
-            </div>
-            <div class="row margin-2em"></div>
-            <div class="row" >
-                <div class="col"><strong>Worker Nodes</strong></div>
-            </div>
-            <div class="row">
-                <div class="col-1">
-                    <input type="number" max="99" :min="minWorker" v-model="workers" size="3em" class="form-control padding-1em margin-top-1em" />
+            <div class="form-group">
+                <div class="card margin-2em">
+                    <div class="card-header" id="masterNodes">
+                        <h5 class="mb-0">Worker Nodes</h5>
+                    </div>
+                    <div id="masterNodesData" class="show" aria-labelledby="masterNodes">
+                        <div class="card-body">
+                            <div class="row margin-1em">
+                                <div class="col-1">
+                                    <input type="number" max="99" :min="minWorker" v-model="workers" size="3em" class="form-control" />
+                                </div>
+                                <div class="col-2">
+                                    <input type="range" class="form-control-range" id="WorkerNodeCount" v-model="workers"  :min="minWorker" max="99">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row margin-2em" >
-                <div class="col-2">
-                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" id="WorkerNodeCount" v-model="workers"  :min="minWorker" max="99">
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
 </template>
 <script>

@@ -36,7 +36,8 @@ const {getClient, setup, sleep, genTransactionId, randPassword} = require('../..
 router.post('/', function (req, res) {
 
     const client = getClient(req.body.uuid);
-    const dryRun = req.body.dry;
+    const dryRun = req.body.dry || false;
+    const fail = req.body.fail || false;
     const cluster = req.body.cluster;
     const nodes = req.body.nodes;
     const general = req.body.general;
@@ -500,8 +501,8 @@ router.post('/', function (req, res) {
                 client,
                 hostsJson,
                 extraVars,
-                req.app.locals.config.debug,
-                req.app.locals.config.testing
+                fail,
+                req.app.locals.config.debug
             );
         });
         res.status(200).json({
