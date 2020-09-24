@@ -38,8 +38,8 @@ COPY ./backend/src ./src/
 COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
 
-RUN echo  '\n\
-    #!/bin/bash\n\
+RUN echo -e '\n\
+    #!/bin/sh\n\
     filename=$1\n\
     while read line; do\n\
     echo "$line"\n\
@@ -49,10 +49,5 @@ RUN echo  '\n\
     > /usr/workdir/src/templates/dry-run_setup.sh && \
     chmod +x /usr/workdir/src/templates/dry-run_setup.sh
 
-## Install npm Modules
-## Build and prep Frontend
-RUN  rm -rf ./dist/* && npm run build \
-    && rm -rf ./src/public/* && cp -r ./dist/* ./src/public
-
 ## Run nginx and backend
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dockerdev"]

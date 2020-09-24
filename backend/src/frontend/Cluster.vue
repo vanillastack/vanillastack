@@ -14,69 +14,90 @@
                     <p><em>Note: It is highly recommended to define a separate Domain name for AppStore, e.g. admin.&lt;your-cluster&gt;, otherwise access is restricted to a kubctl-Tunnel!</em></p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <p><strong>LoadBalancer</strong></p>
+            <div class="card margin-2em">
+                <div class="card-header" id="lbHeading">
+                    <h5 class="mb-0">LoadBalancer</h5>
                 </div>
-            </div>
-            <div class="form-group row margin-2em">
-                <div class="col">
-                    <p v-if="useExternalLb">LoadBalancer-Address / IP</p>
-                    <p v-if="!useExternalLb">IP-address of the cluster</p>
-                    <div class="inline-block margin-right-2em">
-                        <input class="form-control" placeholder="0.0.0.0" name="externalLbIp" v-model="externalLbIp" 
-                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" v-if="useExternalLb"
-                            :disabled="!useExternalLb"
-                            required="required" />
-                        <input class="form-control" placeholder="0.0.0.0" name="clusterip" v-model="clusterip" 
-                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
-                            required="required" v-if="!useExternalLb" />
-                    </div>
-                    <div class="custom-control custom-switch inline-block">
-                    <input class="custom-control-input" id="useExternalLb" name="useExternalLb" type="checkbox" v-model="useExternalLb" v-on:change="triggerValidation()">
-                    <label class="custom-control-label" for="useExternalLb">
-                        Use External LoadBalancer
-                    </label>
-                </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <p><strong>Cluster Domain-Name</strong></p>
-                </div>
-            </div>
-            <div class="form-group row margin-2em">
-                <div class="col">
-                    <div class="inline-block margin-right-2em">
-                        <input class="form-control" placeholder="my.cluster" name="clusterfqdn" v-model="clusterfqdn" 
-                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
-                            :required="useclusterfqdn" :disabled="!useclusterfqdn" />
-                    </div>
-                    <div class="custom-control custom-switch inline-block">
-                        <input class="custom-control-input" id="clusterfqdntrigger" disabled="disabled" name="clusterfqdntrigger" type="checkbox" v-model="useclusterfqdn" v-on:click="triggerValidation()">
-                        <label class="custom-control-label" for="clusterfqdntrigger">
-                            Assign domain name to cluster
-                        </label>
+                <div id="lbData" class="show" aria-labelledby="lbHeading">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="custom-control custom-switch inline-block">
+                                    <input class="custom-control-input" id="useExternalLb" name="useExternalLb" type="checkbox" v-model="useExternalLb" v-on:change="triggerValidation()">
+                                    <label class="custom-control-label" for="useExternalLb">
+                                        Use External LoadBalancer
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <p v-if="useExternalLb">LoadBalancer-Address / IP</p>
+                                <p v-if="!useExternalLb">IP-address of the cluster</p>
+                                <div class="inline-block margin-right-2em">
+                                    <input class="form-control width-20em" placeholder="0.0.0.0" name="ip" v-model="ip" 
+                                        v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
+                                        required="required" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <p><strong>Domain for VanillaStore</strong></p>
+            <div class="card margin-2em">
+                <div class="card-header" id="lbDomain">
+                    <h5 class="mb-0">Cluster Domain-Name</h5>
+                </div>
+                <div id="lbDomainData" class="show" aria-labelledby="lbDomain">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="custom-control custom-switch inline-block">
+                                    <input class="custom-control-input" id="clusterfqdntrigger" disabled="disabled" name="clusterfqdntrigger" type="checkbox" v-model="useclusterfqdn" v-on:click="triggerValidation()">
+                                    <label class="custom-control-label" for="clusterfqdntrigger">
+                                        Assign domain name to cluster
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="inline-block margin-right-2em">
+                                    <input class="form-control width-20em" placeholder="my.cluster" name="clusterfqdn" v-model="clusterfqdn" 
+                                        v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
+                                        :required="useclusterfqdn" :disabled="!useclusterfqdn" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="form-group row margin-2em">
-                <div class="col">
-                    <div class="inline-block margin-right-2em">
-                        <input class="form-control" placeholder="admin.my.cluster" name="adminfqdn" v-model="adminfqdn" 
-                            v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
-                            :required="useadminfqdn" :disabled="!useadminfqdn" />
-                    </div>
-                    <div class="custom-control custom-switch inline-block">
-                        <input class="custom-control-input" id="adminfqdntrigger" name="adminfqdntrigger" type="checkbox" v-model="useadminfqdn" v-on:click="triggerValidation()">
-                        <label class="custom-control-label" for="adminfqdntrigger">
-                            Use domain name for AppStore access
-                        </label>
+            <div class="card margin-2em">
+                <div class="card-header" id="lbPrefix">
+                    <h5 class="mb-0">Domain-Prefix for VanillaStore</h5>
+                </div>
+                <div id="lbPrefixData" class="show" aria-labelledby="lbPrefix">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="custom-control custom-switch inline-block">
+                                    <input class="custom-control-input" id="adminfqdntrigger" name="adminfqdntrigger" type="checkbox" v-model="useadminfqdn" v-on:click="triggerValidation()">
+                                    <label class="custom-control-label" for="adminfqdntrigger">
+                                        Use domain name for AppStore access
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="inline-block margin-right-2em" v-if="useadminfqdn">
+                                    <input class="form-control inline-block width-5em" placeholder="admin" name="adminfqdn" v-model="adminfqdn" 
+                                        v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
+                                        :required="useadminfqdn" :disabled="!useadminfqdn" />
+                                        .{{ clusterfqdn }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,12 +113,11 @@ export default {
 
     data: function()  {
         return {
-            clusterip: this.$store.state.installer.cluster.ip,
+            ip: this.$store.state.installer.cluster.ip,
             useclusterfqdn: this.$store.state.installer.cluster.usefqdn,
             clusterfqdn: this.$store.state.installer.cluster.fqdn,
             useadminfqdn: this.$store.state.installer.cluster.useadminfqdn,
             adminfqdn: this.$store.state.installer.cluster.adminfqdn,
-            externalLbIp: this.$store.state.installer.cluster.externalLbIp,
             useExternalLb: this.$store.state.installer.cluster.useExternalLb
         }
     },
@@ -106,25 +126,20 @@ export default {
         triggerValidation() {
             var isValid = false;
 
-            if(this.clusterfqdn.length > 0 && this.adminfqdn.length == 0) 
-                this.adminfqdn = "admin." + this.clusterfqdn
-
             // validates the data
             var validAdmin = this.useadminfqdn ? this.adminfqdn.length > 0 : true
             var validCluster = this.useclusterfqdn ? this.clusterfqdn.length > 0 : true
-            var validLb = this.externalLbIp.length > 0
-            var validIp = Constants.Validate_IpAddress.test(this.clusterip)
+            var validIp = Constants.Validate_IpAddress.test(this.ip)
 
-            isValid =  validAdmin && validCluster && (this.useExternalLb ? validLb : validIp)
+            isValid =  validAdmin && validCluster && validIp
 
             // Store the data
             this.$store.commit(Constants.Store_ClusterUpdateData, {
-                ip: this.clusterip,
+                ip: this.ip,
                 usefqdn: this.useclusterfqdn,
                 fqdn: this.clusterfqdn,
                 useadminfqdn: this.useadminfqdn,
                 adminfqdn: this.adminfqdn,
-                useExternalLb: this.useExternalLb,
                 externalLbIp: this.externalLbIp
             })
 

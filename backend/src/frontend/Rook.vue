@@ -12,44 +12,74 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="row margin-2em">
-                <div class="col-3">
-                    <p><strong>Rook Dashboard</strong></p>
-                    <div class="custom-control custom-switch">
-                        <input class="custom-control-input" id="dashboard" name="dashboard" type="checkbox" 
-                            v-model="dashboard" 
-                            v-on:click="triggerValidation()">
-                        <label class="custom-control-label" for="dashboard">
-                            Enable Rook Dashboard
-                        </label>
-                    </div>
+            <div class="card margin-2em">
+                <div class="card-header" id="dashboardArea">
+                    <h5 class="mb-0">Rook Dashboard</h5>
                 </div>
-                <div class="col-3">
-                    <p><strong>Monitoring</strong></p>
-                    <div class="custom-control custom-switch">
-                        <input class="custom-control-input" id="monitoring" name="monitoring" type="checkbox" 
-                            v-model="monitoring" 
-                            v-on:click="triggerValidation()">
-                        <label class="custom-control-label" for="monitoring">
-                            Enable Rook Monitoring
-                        </label>
+                <div id="dashboardAreaData" class="show" aria-labelledby="dashboardArea">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="custom-control custom-switch">
+                                    <input class="custom-control-input" id="dashboard" name="dashboard" type="checkbox" 
+                                        v-model="dashboard" 
+                                        v-on:click="toggleDashboard()">
+                                    <label class="custom-control-label" for="dashboard">
+                                        Enable Rook Dashboard
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col"><strong>Replica Level</strong></div>
-            </div>
-            <div class="row">
-                <div class="col-1">
-                    <input type="number" min="2" max="5" v-model="replicaLevel" v-on:input="triggerValidation()"
-                        required="required" size="3em" class="form-control padding-1em margin-top-1em" />
+            <div class="card margin-2em">
+                <div class="card-header" id="monitoringArea">
+                    <h5 class="mb-0">Monitoring</h5>
+                </div>
+                <div id="monitoringAreaData" class="show" aria-labelledby="monitoringArea">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="custom-control custom-switch">
+                                    <input class="custom-control-input" id="monitoring" name="monitoring" type="checkbox" 
+                                        v-model="monitoring" 
+                                        v-on:click="toggleMonitoring()">
+                                    <label class="custom-control-label" for="monitoring">
+                                        Enable Rook Monitoring
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row margin-2em" >
-                <div class="col-2">
-                    <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" 
-                        id="replicaCount" v-model="replicaLevel" size="5em" v-on:change="triggerValidation()"
-                        min="2" max="5">
+            <div class="card margin-2em">
+                <div class="card-header" id="replicaLevel">
+                    <h5 class="mb-0">Replica Level</h5>
+                </div>
+                <div id="replicaLevelData" class="show" aria-labelledby="replicaLevel">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col">
+                                <i class="fas fa-info-circle gray"></i>
+                                Indicates, how often data is replicated within Rook worker nodes. Default value is <em>3</em>, higher values imply more load and less performance, lower values might cause data losses.
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <input type="number" min="2" max="5" v-model="replicaLevel" v-on:input="triggerValidation()"
+                                    required="required" size="3em" class="form-control small" />
+                            </div>
+                        </div>
+                        <div class="row" >
+                            <div class="col-2">
+                                <input type="range" class="form-control-range padding-1em no-padding-left no-padding-right" 
+                                    id="replicaCount" v-model="replicaLevel" size="5em" v-on:change="triggerValidation()"
+                                    min="2" max="5">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,13 +94,23 @@ export default {
 
     data: function() {
         return {
-            dashboard: false,
-            monitoring: true,
-            replicaLevel: 3
+            dashboard: this.$store.state.installer.rook.dashboard,
+            monitoring: this.$store.state.installer.rook.monitoring,
+            replicaLevel: this.$store.state.installer.rook.replicaLevel
         }
     },
 
     methods: {
+        toggleDashboard: function() {
+            this.dashboard = !this.dashboard
+            this.triggerValidation()
+        },
+
+        toggleMonitoring: function() {
+            this.monitoring = !this.monitoring
+            this.triggerValidation()
+        },
+
         triggerValidation: function() {
             // Store the data
             this.$store.commit(Constants.Store_RookUpdateData, this.$data)
@@ -79,7 +119,7 @@ export default {
             EventBus.$emit(Constants.Event_NewViewLoaded,{
                 allowGoForward: true
             })
-        }
+        },
     },
 
     mounted : function () {
