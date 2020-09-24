@@ -45,7 +45,6 @@ expectation of Owners
 - Approvers check submitted content before it is integrated and assign approval stage
 - Approvers ensure the proper working integration
 - Approvers ensure the expectation is targeted
-- The list of Approvers is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
 
 === Developer
 
@@ -54,7 +53,6 @@ expectation of Owners
 - Developers are responsible for not counteracting the idea and the project
 - Developers review submitted content before it is incorporated
 - Developers keep the project flow alive
-- The list of Developers is listed in the link:ASSIGNEDROLES.adoc[ASSIGNEDROLES.ADOC] file
 
 === Contributor
 
