@@ -8,7 +8,7 @@ stages:
   - build_docker_image_dev
   - build_docker_image_testing
   - build_docker_image_prod
-  - run_playbook_fedor32
+  - run_playbook_fedora32
   - run_playbook_centos8
 
 build_docker_image_dev:
