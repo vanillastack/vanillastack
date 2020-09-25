@@ -13,13 +13,13 @@
       - tar
       - python3-pip
       - python3-kubernetes
-      - gcc
 
 - name: Install additional packages
   package:
     name:
       - python3-devel
-  when: ansible_distribution == 'Suse'
+      - gcc-*
+  when: ansible_os_family == 'Suse'
 
 - name: install pip modules
   pip:
@@ -320,7 +320,7 @@
 
 #### SUSE FAMILY
 - name: configure SUSE Systems
-  when: ansible_distribution == 'Suse'
+  when: ansible_os_family == 'Suse'
   block:
   - name: Add Kubic repository
     community.general.zypper_repository:
