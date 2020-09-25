@@ -29,7 +29,7 @@
                     <div class="card-body">
                         <span v-for="item in masters" v-bind:key="item.key">
                             <div class="row margin-1em">
-                                <div class="col-1"><strong>Master {{ item.index + 1 }} {{ item._isDirty }}</strong></div>   
+                                <div class="col-1"><strong>Master {{ item.index + 1 }}</strong></div>   
                             </div>
                             <div class="row margin-2em form-group" >
                                 <div class="col-2">
@@ -66,7 +66,7 @@
                     <div class="card-body">
                         <span v-for="item in workers" :key="item.key">
                             <div class="row margin-1em">
-                                <div class="col-1"><strong>Worker {{ item.index + 1 }} {{ item._isDirty }}</strong></div>   
+                                <div class="col-1"><strong>Worker {{ item.index + 1 }}</strong></div>   
                             </div>
                             <div class="row margin-2em form-group">
                                 <div class="col-2">
