@@ -1,26 +1,26 @@
 [master]
-fedora-master-1 ansible_host=95.217.63.249 ansible_user=fedora
-fedora-master-2 ansible_host=95.217.63.250 ansible_user=fedora
-fedora-master-3 ansible_host=95.217.63.251 ansible_user=fedora
+testing-master-1 ansible_host=95.217.63.249 ansible_user=testing
+testing-master-2 ansible_host=95.217.63.250 ansible_user=testing
+testing-master-3 ansible_host=95.217.63.251 ansible_user=testing
 
 [worker]
-fedora-worker-1 ansible_host=95.217.63.252 ansible_user=fedora
-fedora-worker-2 ansible_host=95.217.63.253 ansible_user=fedora
-fedora-worker-3 ansible_host=95.217.63.254 ansible_user=fedora
+testing-worker-1 ansible_host=95.217.63.252 ansible_user=testing
+testing-worker-2 ansible_host=95.217.63.253 ansible_user=testing
+testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 
 [kube_cluster:children]
 master
 worker
 
 [storage]
-fedora-worker-1 ansible_host=95.217.63.252 ansible_user=fedora
-fedora-worker-2 ansible_host=95.217.63.253 ansible_user=fedora
-fedora-worker-3 ansible_host=95.217.63.254 ansible_user=fedora
+testing-worker-1 ansible_host=95.217.63.252 ansible_user=testing
+testing-worker-2 ansible_host=95.217.63.253 ansible_user=testing
+testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 
 [compute]
-fedora-worker-1 ansible_host=95.217.63.252 ansible_user=fedora
-fedora-worker-2 ansible_host=95.217.63.253 ansible_user=fedora
-fedora-worker-3 ansible_host=95.217.63.254 ansible_user=fedora
+testing-worker-1 ansible_host=95.217.63.252 ansible_user=testing
+testing-worker-2 ansible_host=95.217.63.253 ansible_user=testing
+testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 
 [haproxy:children]
 master
