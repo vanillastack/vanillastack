@@ -11,59 +11,74 @@
                     Here we are validating all nodes for being reachable and whether the ones selected for Rook fulfil the basic requirements.
                 </div>
             </div>
-            <div class="row margin-2em">
-                <div class="col">
-                    <a class="btn btn-success min-width-100" v-on:click="triggerValidation()" :class="{disabled: isRunning}" role="button">Validate Nodes</a>
+            <div class="card margin-2em">
+                <div class="card-header" id="nodesArea">
+                    <h5 class="mb-0">Node-Check</h5>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-2"><strong>IP</strong></div>
-                <div class="col-2"><strong>User</strong></div>
-                <div class="col-2"><strong>Role</strong></div>
-                <div class="col-3"><strong>Workloads</strong></div>
-                <div class="col"><strong>State</strong></div>
-            </div>
-            <div class="form-group" v-for="item in nodes" :key="item.ip">
-                <div class="row">
-                    <div class="col-2">{{ item.ip }}</div>
-                    <div class="col-2">{{ item.user }}</div>
-                    <div class="col-2">{{ item.role }}</div>
-                    <div class="col-3">{{ item.apps }}</div>
-                    <div class="col">
-                        <div v-if="item.checking" class="spinner-border spinner-border-sm" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>                  
-                        <div v-if="nodesChecked || (item.checked && item.success)">
-                            <i class="fas fa-check-circle" style="color:green"></i>
+                <div id="nodesAreaData" class="show" aria-labelledby="ndesArea">
+                    <div class="card-body">
+                        <div class="row margin-2em">
+                            <div class="col">
+                                <a class="btn btn-success min-width-100" v-on:click="triggerValidation()" :class="{disabled: isRunning}" role="button">Validate Nodes</a>
+                            </div>
                         </div>
-                        <div v-if="item.checked && !item.success">
-                            <ul class="fa-ul inline" v-for="error in item.errors" :key="error">
-                                <li><i class="fas fa-times-circle" style="color:red"></i>{{error}}</li>
-                            </ul>
+                        <div class="row">
+                            <div class="col-2"><strong>IP</strong></div>
+                            <div class="col-2"><strong>User</strong></div>
+                            <div class="col-2"><strong>Role</strong></div>
+                            <div class="col-3"><strong>Workloads</strong></div>
+                            <div class="col"><strong>State</strong></div>
+                        </div>
+                        <div class="form-group" v-for="item in nodes" :key="item.ip">
+                            <div class="row">
+                                <div class="col-2">{{ item.ip }}</div>
+                                <div class="col-2">{{ item.user }}</div>
+                                <div class="col-2">{{ item.role }}</div>
+                                <div class="col-3">{{ item.apps }}</div>
+                                <div class="col">
+                                    <div v-if="item.checking" class="spinner-border spinner-border-sm" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>                  
+                                    <div v-if="nodesChecked || (item.checked && item.success)">
+                                        <i class="fas fa-check-circle" style="color:green"></i>
+                                    </div>
+                                    <div v-if="item.checked && !item.success">
+                                        <ul class="fa-ul inline" v-for="error in item.errors" :key="error">
+                                            <li><i class="fas fa-times-circle" style="color:red"></i>{{error}}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row margin-2em">
-                <div class="col">&#160;</div>
-            </div>
-            <div class="row margin-1em">
-                <div class="col">
-                    Please ensure the following requirement is met for each of the nodes where Rook is to be deployed to.
+            <div class="card margin-2em">
+                <div class="card-header" id="nodesArea">
+                    <h5 class="mb-0">Satisfying Rook Dependencies</h5>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <ul>
-                        <li>A raw device exists (<strong>no</strong> filesystem)</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row margin-2em">
-                <div class="col">
-                    <p>You can use the <pre style="display: inline">lsblk -f</pre> command to verify the filesystem-information on your machines:</p>
-                    <p><img src="./images/rook-prerequisites.png" style="max-width: 800px" /></p>
-                    <p>In the given image, volume <strong>vdb</strong> is in a raw state, and can therefore be used for Rook.</p>
+                <div id="nodesAreaData" class="show" aria-labelledby="ndesArea">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col">
+                                Please ensure the following requirement is met for each of the nodes where Rook is to be deployed to.
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <ul class="fa-ul">
+                                    <li><i class="fas fa-check"></i> A raw device exists (<strong>no</strong> filesystem)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row margin-2em">
+                            <div class="col">
+                                <p>You can use the <pre style="display: inline">lsblk -f</pre> command to verify the filesystem-information on your machines:</p>
+                                <p><img src="./images/rook-prerequisites.png" style="max-width: 800px" /></p>
+                                <p>In the given image, volume <strong>vdb</strong> is in a raw state, and can therefore be used for Rook.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
