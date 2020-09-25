@@ -10,6 +10,8 @@ stages:
   - build_docker_image_prod
   - run_playbook_fedora32
   - run_playbook_centos8
+  - run_playbook_debian10
+  - run_playbook_ubuntu_bionic
 
 build_docker_image_dev:
   only:
@@ -73,19 +75,19 @@ run_playbook_centos8:
     - mv group_vars.testing group_vars
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
-#run_playbook_debian10:
-#  only:
-#    refs:
-#      - testing
-#  stage: run_playbook_debian10
-#  interruptible: true
-#  script:
-#    - curl $WEBHOOK_REDEPLOY_DEBIAN10
-#    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-#    - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
-#    - cd vanillastack/ansible
-#    - mv group_vars.testing group_vars
-#    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+run_playbook_debian10:
+  only:
+    refs:
+      - testing
+  stage: run_playbook_debian10
+  interruptible: true
+  script:
+    - curl $WEBHOOK_REDEPLOY_DEBIAN10
+    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+    - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - cd vanillastack/ansible
+    - mv group_vars.testing group_vars
+    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_fedora32:
   only:
@@ -114,17 +116,17 @@ run_playbook_fedora32:
 #    - cd vanillastack/ansible
 #    - mv group_vars.testing group_vars
 #    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
-#
-#run_playbook_ubuntu_bionic:
-#  only:
-#    refs:
-#      - testing
-#  stage: run_playbook_ubuntu_bionic
-#  interruptible: true
-#  script:
-#    - curl $WEBHOOK_REDEPLOY_UBUNTU_BIONIC
-#    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-#    - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
-#    - cd vanillastack/ansible
-#    - mv group_vars.testing group_vars
-#    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+
+run_playbook_ubuntu_bionic:
+  only:
+    refs:
+      - testing
+  stage: run_playbook_ubuntu_bionic
+  interruptible: true
+  script:
+    - curl $WEBHOOK_REDEPLOY_UBUNTU_BIONIC
+    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+    - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
+    - cd vanillastack/ansible
+    - mv group_vars.testing group_vars
+    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
