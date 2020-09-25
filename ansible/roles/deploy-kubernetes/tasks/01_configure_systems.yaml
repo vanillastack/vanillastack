@@ -11,6 +11,8 @@
       - curl
       - python3-passlib
       - tar
+      - python3-pip
+      - python3-kubernetes
 
 - name: install pip modules
   pip:
