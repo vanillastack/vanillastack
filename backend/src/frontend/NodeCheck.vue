@@ -33,7 +33,7 @@
                         <div v-if="item.checking" class="spinner-border spinner-border-sm" role="status">
                             <span class="sr-only">Loading...</span>
                         </div>                  
-                        <div v-if="item.checked && item.success">
+                        <div v-if="nodesChecked || (item.checked && item.success)">
                             <i class="fas fa-check-circle" style="color:green"></i>
                         </div>
                         <div v-if="item.checked && !item.success">
@@ -82,6 +82,7 @@ export default {
             nodes: [],
             isRunning: false,
             nodeCheckTransactionId: '',
+            nodesChecked: this.$store.state.installer.general.nodesChecked
         }
     },
 
@@ -108,15 +109,25 @@ export default {
         },
 
         validate: function() {
-            var isValid = !this.nodes.some(node => !node.success);
-            if(this.isRunning) {
-                this.finishedSuccess = isValid
-                this.finishedError = !isValid
+            var isValid = this.nodesChecked
 
-                this.isRunning = false
+            if(!isValid) {
+                isValid = !this.nodes.some(node => !node.success);
+                if(this.isRunning) {
+                    this.finishedSuccess = isValid
+                    this.finishedError = !isValid
+
+                    this.isRunning = false
+                }
+
+                this.nodesChecked = isValid
+
+                // Commit the result
+                this.$store.commit(Constants.Store_NodesChecked, this.nodesChecked)
+
+                EventBus.$emit(Constants.Event_NodesChecked, isValid)
             }
 
-            EventBus.$emit(Constants.Event_NodesChecked, isValid)
 
             EventBus.$emit(Constants.Event_NewViewLoaded, {
                 allowGoForward: isValid
@@ -149,7 +160,7 @@ export default {
 
     mounted : function () {
         
-        // Load the workers with Rook
+        // Load the masters 
         var nodes = [];
         this.$store.state.installer.general.mastersList.forEach(node => {
             nodes[nodes.length] = {
@@ -164,6 +175,8 @@ export default {
                 checked: false
             }
         })
+
+        // Load the workers
         this.$store.state.installer.general.workersList.forEach(node => {
             nodes[nodes.length] = {
                 ip: node.ip,

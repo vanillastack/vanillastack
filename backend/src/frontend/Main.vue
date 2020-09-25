@@ -144,8 +144,6 @@ export default {
         this.canGoBack = value.canGoBack
         this.canGoForward = value.canGoForward
         this.allowGoForward = value.allowGoForward
-
-        console.log("NAVIGATION UPDATED", value)
     })
 
     EventBus.$on(Constants.Event_NodesValidated, value => {
