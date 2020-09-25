@@ -1,22 +1,16 @@
 ---
 - name: Install neccessary packages
   package:
-    name: "{{ item }}"
-  items:
-    - gnupg
-    - git
-    - python-pip
-    - python3-pip
-    - python-kubernetes
-    - python3-kubernetes
-    - ansible
-    - vim
-    - lvm2
-    - jq
-    - curl
-    - python3-passlib
-    - tar
-  ignore_errors: true
+    name:
+      - gnupg
+      - git
+      - ansible
+      - vim
+      - lvm2
+      - jq
+      - curl
+      - python3-passlib
+      - tar
 
 - name: install pip modules
   pip:
@@ -77,6 +71,10 @@
   - name: Install packages
     package:
       name:
+        - python-pip
+        - python3-pip
+        - python-kubernetes
+        - python3-kubernetes
         - cf7-cli
         - "kubelet-{{ versions }}"
         - "kubeadm-{{ versions }}"
@@ -196,12 +194,34 @@
         - helm
         - cf-cli
         - vim
+        - python-pip
+        - python3-pip
+        - python-kubernetes
+        - python3-kubernetes
       update_cache: yes
     retries: 3
     delay: 1
     register: result
     until: result is success
-  
+    when: ansible_distribution == 'Debian'
+
+  - name: Install packages
+    apt:
+      pkg:
+        - ansible
+        - needrestart
+        - helm
+        - cf-cli
+        - vim
+        - python3-pip
+        - python3-kubernetes
+      update_cache: yes
+    retries: 3
+    delay: 1
+    register: result
+    until: result is success
+    when: ansible_distribution == 'Ubuntu'
+
   - name: Upgrade all packages to the latest version
     apt:
       name: "*"
