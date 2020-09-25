@@ -127,7 +127,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
     try {
         fs.mkdirSync(dir, {recursive: true});
         fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
-
+        wsClient.verifiedNodes = null;
         const hostsYaml = {
             all: {
                 hosts: {}
@@ -165,7 +165,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                     if (err.code !== 4) {
                         console.error(err);
                         wsClient.verifiedNodes = null;
-                        wsMsg.event = 'DONE';
+                        wsMsg.event = 'ERROR';
                         wsMsg.payload = '-1';
                         sendMessage(wsMsg, wsClient, debug);
                         cleanUpPath(debug, transactionId, dir, ['hosts.yml', 'key.pem']);
@@ -188,7 +188,9 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                             node.avail = true;
                             // Setting verified nodes with hostnames
                             wsClient.verifiedNodes[node.host] = ansibleFacts[node.host].ansible_facts.ansible_hostname;
-
+                            if (debug) {
+                                console.log(`Hostname ${wsClient.verifiedNodes[node.host]} set for IP: ${node.host}`);
+                            }
                             // Adding CPU count
                             node.cpus = ansibleFacts[node.host].ansible_facts.ansible_processor_vcpus;
 
@@ -199,21 +201,7 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                             for (const [key, value] of Object.entries(devices)) {
                                 let raw = true;
                                 for (const filter of filterList) {
-                                    // filter for raw devices
-                                    //     devices filtern
-                                    //     dm-*
-                                    //     dm*
-                                    //     sr*
-                                    //     nbd*
-                                    //     rbd*
-                                    //     loop*
-                                    //
-                                    //     danach devices.holder.length == 0 && partitions empty-object -> raw
-                                    //     else return
-                                    //     return device.size
-                                    //
-                                    //     devices loop
-                                    //     raw -> empty partitions
+                                    // filter for raw devices dm* sr* nbd* rbd* loop* devices.holder.length == 0 && partitions empty-object -> raw
                                     if (!key.toString().indexOf(filter)) {
                                         raw = false;
                                     } else {
@@ -236,14 +224,15 @@ const connectionCheck = function (transactionId, nodes, wsClient, dryRun, debug)
                                 node.diskSpace = 0;
                             }
                         }
-                        // console.log(node);
                         wsMsg.event = 'EXECUTION';
                         wsMsg.payload = JSON.stringify(node);
                         sendMessage(wsMsg, wsClient, debug);
                     });
                 }
                 if (stderr) {
-                    wsClient.verifiedNodes = null;
+                    if (debug) {
+                        console.log(`An Error occurred, STDERR:\n${stderr}`);
+                    }
                     wsMsg.event = 'EXECUTION';
                     wsMsg.payload = JSON.stringify(stderr);
                     sendMessage(wsMsg, wsClient, debug);
