@@ -38,6 +38,7 @@ router.post('/', function (req, res) {
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry || false;
     const fail = req.body.fail || false;
+    const isHA = req.body.isHA || false;
     const cluster = req.body.cluster;
     const nodes = req.body.nodes;
     const general = req.body.general;
@@ -47,6 +48,7 @@ router.post('/', function (req, res) {
     const additional = req.body.additional;
     const letsencrypt = req.body.letsencrypt;
 
+    // console.log(req.body);
     // Filtering Bad Request Codes; todo: more advance filtering and changing to switch case
     if (!client) {
         res.status(400).json({
@@ -90,7 +92,7 @@ router.post('/', function (req, res) {
         global: {
             registry: cluster.registry_endpoint,
             uuid: client.uuid,
-            isHA: req.body.isHA,
+            isHA: isHA,
             externalLB: cluster.useExternalLb
         },
         ingress: {

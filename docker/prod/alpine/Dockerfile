@@ -7,7 +7,6 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DEBUG=false
-ENV TESTING=false
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
 EXPOSE ${PORT}
