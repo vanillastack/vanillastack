@@ -91,6 +91,7 @@ run_playbook_debian10:
     - cd vanillastack/ansible
     - mv group_vars.testing group_vars
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+
 run_playbook_fedora32:
   only:
     refs:
