@@ -8,4 +8,8 @@
   command: >
     kubeadm join --token {{ token }} --node-name {{ inventory_hostname_short }} \
                  --discovery-token-unsafe-skip-ca-verification \
+                 {% if global.isHA %}
                  api.{{ kubernetes.loadBalancer.clusterDomain }}:6443 
+                 {% else %}
+                 {{ hostvars[groups.master | first]['ansible_default_ipv4']['address'] }}:6443
+                 {% endif %}                 

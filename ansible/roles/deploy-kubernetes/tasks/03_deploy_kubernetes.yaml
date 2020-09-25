@@ -12,7 +12,9 @@
   command: > 
     kubeadm init --service-cidr {{ kubernetes.service_cidr }} \
                  --token {{ token }} --node-name {{ inventory_hostname_short }} \
-                 --control-plane-endpoint api.{{ kubernetes.loadBalancer.clusterDomain }}:6443
+                  {% if global.isHA %}
+                  --control-plane-endpoint api.{{ kubernetes.loadBalancer.clusterDomain }}:6443 \
+                  {% endif %}
                  --upload-certs \
                  --apiserver-bind-port {{ apiport }} \
                  --certificate-key {{ certificate_key }} \

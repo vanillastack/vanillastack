@@ -87,13 +87,6 @@
     selinux:
       state: disabled
   
-  - name: Disable Firewalld
-    systemd: 
-      name: firewalld
-      masked: true
-      enabled: false
-      state: stopped
-  
   - name: Check if systemd.unified_cgroup_hierarchy in grubenv already
     command: grep -Fq "systemd.unified_cgroup_hierarchy=0" /boot/grub2/grubenv
     register: grubenv_systemd_check
@@ -326,13 +319,6 @@
       - "kubernetes1.19-kubelet"
       - "cri-o"
 
-  - name: Disable Firewalld
-    systemd:
-      name: firewalld
-      masked: true
-      enabled: false
-      state: stopped
-
   - name: configure crio
     lineinfile:
       path: /etc/crio/crio.conf.d/00-default.conf
@@ -371,6 +357,21 @@
       regexp: '^seccomp_profile =.*'
       line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 #### SUSE FAMILY END
+
+- name: "Check for installed packages"
+  package_facts:
+    manager: "auto"
+
+- name: Disable Firewall
+  systemd:
+    name: "{{ item }}"
+    masked: true
+    enabled: false
+    state: stopped
+  when: "item in ansible_facts.packages"
+  loop:
+    - "firewalld"
+    - "ufw"
 
 - name: Upgrade all packages to the latest version
   package:
