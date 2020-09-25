@@ -102,6 +102,9 @@ export default {
             var payload = this.generateCall()
             payload.uuid = this.$store.state.base.uuid
 
+            console.log("UUID", payload.uuid)
+            console.log("PAYLOAD", payload)
+
             this.$network.setup(payload)
         },
 
@@ -289,13 +292,19 @@ export default {
             if(download == null) {
                 download = document.createElement('a')
                 download.setAttribute('id', uuid)
-                download.style.display = 'node'
+                download.style.display = 'none'
 
                 document.body.appendChild(download)
             }
 
             // Set the data
-            download.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)))
+            while(download.hasAttribute('href'))
+                download.removeAttribute('href')
+
+            while(download.hasAttribute('download'))
+                download.removeAttribute('download')
+
+            download.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(data))
             download.setAttribute('download', this.$store.state.installer.cluster.fqdn + '.config')
 
             // Execute the download

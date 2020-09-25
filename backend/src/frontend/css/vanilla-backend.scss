@@ -1,5 +1,3 @@
-@import 'bootstrap.min';
-
 $color_red: #DD402D;
 $color_gray: gray;
 $color_white: white;
@@ -7,6 +5,11 @@ $color_green: green;
 $color_gray_light: #efefef;
 $color_gray_medium: #ccc;
 $color_black: black;
+$width_medium: 8em;
+$width_small: 5em;
+$width_x_small: 2em;
+$width_x_large: 20em;
+$width_large: 15em;
 
 body, html, main { 
   font-family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
@@ -313,17 +316,12 @@ a.black {
 }
 
 .small {
-  width: 5em;
-  display: inline-block
-}
-
-.medium {
-  width: 8em;
+  width: $width_small;
   display: inline-block
 }
 
 .fas.small {
-  width: 2em;
+  width: $width_x_small;
   display: inline-block;
 }
 
@@ -332,11 +330,11 @@ a.black {
 }
 
 .width-5em {
-  width: 5em;
+  width: $width_small;
 }
 
 .width-20em {
-  width: 20em;
+  width: $width_x_large;
 }
 
 h5.mb-0 button {
@@ -348,6 +346,11 @@ h5.mb-0 button {
   margin-top: 0.5em;
 }
 
-.error {
-  @extend .is-invalid
+.medium {
+  width: $width_medium;
+  display: inline-block
+}
+
+.input-large  {
+  width: $width_large;
 }

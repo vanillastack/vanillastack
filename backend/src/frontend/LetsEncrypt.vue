@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <div class="form-group row">
                             <div class="col">
-                                <select class="custom-select width-20em"
+                                <select class="custom-select input-large"
                                     name="issuer" v-model="issuer" 
                                     v-on:blur="triggerValidation()"
                                     v-on:change="triggerValidation()">
@@ -47,7 +47,7 @@
                             <div class="col">
                                 <input type="email" v-model="issuerEmail" v-on:input="triggerValidation()"
                                     placeholder="you@email"
-                                    required="required" class="form-control width-20em" />
+                                    required="required" class="form-control input-large" />
                             </div>
                         </div>
                     </div>
