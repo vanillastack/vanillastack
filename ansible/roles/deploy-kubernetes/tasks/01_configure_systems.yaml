@@ -1,20 +1,22 @@
 ---
 - name: Install neccessary packages
   package:
-    name:
-      - gnupg
-      - git
-      - python-pip
-      - python3-pip
-      - python-kubernetes
-      - python3-kubernetes
-      - ansible
-      - vim
-      - lvm2
-      - jq
-      - curl
-      - python3-passlib
-      - tar
+    name: "{{ item }}"
+  items:
+    - gnupg
+    - git
+    - python-pip
+    - python3-pip
+    - python-kubernetes
+    - python3-kubernetes
+    - ansible
+    - vim
+    - lvm2
+    - jq
+    - curl
+    - python3-passlib
+    - tar
+  ignore_errors: true
 
 - name: install pip modules
   pip:
