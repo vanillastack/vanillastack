@@ -13,6 +13,13 @@
       - tar
       - python3-pip
       - python3-kubernetes
+      - gcc
+
+- name: Install additional packages
+  package:
+    name:
+      - python3-devel
+  when: ansible_distribution == 'Suse'
 
 - name: install pip modules
   pip:
