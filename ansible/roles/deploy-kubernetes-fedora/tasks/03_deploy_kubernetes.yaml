@@ -4,13 +4,19 @@
     file: /tmp/cluster_vars.yml
   when: certificate_key is not defined or certificate_key|length <1
 
+- name: define port, kubelet is listening on
+  set_fact:
+    apiport: "{% if global.externalLB %}6443{% else %}8443{% endif %}"
+
 - name: Init Cluster
   command: > 
     kubeadm init --service-cidr {{ kubernetes.service_cidr }} \
-                 --token {{ token }} \
-                 --control-plane-endpoint api.{{ kubernetes.loadBalancer.clusterDomain }}:6443
+                 --token {{ token }} --node-name {{ inventory_hostname_short }} \
+                 {% if global.isHA %}
+                 --control-plane-endpoint api.{{ kubernetes.loadBalancer.clusterDomain }}:6443 \
+                 {% endif %}
                  --upload-certs \
-                 --apiserver-bind-port 8443 \
+                 --apiserver-bind-port {{ apiport }} \
                  --certificate-key {{ certificate_key }} \
                  --ignore-preflight-errors=Port-6443 \
                  --skip-phases=addon/kube-proxy \

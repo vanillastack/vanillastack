@@ -1,0 +1,115 @@
+---
+
+= VanillaStack Governance
+
+
+This document defines the Governance-Policies of the VanillaStack-Project. It introduces the different roles in the project, their corresponding responsibilities, and the assigned tasks to each role. In addition, it defines the terms and conditions for contributing to the project.
+
+---
+
+== Roles
+
+=== Owner
+
+- Owners own, represent and market the VanillaStack
+- Owners own the rights to the VanillaStack brand
+- Owners own the provided domains related to this project
+- Owners decide on the used licenses
+- Owners define the expectation of the project
+- Funds contributed to the project are the responsibility and management of the owners
+- Owners appoint or remove maintainers and developers
+- The list of owners is listed in the Roles.adoc file
+
+=== Maintainer
+
+- Owners can be maintainers
+- Maintainers are used or removed by owners
+- Maintainers are not responsible for the idea and the project
+- Maintainers control the project and decision-making processes
+- Maintainers determine the timing of the project
+- Maintainers evaluate submitted content and ideas
+- Maintainers prioritize tasks
+- Maintainers check submitted content before it is integrated
+- The list of maintainers is listed in the Roles.adoc file
+
+=== Developer
+
+- Maintainer can be Developers
+- Developers are added or removed by owners
+- Developers are responsible for not counteracting the idea and the project
+- Developers review submitted content before it is incorporated
+- Developers keep the project flow alive
+
+=== Contributor
+
+- Contributor can be anyone
+- Contributors are interested in advancing the project's progress
+- Contributors contribute to the project with content
+- Contributors observe the licenses and are subject to these
+- Contributors provide content for the project without any expected consideration
+- Contributors can vote on content needs
+
+=== Sponsor
+
+- Sponsor can be anyone
+- Sponsors support by donations for the project
+- Sponsors can ensure that the project can be driven successfully
+- Sponsors do not gain any special benefits to keep the project independent
+
+NOTE: Here a special thanks to our sponsors!
+
+=== Provider
+
+- Contracts are concluded with providers
+- Providers provide services that are used in the project run (e.g. storage, infrastructure, consultancy) in accordance to the corresponding contract.
+
+---
+
+== Processes
+
+=== Content
+
+- Content is contributed in the community
+- Content is evaluated by developers and maintainers, taking into account the necessities
+- Content is reviewed by developers and maintainers
+- Content is used by developers and maintainers
+- Content is packaged in milestones
+- Content is controlled according to the expectations of the owners
+
+=== Sprint
+
+- Sprint defines the work package to be delivered over a certain period of time
+- A sprint ends with a milestone
+- Sprint content is defined by the developers and maintainers based on the expectations of the owners
+- The size of work packages in sprints may vary based on available resources
+
+=== Milestones
+
+- Milestones define the time interval of sprints, i.e. of work packages to be delivered
+- Milestones are assigned to sprints according to expectations
+- The content of the milestones may changed
+
+=== Release
+
+- Requires a completed milestone
+- Releases the delivered work packages for use
+
+---
+
+== Other
+
+=== How can I participate?
+
+- The participation takes place through content. The content will be provided in the intended platform.
+- The necessity for provisioning can be supported by other contributors.
+- The provided content is reviewed and evaluated by developers and maintainers, taking into account the necessities
+
+=== How can I become a developer/maintainer?
+
+- An application will be submitted by e-mail to the owners.
+- The owners evaluate the application and respond within adequate time.
+
+=== How can I become a sponsor?
+
+- An application will be submitted by e-mail to the owners.
+- The owners evaluate the application and respond within adequate time.

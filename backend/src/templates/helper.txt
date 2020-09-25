@@ -1,0 +1,141 @@
+TASK [deploy-kubernetes-fedora : make sure, registry is not set] ***************
+changed: [vanilla-master-01]
+changed: [vanilla-master-02]
+changed: [vanilla-master-03]
+changed: [vanilla-worker-02]
+changed: [vanilla-worker-03]
+changed: [vanilla-worker-01]
+TASK [deploy-kubernetes-fedora : add container repos] **************************
+changed: [vanilla-master-01] => (item=/etc/containers/registries.conf)
+changed: [vanilla-master-02] => (item=/etc/containers/registries.conf)
+changed: [vanilla-master-03] => (item=/etc/containers/registries.conf)
+changed: [vanilla-worker-01] => (item=/etc/containers/registries.conf)
+changed: [vanilla-worker-03] => (item=/etc/containers/registries.conf)
+changed: [vanilla-worker-02] => (item=/etc/containers/registries.conf)
+TASK [deploy-kubernetes-fedora : remove cni configs] ***************************
+changed: [vanilla-master-01] => (item=/etc/cni/net.d/100-crio-bridge.conf)
+changed: [vanilla-master-02] => (item=/etc/cni/net.d/100-crio-bridge.conf)
+ok: [vanilla-worker-01] => (item=/etc/cni/net.d/100-crio-bridge.conf)
+changed: [vanilla-master-03] => (item=/etc/cni/net.d/100-crio-bridge.conf)
+changed: [vanilla-worker-03] => (item=/etc/cni/net.d/100-crio-bridge.conf)
+changed: [vanilla-master-02] => (item=/etc/cni/net.d/200-loopback.conf)
+changed: [vanilla-master-01] => (item=/etc/cni/net.d/200-loopback.conf)
+changed: [vanilla-worker-02] => (item=/etc/cni/net.d/100-crio-bridge.conf)
+ok: [vanilla-worker-01] => (item=/etc/cni/net.d/200-loopback.conf)
+changed: [vanilla-master-03] => (item=/etc/cni/net.d/200-loopback.conf)
+changed: [vanilla-worker-03] => (item=/etc/cni/net.d/200-loopback.conf)
+changed: [vanilla-worker-02] => (item=/etc/cni/net.d/200-loopback.conf)
+TASK [deploy-kubernetes-fedora : Make sure crio service is running] ************
+changed: [vanilla-master-01]
+changed: [vanilla-worker-01]
+changed: [vanilla-worker-03]
+changed: [vanilla-master-02]
+changed: [vanilla-worker-02]
+changed: [vanilla-master-03]
+TASK [deploy-kubernetes-fedora : Make sure kubelet service is running] *********
+changed: [vanilla-master-01]
+changed: [vanilla-master-03]
+changed: [vanilla-worker-01]
+changed: [vanilla-worker-02]
+changed: [vanilla-master-02]
+changed: [vanilla-worker-03]
+TASK [deploy-kubernetes-fedora : Add modules] **********************************
+changed: [vanilla-worker-01] => (item=br_netfilter)
+changed: [vanilla-master-02] => (item=br_netfilter)
+changed: [vanilla-worker-03] => (item=br_netfilter)
+changed: [vanilla-worker-02] => (item=br_netfilter)
+changed: [vanilla-master-03] => (item=br_netfilter)
+changed: [vanilla-master-01] => (item=br_netfilter)
+ok: [vanilla-worker-03] => (item=overlay)
+ok: [vanilla-master-02] => (item=overlay)
+ok: [vanilla-master-01] => (item=overlay)
+ok: [vanilla-worker-02] => (item=overlay)
+ok: [vanilla-worker-01] => (item=overlay)
+ok: [vanilla-master-03] => (item=overlay)
+TASK [deploy-kubernetes-fedora : make Modules persistant] **********************
+changed: [vanilla-master-02] => (item=br_netfilter)
+changed: [vanilla-master-01] => (item=br_netfilter)
+changed: [vanilla-worker-01] => (item=br_netfilter)
+changed: [vanilla-worker-02] => (item=br_netfilter)
+changed: [vanilla-master-03] => (item=br_netfilter)
+changed: [vanilla-master-02] => (item=overlay)
+changed: [vanilla-worker-03] => (item=br_netfilter)
+changed: [vanilla-master-01] => (item=overlay)
+changed: [vanilla-worker-01] => (item=overlay)
+changed: [vanilla-worker-02] => (item=overlay)
+changed: [vanilla-master-03] => (item=overlay)
+changed: [vanilla-worker-03] => (item=overlay)
+TASK [deploy-kubernetes-fedora : create bridge traffic config] *****************
+changed: [vanilla-master-02] => (item=net.bridge.bridge-nf-call-ip6tables)
+changed: [vanilla-worker-02] => (item=net.bridge.bridge-nf-call-ip6tables)
+changed: [vanilla-master-01] => (item=net.bridge.bridge-nf-call-ip6tables)
+changed: [vanilla-master-03] => (item=net.bridge.bridge-nf-call-ip6tables)
+ok: [vanilla-worker-01] => (item=net.bridge.bridge-nf-call-ip6tables)
+changed: [vanilla-worker-03] => (item=net.bridge.bridge-nf-call-ip6tables)
+changed: [vanilla-master-02] => (item=net.bridge.bridge-nf-call-iptables)
+changed: [vanilla-master-01] => (item=net.bridge.bridge-nf-call-iptables)
+changed: [vanilla-master-03] => (item=net.bridge.bridge-nf-call-iptables)
+ok: [vanilla-worker-01] => (item=net.bridge.bridge-nf-call-iptables)
+changed: [vanilla-worker-02] => (item=net.bridge.bridge-nf-call-iptables)
+changed: [vanilla-worker-03] => (item=net.bridge.bridge-nf-call-iptables)
+changed: [vanilla-master-02] => (item=net.ipv4.ip_forward)
+changed: [vanilla-worker-02] => (item=net.ipv4.ip_forward)
+ok: [vanilla-worker-01] => (item=net.ipv4.ip_forward)
+changed: [vanilla-master-03] => (item=net.ipv4.ip_forward)
+changed: [vanilla-master-01] => (item=net.ipv4.ip_forward)
+changed: [vanilla-worker-03] => (item=net.ipv4.ip_forward)
+TASK [deploy-kubernetes-fedora : set net.ipv4.conf.*.rp_filter to 0 for systemd 245 workaround] ***
+changed: [vanilla-master-02] => (item=net.ipv4.conf.all.rp_filter)
+changed: [vanilla-master-01] => (item=net.ipv4.conf.all.rp_filter)
+changed: [vanilla-worker-03] => (item=net.ipv4.conf.all.rp_filter)
+changed: [vanilla-master-03] => (item=net.ipv4.conf.all.rp_filter)
+changed: [vanilla-worker-02] => (item=net.ipv4.conf.all.rp_filter)
+changed: [vanilla-master-02] => (item=net.ipv4.conf.default.rp_filter)
+ok: [vanilla-worker-01] => (item=net.ipv4.conf.all.rp_filter)
+changed: [vanilla-master-01] => (item=net.ipv4.conf.default.rp_filter)
+changed: [vanilla-worker-02] => (item=net.ipv4.conf.default.rp_filter)
+changed: [vanilla-master-03] => (item=net.ipv4.conf.default.rp_filter)
+ok: [vanilla-worker-01] => (item=net.ipv4.conf.default.rp_filter)
+changed: [vanilla-worker-03] => (item=net.ipv4.conf.default.rp_filter)
+TASK [deploy-kubernetes-fedora : Disable Swap] *********************************
+changed: [vanilla-master-02]
+changed: [vanilla-master-01]
+changed: [vanilla-master-03]
+changed: [vanilla-worker-02]
+changed: [vanilla-worker-01]
+changed: [vanilla-worker-03]
+TASK [deploy-kubernetes-fedora : Disable swap permanently, persist reboots] ****
+changed: [vanilla-master-01]
+changed: [vanilla-master-03]
+changed: [vanilla-worker-02]
+changed: [vanilla-master-02]
+changed: [vanilla-worker-03]
+ok: [vanilla-worker-01]
+TASK [deploy-kubernetes-fedora : Reboot machine to get latest updates] *********
+changed: [vanilla-master-03]
+changed: [vanilla-master-01]
+changed: [vanilla-master-02]
+changed: [vanilla-worker-02]
+changed: [vanilla-worker-01]
+changed: [vanilla-worker-03]
+PLAY [generate secrets] ********************************************************
+TASK [Gathering Facts] *********************************************************
+ok: [vanilla-master-01]
+TASK [deploy-kubernetes-fedora : 02-1-generate-certificate] ********************
+included: /usr/workdir/ansible/roles/deploy-kubernetes-fedora/tasks/02-1-generate-certificate.yaml for vanilla-master-01
+TASK [deploy-kubernetes-fedora : create join token] ****************************
+changed: [vanilla-master-01]
+TASK [deploy-kubernetes-fedora : save token] ***********************************
+changed: [vanilla-master-01]
+TASK [deploy-kubernetes-fedora : create certificate key] ***********************
+changed: [vanilla-master-01]
+TASK [deploy-kubernetes-fedora : save certificate key] *************************
+changed: [vanilla-master-01]
+TASK [deploy-kubernetes-fedora : Store vars localy] ****************************
+changed: [vanilla-master-01]
+PLAY [Init KubeCluster] ********************************************************
+TASK [deploy-kubernetes-fedora : 03_deploy_kubernetes] *************************
+included: /usr/workdir/ansible/roles/deploy-kubernetes-fedora/tasks/03_deploy_kubernetes.yaml for vanilla-master-01
+TASK [deploy-kubernetes-fedora : Include certificate var] **********************
+ok: [vanilla-master-01]
+TASK [deploy-kubernetes-fedora : Init Cluster] *********************************

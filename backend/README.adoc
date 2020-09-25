@@ -1,0 +1,76 @@
+= VanillaStack Backend API
+
+== Requirements
+
+Docker or Node.js installed
+
+Got to VanillaStack/backend and execute docker build and run command
+
+[source,shell script]
+----
+mkdir VanillaStack
+cd VanillaStack
+git clone vs .
+docker build -f docker/prod/Dockerfile \
+  -t vanillastack-installer . && \
+  docker run \
+  --name vanillastack-installer -d \
+  -p 8080:8080 \
+  vanillastack-installer
+----
+
+or
+
+[source,shell script]
+----
+cd VanillaStack/backend
+npm install
+npm run dev
+----
+
+== API
+
+The API definition can be found with the backend running on:
+
+[source,]
+----
+http://localhost:8080/api/v1/api-docs
+----
+
+The definition is written in OpenAPI and can be tested on the spot.
+
+== WebSockets
+
+WebSockets are using JSON-Objects for communication between front- and backend.
+
+The JSON-Objects consists of a transactionId, an event, and the payload.
+The *transactionId* is a generated number, which is used to identify a single process.
+The *event* describes what kind of transaction it is.
+Following events are possible: *INIT*, *EXEC* and *DONE*, which are describing specific scenario for JSON-Object states.
+Each state expects a specific payload.
+
+WebSocket are initialized through a connection upgrade request with the uuid as parameter of the requesting client.
+
+[source,]
+----
+ws://localhost:3000?uuid=00000000-0000-0000-0000-0000000000000
+----
+
+The UUID can be requested by calling the /info endpoint.
+
+After connecting the WS-Tunnel is open and will be used to transfer unbuffered async information from the backend.
+For Example: The backend will send JSON-Objects with the event EXECUTION set, a transactionId which will be returned upon creating a request for the async execution and the unbuffered response as payload.
+
+*Example EXEC-Object:*
+
+[source,json]
+----
+{
+    "transactionId": "0000000000",
+    "event": "EXEC",
+    "payload": "string"
+}
+----
+
+The unbuffered execution will continue even when the WebSocket connection is terminated or closed.
+With the uuid used to issue the unbuffered execution, the output stream through the WebSocket can be continued at anytime.
