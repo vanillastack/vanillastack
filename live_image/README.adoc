@@ -11,6 +11,10 @@ The live image is an ISO image that can be booted directly via CDROM, USB or any
 * live-build as build-chain
 * Installer itself will be running as docker container
 * Visual Frontend via Running Desktop-Environment with a Webbrowser
+* the container image for the installer will be pulled at build-time and be squashed into the live image.
+* this means that after boot of the live-image it will take some time, until the image is prepared and the container is running.
+* therefore a chromium browser is started in App-mode with an splash-screen website, that is polling the installer for readiness, before redirecting there.
+
 
 == Building
 
@@ -21,7 +25,7 @@ For Development there are two modes how to build:
 
 The scripts are split in a way, that they function as well locally as also in a gitlab-ci pipeline
 
-For local building, we use docker to get the a defined debian:buster installation as base. In gitlab we are already running in a debian:buster container, so steps differ a bit.
+For local building, we use docker to get the a defined debian:buster installation as base. In gitlab-ci we are already running in a debian:buster container, so steps differ a bit.
 
 === local building with docker
 
@@ -31,15 +35,13 @@ The Dockerfile mainly just consists of preparing a build-environment for live-bu
 
 Build the container:
 
-  docker build -t vanilla-installa .
+  docker build -t vanilla-installer .
 
 After you build that simple container you can run it with:
 
-  `docker run -ti --name vanilla -v <OUTPUTPATH>/data:rw --privileged anilla-installa`
+  `docker run -ti --name vanilla -v <OUTPUTPATH>/data:rw --privileged vanilla-installer`
 
-In the container, you can then start `./build-installer.bash`. At the end, the build-artifacts will be copied to `/data` where you should mount your output-directory to.
-
-Note: The interactive part is currently implemented because of the development-phase for troubleshooting. Sooner or later this will change to an headless call to directly call the `build-installer.bash` script.
+In the container, the script `./build-installer.bash` is automatically started. At the end, the build-artifacts will be copied to `/data` where you should have mounted your output-directory to.
 
 === building via gitlab-ci-pipeline
 
