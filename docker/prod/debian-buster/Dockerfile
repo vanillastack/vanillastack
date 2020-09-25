@@ -42,6 +42,7 @@ RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y \
     pip3 install ansible && \
     pip3 install -r requirements.txt && \
     ansible-galaxy collection install community.kubernetes && \
+    ansible-galaxy collection install community.general && \
     npm install && npm audit fix
 
 FROM base
