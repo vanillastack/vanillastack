@@ -284,7 +284,7 @@
       path: /etc/crio/crio.conf
       state: present
       regexp: '^seccomp_profile =.*'
-      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+      line: 'seccomp_profile = ""'
 #### DEBIAN FAMILY END
 
 #### SUSE FAMILY
@@ -350,12 +350,12 @@
             "nproc=8192:8192"
         ]
   
-  - name: Set CRI-O seccomp profile path
-    lineinfile:
-      path: /etc/crio/crio.conf.d/00-default.conf
-      state: present
-      regexp: '^seccomp_profile =.*'
-      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+#  - name: Set CRI-O seccomp profile path
+#    lineinfile:
+#      path: /etc/crio/crio.conf.d/00-default.conf
+#      state: present
+#      regexp: '^seccomp_profile =.*'
+#      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 #### SUSE FAMILY END
 
 - name: "Check for installed packages"
