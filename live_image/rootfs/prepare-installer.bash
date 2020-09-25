@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 export DEBIAN_FRONTEND=noninteractive
 export LANG=C.UTF-8
 export LANGUAGE=C.UTF-8
@@ -31,11 +33,8 @@ apt-get update && apt-get install -y --no-install-recommends $PACKAGES_NEEDED
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
 sed -i '1161s%umount%#umount%' /usr/share/debootstrap/functions
 
-
 mkdir -p ${WORKDIR}
 mkdir -p ${OUTPUT}
-
-ls -l $WORKDIR
 
 echo "deb [arch=amd64] https://download.docker.com/linux/debian buster stable" > /etc/apt/sources.list.d/docker.list
 
