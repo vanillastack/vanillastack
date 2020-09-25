@@ -22,7 +22,7 @@ import Summary from './Summary.vue'
 import LetsEncrypt from './LetsEncrypt.vue'
 import CF from './CF.vue'
 import Install from './Install.vue'
-import 'es6-promise/auto'
+import 'es6-promise/auto' 
 
 // Call Vue.use(VueRouter)
 Vue.use(VueRouter)
