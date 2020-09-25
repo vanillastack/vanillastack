@@ -1,15 +1,25 @@
-body, html, main {
+@import 'bootstrap.min';
+
+$color_red: #DD402D;
+$color_gray: gray;
+$color_white: white;
+$color_green: green;
+$color_gray_light: #efefef;
+$color_gray_medium: #ccc;
+$color_black: black;
+
+body, html, main { 
   font-family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
   height: 100% !important;
 }
 
 a {
-  color: #DD402D;
+  color: $color_black;
 }
 
 .header {
   background-color: #333;
-  color: white;
+  color: $color_white;
   position: absolute;
   top: 0;
   width: 100%;
@@ -20,7 +30,7 @@ a {
 .navigation {
   margin-left: -1em;
   line-height: 2em;
-  border-right: 1px solid #ececec;
+  border-right: 1px solid $color_gray_light;
   text-align: right;
 }
 
@@ -34,7 +44,7 @@ a {
 }
 
 .nav-item.router-link-active {
-  color:#DD402D !important;
+  color:$color_red !important;
 }
 
 .nav-item.router-link-active:hover {
@@ -51,9 +61,9 @@ a {
 }
 
 .footer {
-  background-color: #fff;
+  background-color: $color_white;
   min-height: 3em;
-  color: white;
+  color: $color_white;
   position: fixed;
   bottom: 0;
   height: 3em;
@@ -85,6 +95,14 @@ ul.secondary-nav {
   min-width: 100px;
 }
 
+.margin-top-0_5em {
+  margin-top: 0.5em !important;
+}
+
+.margin-right-1em {
+  margin-right: 1em;
+}
+
 .cite {
   font-style: italic;
   margin-left: 1em;
@@ -105,7 +123,7 @@ ul.secondary-nav {
 }
 
 .button-as-link:disabled {
-  color: #ccc;
+  color: $color_gray_medium;
 }
 
 .padding-1em {
@@ -220,12 +238,12 @@ div>.lead-image {
 /* Accordion */
 .accordion-link {
   font-weight: normal;
-  color: black
+  color: $color_black;
 }
 
 .accordion-link[aria-expanded = "true"] {
   font-weight: bolder;
-  color: black
+  color: $color_black;
 }
 
 .fa-ul {
@@ -266,19 +284,19 @@ div>.lead-image {
 }
 
 .green {
-  color:green;
+  color: $color_green;
 }
 
 .red {
-  color:#DD402D;
+  color:$color_red;
 }
 
 .gray {
-  color: #999;
+  color: $color_gray_medium;
 }
 
 .black {
-  color: #000;
+  color: $color_black;
 }
 
 a.black {
@@ -328,4 +346,8 @@ h5.mb-0 button {
 
 .col-2 input[type='range'] {
   margin-top: 0.5em;
+}
+
+.error {
+  @extend .is-invalid
 }

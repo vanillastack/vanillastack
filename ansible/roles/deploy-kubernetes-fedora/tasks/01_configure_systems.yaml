@@ -14,6 +14,7 @@
       - jq
       - curl
       - python3-passlib
+      - tar
 
 - name: install pip modules
   pip:
@@ -21,6 +22,10 @@
       - pyhelm
       - openshift
     extra_args: --ignore-installed
+
+- debug:
+    msg: "{{ hostvars[groups.master | first]['ansible_default_ipv4']['address'] }}"
+
 
 - name: make sure, domain search is not set
   lineinfile:
@@ -85,13 +90,7 @@
     selinux:
       state: disabled
   
-  - name: Disable Firewalld
-    systemd: 
-      name: firewalld
-      masked: true
-      enabled: false
-      state: stopped
-  
+ 
   - name: Check if systemd.unified_cgroup_hierarchy in grubenv already
     command: grep -Fq "systemd.unified_cgroup_hierarchy=0" /boot/grub2/grubenv
     register: grubenv_systemd_check
@@ -120,6 +119,18 @@
       create: true
 
   when: ansible_distribution == "Fedora"
+
+- name: "Check for installed packages"
+  package_facts:
+    manager: "auto"
+
+- name: Disable Firewalld
+  systemd: 
+    name: firewalld
+    masked: true
+    enabled: false
+    state: stopped
+  when: "'firewalld' in ansible_facts.packages"
 
 - name: Upgrade all packages to the latest version
   package:

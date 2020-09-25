@@ -1,0 +1,42 @@
+---
+# tasks file for install-kubedashboard
+#
+- name: add infrastructure repo
+  community.kubernetes.helm_repository:
+    name: vsinfrastructure
+    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-infrastructure
+
+
+- name: Install Kube Dashboard
+  community.kubernetes.helm:
+    chart_ref: vsinfrastructure/kubernetes-dashboard
+    name: kubernetes-dashboard
+    release_namespace: kube-system
+    create_namespace: true
+    values: "{{ lookup('template', 'dashboard-values.yaml') | from_yaml }}"
+    wait: true
+
+- name: create rolebinding for dashboard
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: dashboard-admin-sa
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+      - kind: ServiceAccount
+        name: kubernetes-dashboard
+        namespace: kube-system
+
+- name: Print accesstoken
+  shell: "kubectl get secrets -n kube-system $(kubectl get secrets -n kube-system | awk '/kubernetes-dashboard-token/ {print $1;exit}') -o jsonpath='{.data.token}'"
+  register: dashboardtoken
+
+
+- debug:
+    msg: "{{ dashboardtoken.stdout | b64decode }}"

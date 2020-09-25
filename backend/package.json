@@ -31,8 +31,10 @@
   },
   "devDependencies": {
     "@vue/cli-service": "^4.5.4",
-    "nodemon": "^2.0.4",
     "dotenv": "^8.2.0",
+    "nodemon": "^2.0.4",
+    "sass": "^1.26.11",
+    "sass-loader": "^10.0.2",
     "vue-template-compiler": "^2.6.12"
   }
 }

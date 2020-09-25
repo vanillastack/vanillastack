@@ -19,37 +19,21 @@
                     <div class="card-body">
                         <div class="row margin-1em">
                             <div class="col">
-                                <i class="fas fa-info-circle gray"></i>
+                                <p><i class="fas fa-info-circle gray"></i>
                                 A HA-installation implies you will have a minimum of three master nodes for additional fail-over functionality. This kind of installation 
-                                is strongly recommended for productive clusters. For development clusters, a non-HA-installation might be sufficient.
+                                is strongly recommended for productive clusters. For development clusters, a non-HA-installation might be sufficient.</p>
+                                <p>
+                                    Master-Node Count: <strong>{{ masters }}</strong> 
+                                </p>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col">
                                 <div class="custom-control custom-switch">
-                                    <input class="custom-control-input" type="checkbox" name="installAsHA" id="installAsHA" value="HA" v-model="isHA" :checked="isHA" v-on:change="installationKindChanged">
+                                    <input class="custom-control-input" type="checkbox" name="installAsHA" id="installAsHA" value="HA" v-model="isHA" :checked="isHA" v-on:change="installationKindChanged()">
                                     <label class="custom-control-label" for="installAsHA">
                                         Install as HA-cluster for productive workloads
                                     </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="card margin-2em">
-                    <div class="card-header" id="masterNodes">
-                        <h5 class="mb-0">Master Nodes</h5>
-                    </div>
-                    <div id="masterNodesData" class="show" aria-labelledby="masterNodes">
-                        <div class="card-body">
-                            <div class="row margin-1em">
-                                <div class="col-1">
-                                    <input type="number" max="99" :min="minMaster" v-model="masters" class="form-control" />
-                                </div>
-                                <div class="col-2">
-                                    <input type="range" class="form-control-range" id="MasterNodeCount" v-model="masters" :min="minMaster" max="99">
                                 </div>
                             </div>
                         </div>
@@ -88,7 +72,7 @@
                             </div>
                             <div class="row margin-2em form-group">
                                 <div class="col-1" style="text-align:center !important">
-                                    <img src="./images/openstack.jpg" class="lead-image" />
+                                    <a v-on:click="installOpenStack = !installOpenStack"><img src="./images/openstack.jpg" class="lead-image" /></a>
                                 </div>
                                 <div class="col-4 valign-center">
                                     <p>OpenStack provides a complete Infrastructure-as-a-Service-layer, providing you with the ability to provision virtual machines, databases and storage. It has its own management UIs and perfectly runs on top of Kubernetes.</p>
@@ -105,7 +89,7 @@
                             </div>
                             <div class="row margin-2em form-group">
                                 <div class="col-1" style="text-align:center !important">
-                                    <img src="./images/cloudfoundry.png" class="lead-image-hor" />
+                                    <a v-on:click="installCF = !installCF"><img src="./images/cloudfoundry.png" class="lead-image-hor" /></a>
                                 </div>
                                 <div class="col-4 valign-center">
                                     <p>Cloud Foundry is an amazing Platform-as-a-Service-layer, completely automating deployment and operations of your code. It supports programming languages such as Java, .NET, Node, Python and many more. It has its own management UIs and perfectly runs on top of Kubernetes.</p>   
@@ -131,6 +115,14 @@
                     </div>
                     <div id="masterNodesData" class="show" aria-labelledby="masterNodes">
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <p>
+                                        <i class="fas fa-info-circle gray"></i>
+                                        The amount of worker nodes defines, how many workloads you might be able to run. As a rule of thumbs: More workers (with better specifications) imply more reliable performance and more workloads to be executed. The amount of workers defines how resilient your cluster will be. Again, as a rule of thumbs: More workers provide more resilience and more fail-over capabilities.</p>
+                                    <p>Worker-Node Count: <strong>{{ workers }}</strong></p>
+                                </div>
+                            </div>
                             <div class="row margin-1em">
                                 <div class="col-1">
                                     <input type="number" max="99" :min="minWorker" v-model="workers" size="3em" class="form-control" />
@@ -173,6 +165,8 @@ export default {
     methods: {
         
         installationKindChanged (e) {
+            this.masters = this.isHA ? 3 : 1
+
             EventBus.$emit(Constants.Event_InstallationCFUpdated)
         },
         

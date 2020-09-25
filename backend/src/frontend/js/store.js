@@ -260,6 +260,7 @@ const generalSettings = {
     installOpenStack: false,
     workersList: [],
     mastersList: [],
+    nodesChecked: false,
   }),
 
   mutations: {
@@ -278,6 +279,10 @@ const generalSettings = {
 
     [Constants.Store_UpdateMasters](state, data) {
       state.mastersList = data
+    },
+
+    [Constants.Store_NodesChecked](state, data) {
+      state.nodesChecked = data
     }
   }
 
