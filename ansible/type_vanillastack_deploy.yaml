@@ -6,32 +6,13 @@
   roles:
     - role: wait-for-nodes
  
-- name: Configure Servers - RedHat family
+- name: Configure Servers
   hosts: kube_cluster
   become: true
   gather_facts: true
   roles:
     - role: deploy-kubernetes
-      action: 01_configure_systems_redhat
-      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: Configure Servers - Debian family
-  hosts: kube_cluster
-  become: true
-  gather_facts: true
-  roles:
-    - role: deploy-kubernetes
-      action: 01_configure_systems_debian
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-- name: Configure Servers - Suse family
-  hosts: kube_cluster
-  become: true
-  gather_facts: true
-  roles:
-    - role: deploy-kubernetes
-      action: 01_configure_systems_suse
-      when: ansible_distribution == 'Suse'
+      action: 01_configure_systems
 
 - name: Install Keepalived
   hosts: master
