@@ -40,8 +40,9 @@
   environment:
     DESIRED_VERSION: "{{ kubernetes.helm_version }}"
 
-## block
+#### REDHAT FAMILY
 - name: configure RHEL Systems
+  when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
   block:
   - name: Add cf repo      
     yum_repository:
@@ -72,7 +73,7 @@
       versions: "{{ dnf_output.stdout }}"
   
   - name: Install packages
-    dnf:
+    package:
       name:
         - cf7-cli
         - "kubelet-{{ versions }}"
@@ -119,8 +120,7 @@
       regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
       line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
       create: true
-
-  when: ansible_distribution == "Fedora"
+#### REDHAT FAMILY END
 
 - name: Upgrade all packages to the latest version
   package:
@@ -157,5 +157,5 @@
     regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
     create: true
-  when: ansible_distribution == "Debian"
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
