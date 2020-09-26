@@ -1,4 +1,9 @@
 ---
+- name: Install EPEL
+  package:
+    name: epel-release
+  when: ansible_distribution == 'CentOS'
+ 
 - name: Install neccessary packages
   package:
     name:
@@ -19,7 +24,7 @@
     name:
       - python3-devel
       - gcc-*
-  when: ansible_os_family == 'Suse'
+  when: ansible_os_family == 'Suse' or ansible_distribution == 'CentOS'
 
 - name: install pip modules
   pip:
@@ -41,10 +46,15 @@
     mode: '0700'
 
 - name: install helm
-  command: /tmp/get_helm.sh
-  environment:
-    DESIRED_VERSION: "{{ kubernetes.helm_version }}"
-  retries: 3
+  block:
+  - name: install helm
+    command: /tmp/get_helm.sh
+    environment:
+      DESIRED_VERSION: "{{ kubernetes.helm_version }}"
+    retries: 2
+  rescue:
+  - name: try helm command
+    command: helm
 
 #### REDHAT FAMILY
 - name: configure RHEL Systems
