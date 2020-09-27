@@ -111,9 +111,9 @@
   - name: Install packages
     package:
       name:
-        - python-pip
+#        - python-pip
         - python3-pip
-        - python-kubernetes
+#        - python-kubernetes
         - python3-kubernetes
         - cf7-cli
         - "kubelet-{{ versions }}"
