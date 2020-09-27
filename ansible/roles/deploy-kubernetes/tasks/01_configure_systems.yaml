@@ -55,6 +55,7 @@
   command: /tmp/get_helm.sh
   environment:
     DESIRED_VERSION: "{{ kubernetes.helm_version }}"
+  ignore_errors: yes
 
 #### REDHAT FAMILY
 - name: configure RHEL Systems
