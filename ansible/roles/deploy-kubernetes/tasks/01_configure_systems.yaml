@@ -39,6 +39,12 @@
     state: absent
     path: /etc/resolv.conf
 
+- name: Add /usr/local/bin to global PATH
+  copy:
+    dest: /etc/profile.d/custom-path.sh
+    content: 'PATH=$PATH:/usr/local/bin'
+  when: ansible_distribution == 'CentOS'
+
 - name: get helm script
   get_url:
     url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -46,15 +52,9 @@
     mode: '0700'
 
 - name: install helm
-  block:
-  - name: install helm
-    command: /tmp/get_helm.sh
-    environment:
-      DESIRED_VERSION: "{{ kubernetes.helm_version }}"
-    retries: 2
-  rescue:
-  - name: try helm command
-    command: helm
+  command: /tmp/get_helm.sh
+  environment:
+    DESIRED_VERSION: "{{ kubernetes.helm_version }}"
 
 #### REDHAT FAMILY
 - name: configure RHEL Systems
