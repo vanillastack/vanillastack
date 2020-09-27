@@ -80,6 +80,25 @@
   
   - name: enable crio
     command: "dnf module enable cri-o:{{ kubernetes.crioVersion }} -y" 
+    when: ansible_distribution == 'Fedora'
+
+  - name: Add kubic stable repo
+    yum_repository:
+      name: devel_kubic_libcontainers_stable
+      description: "Stable Releases of Upstream github.com/containers packages (CentOS_8)"
+      baseurl: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/
+      gpgcheck: 1
+      gpgkey: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/repodata/repomd.xml.key
+    when: ansible_distribution == 'CentOS'
+
+  - name: Add CRI-O repo
+    yum_repository: 
+      name: "devel_kubic_libcontainers_stable_cri-o_{{ kubernetes.crioVersion }}"
+      description: "Last release available in {{ kubernetes.crioVersion }} branch (CentOS_8)"
+      baseurl: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18/CentOS_8/
+      gpgcheck: 1
+      gpgkey: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18/CentOS_8/repodata/repomd.xml.key
+    when: ansible_distribution == 'CentOS'
   
   - name: get latest kube version
     shell: dnf --showduplicate list  kubelet --disableexcludes=kubernetes | grep {{ kubernetes.version }} | tail -1 | tr -s ' ' | cut -d ' ' -f2
