@@ -371,6 +371,7 @@
         - kubernetes1.19-client
         - kubernetes1.19-kubelet
         - cri-o
+        - cri-tools
       state: present
 
   - name: mark packages as hold
