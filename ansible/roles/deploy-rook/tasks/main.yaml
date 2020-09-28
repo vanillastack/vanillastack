@@ -19,7 +19,7 @@
   when: rook.enabled
 
 - name: wait for CephCluster to come up
-  shell: kubectl get cephcluster "{{rook.cluster.name}}" -o json -n "{{rook.namespace}}"|grep HEALTH_OK
+  shell: kubectl get cephcluster "{{rook.cluster.name}}" -o json -n "{{rook.namespace}}"|egrep "(HEALTH_OK|HEALTH_WARN)"
   register: cephcluster
   until: cephcluster.rc==0
   retries: 120
