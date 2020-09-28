@@ -83,13 +83,10 @@
     replace: '#\1\2\3swap\4'
 
 - name: Persist swapoff
-  blockinfile:
-    path: /etc/init.d/boot.local
-    block: |
-      #!/bin/bash
-      swapoff -a
-    create: yes
-    mode: '755'
+  template:
+    src: ./templates/boot.local
+    dest: /etc/init.d/boot.local
+    mode: 0755
   when: ansible_os_family == 'Suse'
 
 - name: "Reboot machine to get latest updates"
