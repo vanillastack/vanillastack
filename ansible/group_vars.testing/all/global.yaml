@@ -34,11 +34,11 @@ kubernetes:
   resetCluster: false
   kubeadmin_config: /etc/kubernetes/admin.conf
 cloudfoundry:
-  enabled: true
+  enabled: false
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
-  enabled: true
+  enabled: false
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"  
 guacamole:
