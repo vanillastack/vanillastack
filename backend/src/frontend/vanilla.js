@@ -36,7 +36,7 @@ Vue.use(Network)
 // Require all the CSS
 require('bootstrap');
 require('./css/bootstrap.min.css');
-require('./css/vanilla-backend.css');
+require('./css/vanilla-backend.scss');
 require('./css/all.min.css')
 
 // Define the routes
@@ -111,8 +111,6 @@ var app = new Vue({
 
         currentRoute = index
         this.handleNavigation(currentRoute, currentRoute, true)
-
-        console.log("Current Route Index", currentRoute)
       })
 
       // Bind to the closing of the window and remove the WS-socket
@@ -199,8 +197,6 @@ var app = new Vue({
   .$mount("#vanilla")
 
 app.handleNavigation(0, 0, true)
-
-console.log("Started Vue");
 
 // Store the globals
 Globals.router = router

@@ -140,7 +140,7 @@ export default {
                 fqdn: this.clusterfqdn,
                 useadminfqdn: this.useadminfqdn,
                 adminfqdn: this.adminfqdn,
-                externalLbIp: this.externalLbIp
+                useExternalLb: this.useExternalLb
             })
 
             // Notify about the change
