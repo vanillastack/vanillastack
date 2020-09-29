@@ -65,9 +65,15 @@ const Network = {
                     // console.log("SETUP", response.body)
 
                     EventBus.$emit(Constants.Network_InstallationInProgress, {
+                        state: Constants.Network_State_Progress,
                         keystonePass: response.body.keyStonePass,
                         stratosPass: response.body.stratosPass,
                         transactionId: response.body.transactionId
+                    }, error => {
+                        EventBus.$emit(Constants.Network.Network_InstallationInProgress, {
+                            state: Constants.Network_State_Error,
+                            message: error.message
+                        })
                     })
                 })
             },
@@ -75,11 +81,8 @@ const Network = {
             downloadConfig: function(uuid) {
                 const path = this.data.addressPrefix + "/config/" + uuid
                 this.data.__vue.http.get(path).then(response => {
-                    console.log("K8S", response.body)
 
-                    EventBus.$emit(Constants.Network_KubeConfigLoaded, {
-                        key: response.body
-                    })
+                    EventBus.$emit(Constants.Network_KubeConfigLoaded, response.body)
                 })
             },
 

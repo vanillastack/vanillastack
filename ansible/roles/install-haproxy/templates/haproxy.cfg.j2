@@ -52,7 +52,7 @@ defaults
         timeout server 50000
 
 listen stats 
-        bind {{ kubernetes.loadBalancer.virtualIP }}:1936
+        bind *:1936
         # Stats configuration
         stats hide-version
         stats enable
@@ -61,7 +61,7 @@ listen stats
         stats refresh 30s
 
 frontend kube-api
-        bind {{ kubernetes.loadBalancer.virtualIP }}:6443
+        bind *:6443
         mode tcp
         # Default backend
         default_backend master

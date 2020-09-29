@@ -35,10 +35,10 @@ const {getClient, setup, sleep, genTransactionId, randPassword} = require('../..
  */
 router.post('/', function (req, res) {
 
-    console.log(req.body);
-
     const client = getClient(req.body.uuid);
-    const dryRun = req.body.dry;
+    const dryRun = req.body.dry || false;
+    const fail = req.body.fail || false;
+    const isHA = req.body.isHA || false;
     const cluster = req.body.cluster;
     const nodes = req.body.nodes;
     const general = req.body.general;
@@ -48,6 +48,7 @@ router.post('/', function (req, res) {
     const additional = req.body.additional;
     const letsencrypt = req.body.letsencrypt;
 
+    // console.log(req.body);
     // Filtering Bad Request Codes; todo: more advance filtering and changing to switch case
     if (!client) {
         res.status(400).json({
@@ -91,7 +92,7 @@ router.post('/', function (req, res) {
         global: {
             registry: cluster.registry_endpoint,
             uuid: client.uuid,
-            isHA: req.body.isHA,
+            isHA: isHA,
             externalLB: cluster.useExternalLb
         },
         ingress: {
@@ -313,7 +314,7 @@ router.post('/', function (req, res) {
                 l3: {
                     ha: openstack.neutron_l3ha,
                     maxAgentsPerRouter: openstack.neutron_maxAgentsPerRouter,
-                    haNetworkType: openstack.neutron_overlayNetworkType,
+                    haNetworkType: openstack.neutron_overlayNetworkType.toLowerCase(),
                     dhcpAgents: openstack.neutron_dhcpAgents
                 },
                 endpoints: {
@@ -342,7 +343,7 @@ router.post('/', function (req, res) {
                     placementURLPrefix: openstack.nova_placement_endpoint
                 },
                 libvirt: {
-                    virtType: openstack.nova_virtType,
+                    virtType: openstack.nova_virtType.toLowerCase(),
                     cpuMode: openstack.nova_cpuMode
                 },
                 auth: {
@@ -496,7 +497,15 @@ router.post('/', function (req, res) {
         hostsJson.all.children.cf.hosts = cfNodes;
         const transactionId = genTransactionId();
         sleep(500).then(() => {
-            setup(transactionId, basePath, dryRun, client, hostsJson, extraVars, req.app.locals.config.debug);
+            setup(transactionId,
+                basePath,
+                dryRun,
+                client,
+                hostsJson,
+                extraVars,
+                fail,
+                req.app.locals.config.debug
+            );
         });
         res.status(200).json({
             transactionId: transactionId,

@@ -11,113 +11,159 @@
                     Please collect the IP-addresses, the SSH-username and the designation of your cluster nodes here.
                 </div>
             </div>
-            <div class="row">
+            <div class="row margin-1em">
                 <div class="col">
-                    <p><strong>Master Nodes</strong></p>
+                    <i class="fas fa-info-circle red"></i>
+                    &#160;<strong class="red">The IP-adress-range 10.0.0.0/8 can not be used.</strong>
+                    <br />This implies, all IP-addresses between <em>10.0.0.1</em> and <em>10.255.255.255</em> are not valid and can't be accepted.
+                    <p>
+                        <strong>Please ensure, none of the network adapters use this ip-address-range</strong>
+                    </p>
                 </div>
             </div>
-            <div class="form-group" v-for="item in masters" v-bind:key="item.key">
-                <div class="row">
-                    <div class="col-2">
-                        <label for="ip">IP-address of node</label>
-                    </div>
-                    <div class="col">
-                        <label for="user">Username on node</label>
+            <div class="card margin-2em">
+                <div class="card-header" id="masterNodesArea">
+                    <h5 class="mb-0">Master Nodes</h5>
+                </div>
+                <div id="masterNodesAreaData" class="show" aria-labelledby="masterNodesArea">
+                    <div class="card-body">
+                        <span v-for="item in masters" v-bind:key="item.key">
+                            <div class="row margin-1em">
+                                <div class="col"><strong>Master {{ item.index + 1 }}</strong></div>   
+                            </div>
+                            <div class="row margin-2em form-group" >
+                                <div class="col-3">
+                                    <label for="ip" class="block">IP-address</label>
+                                    <input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.ipFocused && (!item.isValidIp() || item.hasDuplicateIpAddress)}" placeholder="0.0.0.0" name="ip" v-model="item.ip" 
+                                        v-on:change="item.triggerValidation('ip')" 
+                                        v-on:focus="item.triggerValidation('ip')"
+                                        v-on:blur="item.triggerValidation('ip')" required="required" />
+                                </div>
+                                <div class="col-3">
+                                    <label for="user" class="block">Username</label>
+                                    <div class="inline-block margin-right-2em"><input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.userFocused && !item.isValidUser()}" 
+                                        placeholder="root" name="user" v-model="item.user" 
+                                        v-on:blur="item.triggerValidation('user')" v-on:change="item.copyUserNameChanged($event.target.value, item)" 
+                                        v-on:focus="item.triggerValidation('user')"
+                                        :required="item.userNameRequired" :disabled="item.copyUser && item.isNotFirst" /></div>
+                                    <div class="custom-control margin-top-0_5em custom-switch" v-if="item.isNotFirst">
+                                        <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">
+                                        <label class="custom-control-label" :for="item.key">
+                                            Same as Master 1
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-2">
-                        <input class="form-control" placeholder="0.0.0.0" name="ip" v-model="item.ip" v-on:change="item.triggerValidation()" v-on:blur="item.triggerValidation()" required="required" />
+            </div>
+            <div class="card margin-2em">
+                <div class="card-header" id="workerNodesArea">
+                    <h5 class="mb-0">Worker Nodes</h5>
+                </div>
+                <div id="workerNodesAreaData" class="show" aria-labelledby="workerNodesArea">
+                    <div class="card-body">
+                        <span v-for="item in workers" :key="item.key">
+                            <div class="row margin-1em">
+                                <div class="col"><strong>Worker {{ item.index + 1 }}</strong></div>   
+                            </div>
+                            <div class="row margin-2em form-group">
+                                <div class="col-3">
+                                    <label for="ip" class="block">IP-address</label>
+                                    <input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.ipFocused && (!item.isValidIp() || item.hasDuplicateIpAddress) }" placeholder="0.0.0.0" name="ip" 
+                                        v-on:change="item.triggerValidation('ip')" 
+                                        v-on:blur="item.triggerValidation('ip')" 
+                                        v-on:focus="item.triggerValidation('ip')"
+                                        v-model="item.ip" required="required" />
+                                </div>
+                                <div class="col-3">
+                                    <label for="user" class="block">Username</label>
+                                    <div class="margin-right-2em"><input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.userFocused && !item.isValidUser()}" placeholder="root" name="user" 
+                                        v-model="item.user" v-on:blur="item.triggerValidation('user')" 
+                                        v-on:focus="item.triggerValidation('user')"
+                                        v-on:change="item.copyUserNameChanged($event.target.value, item)" 
+                                        :required="item.userNameRequired" :disabled="(item.copyUser && item.isNotFirst) || (item.copyMaster && item.isFirst)" /></div>
+                                    <div class="margin-top-0_5em custom-control custom-switch" v-if="item.isNotFirst">
+                                        <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">
+                                        <label class="custom-control-label" :for="item.key">
+                                            Same as Worker 1
+                                        </label>
+                                    </div>
+                                    <div class="margin-top-0_5em custom-control custom-switch" v-if="item.isFirst">
+                                        <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyMaster" v-on:click="item.copyUserChanged(item)">
+                                        <label class="custom-control-label" :for="item.key">
+                                            Same as Master 1
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
                     </div>
-                    <div class="col">
-                        <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="item.user" v-on:blur="item.triggerValidation()" v-on:change="item.copyUserNameChanged($event.target.value, item)" :required="item.userNameRequired" :disabled="item.copyUser && item.isNotFirst" /></div>
-                        <div class="custom-control custom-switch inline-block" v-if="item.isNotFirst">
-                            <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">
-                            <label class="custom-control-label" :for="item.key">
-                                Use first master's value
-                            </label>
+                </div>
+            </div>
+            <div class="card margin-2em" v-if="hasApplications">
+                <div class="card-header" id="workloadsArea">
+                    <h5 class="mb-0">Workloads</h5>
+                </div>
+                <div id="workloadsAreaData" class="show" aria-labelledby="workloadsArea">
+                    <div class="card-body">
+                        <div class="row margin-2em" v-if="hasMultipleApplications">
+                            <div class="col">
+                                <i class="fas fa-info-circle gray"></i>
+                                You can assign multiple applications to a worker node.
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row margin-2em"></div>
-            <div class="row">
-                <div class="col">
-                    <p><strong>Worker Nodes</strong></p>
-                </div>
-            </div>
-            <div v-if="hasApplications" class="row margin-1em">
-                <div class="col">
-                    <p>Please assign applications to worker nodes. The following conditions must be met:</p>
-                </div>
-            </div>
-            <div v-if="hasApplications && installRook" class="row margin-1em">
-                <div class="col-3"><i class="fas fa-check small"></i> 3 worker nodes for Rook</div>
-                <div class="col-3"><a class="btn btn-sm btn-primary margin-left-3em" role="button" v-on:click="setRook()">Assign to all workers</a></div>
-            </div>
-            <div v-if="hasApplications && installOpenStack" class="row margin-1em">
-                <div class="col-3"><i class="fas fa-check small"></i> 3 worker nodes for OpenStack</div>
-                <div class="col-3"><a class="btn btn-sm btn-primary margin-left-3em" role="button" v-on:click="setOS()">Assign to all workers</a></div>
-            </div>
-            <div v-if="hasApplications && installCF" class="row margin-1em">
-                <div class="col-3"><i class="fas fa-check small"></i> 3 worker nodes for Cloud Foundry</div>
-                <div class="col-3"><a class="btn btn-sm btn-primary margin-left-3em" role="button" v-on:click="setCF()">Assign to all workers</a></div>
-            </div>
-            <div class="row margin-2em" v-if="hasMultipleApplications">
-                <div class="col">
-                    <em>Note: You can assign multiple applications to a worker node.</em>
-                </div>
-            </div>
-            <div class="form-group" v-for="item in workers" :key="item.key">
-                <div class="row">
-                    <div class="col-2">
-                        <label for="ip">IP-address of node</label>
-                    </div>
-                    <div class="col-6">
-                        <label for="user">Username on node</label>
-                    </div>
-                    <div class="col">
-                        <label for="user" v-if="hasApplications">Application usage on node</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-2">
-                        <input class="form-control" placeholder="0.0.0.0" name="ip" v-on:change="item.triggerValidation()" v-on:blur="item.triggerValidation()" v-model="item.ip" required="required" />
-                    </div>
-                    <div class="col-6">
-                        <div class="inline-block margin-right-2em"><input class="form-control" placeholder="root" name="user" v-model="item.user" v-on:blur="item.triggerValidation()" v-on:change="item.copyUserNameChanged($event.target.value, item)" :required="item.userNameRequired" :disabled="(item.copyUser && item.isNotFirst) || (item.copyMaster && item.isFirst)" /></div>
-                        <div class="custom-control custom-switch inline-block" v-if="item.isNotFirst">
-                            <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyUser" v-on:click="item.copyUserChanged(item)">
-                            <label class="custom-control-label" :for="item.key">
-                                Use first worker's value
-                            </label>
+                        <div v-if="hasApplications" class="row margin-1em">
+                            <div class="col">
+                                <p>The following conditions must be met:</p>
+                            </div>
                         </div>
-                        <div class="custom-control custom-switch inline-block" v-if="item.isFirst">
-                            <input class="custom-control-input" :id="item.key" :name="item.key" type="checkbox" v-model="item.copyMaster" v-on:click="item.copyUserChanged(item)">
-                            <label class="custom-control-label" :for="item.key">
-                                Use first master's value
-                            </label>
+                        <div v-if="hasApplications && installRook" class="row margin-1em">
+                            <div class="col-3" v-bind:class="{ ' red' : !rookValid, ' green': rookValid }"><i class="fas fa-check small"></i> 3 worker nodes for Rook</div>
                         </div>
-                    </div>
-                    <div class="col" style="vertical-align:center;margin-top:.45em">
-                        <div class="custom-control custom-switch" v-if="installRook">
-                            <input :id="item.key_rook" class="custom-control-input" type="checkbox" v-model="item.rook" v-on:change="item.triggerValidation()">
-                            <label :for="item.key_rook" class="custom-control-label">
-                                Rook
-                            </label>
+                        <div v-if="hasApplications && installOpenStack" class="row margin-1em">
+                            <div class="col-3" v-bind:class="{ ' red' : !osValid, ' green': osValid }"><i class="fas fa-check small"></i> 3 worker nodes for OpenStack</div>
                         </div>
-                        <div class="custom-control custom-switch" v-if="installOpenStack">
-                            <input :id="item.key_openstack" class="custom-control-input" type="checkbox" v-model="item.openstack" v-on:change="item.triggerValidation()">
-                            <label :for="item.key_openstack" class="custom-control-label">
-                                OpenStack
-                            </label>
+                        <div v-if="hasApplications && installCF" class="row margin-1em">
+                            <div class="col-3" v-bind:class="{ ' red' : !cfValid, ' green' : cfValid }"><i class="fas fa-check small"></i> 3 worker nodes for Cloud Foundry</div>
                         </div>
-                        <div class="custom-control custom-switch" v-if="installCF">
-                            <input :id="item.key_cf" class="custom-control-input" type="checkbox" v-model="item.cf" v-on:change="item.triggerValidation()">
-                            <label :for="item.key_cf" class="custom-control-label">
-                                Cloud Foundry
-                            </label>
+                        <div class="row margin-1em"></div>
+                        <div class="row margin-2em">
+                            <div class="col" >
+                                <a class="btn btn-primary margin-right-1em" v-if="installRook" role="button" v-on:click="setRook()">Assign <strong>Rook</strong> to all workers</a>
+                                <a class="btn btn-primary margin-right-1em" v-if="installOpenStack" role="button" v-on:click="setOS()">Assign <strong>OpenStack</strong> to all workers</a>
+                                <a class="btn btn-primary margin-right-1em" v-if="installCF" role="button" v-on:click="setCF()">Assign <strong>Cloud Foundry</strong> to all workers</a>
+                            </div>
                         </div>
+                        <div class="row margin-1em"></div>
+                        <span v-for="item in workers" :key="item.key">
+                            <div class="row margin-2em form-group">
+                                <div class="col-2">
+                                    <label for="ip">Worker {{ item.index + 1 }}</label>
+                                </div>
+                                <div class="col">
+                                    <div class="custom-control custom-switch" v-if="installRook">
+                                        <input :id="item.key_rook" class="custom-control-input" type="checkbox" v-model="item.rook" v-on:change="item.triggerValidation()">
+                                        <label :for="item.key_rook" class="custom-control-label">
+                                            Rook
+                                        </label>
+                                    </div>
+                                    <div class="custom-control custom-switch" v-if="installOpenStack">
+                                        <input :id="item.key_openstack" class="custom-control-input" type="checkbox" v-model="item.openstack" v-on:change="item.triggerValidation()">
+                                        <label :for="item.key_openstack" class="custom-control-label">
+                                            OpenStack
+                                        </label>
+                                    </div>
+                                    <div class="custom-control custom-switch" v-if="installCF">
+                                        <input :id="item.key_cf" class="custom-control-input" type="checkbox" v-model="item.cf" v-on:change="item.triggerValidation()">
+                                        <label :for="item.key_cf" class="custom-control-label">
+                                            Cloud Foundry
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -148,6 +194,9 @@ export default {
             installOpenStack : this.$store.state.installer.general.installOpenStack,
             hasApplications: false,
             hasMultipleApplications: false,
+            rookValid: true,
+            cfValid: true,
+            osValid: true
     }},
 
     mounted : function () {
@@ -230,8 +279,21 @@ export default {
         this.prepareList(workers)
         this.prepareList(masters)
 
-        this.workers = this.fillList(workers, this.$store.state.installer.general.workersList, true)
-        this.masters = this.fillList(masters, this.$store.state.installer.general.mastersList, false)
+        let validator = {
+            set: function(obj, prop, value) {
+                if((prop === 'ip' || prop === 'user' || prop === 'rook' || prop === 'cf' || prop === 'openstack') && obj[prop] !== value) {
+                    Object.defineProperty(obj, "_isDirty", {value: true}); // Flag
+                }
+
+                return Reflect.set(...arguments); // Forward trapped args to ob
+            }
+        }
+
+        var workers = this.fillList(workers, this.$store.state.installer.general.workersList, true)
+        this.workers = workers.map(worker => new Proxy(worker, validator));
+
+        var masters = this.fillList(masters, this.$store.state.installer.general.mastersList, false)
+        this.masters = masters.map(master => new Proxy(master, validator));
 
         // Validate the data
         this.validate();
@@ -241,6 +303,12 @@ export default {
         // Store the state of the data
         this.$store.commit(Constants.Store_UpdateWorkers, this.workers)
         this.$store.commit(Constants.Store_UpdateMasters, this.masters)
+
+        // Check, whether some data has been changed
+        if(this.workers.some(item => item._isDirty !== undefined && item._isDirty === true) || this.masters.some(item => item._isDirty !== undefined && item._isDirty === true)) {
+            console.log("+++ LIST IS DIRTY +++")
+            this.$store.commit(Constants.Store_NodesChecked, false)
+        }
 
         next()
     },
@@ -285,16 +353,29 @@ export default {
                     openstack: item.openstack,
                     isWorker: isWorkersList,
                     rookChecked: item.rookChecked,
+                    ipFocused: false,
+                    userFocused: false,
+                    hasDuplicateIpAddress: false,
 
                     isValid: function() {
-                        var isValidLocally =
-                            this.user.length > 0 &&
-                               Constants.Validate_IpAddress.test(this.ip)
-
-                        return isValidLocally
+                        return this.isValidUser() && this.isValidIp()
                     },
 
-                    triggerValidation: function() {
+                    isValidUser: function() {
+                        return this.user.length > 0
+                    },
+
+                    isValidIp: function() {
+                        return Constants.Validate_IpAddress.test(this.ip) &&
+                               !this.ip.startsWith('10.')
+                    },
+
+                    triggerValidation: function(field) {
+                        if(field == 'ip')
+                            this.ipFocused = true 
+                        if(field == 'user')
+                            this.userFocused = true
+
                         EventBus.$emit(LocalEvent_Validate)
                     },
                     
@@ -345,7 +426,9 @@ export default {
                 if(!masterIsValid)
                     isValid = false
 
+                master.hasDuplicateIpAddress = master.ip.length > 0 && ipAddresses.some(ip => master.ip === ip);
                 ipAddresses[ipAddresses.length] = master.ip
+
             })
 
             // Validate the workers
@@ -366,13 +449,19 @@ export default {
                 cfNodes += worker.cf ? 1 : 0;
                 openStackNodes += worker.openstack ? 1 : 0;
 
+                worker.hasDuplicateIpAddress = worker.ip.length > 0 && ipAddresses.some(ip => worker.ip === ip);
                 ipAddresses[ipAddresses.length] = worker.ip
+
             })
 
             // Check for the number of assigned nodes
-            if(this.installRook) isValid = isValid && rookNodes >= 3;
-            if(this.installCF) isValid = isValid && cfNodes >= 3;
-            if(this.installOpenStack) isValid = isValid && openStackNodes >= 3;
+            this.rookValid = rookNodes >= 3
+            this.cfValid = cfNodes >= 3
+            this.osValid = openStackNodes >= 3
+
+            if(this.installRook) isValid = isValid && this.rookValid;
+            if(this.installCF) isValid = isValid && this.cfValid;
+            if(this.installOpenStack) isValid = isValid && this.osValid;
 
             // Check for duplicate IP-addresses
             let duplicates = ipAddresses.reduce((acc,currentValue,index, array) => {

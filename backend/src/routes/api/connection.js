@@ -37,6 +37,9 @@ router.post('/', function (req, res) {
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry;
     const nodes = req.body.nodes;
+
+    // console.log(req.body);
+
     if (!client) {
         res.status(400).json({
             message: 'uuid invalid'

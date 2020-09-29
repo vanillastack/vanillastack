@@ -12,28 +12,45 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="row margin-1em">
-                <div class="col-3">
-                    <p><strong>Let's Encrypt Certificate Kind</strong></p>
-                    <select class="custom-select"
-                        name="issuer" v-model="issuer" 
-                        v-on:blur="triggerValidation()"
-                        v-on:change="triggerValidation()">
-                        <option value="letsencrypt-staging">Staging (non production or test)</option>
-                        <option value="letsencrypt-prod">Production</option>
-                    </select>
+            <div class="card margin-2em">
+                <div class="card-header" id="certKind">
+                    <h5 class="mb-0">Let's Encrypt Certificate Kind</h5>
                 </div>
-                <div class="col" v-if="issuer == 'letsencrypt-prod'">
-                    <p class="margin-2em"><strong>&#160;</strong></p>
-                    <span class="red">Please ensure to only select this option when truly setting up a production cluster, since Let's Encrypt defines time-outs for production cluster, which would prevent new certificates to be re-requested in case of reinstalling a cluster.</span>
+                <div id="certKindData" class="show" aria-labelledby="certKind">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <select class="custom-select input-large"
+                                    name="issuer" v-model="issuer" 
+                                    v-on:blur="triggerValidation()"
+                                    v-on:change="triggerValidation()">
+                                    <option value="letsencrypt-staging">Staging (non production or test)</option>
+                                    <option value="letsencrypt-prod">Production</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" v-if="issuer == 'letsencrypt-prod'">
+                            <div class="col">
+                                <span class="red">Please ensure to only select this option when truly setting up a production cluster, since Let's Encrypt defines time-outs for production cluster, which would prevent new certificates to be re-requested in case of reinstalling a cluster.</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row margin-1em">
-                <div class="col-3">
-                    <p><strong>Issuer E-Mail</strong></p>
-                    <input type="email" v-model="issuerEmail" v-on:input="triggerValidation()"
-                        placeholder="you@email"
-                        required="required" class="form-control padding-1em margin-top-1em" />
+            <div class="card margin-2em">
+                <div class="card-header" id="certMail">
+                    <h5 class="mb-0">Issuer E-Mail</h5>
+                </div>
+                <div id="certMailData" class="show" aria-labelledby="certMail">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <input type="email" v-model="issuerEmail" v-on:input="triggerValidation()"
+                                    placeholder="you@email"
+                                    required="required" class="form-control input-large" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -32,7 +32,9 @@
             </div>
         </div>
         <div class="row margin-2em" v-if="installed && !installationError">
-            <div class="col-2"><a class="btn btn-success" role="button" v-on:click="downloadConfig()">Download Config</a></div>
+            <div class="col">
+                <a class="btn btn-primary margin-right-1em" role="button" 
+                    v-on:click="downloadConfig()">Download Config</a></div>
         </div>
          <div class="row margin-2em" v-if="installed && !installationError">
             <div class="col">
@@ -41,8 +43,9 @@
             </div>
         </div>
         <div class="row margin-2em" v-if="installed && !installationError">
-            <div class="col-1" v-if="isDryRun"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Restart</a></div>
-            <div class="col-1"><a class="btn btn-small btn-success" v-on:click="showLog = !showLog">Show Logs</a></div>
+            <div class="col"><a v-if="isDryRun" class="btn btn-small btn-primary margin-right-1em" v-on:click="startInstallation()">Restart</a>
+                <a class="btn btn-small btn-primary margin-right-1em" v-on:click="showLog = !showLog">Show Logs</a>
+                <a class="btn btn-small btn-primary margin-right-1em" v-on:click="downloadLogs()">Download Logs</a></div>
         </div>
         <div class="row" v-if="installed && showLog && !installationError">
             <div class="col"><pre style="width: 100%; overflow: hidden !important" class="pre-install" id="logs">{{ display }}</pre></div>
@@ -59,7 +62,9 @@
             </div>
         </div>
         <div class="row margin-2em" v-if="installed && installationError">
-            <div class="col-1"><a class="btn btn-small btn-success" v-on:click="startInstallation()">Retry</a></div>
+            <div class="col">
+                <a class="btn btn-small btn-primary margin-right-1em" v-on:click="startInstallation()">Retry</a>
+                <a class="btn btn-small btn-primary margin-right-1em" v-on:click="downloadLogs()">Download Logs</a></div>
         </div>
         <div class="row margin-2em">
             <div class="col" v-if="installing">
@@ -88,7 +93,8 @@ export default {
             isOpenStack: false,
             isCloudFoundry: false,
             showLog: false,
-            installationError: false
+            installationError: false,
+            log: []
         }
     },
 
@@ -98,11 +104,31 @@ export default {
             this.display = ''
             this.showLog = false
             this.installationError = false
+            this.log = []
 
             var payload = this.generateCall()
             payload.uuid = this.$store.state.base.uuid
 
+            console.log("UUID", payload.uuid)
+            console.log("PAYLOAD", payload)
+
             this.$network.setup(payload)
+        },
+
+        downloadLogs: function() {
+            // Define the ID
+            var uuid = 'logs_' + this.$store.state.base.uuid
+
+            // Create the element
+            var download = this.createDownloadElement(uuid, 'text/plain', this.transactionId + '.log', 
+                this.log.join(''))
+            
+            // Execute the download
+            download.click()
+
+            // Remove the element
+            document.body.removeChild(download)
+
         },
 
         // Adds a node to the list
@@ -160,8 +186,11 @@ export default {
                 cf: JSON.parse(JSON.stringify(this.$store.state.installer.cloudfoundry)),
                 additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional)),
                 letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt))
-
             }
+
+            // Handle the stratos installation properly
+            if(!data.general.installCF)
+                data.cf.stratos = false
 
             this.isOpenStack = data.general.installOS
             this.isCloudFoundry = data.general.installCF
@@ -187,6 +216,35 @@ export default {
             .replace(/"/g, '"')
             .replace(/>/g, '>')   
             .replace(/</g, '<');    
+        },
+
+        showNetworkError: function(message) {
+            this.installing = false
+            this.installed = false 
+            this.installationError = true
+            this.display += message
+        },
+
+        createDownloadElement: function(id, contentType, fileName, content) {
+            // Create a virtual download-element
+            var uuid = id
+
+            // Check, whether the element already exists
+            var download = document.getElementById(uuid)
+            if(download != null) {
+                document.body.removeChild(download)
+            }
+
+            download = document.createElement('a')
+            download.setAttribute('id', uuid)
+            download.style.display = 'none'
+            document.body.appendChild(download)
+
+            // Set the data
+            download.setAttribute('href', 'data:' + contentType + ';charset=utf-8,' + encodeURIComponent(content))
+            download.setAttribute('download', fileName)
+
+            return download
         }
 
     },
@@ -203,16 +261,21 @@ export default {
     },
 
     created: function() {
-        EventBus.$on(Constants.Network_InstallationInProgress, data => {
-            this.installing = true
-            this.installed = false
-            this.transactionId = data.transactionId
-            this.keystonePass = data.keystonePass
-            this.stratosPass = data.stratosPass
-            this.setListAttributes = false
 
-            console.log("DATA", this.generateCall())
-            console.log("DATA-TXT", JSON.stringify(this.generateCall()))
+        EventBus.$on(Constants.Network_InstallationInProgress, data => {
+            if(data.state == Constants.Network_State_Progress) {
+                this.installing = true
+                this.installed = false
+                this.transactionId = data.transactionId
+                this.keystonePass = data.keystonePass
+                this.stratosPass = data.stratosPass
+                this.setListAttributes = false
+            } else if(data.state == Constants.Network_State_Error) {
+
+                console.log("ERROR", data.message)
+                this.showNetworkError(data.message)
+                this.installationError = true
+            }
         })
 
         EventBus.$on(Constants.Network_WS_Response, message => {
@@ -246,6 +309,8 @@ export default {
                         }
                     }
 
+                    this.log[this.log.length] = data.payload
+
                     var message = this.htmlEncode(data.payload)
                     this.display += message
                     
@@ -270,25 +335,18 @@ export default {
 
         // Kubeconfig was loaded, we allow to download it
         EventBus.$on(Constants.Network_KubeConfigLoaded, data => {
-            // Create a virtual download-element
+            // Define the ID
             var uuid = 'download_' + this.$store.state.base.uuid
 
-            // Check, whether the element already exists
-            var download = document.getElementById(uuid)
-            if(download == null) {
-                download = document.createElement('a')
-                download.setAttribute('id', uuid)
-                download.style.display = 'node'
-
-                document.body.appendChild(download)
-            }
-
-            // Set the data
-            download.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)))
-            download.setAttribute('download', this.$store.state.installer.cluster.fqdn + '.config')
-
+            // Create the element
+            var download = this.createDownloadElement(
+                uuid, 'text/plain', this.$store.state.installer.cluster.fqdn.replace('.', '_') + '.config', data)
+            
             // Execute the download
             download.click()
+
+            // Remove the element
+            document.body.removeChild(download)
         })
     }
 }

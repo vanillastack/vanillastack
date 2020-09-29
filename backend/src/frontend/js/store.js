@@ -70,9 +70,9 @@ const letsencryptSettings = {
 
 const cloudfoundrySettings = {
   state: () => ({
-    fqdn: '',
+    fqdn: 'cf',
     stratos: true,
-    stratos_endpoint: ''
+    stratos_endpoint: 'stratos'
   }),
 
   mutations: {
@@ -231,10 +231,9 @@ const clusterSettings = {
     ip: '',
     fqdn: '',
     usefqdn: true,
-    adminfqdn: '',
+    adminfqdn: 'admin',
     useadminfqdn: true,
-    externalLbIp: '',
-    useExternalLb: false
+    useExternalLb: true
   }),
 
 
@@ -261,6 +260,7 @@ const generalSettings = {
     installOpenStack: false,
     workersList: [],
     mastersList: [],
+    nodesChecked: false,
   }),
 
   mutations: {
@@ -279,6 +279,10 @@ const generalSettings = {
 
     [Constants.Store_UpdateMasters](state, data) {
       state.mastersList = data
+    },
+
+    [Constants.Store_NodesChecked](state, data) {
+      state.nodesChecked = data
     }
   }
 
