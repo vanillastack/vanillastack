@@ -186,8 +186,11 @@ export default {
                 cf: JSON.parse(JSON.stringify(this.$store.state.installer.cloudfoundry)),
                 additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional)),
                 letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt))
-
             }
+
+            // Handle the stratos installation properly
+            if(!data.general.installCF)
+                data.cf.stratos = false
 
             this.isOpenStack = data.general.installOS
             this.isCloudFoundry = data.general.installCF
