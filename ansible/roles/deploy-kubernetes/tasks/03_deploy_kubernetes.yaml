@@ -8,11 +8,6 @@
   set_fact:
     apiport: "{% if global.externalLB %}6443{% else %}8443{% endif %}"
 
-- name: remove suse repository
-  set_fact:
-    kubernetes.kubeadm_opt: "--image-repository k8s.gcr.io --kubernetes-version {{kubernetes.version}}"
-  when: ansible_os_family == 'Suse'
-
 - name: Init Cluster
   command: > 
     kubeadm init --service-cidr {{ kubernetes.service_cidr }} \
@@ -25,6 +20,9 @@
                  --certificate-key {{ certificate_key }} \
                  --ignore-preflight-errors=Port-6443 \
                  --skip-phases=addon/kube-proxy \
+                 {% if ansible_os_family == 'Suse' %}
+                 --image-repository k8s.gcr.io --kubernetes-version {{kubernetes.version}} \
+                 {% endif %}
                  {{ kubernetes.kubeadm_opts }} \
                  {{ kubernetes.init_opts }}
-  register: init_cluster 
+  register: init_cluster
