@@ -33,14 +33,14 @@
                             </div>
                             <div class="row margin-2em form-group" >
                                 <div class="col-3">
-                                    <label for="ip">IP-address</label>
+                                    <label for="ip" class="block">IP-address</label>
                                     <input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.ipFocused && (!item.isValidIp() || item.hasDuplicateIpAddress)}" placeholder="0.0.0.0" name="ip" v-model="item.ip" 
                                         v-on:change="item.triggerValidation('ip')" 
                                         v-on:focus="item.triggerValidation('ip')"
                                         v-on:blur="item.triggerValidation('ip')" required="required" />
                                 </div>
                                 <div class="col-3">
-                                    <label for="user">Username</label>
+                                    <label for="user" class="block">Username</label>
                                     <div class="inline-block margin-right-2em"><input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.userFocused && !item.isValidUser()}" 
                                         placeholder="root" name="user" v-model="item.user" 
                                         v-on:blur="item.triggerValidation('user')" v-on:change="item.copyUserNameChanged($event.target.value, item)" 
@@ -70,7 +70,7 @@
                             </div>
                             <div class="row margin-2em form-group">
                                 <div class="col-3">
-                                    <label for="ip">IP-address</label>
+                                    <label for="ip" class="block">IP-address</label>
                                     <input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.ipFocused && (!item.isValidIp() || item.hasDuplicateIpAddress) }" placeholder="0.0.0.0" name="ip" 
                                         v-on:change="item.triggerValidation('ip')" 
                                         v-on:blur="item.triggerValidation('ip')" 
@@ -78,7 +78,7 @@
                                         v-model="item.ip" required="required" />
                                 </div>
                                 <div class="col-3">
-                                    <label for="user">Username</label>
+                                    <label for="user" class="block">Username</label>
                                     <div class="margin-right-2em"><input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.userFocused && !item.isValidUser()}" placeholder="root" name="user" 
                                         v-model="item.user" v-on:blur="item.triggerValidation('user')" 
                                         v-on:focus="item.triggerValidation('user')"
