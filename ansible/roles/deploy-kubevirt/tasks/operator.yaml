@@ -1,0 +1,12 @@
+---
+- name: Create Kubevirt namespace
+  k8s:
+    name: "{{kubevirt.namespace}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Deploy KubeVirt Operator
+  k8s:
+    state: present
+    definition: "{{ lookup('template','operator.yaml.j2')}}"

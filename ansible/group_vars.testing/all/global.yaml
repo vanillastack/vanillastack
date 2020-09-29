@@ -226,3 +226,7 @@ grafana:
   ingress:
     enabled: true
     dns: "grafana.{{ kubernetes.loadBalancer.clusterDomain }}"
+kubevirt:
+  enabled: true
+  namespace: kubevirt
+  version: v0.33.0
