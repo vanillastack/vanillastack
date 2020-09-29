@@ -8,6 +8,11 @@
   set_fact:
     apiport: "{% if global.externalLB %}6443{% else %}8443{% endif %}"
 
+- name: remove suse repository
+  set_fact:
+    kubernetes.kubeadm_opt: "--image-repository k8s.gcr.io --kubernetes-version {{kubernetes.version}}"
+  when: ansible_os_family == 'Suse'
+
 - name: Init Cluster
   command: > 
     kubeadm init --service-cidr {{ kubernetes.service_cidr }} \
