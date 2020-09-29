@@ -18,6 +18,7 @@ RUN apt update && apt install -y \
     openssh-client python3-pip && \
     pip3 install ansible && \
     ansible-galaxy collection install community.kubernetes && \
+    ansible-galaxy collection install community.general && \
     rm -rf /var/lib/apt/lists/* 
 
 ## copy app files

@@ -1,0 +1,23 @@
+---
+# defaults file for deploy-kubernetes
+
+kubernetes:
+  init_opts: ""
+  kubeadm_opts: ""
+  service_cidr: "10.96.0.0/12"
+  loadBalancer:
+    virtualIP: 135.181.48.19
+    clusterDomain: ""
+  clusterName: kube
+  resetCluster: false
+  version: "1.19"
+  crioVersion: "1.18"
+  kubeadmin_config: /etc/kubernetes/admin.conf
+  helm_version: "v3.3.1"
+  pod_cidr: "10.0.0.0/8"
+
+## the following may be historic keys that are no longer needed
+
+#pod_network_cidr: "10.244.0.0/16"
+#cidr: "10.244.0.0/16"
+#reset_cluster: false
