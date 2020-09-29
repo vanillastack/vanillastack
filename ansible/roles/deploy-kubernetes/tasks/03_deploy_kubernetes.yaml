@@ -21,7 +21,7 @@
                  --ignore-preflight-errors=Port-6443 \
                  --skip-phases=addon/kube-proxy \
                  {% if ansible_os_family == 'Suse' %}
-                 --image-repository k8s.gcr.io --kubernetes-version {{kubernetes.version}} \
+                 --image-repository k8s.gcr.io --kubernetes-version latest \
                  {% endif %}
                  {{ kubernetes.kubeadm_opts }} \
                  {{ kubernetes.init_opts }}
