@@ -10,8 +10,8 @@ global
         daemon
 
         # Enable stats through socket in order to monitor HAProxy through Zabbix
-        stats socket /run/haproxy.sock mode 666 level user
-        stats timeout 2m
+        #stats socket /run/haproxy.sock mode 666 level user
+        #stats timeout 2m
 
         #Sets the maximum size of the Diffie-Hellman parameters used for generating the ephemeral/temporary Diffie-Hellman key in case of DHE key exchange
         tune.ssl.default-dh-param 1024

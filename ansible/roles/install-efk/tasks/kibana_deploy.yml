@@ -10,7 +10,6 @@
     name: "{{ efkstack.kibana.user }}"
     password: "{{ efkstack.kibana.password }}"
     owner: "{{ efkstack.kibana.system_user }}"
-    group: "{{ efkstack.kibana.system_group }}"
     mode: 0640
 
 - name: Slurp auth file

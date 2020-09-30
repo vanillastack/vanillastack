@@ -1,0 +1,443 @@
+---
+- name: Install EPEL
+  package:
+    name: epel-release
+  when: ansible_distribution == 'CentOS'
+ 
+- name: Install neccessary packages
+  package:
+    name:
+      - gnupg
+      - git
+      - ansible
+      - vim
+      - lvm2
+      - jq
+      - curl
+      - python3-passlib
+      - tar
+      - python3-pip
+      - python3-kubernetes
+
+- name: Install additional packages
+  package:
+    name:
+      - python3-devel
+      - gcc-*
+  when: ansible_os_family == 'Suse' or ansible_distribution == 'CentOS'
+
+- name: install pip modules
+  pip:
+    name:
+      - pyhelm
+      - openshift
+    extra_args: --ignore-installed
+
+- name: make sure, domain search is not set
+  lineinfile:
+    regexp: '^(.*)search(.*)$'
+    state: absent
+    path: /etc/resolv.conf
+
+- name: Add /usr/local/bin to global PATH
+  copy:
+    dest: /etc/profile.d/custom-path.sh
+    content: 'PATH=$PATH:/usr/local/bin'
+  when: ansible_distribution == 'CentOS'
+
+- name: get helm script
+  get_url:
+    url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    dest: /tmp/get_helm.sh
+    mode: '0700'
+
+- name: install helm
+  command: /tmp/get_helm.sh
+  environment:
+    DESIRED_VERSION: "{{ kubernetes.helm_version }}"
+  ignore_errors: yes
+
+#### REDHAT FAMILY
+- name: configure RHEL Systems
+  when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  block:
+  - name: Add cf repo      
+    yum_repository:
+      name: cloudfoundry
+      description: cloudfoundry repo
+      baseurl: https://packages.cloudfoundry.org/fedora
+      gpgcheck: 1
+      gpgkey: https://packages.cloudfoundry.org/fedora/cli.cloudfoundry.org.key
+  
+  - name: Add kubernetes repo
+    yum_repository:
+      name: kubernetes
+      description: kubernetes repo
+      baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+      gpgcheck: 1
+      gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      exclude: kubelet kubeadm kubectl
+  
+  - name: enable crio
+    command: "dnf module enable cri-o:{{ kubernetes.crioVersion }} -y" 
+    when: ansible_distribution == 'Fedora'
+
+  - name: Add kubic stable repo
+    yum_repository:
+      name: devel_kubic_libcontainers_stable
+      description: "Stable Releases of Upstream github.com/containers packages (CentOS_8)"
+      baseurl: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/
+      gpgcheck: 1
+      gpgkey: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/repodata/repomd.xml.key
+    when: ansible_distribution == 'CentOS'
+
+  - name: Add CRI-O repo
+    yum_repository: 
+      name: "devel_kubic_libcontainers_stable_cri-o_{{ kubernetes.crioVersion }}"
+      description: "Last release available in {{ kubernetes.crioVersion }} branch (CentOS_8)"
+      baseurl: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18/CentOS_8/
+      gpgcheck: 1
+      gpgkey: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18/CentOS_8/repodata/repomd.xml.key
+    when: ansible_distribution == 'CentOS'
+  
+  - name: get latest kube version
+    shell: dnf --showduplicate list  kubelet --disableexcludes=kubernetes | grep {{ kubernetes.version }} | tail -1 | tr -s ' ' | cut -d ' ' -f2
+    register: dnf_output
+  
+  - name: get kubeversion
+    set_fact:
+      versions: "{{ dnf_output.stdout }}"
+  
+  - name: Install packages
+    package:
+      name:
+#        - python-pip
+        - python3-pip
+#        - python-kubernetes
+        - python3-kubernetes
+        - cf7-cli
+        - "kubelet-{{ versions }}"
+        - "kubeadm-{{ versions }}"
+        - "kubectl-{{ versions }}"
+        - grubby
+        - cri-o
+      disable_excludes: kubernetes
+  
+  - name: Disable SELinux
+    selinux:
+      state: disabled
+  
+  - name: Check if systemd.unified_cgroup_hierarchy in grubenv already
+    command: grep -Fq "systemd.unified_cgroup_hierarchy=0" /boot/grub2/grubenv
+    register: grubenv_systemd_check
+    check_mode: no
+    ignore_errors: yes
+    changed_when: no
+  
+  - name: Fix for systemd version 245
+    template:
+      src: 99-rp_filter.conf
+      dest: /usr/lib/sysctl.d/99-rp_filter.conf
+      mode: '0644'
+      owner: root
+      group: root
+    register: systemd_version_245_sysctl_fix
+  
+  - name: Call grubby to switch back to cgroups v1
+    command: grubby --update-kernel=ALL --args=systemd.unified_cgroup_hierarchy=0 --make-default
+    when: grubenv_systemd_check.rc != 0
+
+  - name: configure rpm kubelet
+    lineinfile:
+      path: /etc/sysconfig/kubelet
+      regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
+      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
+      create: true
+
+  - name: Set CRI-O cgroups driver
+    lineinfile:
+      path: /etc/crio/crio.conf
+      state: present
+      regexp: '^cgroup_manager =.*'
+      line: 'cgroup_manager = "systemd"'
+  
+  - name: Set CRI-O default_ulimits
+    blockinfile:
+      path: /etc/crio/crio.conf
+      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+      block: |
+        default_ulimits = [
+            "nofile=16384:24576",
+            "nproc=8192:8192"
+        ]
+  
+  - name: Set CRI-O seccomp profile path
+    lineinfile:
+      path: /etc/crio/crio.conf
+      state: present
+      regexp: '^seccomp_profile =.*'
+      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+#### REDHAT FAMILY END
+
+#### DEBIAN FAMILY
+- name: configure Debian Systems
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  block:
+  - name: Add key from keyserver
+    apt_key:
+      keyserver: keyserver.ubuntu.com
+      id: "{{ item }}"
+    loop:
+      - 93C4A3FD7BB9C367
+      - 8BECF1637AD8C79D
+    retries: 3
+    delay: 1
+    register: result
+    until: result is success
+  
+  - name: Add key for cri-o repos
+    apt_key:
+      url: "{{ item }}"
+    loop:
+      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/Release.key"
+      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Unstable/Release.key"
+      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key"
+      - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+      - "https://baltocdn.com/helm/signing.asc"
+      - "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
+    retries: 3
+    delay: 1
+    register: result
+    until: result is success
+  
+  - name: Add repositories
+    apt_repository:
+      repo: "{{ item }}"
+      state: present
+    loop:
+      - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+      - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
+      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
+      - "deb https://baltocdn.com/helm/stable/debian/ all main"
+      - "deb https://packages.cloudfoundry.org/debian stable main"
+    retries: 3
+    delay: 1
+    register: result
+    until: result is success
+  
+  - name: Install packages
+    apt:
+      pkg:
+        - ansible
+        - needrestart
+        - helm
+        - cf-cli
+        - vim
+        - python-pip
+        - python3-pip
+        - python-kubernetes
+        - python3-kubernetes
+      update_cache: yes
+    retries: 3
+    delay: 1
+    register: result
+    until: result is success
+    when: ansible_distribution == 'Debian'
+
+  - name: Install packages
+    apt:
+      pkg:
+        - ansible
+        - needrestart
+        - helm
+        - cf-cli
+        - vim
+        - python3-pip
+        - python3-kubernetes
+      update_cache: yes
+    retries: 3
+    delay: 1
+    register: result
+    until: result is success
+    when: ansible_distribution == 'Ubuntu'
+
+  - name: Upgrade all packages to the latest version
+    apt:
+      name: "*"
+      state: latest
+  
+  - name: get latest kube version
+    shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+    register: apt_output
+  
+  - name: get kubeversion
+    set_fact:
+      versions: "{{ apt_output.stdout }}"
+  
+  - name: Install packages
+    apt:
+      pkg:
+        - "kubelet={{ versions }}"
+        - "kubeadm={{ versions }}"
+        - "kubectl={{ versions }}"
+        - "cri-o"
+        - libgtk2.0-0
+      update_cache: yes
+  
+  - name: mark packages as hold
+    dpkg_selections:
+      name: "{{ item }}"
+      selection: hold
+    with_items:
+      - "kubelet"
+      - "kubeadm"
+      - "kubectl"
+      - "cri-o"
+  
+  - name: configure crio
+    lineinfile:
+      path: /etc/crio/crio.conf
+      regexp: '^(.*)conmon =(.*)$'
+      line: 'conmon = "/usr/bin/conmon"'
+      backrefs: yes
+  
+  ## Bug needs to be tracked
+  - name: remove seccomp from crio
+    lineinfile:
+      path: /etc/crio/crio.conf
+      regexp: '^(.*)seccomp_profile =(.*)$'
+      line: 'seccomp_profile = ""'
+      backrefs: yes
+  
+  - name: fix runc runtime path in crio config
+    lineinfile:
+      path: /etc/crio/crio.conf
+      regexp: '^  runtime_path =(.*)$'
+      line: '  runtime_path = "/usr/sbin/runc"'
+      backrefs: yes
+  
+  - name: configure kubelet
+    lineinfile:
+      path: /etc/default/kubelet
+      regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
+      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
+      create: true
+
+  - name: Set CRI-O cgroups driver
+    lineinfile:
+      path: /etc/crio/crio.conf
+      state: present
+      regexp: '^cgroup_manager =.*'
+      line: 'cgroup_manager = "systemd"'
+  
+  - name: Set CRI-O default_ulimits
+    blockinfile:
+      path: /etc/crio/crio.conf
+      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+      block: |
+        default_ulimits = [
+            "nofile=16384:24576",
+            "nproc=8192:8192"
+        ]
+  
+  - name: Set CRI-O seccomp profile path
+    lineinfile:
+      path: /etc/crio/crio.conf
+      state: present
+      regexp: '^seccomp_profile =.*'
+      line: 'seccomp_profile = ""'
+#### DEBIAN FAMILY END
+
+#### SUSE FAMILY
+- name: configure SUSE Systems
+  when: ansible_os_family == 'Suse'
+  block:
+  - name: Add Kubic repository
+    community.general.zypper_repository:
+      name: kubic 
+      repo: 'http://download.opensuse.org/repositories/devel:/kubic/openSUSE_Tumbleweed/'
+      auto_import_keys: yes
+      state: present
+
+  - name: Install packages
+    community.general.zypper:
+      name:
+        - ansible
+        - vim
+        - helm
+        - cf-cli
+        - kubernetes1.19-kubeadm
+        - kubernetes1.19-client
+        - kubernetes1.19-kubelet
+        - cri-o
+        - cri-tools
+      state: present
+
+  - name: mark packages as hold
+    shell: "zypper addlock {{ item }}"
+    with_items:
+      - "kubernetes1.19-kubeadm"
+      - "kubernetes1.19-client"
+      - "kubernetes1.19-kubelet"
+      - "cri-o"
+
+  - name: configure crio
+    lineinfile:
+      path: /etc/crio/crio.conf.d/00-default.conf
+      regexp: '^(.*)conmon =(.*)$'
+      line: 'conmon = "/usr/bin/conmon"'
+      backrefs: yes
+
+  - name: configure kubelet
+    lineinfile:
+      path: /etc/sysconfig/kubelet
+      regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
+      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
+      create: true
+
+  - name: Set CRI-O cgroups driver
+    lineinfile:
+      path: /etc/crio/crio.conf.d/00-default.conf
+      state: present
+      regexp: '^cgroup_manager =.*'
+      line: 'cgroup_manager = "systemd"'
+  
+  - name: Set CRI-O default_ulimits
+    blockinfile:
+      path: /etc/crio/crio.conf.d/00-default.conf
+      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+      block: |
+        default_ulimits = [
+            "nofile=16384:24576",
+            "nproc=8192:8192"
+        ]
+  
+#  - name: Set CRI-O seccomp profile path
+#    lineinfile:
+#      path: /etc/crio/crio.conf.d/00-default.conf
+#      state: present
+#      regexp: '^seccomp_profile =.*'
+#      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+#### SUSE FAMILY END
+
+- name: "Check for installed packages"
+  package_facts:
+    manager: "auto"
+
+- name: Disable Firewall
+  systemd:
+    name: "{{ item }}"
+    masked: true
+    enabled: false
+    state: stopped
+  when: "item in ansible_facts.packages"
+  loop:
+    - "firewalld"
+    - "ufw"
+
+- name: Upgrade all packages to the latest version
+  package:
+    name: "*"
+    state: latest
+
