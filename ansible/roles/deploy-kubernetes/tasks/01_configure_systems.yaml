@@ -440,4 +440,6 @@
   package:
     name: "*"
     state: latest
+  retries: 10
+  delay: 30
 
