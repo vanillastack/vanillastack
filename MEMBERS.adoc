@@ -1,0 +1,42 @@
+= Members
+
+This page lists all Members assigned to a Role to make it possible to address PRs, questions, etc. to the right place.
+
+- See link:GOVERANCE.adoc[GOVERNANCE.adoc] for governance guidelines and steering committee and maintainer responsibilities.
+
+== Owners
+
+.Owners
+|===
+| Name
+
+| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>
+| Karsten Samaschke <karsten.samaschke@cloudical.io>
+|===
+
+== Steering Committee
+
+Steering committee members are added according the link:GOVERNANCE.adoc[GOVERNANCE.adoc].
+
+.Steering Commitee
+|===
+| Name                                                    | Represents  | Github
+
+| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>          | Cloudical   | [kisahm](https://github.com/kisahm)
+| Karsten Samaschke <karsten.samaschke@cloudical.io>      | Cloudical   | [ksamaschke](https://github.com/ksamaschke)
+| Christian Schilliing <christian.schilling@cloudical.io> | Cloudical   | [christiancloudical](https://github.com/christiancloudical)
+| Jeff Chousterman <jeff.choustermann@cloudical.io>       | Cloudical   | [j0x00](https://github.com/j0x00)
+|===
+
+== Maintainers
+
+Maintainers will be added according to the process defined in link:GOVERNANCE.adoc[GOVERNANCE.adoc].
+
+.Maintainers
+|===
+| Name
+
+| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>           
+| Karsten Samaschke <karsten.samaschke@cloudical.io>
+| Christian Schilliing <christian.schilling@cloudical.io>
+| Jeff Chousterman <jeff.choustermann@cloudical.io>

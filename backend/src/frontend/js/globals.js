@@ -4,7 +4,8 @@ const data = {
     vue: null,
     store: null,
     UUID: '',
-    version: ''
+    version: '',
+    verbose: window.location.search.indexOf("verbose=true")
 }
 
 global.Globals = data

@@ -120,7 +120,7 @@ router.post('/', function (req, res) {
             storageclass: 'rook-ceph-block' //  todo: not defined
         },
         stratos: {
-            enabled: cf.stratos,
+            enabled: general.installCF ? cf.stratos : false,
             coreDomain: cf.stratos_endpoint,
             adminpassword: randPassword(4, 4, 8)
         },
@@ -410,6 +410,9 @@ router.post('/', function (req, res) {
         },
         guacamole: {
             enabled: false // todo: mapping required; to be implemented
+        },
+        efkstack: {
+            enabled: additional.elastic
         }
     }
     // Building Inventory

@@ -81,11 +81,8 @@ const Network = {
             downloadConfig: function(uuid) {
                 const path = this.data.addressPrefix + "/config/" + uuid
                 this.data.__vue.http.get(path).then(response => {
-                    console.log("K8S", response.body)
 
-                    EventBus.$emit(Constants.Network_KubeConfigLoaded, {
-                        key: response.body
-                    })
+                    EventBus.$emit(Constants.Network_KubeConfigLoaded, response.body)
                 })
             },
 

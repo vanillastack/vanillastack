@@ -1,7 +1,4 @@
----
-
 = VanillaStack Governance
-
 
 This document defines the Governance-Policies of the VanillaStack-Project. It introduces the different roles in the project, their corresponding responsibilities, and the assigned tasks to each role. In addition, it defines the terms and conditions for contributing to the project.
 
@@ -18,24 +15,41 @@ This document defines the Governance-Policies of the VanillaStack-Project. It in
 - Owners define the expectation of the project
 - Funds contributed to the project are the responsibility and management of the owners
 - Owners appoint or remove maintainers and developers
-- The list of owners is listed in the Roles.adoc file
+- The list of owners is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
+
+=== Steering Committee Member
+
+- Steering Commitee Members steer the project and its relation
+- Steering Commitee Members make decisions related obstacles and changes interfering
+the Project flow (e.g. used OS, used versions, used Libraries and so on) following
+expectation of Owners
+- Steering Commitee Member used or removed by owners
+- The list of Steering Commitee Member is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
 
 === Maintainer
 
-- Owners can be maintainers
+- Owners can be Maintainers
 - Maintainers are used or removed by owners
 - Maintainers are not responsible for the idea and the project
 - Maintainers control the project and decision-making processes
 - Maintainers determine the timing of the project
 - Maintainers evaluate submitted content and ideas
 - Maintainers prioritize tasks
-- Maintainers check submitted content before it is integrated
-- The list of maintainers is listed in the Roles.adoc file
+- Maintainers submit content in Master-Branch as soon as content is approved
+- The list of maintainers is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
+
+=== Approvers
+
+- Maintainer and/or Owners can be Approvers
+- Approvers are used or removed by Owners
+- Approvers check submitted content before it is integrated and assign approval stage
+- Approvers ensure the proper working integration
+- Approvers ensure the expectation is targeted
 
 === Developer
 
-- Maintainer can be Developers
-- Developers are added or removed by owners
+- Maintainers and/or Approvers and/or Owners can be Developer
+- Developers are added or removed by Owners
 - Developers are responsible for not counteracting the idea and the project
 - Developers review submitted content before it is incorporated
 - Developers keep the project flow alive

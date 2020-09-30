@@ -1,0 +1,43 @@
+= Sublicenses
+
+The following sublicenses are present in the project
+
+Frontend "Installer"
+
+- ...
+- ...
+
+Backend "Installer"
+
+- *cookie-parser*, https://www.npmjs.com/package/cookie-parser: MIT
+- *debug*, https://www.npmjs.com/package/debug: MIT
+- *dotenv*, https://www.npmjs.com/package/dotenv: BSD-2-Clause
+- *express*, https://www.npmjs.com/package/express: MIT
+- *morgan*, https://www.npmjs.com/package/morgan: MIT
+- *swagger-jsdoc*, https://www.npmjs.com/package/swagger-jsdoc: MIT
+- *swagger-ui-express*, https://www.npmjs.com/package/swagger-ui-express: MIT
+- *uuid*, https://www.npmjs.com/package/uuid: MIT
+- *ws*, https://www.npmjs.com/package/ws: MIT
+
+Frontend "App-Store"
+
+- ...
+- ...
+
+Backend "App-Store"
+
+- ...
+- ...
+
+Vanilla-Stack
+
+- *Kubernetes*, https://github.com/kubernetes/kubernetes/blob/master/LICENSE: Apache 2.0
+- *CloudFoundry*, https://lists.cloudfoundry.org/g/cf-dev/topic/list_of_approved_open_source/13270295: Apache 2.0
+- *OpenStack*, https://governance.openstack.org/tc/reference/licensing.html: Apache 2.0
+- *OpenShift 3.5 - 4.5*, https://docs.openshift.com/container-platform/4.5/welcome/index.html: Apache 2.0
+- *Rook*, https://github.com/rook/rook/blob/master/LICENSE: Apache 2.0
+- *Prometheus*, https://prometheus.io/docs/introduction/faq/#what-license-is-prometheus-released-under: Apache 2.0
+- *Elastic*, https://www.elastic.co/subscriptions: Apache 2.0
+- *FluentD*, https://docs.fluentd.org/#:~:text=%E2%80%8BFluentd%20is%20an%20open,0.: Apache 2.0
+- *Grafana*, https://github.com/grafana/grafana/blob/master/LICENSE: Apache 2.0
+- *Cri-O*, https://github.com/cri-o/cri-o/blob/master/LICENSE: Apache 2.0

@@ -31,11 +31,11 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-2">
+                            <div class="col">
                                 <p v-if="useExternalLb">LoadBalancer-Address / IP</p>
                                 <p v-if="!useExternalLb">IP-address of the cluster</p>
                                 <div class="inline-block margin-right-2em">
-                                    <input class="form-control width-20em" placeholder="0.0.0.0" name="ip" v-model="ip" 
+                                    <input class="form-control input-large" placeholder="0.0.0.0" name="ip" v-model="ip" 
                                         v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
                                         required="required" />
                                 </div>
@@ -63,7 +63,7 @@
                         <div class="form-group row">
                             <div class="col">
                                 <div class="inline-block margin-right-2em">
-                                    <input class="form-control width-20em" placeholder="my.cluster" name="clusterfqdn" v-model="clusterfqdn" 
+                                    <input class="form-control input-large" placeholder="my.cluster" name="clusterfqdn" v-model="clusterfqdn" 
                                         v-on:change="triggerValidation()" v-on:blur="triggerValidation()" 
                                         :required="useclusterfqdn" :disabled="!useclusterfqdn" />
                                 </div>
