@@ -185,3 +185,21 @@
   roles:
     - role: deploy-harbor
       when: harbor.enabled
+
+- name: Deploy KubeVirt
+  hosts: master[0]
+  become: false
+  gather_facts: false
+  roles:
+    - role: deploy-kubevirt
+      action: operator
+      when: kubevirt.enabled
+
+- name: Deploy KubeVirt CLI
+  hosts: master[0]
+  become: true
+  gather_facts: false
+  roles:
+    - role: deploy-kubevirt
+      action: virtctl
+      when: kubevirt.enabled
