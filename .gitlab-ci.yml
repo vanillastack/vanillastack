@@ -12,7 +12,7 @@ stages:
   - run_playbook_fedora32
   - run_playbook_centos8
   - run_playbook_debian10
-  - run_playbook_ubuntu_bionic
+  - run_playbook_ubuntu_focal
   - run_playbook_opensuse15_2
 
 build_docker_image_dev:
@@ -123,11 +123,11 @@ run_playbook_opensuse15_2:
     - mv group_vars.testing group_vars
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
-run_playbook_ubuntu_bionic:
+run_playbook_ubuntu_focal:
   only:
     refs:
       - testing
-  stage: run_playbook_ubuntu_bionic
+  stage: run_playbook_ubuntu_focal
   interruptible: true
   allow_failure: true
   script:
