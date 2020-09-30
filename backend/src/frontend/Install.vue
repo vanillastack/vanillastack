@@ -76,6 +76,7 @@
 <script>
 import Constants from './js/constants.js'
 import EventBus from './js/eventBus.js'
+import Globals from './js/globals'
 
 export default {
     name: 'install',
@@ -194,6 +195,10 @@ export default {
 
             this.isOpenStack = data.general.installOS
             this.isCloudFoundry = data.general.installCF
+
+            if(Globals.verbose) {
+                console.log('+++ Data +++', data)
+            }
             
             return data
         },
@@ -245,6 +250,39 @@ export default {
             download.setAttribute('download', fileName)
 
             return download
+        },
+
+        showLogMessage: function(data) {
+            if(!this.setListAttributes) {
+                var output = document.getElementById('output')
+
+                if(null != output) {
+                    // Get the position of the output window
+                    var offset = this.getOffset(output)
+
+                    // Get the visible width and height of the browser window
+                    var width = window.innerWidth
+                    var height = window.innerHeight
+
+                    var outputWidth = width - 30 - offset.left
+                    var outputHeight = height - 50 - offset.top
+
+                    output.setAttribute("style","height:" + outputHeight + "px")
+
+                    this.setListAttributes = true
+                }
+            }
+
+            this.log[this.log.length] = data.payload
+
+            var message = this.htmlEncode(data.payload)
+            this.display += message
+            
+            //list.body.innerHTML += messagevar 
+            var list = document.getElementById('output')
+
+            if(null != list)
+                list.scrollTop = list.scrollHeight;
         }
 
     },
@@ -263,6 +301,10 @@ export default {
     created: function() {
 
         EventBus.$on(Constants.Network_InstallationInProgress, data => {
+            if(Globals.verbose) {
+                console.log('+++ InstallationInProgress +++', data)
+            }
+
             if(data.state == Constants.Network_State_Progress) {
                 this.installing = true
                 this.installed = false
@@ -279,6 +321,10 @@ export default {
         })
 
         EventBus.$on(Constants.Network_WS_Response, message => {
+            if(Globals.verbose) {
+                console.log('+++ WS +++', message)
+            }
+
             var data = JSON.parse(message)
 
             // Process only data to be displayed for this transaction-id
@@ -289,40 +335,15 @@ export default {
                     this.installing = true
                     this.installed = false
 
-                    if(!this.setListAttributes) {
-                        var output = document.getElementById('output')
-
-                        if(null != output) {
-                            // Get the position of the output window
-                            var offset = this.getOffset(output)
-
-                            // Get the visible width and height of the browser window
-                            var width = window.innerWidth
-                            var height = window.innerHeight
-
-                            var outputWidth = width - 30 - offset.left
-                            var outputHeight = height - 50 - offset.top
-
-                            output.setAttribute("style","height:" + outputHeight + "px")
-
-                            this.setListAttributes = true
-                        }
-                    }
-
-                    this.log[this.log.length] = data.payload
-
-                    var message = this.htmlEncode(data.payload)
-                    this.display += message
-                    
-                    //list.body.innerHTML += messagevar 
-                    var list = document.getElementById('output')
-
-                    if(null != list)
-                        list.scrollTop = list.scrollHeight;
+                    this.showLogMessage(data)
                 }
 
                 if(data.event == 'ERROR') {
                     this.installationError = true
+                    this.installing = false
+                    this.installed = false
+
+                    this.showLogMessage(data)
                 }
 
                 if(data.event == 'DONE') {

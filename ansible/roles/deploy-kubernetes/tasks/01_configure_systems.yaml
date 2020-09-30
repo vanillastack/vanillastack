@@ -61,6 +61,11 @@
 - name: configure RHEL Systems
   when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
   block:
+  - name: remove cockpit
+    package:
+      state: absent
+      name: cockpit*
+
   - name: Add cf repo      
     yum_repository:
       name: cloudfoundry
@@ -440,4 +445,6 @@
   package:
     name: "*"
     state: latest
+  retries: 10
+  delay: 30
 

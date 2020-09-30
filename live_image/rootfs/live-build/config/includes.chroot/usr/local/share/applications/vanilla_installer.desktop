@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Vanilla-Installer
+GenericName=Start the VanillaStack-Installer
+GenericName[de]=Startet den VanillaStack Installer
+Icon=/usr/local/share/icons/vanillastack/vanilla.svg
+Exec=chromium --start-fullscreen --app=http://localhost
+Terminal=false
+Type=Application
+StartupNotify=true
+
