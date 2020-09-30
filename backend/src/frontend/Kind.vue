@@ -72,7 +72,7 @@
                             </div>
                             <div class="row margin-2em form-group">
                                 <div class="col-1" style="text-align:center !important">
-                                    <a v-on:click="installOpenStack = !installOpenStack; installationOpenStackChanged()"><img src="./images/openstack.jpg" class="lead-image" /></a>
+                                    <a v-on:click="installOpenStack = !installOpenStack"><img src="./images/openstack.jpg" class="lead-image" /></a>
                                 </div>
                                 <div class="col-4 valign-center">
                                     <p>OpenStack provides a complete Infrastructure-as-a-Service-layer, providing you with the ability to provision virtual machines, databases and storage. It has its own management UIs and perfectly runs on top of Kubernetes.</p>
@@ -89,7 +89,7 @@
                             </div>
                             <div class="row margin-2em form-group">
                                 <div class="col-1" style="text-align:center !important">
-                                    <a v-on:click="installCF = !installCF; installationCFChanged()"><img src="./images/cloudfoundry.png" class="lead-image-hor" /></a>
+                                    <a v-on:click="installCF = !installCF"><img src="./images/cloudfoundry.png" class="lead-image-hor" /></a>
                                 </div>
                                 <div class="col-4 valign-center">
                                     <p>Cloud Foundry is an amazing Platform-as-a-Service-layer, completely automating deployment and operations of your code. It supports programming languages such as Java, .NET, Node, Python and many more. It has its own management UIs and perfectly runs on top of Kubernetes.</p>   
@@ -171,23 +171,11 @@ export default {
         },
         
         installationCFChanged (e) {
-            var isChecked = false
-            if(e != null) 
-                isChecked = e.target.checked
-            else 
-                isChecked = this.$data.installCF
-
-            EventBus.$emit(Constants.Event_InstallationCFUpdated, isChecked)
+            EventBus.$emit(Constants.Event_InstallationCFUpdated, e.target.checked)
         },
         
         installationOpenStackChanged (e) {
-            var isChecked = false
-            if(e != null) 
-                isChecked = e.target.checked
-            else 
-                isChecked = this.$data.installOpenStack
-
-            EventBus.$emit(Constants.Event_InstallationOpenStackUpdated, isChecked)
+            EventBus.$emit(Constants.Event_InstallationOpenStackUpdated, e.target.checked)
         },
 
         validate: function() {

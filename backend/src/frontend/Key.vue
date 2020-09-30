@@ -39,7 +39,7 @@
                     <form>
                         <div class="form-check margin-2em">
                             <input class="form-check-input" type="checkbox" v-model="didCopy" id="copiedKey" name="copiedKey" @input="updateCopiedKeys" />
-                            <label class="form-check-label" for="copiedKey">
+                            <label class="form-check-label" for="acceptTerms">
                                 I copied the SSH-key to <em>all</em> nodes
                             </label>
                         </div>

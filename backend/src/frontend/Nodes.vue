@@ -29,19 +29,19 @@
                     <div class="card-body">
                         <span v-for="item in masters" v-bind:key="item.key">
                             <div class="row margin-1em">
-                                <div class="col"><strong>Master {{ item.index + 1 }}</strong></div>   
+                                <div class="col-1"><strong>Master {{ item.index + 1 }}</strong></div>   
                             </div>
                             <div class="row margin-2em form-group" >
-                                <div class="col-3">
-                                    <label for="ip" class="block">IP-address</label>
-                                    <input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.ipFocused && (!item.isValidIp() || item.hasDuplicateIpAddress)}" placeholder="0.0.0.0" name="ip" v-model="item.ip" 
+                                <div class="col-2">
+                                    <label for="ip">IP-address</label>
+                                    <input class="form-control" v-bind:class="{ ' is-invalid' : item.ipFocused && (!item.isValidIp() || item.hasDuplicateIpAddress)}" placeholder="0.0.0.0" name="ip" v-model="item.ip" 
                                         v-on:change="item.triggerValidation('ip')" 
                                         v-on:focus="item.triggerValidation('ip')"
                                         v-on:blur="item.triggerValidation('ip')" required="required" />
                                 </div>
-                                <div class="col-3">
-                                    <label for="user" class="block">Username</label>
-                                    <div class="inline-block margin-right-2em"><input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.userFocused && !item.isValidUser()}" 
+                                <div class="col-2">
+                                    <label for="user">Username</label>
+                                    <div class="inline-block margin-right-2em"><input class="form-control" v-bind:class="{ ' is-invalid' : item.userFocused && !item.isValidUser()}" 
                                         placeholder="root" name="user" v-model="item.user" 
                                         v-on:blur="item.triggerValidation('user')" v-on:change="item.copyUserNameChanged($event.target.value, item)" 
                                         v-on:focus="item.triggerValidation('user')"
@@ -66,20 +66,20 @@
                     <div class="card-body">
                         <span v-for="item in workers" :key="item.key">
                             <div class="row margin-1em">
-                                <div class="col"><strong>Worker {{ item.index + 1 }}</strong></div>   
+                                <div class="col-1"><strong>Worker {{ item.index + 1 }}</strong></div>   
                             </div>
                             <div class="row margin-2em form-group">
-                                <div class="col-3">
-                                    <label for="ip" class="block">IP-address</label>
-                                    <input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.ipFocused && (!item.isValidIp() || item.hasDuplicateIpAddress) }" placeholder="0.0.0.0" name="ip" 
+                                <div class="col-2">
+                                    <label for="ip">IP-address</label>
+                                    <input class="form-control" v-bind:class="{ ' is-invalid' : item.ipFocused && (!item.isValidIp() || item.hasDuplicateIpAddress) }" placeholder="0.0.0.0" name="ip" 
                                         v-on:change="item.triggerValidation('ip')" 
                                         v-on:blur="item.triggerValidation('ip')" 
                                         v-on:focus="item.triggerValidation('ip')"
                                         v-model="item.ip" required="required" />
                                 </div>
-                                <div class="col-3">
-                                    <label for="user" class="block">Username</label>
-                                    <div class="margin-right-2em"><input class="form-control input-large" v-bind:class="{ ' is-invalid' : item.userFocused && !item.isValidUser()}" placeholder="root" name="user" 
+                                <div class="col-2">
+                                    <label for="user">Username</label>
+                                    <div class="margin-right-2em"><input class="form-control" v-bind:class="{ ' is-invalid' : item.userFocused && !item.isValidUser()}" placeholder="root" name="user" 
                                         v-model="item.user" v-on:blur="item.triggerValidation('user')" 
                                         v-on:focus="item.triggerValidation('user')"
                                         v-on:change="item.copyUserNameChanged($event.target.value, item)" 
