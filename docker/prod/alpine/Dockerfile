@@ -35,6 +35,7 @@ FROM base
 ## copy app files
 COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
+COPY ./backend/public ./public/
 COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
 

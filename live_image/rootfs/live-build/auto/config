@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+lb config noauto \
+        --apt-indicies false \
+        --color \
+        "${@}"
