@@ -176,12 +176,19 @@
             "nproc=8192:8192"
         ]
   
-  - name: Set CRI-O seccomp profile path
+  - name: remove seccomp from crio
     lineinfile:
       path: /etc/crio/crio.conf
-      state: present
-      regexp: '^seccomp_profile =.*'
-      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+      regexp: '^(.*)seccomp_profile =(.*)$'
+      line: 'seccomp_profile = ""'
+      backrefs: yes
+
+  - name: fix runc runtime path in crio config
+    lineinfile:
+      path: /etc/crio/crio.conf
+      regexp: '^  runtime_path =(.*)$'
+      line: '  runtime_path = "/usr/sbin/runc"'
+      backrefs: yes
 #### REDHAT FAMILY END
 
 #### DEBIAN FAMILY
