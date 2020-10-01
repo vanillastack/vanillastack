@@ -126,6 +126,7 @@
         - "kubectl-{{ versions }}"
         - grubby
         - cri-o
+        - sos
       disable_excludes: kubernetes
   
   - name: Disable SELinux
@@ -250,6 +251,7 @@
         - python3-pip
         - python-kubernetes
         - python3-kubernetes
+        - sosreport
       update_cache: yes
     retries: 3
     delay: 1
@@ -267,6 +269,7 @@
         - vim
         - python3-pip
         - python3-kubernetes
+        - sosreport
       update_cache: yes
     retries: 3
     delay: 1
