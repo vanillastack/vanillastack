@@ -341,7 +341,7 @@ export default {
                 if(data.event == 'ERROR') {
                     this.installationError = true
                     this.installing = false
-                    this.installed = false
+                    this.installed = true
 
                     this.showLogMessage(data)
                 }
