@@ -18,7 +18,7 @@ This page lists all Members assigned to a Role to make it possible to address PR
 
 Steering committee members are added according the link:GOVERNANCE.adoc[GOVERNANCE.adoc].
 
-.Steering Commitee
+.Steering Committee
 |===
 | Name                                                    | Represents  | Github
 
@@ -35,8 +35,8 @@ Maintainers will be added according to the process defined in link:GOVERNANCE.ad
 .Maintainers
 |===
 | Name
-
 | Kim-Norman Sahm <kim-norman.sahm@cloudical.io>           
 | Karsten Samaschke <karsten.samaschke@cloudical.io>
 | Christian Schilliing <christian.schilling@cloudical.io>
 | Jeff Chousterman <jeff.choustermann@cloudical.io>
+|===
