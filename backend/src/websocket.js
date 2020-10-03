@@ -310,6 +310,9 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
         fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsJson));
         fs.writeFileSync(`${dir}/extra_vars.json`, JSON.stringify(extraVars));
 
+        wsClient.ansibleConfig = hostsJson;
+        wsClient.ansibleConfig.all.vars = extraVars;
+
         if (!JSON.parse(dryRun)) { //&& (process.env.DOCKER || process.env.DOCKER != null)
             const options = {
                 cwd: `${basePath}`,
