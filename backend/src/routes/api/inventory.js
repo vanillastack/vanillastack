@@ -4,11 +4,11 @@ const path = require('path');
 const {getClient, downloadFile, cleanUpPath} = require('../../websocket');
 
 /**
- * Get KubeConfig to Download
+ * Get Current Ansible Config
  * @swagger
- * /config/{uuid}:
+ * /inventory/{uuid}:
  *     get:
- *         summary: Endpoint to download KubeConfig after successful setup run
+ *         summary: Endpoint to get current ansible config for a setup run
  *         parameters:
  *             - name: "uuid"
  *               in: "path"
@@ -45,7 +45,7 @@ router.get('/:uuid', function (req, res) {
             message: 'uuid invalid'
         });
         return;
-    } else if (client.setup == null) {
+    } else if (client.ansibleConfig == null) {
         if (debug) {
             console.log("Client has not run setup yet");
         }
@@ -54,15 +54,14 @@ router.get('/:uuid', function (req, res) {
         });
         return;
     }
-    const filename = 'kubeconfig';
-    const kubeConfigPath = downloadFile(client.uuid, filename, client.setup);
-    res.on('finish', () => {
-        cleanUpPath(debug, null, kubeConfigPath, [filename]);
-    });
-    res.download(path.join(kubeConfigPath, filename));
-    // res.end();
 
-    //cleanUpPath(null, kubeConfigPath, ['kubeconfig']);
+    const filename = 'ansible_vars.json';
+    const ansibleConfigPath = downloadFile(client.uuid, filename, JSON.stringify(client.ansibleConfig));
+
+    res.on('finish', () => {
+        cleanUpPath(debug, null, ansibleConfigPath, [filename]);
+    });
+    res.download(path.join(ansibleConfigPath, filename));
 });
 
 module.exports = router;
