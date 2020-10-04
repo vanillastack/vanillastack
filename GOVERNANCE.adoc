@@ -19,12 +19,12 @@ This document defines the Governance-Policies of the VanillaStack-Project. It in
 
 === Steering Committee Member
 
-- Steering Committee Members steer the project and its relation
-- Steering Committee Members make decisions related obstacles and changes interfering
+- Steering Commitee Members steer the project and its relation
+- Steering Commitee Members make decisions related obstacles and changes interfering
 the Project flow (e.g. used OS, used versions, used Libraries and so on) following
 expectation of Owners
-- Steering Committee Member used or removed by owners
-- The list of Steering Committee Member is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
+- Steering Commitee Member used or removed by owners
+- The list of Steering Commitee Member is listed in the link:MEMBERS.adoc[MEMBERS.ADOC] file
 
 === Maintainer
 
