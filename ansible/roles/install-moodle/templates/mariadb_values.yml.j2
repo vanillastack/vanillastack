@@ -47,7 +47,7 @@ db:
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-user-on-first-run
   ##
   user: "bn_moodle"
-  password: "changeme"
+  password: ""
   ## Database to create
   ## ref: https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-on-first-run
   ##
@@ -55,7 +55,7 @@ db:
   ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
   ## If it is not force, a random password will be generated.
   ##
-  forcePassword: true
+  forcePassword: false
   ## Mount user password as a file instead of using an environment variable
   ##
   injectSecretsAsVolume: false

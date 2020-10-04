@@ -3,7 +3,6 @@ image:
   repository: bitnami/moodle
   tag: 3.8.2-debian-10-r0
   pullPolicy: IfNotPresent
-
 ## Skip Moodle installation wizard. Useful for migrations and restoring from SQL dump
 ## ref: https://github.com/bitnami/bitnami-docker-moodle#configuration
 ##
@@ -18,7 +17,7 @@ moodleUsername: "admin"
 ## Defaults to a random 10-character alphanumeric string if not set
 ## ref: https://github.com/bitnami/bitnami-docker-moodle#configuration
 ##
-moodlePassword: "testpass"
+moodlePassword: ""
 
 ## Admin email
 ## ref: https://github.com/bitnami/bitnami-docker-moodle#configuration
@@ -42,7 +41,7 @@ externalDatabase:
   user: bn_moodle
 
   ## Database password
-  password: "changeme"
+  password: "{{ mariadbpassword.stdout | b64decode }}"
 
   ## Database name
   database: bitnami_moodle

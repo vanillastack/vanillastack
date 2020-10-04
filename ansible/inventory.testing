@@ -1,26 +1,26 @@
 [master]
-magic-master1 ansible_host=192.168.1.244 ansible_user=ansible
-magic-master2 ansible_host=192.168.1.137 ansible_user=ansible
-magic-master3 ansible_host=192.168.1.96 ansible_user=ansible
+testing-master-1 ansible_host=95.217.63.249 ansible_user=testing
+testing-master-2 ansible_host=95.217.63.250 ansible_user=testing
+testing-master-3 ansible_host=95.217.63.251 ansible_user=testing
 
 [worker]
-magic-worker1 ansible_host=192.168.1.77 ansible_user=ansible
-magic-worker2 ansible_host=192.168.1.98 ansible_user=ansible
-magic-worker3 ansible_host=192.168.1.111 ansible_user=ansible
+testing-worker-1 ansible_host=95.217.63.252 ansible_user=testing
+testing-worker-2 ansible_host=95.217.63.253 ansible_user=testing
+testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 
 [kube_cluster:children]
 master
 worker
 
 [storage]
-magic-worker1 ansible_host=192.168.1.77 ansible_user=ansible
-magic-worker2 ansible_host=192.168.1.98 ansible_user=ansible
-magic-worker3 ansible_host=192.168.1.111 ansible_user=ansible
+testing-worker-1 ansible_host=95.217.63.252 ansible_user=testing
+testing-worker-2 ansible_host=95.217.63.253 ansible_user=testing
+testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 
 [compute]
-magic-worker1 ansible_host=192.168.1.77 ansible_user=ansible
-magic-worker2 ansible_host=192.168.1.98 ansible_user=ansible
-magic-worker3 ansible_host=192.168.1.111 ansible_user=ansible
+testing-worker-1 ansible_host=95.217.63.252 ansible_user=testing
+testing-worker-2 ansible_host=95.217.63.253 ansible_user=testing
+testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 
 [haproxy:children]
 master

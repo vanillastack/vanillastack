@@ -203,3 +203,10 @@
     - role: deploy-kubevirt
       action: virtctl
       when: kubevirt.enabled
+
+- name: install moodle
+  hosts: master[0]
+  gather_facts: true
+  roles:
+  - role: install-moodle
+    when: moodle.enabled
