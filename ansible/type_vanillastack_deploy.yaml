@@ -203,3 +203,10 @@
     - role: deploy-kubevirt
       action: virtctl
       when: kubevirt.enabled
+
+- name: Secure Servers (Installing Polyverse)
+  hosts: kube_cluster
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-polyverse
