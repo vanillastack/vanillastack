@@ -37,6 +37,7 @@ build_docker_image_testing:
       - testing
   stage: build_docker_image_testing
   interruptible: true
+  allow_failure: true
   script:
     - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
