@@ -23,17 +23,6 @@
   when: openstack.tls.enabled and openstack.enabled
   include_tasks: tls.yaml
 
-### SUSE workaround
-- name: create neutron user
-  user:
-    name: neutron
-    comment: "needed for OpenStack"
-    uid: 42424
-    shell: /usr/bin/false
-    home: /var/lib/neutron
-  when: ansible_os_family == 'Suse'
-### END workaround
-
 - name: Deploy OpenStack
   include_tasks: deploy.yaml
   when: openstack.enabled

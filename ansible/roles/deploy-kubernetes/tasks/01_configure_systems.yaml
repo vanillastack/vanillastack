@@ -433,6 +433,16 @@
 #      state: present
 #      regexp: '^seccomp_profile =.*'
 #      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+
+  ### SUSE OpenStack workaround
+  - name: create neutron user
+    user:
+      name: neutron
+      comment: "needed for OpenStack"
+      uid: 42424
+      shell: /usr/bin/false
+      home: /var/lib/neutron
+    when: openstack.enabled
 #### SUSE FAMILY END
 
 - name: "Check for installed packages"
