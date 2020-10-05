@@ -231,7 +231,6 @@
       - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
       - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
       - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_Unstable/ /"
-      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
       - "deb https://baltocdn.com/helm/stable/debian/ all main"
       - "deb https://packages.cloudfoundry.org/debian stable main"
     retries: 3
