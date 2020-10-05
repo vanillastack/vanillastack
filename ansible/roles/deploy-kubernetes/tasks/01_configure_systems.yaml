@@ -281,6 +281,8 @@
     apt:
       name: "*"
       state: latest
+    retries: 10
+    delay: 30
   
   - name: get latest kube version
     shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
