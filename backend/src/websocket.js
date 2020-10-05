@@ -310,6 +310,9 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
         fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsJson));
         fs.writeFileSync(`${dir}/extra_vars.json`, JSON.stringify(extraVars));
 
+        wsClient.ansibleConfig = hostsJson;
+        wsClient.ansibleConfig.all.vars = extraVars;
+
         if (!JSON.parse(dryRun)) { //&& (process.env.DOCKER || process.env.DOCKER != null)
             const options = {
                 cwd: `${basePath}`,
@@ -455,15 +458,15 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
     }
 }
 
-const downloadKubeConf = function (client) {
-    const dir = `/tmp/${client.uuid}`;
+const downloadFile = function (uuid, filename, data) {
+    const dir = `/tmp/${uuid}`;
     try {
         fs.mkdirSync(dir, {recursive: true});
-        fs.writeFileSync(`${dir}/kubeconfig`, client.setup);
+        fs.writeFileSync(path.join(dir, filename), data);
     } catch (e) {
         console.log(e);
     }
-    return `${dir}`
+    return dir
 }
 
 // invoke like so: randPassword(5,3,2);
@@ -554,6 +557,6 @@ module.exports = {
     sleep,
     genTransactionId,
     randPassword,
-    downloadKubeConf,
+    downloadFile,
     cleanUpPath
 };

@@ -16,7 +16,8 @@
                 <p>Please ensure to match the following requirements:</p>
                 <ul class="fa-ul">
                     <li><i class="fas fa-check"></i> A minimum of four (4) nodes (VMs, Bare-Metal-machines)</li>
-                    <li><i class="fas fa-check"></i> A minimum of 1 GB RAM and 20 GB of HDD / SSD storage for each node</li>
+                    <li><i class="fas fa-check"></i> A minimum of 2 GB RAM and 20 GB of HDD / SSD storage for each node</li>
+                    <li><i class="fas fa-check"></i> A minimum of 2 vCPUs for each node</li>
                     <li><i class="fas fa-check"></i> Root access to these nodes</li>
                     <li><i class="fas fa-check"></i> IP-address for the cluster / Hostname for the cluser</li>
                     <li><i class="fas fa-check"></i> A wildcard domain (*.my.cluster) for making components accessible</li>
