@@ -22,9 +22,9 @@
   shell: kubectl get secret -n moodle -o json mariadb-moodle|jq -r '.data["mariadb-password"]'
   register: mariadbpassword
 
-# - name: Install moodle
-#   community.kubernetes.helm:
-#     name: moodle
-#     chart_ref: bitnami/moodle
-#     release_namespace: "{{ moodle.namespace }}"
-#     values: "{{ lookup('template', 'moodle_values.yml.j2') | from_yaml }}"
+- name: Install moodle
+  community.kubernetes.helm:
+    name: moodle
+    chart_ref: bitnami/moodle
+    release_namespace: "{{ moodle.namespace }}"
+    values: "{{ lookup('template', 'moodle_values.yml.j2') | from_yaml }}"
