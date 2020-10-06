@@ -16,7 +16,7 @@
   when: ansible_distribution == 'Debian'
 
 - name: Reinstall polymorphed packages on Centos and restart Server
-  shell: "yum reinstall -y \*"
+  shell: "yum reinstall -y *"
   when: ansible_distribution == 'CentOS'
 
 - name: "Reboot machine to get latest updates"
