@@ -413,6 +413,9 @@ router.post('/', function (req, res) {
         },
         efkstack: {
             enabled: additional.elastic
+        },
+        harbor: {
+            enabled: additional.harbor
         }
     }
     // Building Inventory

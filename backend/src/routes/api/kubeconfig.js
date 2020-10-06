@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {getClient, downloadKubeConf, cleanUpPath} = require('../../websocket');
+const path = require('path');
+const {getClient, downloadFile, cleanUpPath} = require('../../websocket');
 
 /**
  * Get KubeConfig to Download
@@ -53,12 +54,12 @@ router.get('/:uuid', function (req, res) {
         });
         return;
     }
-
-    const kubeConfigPath = downloadKubeConf(client);
+    const filename = 'kubeconfig';
+    const kubeConfigPath = downloadFile(client.uuid, filename, client.setup);
     res.on('finish', () => {
-        cleanUpPath(debug, null, kubeConfigPath, ['kubeconfig']);
+        cleanUpPath(debug, null, kubeConfigPath, [filename]);
     });
-    res.download(`${kubeConfigPath}/kubeconfig`);
+    res.download(path.join(kubeConfigPath, filename));
     // res.end();
 
     //cleanUpPath(null, kubeConfigPath, ['kubeconfig']);

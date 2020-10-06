@@ -35,12 +35,12 @@ Please read and apply the following rules to contribute to this project:
     *** Each role needs a description
       *** What is the role doing?
       *** What is required for usage?
-    ** Make useful commits
+    ** Make usefull commits
       *** Use Tags: ADD / NEW / FIX / CHG in front of your commits
       *** Use Comment tag for deeper information at bigger changes
-  ** No hard-coding
+  ** No hardcoding
     *** use variables
-    *** variables must be defined outside of the role (vars, group_vars, host_vars, etc)
+    *** variables must be defined outsite of the role (vars, group_vars, host_vars, etc)
   ** New features needs to merged into the master branch by using pull-requests
     *** the code needs to be review and approved by 2 team members
     *** the approvement needs to be documented!
@@ -54,14 +54,27 @@ Please read and apply the following rules to contribute to this project:
     *** script/bash usage must be documented in detail (why you are using this?)
     *** the Ansible role must be able to handle bash command errors
 * Bug handling
-  ** For each Bug open an Issue at the GitLab project page
+  ** For each Bug open an Issue at the gitlab project page
   ** Bugs will be tracked by the project board
 * Feature requests
-  ** Feature requests can be requests by creating an Issue
+  ** Feature requests can be requestes by creating an Issue
   ** Feature requests will be tracked by the project board
 * Playbooks don't execute any tasks, they are used to call roles.
   ** Every Role is used for one part and should include multiple tasks
   ** tasks should not be to complex, f.e. you do not provision a bastion host and install kubernetes on top in one task
+
+=== Cloning the Repository
+
+This project uses git submodules to ensure you get everything needed, please use the following command(s):
+[source,console]
+----
+# For git >= 2.13
+git clone --recurse-submodules GIT_REPOSITORY_URL
+# For older git versions
+git clone GIT_REPOSITORY_URL
+cd REPO_NAME
+git submodule update --init --recursive
+----
 
 === Workflow
 * Create a feature / personal branch based on the master branch

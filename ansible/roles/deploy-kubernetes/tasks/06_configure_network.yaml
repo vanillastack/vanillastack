@@ -41,6 +41,17 @@
     values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
     create_namespace: true
     wait: true
+  when: ansible_os_family == 'Suse' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Ubuntu'
+
+- name: Deploy latest version of Cilium
+  community.kubernetes.helm:
+    name: cilium
+    chart_ref: vsinfrastructure/cilium
+    release_namespace: kube-system
+    values: "{{ lookup('template', 'cilium-values-debian.yaml.j2') | from_yaml }}"
+    create_namespace: true
+    wait: true
+  when: ansible_distribution == 'Debian'
 
 - name: save vars to kubeconfig
   k8s:

@@ -1,0 +1,6 @@
+[submodule "ansible/collections/ansible_collections/community/general"]
+	path = ansible/collections/ansible_collections/community/general
+	url = https://github.com/ansible-collections/community.general.git
+[submodule "ansible/collections/ansible_collections/community/kubernetes"]
+	path = ansible/collections/ansible_collections/community/kubernetes
+	url = https://github.com/ansible-collections/community.kubernetes.git
