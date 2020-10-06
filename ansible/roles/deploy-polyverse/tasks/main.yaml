@@ -17,6 +17,3 @@
 - name: Reinstall polymorphed packages on Centos and restart Server
   shell: yum reinstall -y \* && shutdown -r now
   when: ansible_distribution == 'CentOS'
-
-
-
