@@ -76,6 +76,7 @@ run_playbook_centos8:
     - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack/ansible
     - mv group_vars.testing group_vars
+    - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/polyverse.yaml
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_debian10:
@@ -91,6 +92,7 @@ run_playbook_debian10:
     - git clone -b testing https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cloudical.net/vanillastack/vanillastack.git
     - cd vanillastack/ansible
     - mv group_vars.testing group_vars
+    - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/polyverse.yaml
     - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_fedora32:
