@@ -19,7 +19,9 @@
                  --apiserver-bind-port {{ apiport }} \
                  --certificate-key {{ certificate_key }} \
                  --ignore-preflight-errors=Port-6443 \
+                 {% if ansible_distribution == 'Debian' %}
                  --skip-phases=addon/kube-proxy \
+                 {% endif %}
                  {% if ansible_os_family == 'Suse' %}
                  --image-repository k8s.gcr.io --kubernetes-version latest \
                  {% endif %}
