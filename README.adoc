@@ -63,6 +63,19 @@ Please read and apply the following rules to contribute to this project:
   ** Every Role is used for one part and should include multiple tasks
   ** tasks should not be to complex, f.e. you do not provision a bastion host and install kubernetes on top in one task
 
+=== Cloning the Repository
+
+This project uses git submodules to ensure you get everything needed, please use the following command(s):
+[source,console]
+----
+# For git >= 2.13
+git clone --recurse-submodules GIT_REPOSITORY_URL
+# For older git versions
+git clone GIT_REPOSITORY_URL
+cd REPO_NAME
+git submodule update --init --recursive
+----
+
 === Workflow
 * Create a feature / personal branch based on the master branch
 * Change your stuff
