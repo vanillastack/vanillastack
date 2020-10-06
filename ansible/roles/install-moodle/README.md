@@ -14,7 +14,7 @@ Example Playbook
 
 ```yaml
 ---
-- name: install monitoring
+- name: install moodle
   hosts: master[0]
   gather_facts: true
   roles:
