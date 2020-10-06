@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {getClient} = require('../../websocket');
+const path = require('path');
+const {getClient, downloadFile, cleanUpPath} = require('../../websocket');
 
 /**
  * Get Current Ansible Config
@@ -44,7 +45,7 @@ router.get('/:uuid', function (req, res) {
             message: 'uuid invalid'
         });
         return;
-    } else if (client.setup == null) {
+    } else if (client.ansibleConfig == null) {
         if (debug) {
             console.log("Client has not run setup yet");
         }
@@ -54,9 +55,13 @@ router.get('/:uuid', function (req, res) {
         return;
     }
 
-    res.status(200).send(
-        client.ansibleConfig
-    );
+    const filename = 'ansible_vars.json';
+    const ansibleConfigPath = downloadFile(client.uuid, filename, JSON.stringify(client.ansibleConfig));
+
+    res.on('finish', () => {
+        cleanUpPath(debug, null, ansibleConfigPath, [filename]);
+    });
+    res.download(path.join(ansibleConfigPath, filename));
 });
 
 module.exports = router;
