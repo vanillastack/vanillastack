@@ -71,6 +71,7 @@ run_playbook_centos8:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - cd ansible
     - mv group_vars.testing group_vars
+    - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/polyverse.yaml
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_debian10:
@@ -85,6 +86,7 @@ run_playbook_debian10:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - cd ansible
     - mv group_vars.testing group_vars
+    - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/polyverse.yaml
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_fedora32:

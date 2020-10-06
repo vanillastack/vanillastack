@@ -5,6 +5,14 @@
   gather_facts: no
   roles:
     - role: wait-for-nodes
+
+- name: Secure Servers (Installing Polyverse)
+  hosts: kube_cluster
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-polyverse
+      when: polyverse.enabled
  
 - name: Configure Servers
   hosts: kube_cluster
