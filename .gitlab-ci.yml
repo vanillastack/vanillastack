@@ -71,7 +71,7 @@ run_playbook_centos8:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - cd ansible
     - mv group_vars.testing group_vars
-    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_debian10:
   only:
@@ -85,7 +85,7 @@ run_playbook_debian10:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - cd ansible
     - mv group_vars.testing group_vars
-    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_fedora32:
   only:
@@ -99,7 +99,7 @@ run_playbook_fedora32:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - cd ansible
     - mv group_vars.testing group_vars
-    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_opensuse15_2:
   only:
@@ -113,7 +113,7 @@ run_playbook_opensuse15_2:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - cd ansible
     - mv group_vars.testing group_vars
-    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_ubuntu_focal:
   only:
@@ -127,7 +127,7 @@ run_playbook_ubuntu_focal:
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - cd ansible
     - mv group_vars.testing group_vars
-    - ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 
 include:
