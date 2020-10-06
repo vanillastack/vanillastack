@@ -1,0 +1,3 @@
+polyverse:
+  enabled: true
+  key: "POLYVERSE_KEY"
