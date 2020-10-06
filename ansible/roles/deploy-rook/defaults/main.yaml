@@ -38,10 +38,11 @@ rook:
     failureDomain: host
     poolName: replicapool
     replicaLevel: 3
+    minSize: 2
   storageClassObject:
     enabled: false
   storageClassFile:
-    enabled: false
+    enabled: true
   toolbox:
     enabled: true
     name: rook-ceph-tools
@@ -56,8 +57,10 @@ rook:
     name: cephobjectn1
     failureDomain: host
     replicaLevel: 2
+    minSize: 1
   filesystem:
     enabled: false
     name: cephfsn1
     replicaLevel: 2
+    minSize: 1
     failureDomain: host
