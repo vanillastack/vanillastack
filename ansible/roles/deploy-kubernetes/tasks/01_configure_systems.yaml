@@ -361,6 +361,13 @@
       state: present
       regexp: '^seccomp_profile =.*'
       line: 'seccomp_profile = ""'
+
+  - name: remove preconfigures crio.conf from dpkg
+    file:
+      path: /etc/crio/crio.conf.d/01-crio-runc.conf
+      state: absent
+    when: ansible_distribution == 'Debian'
+
 #### DEBIAN FAMILY END
 
 #### SUSE FAMILY
@@ -466,4 +473,3 @@
     state: latest
   retries: 10
   delay: 30
-
