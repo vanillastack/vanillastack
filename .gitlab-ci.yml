@@ -6,6 +6,7 @@ variables:
   DOCKER_HOST: tcp://localhost:2375
 
 stages:
+  - test
   - build_docker_image_dev
   - build_docker_image_testing
   - build_docker_image_prod
@@ -15,6 +16,20 @@ stages:
   - run_playbook_debian10
   - run_playbook_ubuntu_focal
   - run_playbook_opensuse15_2
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  
+variables:
+  SAST_EXCLUDED_PATHS: "docs"
+  SEARCH_MAX_DEPTH: 50
+  SCAN_KUBERNETES_MANIFESTS: "true"
+
+secret_detection:
+  variables:
+    SECRET_DETECTION_EXCLUDED_PATHS: "docs"
+
 
 build_docker_image_dev:
   only:
