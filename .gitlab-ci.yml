@@ -25,11 +25,7 @@ variables:
   SAST_EXCLUDED_PATHS: "docs"
   SEARCH_MAX_DEPTH: 50
   SCAN_KUBERNETES_MANIFESTS: "true"
-
-secret_detection:
-  variables:
-    SECRET_DETECTION_EXCLUDED_PATHS: "docs"
-
+  SECRET_DETECTION_EXCLUDED_PATHS: "docs"    
 
 build_docker_image_dev:
   only:
