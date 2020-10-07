@@ -4,7 +4,11 @@ services:
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_HOST: tcp://localhost:2375
-
+  SAST_EXCLUDED_PATHS: "docs"
+  SECRET_DETECTION_EXCLUDED_PATHS: "docs"
+  SEARCH_MAX_DEPTH: 50
+  SCAN_KUBERNETES_MANIFESTS: "true"
+  
 stages:
   - test
   - build_docker_image_dev
@@ -16,16 +20,6 @@ stages:
   - run_playbook_debian10
   - run_playbook_ubuntu_focal
   - run_playbook_opensuse15_2
-
-include:
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
-  
-variables:
-  SAST_EXCLUDED_PATHS: "docs"
-  SEARCH_MAX_DEPTH: 50
-  SCAN_KUBERNETES_MANIFESTS: "true"
-  SECRET_DETECTION_EXCLUDED_PATHS: "docs"    
 
 build_docker_image_dev:
   only:
@@ -145,3 +139,5 @@ run_playbook_ubuntu_focal:
 
 include:
   - local: '/live_image/.gitlab-ci.yaml'
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
