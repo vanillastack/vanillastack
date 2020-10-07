@@ -28,8 +28,13 @@ $ ssh-copy-id -i .ssh/id_rsa.pub <ip-address>
 == Clone project and configure cluster
 [source]
 ----
-$ git clone https://gitlab.cloudical.net/vanillastack/vanillastack.git
+# For git >= 2.13
+$ git clone --recurse-submodules https://gitlab.cloudical.net/vanillastack/vanillastack.git
 $ cd vanillastack/ansible
+# For older git versions
+$ git clone GIT_REPOSITORY_URL
+$ cd vanillastack/ansible
+$ git submodule update --init --recursive
 
 # copy and edit hosts file
 $ cp hosts.sample hosts
