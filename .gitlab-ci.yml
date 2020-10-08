@@ -7,7 +7,6 @@ variables:
   SAST_EXCLUDED_PATHS: "docs"
   SECRET_DETECTION_EXCLUDED_PATHS: "docs"
   SEARCH_MAX_DEPTH: 50
-  SCAN_KUBERNETES_MANIFESTS: "true"
   
 stages:
   - test
