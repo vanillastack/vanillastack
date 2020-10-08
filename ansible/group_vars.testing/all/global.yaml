@@ -231,6 +231,7 @@ kubevirt:
   namespace: kubevirt
   version: v0.33.0
 moodle:
+  username: admin
   enabled: true
   namespace: moodle
   storage:

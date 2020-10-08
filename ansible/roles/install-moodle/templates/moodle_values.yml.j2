@@ -11,7 +11,7 @@ moodleSkipInstall: "no"
 ## User of the application
 ## ref: https://github.com/bitnami/bitnami-docker-moodle#configuration
 ##
-moodleUsername: "admin"
+moodleUsername: "{{ moodle.username }}"
 
 ## Application password
 ## Defaults to a random 10-character alphanumeric string if not set
