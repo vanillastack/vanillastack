@@ -230,3 +230,17 @@ kubevirt:
   enabled: true
   namespace: kubevirt
   version: v0.33.0
+moodle:
+  username: admin
+  enabled: true
+  namespace: moodle
+  storage:
+    classname: "rook-ceph-block"
+    size: 8Gi
+  mariadb:
+    persistence: true
+    classname: "rook-ceph-block"
+    size: 8Gi
+  ingress:
+    enabled: true
+    dns: "moodle.{{ kubernetes.loadBalancer.clusterDomain }}"
