@@ -1,0 +1,30 @@
+---
+- name: Helm add bitnami repository
+  community.kubernetes.helm_repository:
+    name: bitnami
+    repo_url: https://charts.bitnami.com/bitnami
+
+- name: Create moodle namespace
+  k8s:
+    name: "{{ moodle.namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Install mariadb
+  community.kubernetes.helm:
+    name: mariadb-moodle
+    chart_ref: bitnami/mariadb
+    release_namespace: "{{ moodle.namespace }}"
+    values: "{{ lookup('template', 'mariadb_values.yml.j2') | from_yaml }}"
+
+- name: register mariadb application password
+  shell: kubectl get secret -n moodle -o json mariadb-moodle|jq -r '.data["mariadb-password"]'
+  register: mariadbpassword
+
+- name: Install moodle
+  community.kubernetes.helm:
+    name: moodle
+    chart_ref: bitnami/moodle
+    release_namespace: "{{ moodle.namespace }}"
+    values: "{{ lookup('template', 'moodle_values.yml.j2') | from_yaml }}"
