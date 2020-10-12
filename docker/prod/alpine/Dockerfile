@@ -24,7 +24,7 @@ ENV MODE=installer
 ENV DEBUG=false
 ARG ANSIBLEPATH='/tmp/ansible'
 ENV ANSIBLEPATH ${ANSIBLEPATH}
-EXPOSE ${PORT}qq
+EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
 ## Copy package files
