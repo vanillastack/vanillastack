@@ -290,7 +290,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
     const dir = `${basePath}/${wsClient.uuid}`;
 
     try {
-
+// some
         console.log(`${transactionId} Setup started`);
 
         // create ansible env
@@ -383,7 +383,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
             let dryExec;
 
             if (!fail) {
-                const dryRunScriptsPath = path.join(__dirname, 'templates');
+                const dryRunScriptsPath = path.join(__dirname, '../templates');
                 const options = {
                     cwd: dryRunScriptsPath,
                     env: null
