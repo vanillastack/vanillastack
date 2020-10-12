@@ -4,9 +4,9 @@
  * Module dependencies.
  */
 require('dotenv').config();
-const config = require('../config');
+const config = require('../config/config');
 const app = require('../app');
-const {wss, getClient} = require('../websocket');
+const {wss, getClient} = require('../services/websocket');
 const debug = require('debug')('backend:server');
 const http = require('http');
 const url = require('url');
@@ -26,10 +26,11 @@ const server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
+let startMsg = `Server Version ${app.locals.config.version} started on port ${port} `
+startMsg += `in ${app.locals.config.mode} Mode `
+startMsg += `and Debug ${app.locals.config.debug ? 'enabled' : 'disabled'}`
 server.listen(port, () => {
-    console.log(
-        `Server started on port ${port} in ${app.locals.config.mode} Mode with Debug ${app.locals.config.debug ? 'enabled' : 'disabled'}`
-    );
+    console.log(startMsg);
 });
 server.on('error', onError);
 server.on('listening', onListening);
