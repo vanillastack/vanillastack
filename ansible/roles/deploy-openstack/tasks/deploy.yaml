@@ -7,7 +7,7 @@
 - name: "{{item.name}} | deploy helm chart"
   community.kubernetes.helm:
     name: "{{ item.name }}"
-    chart_ref: "vanilla-openstack/{{ openstack[item.name]['chartName'] }}"
+    chart_ref: "vanillastack/{{ openstack[item.name]['chartName'] }}"
     chart_version: "{{ openstack[item.name]['chartVersion'] }}"
     release_namespace: "{{openstack.namespace}}"
     values: "{{ lookup('template', '{{item.name}}.yaml.j2') | from_yaml }}"
