@@ -4,8 +4,12 @@ services:
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_HOST: tcp://localhost:2375
-
+  SAST_EXCLUDED_PATHS: "docs"
+  SECRET_DETECTION_EXCLUDED_PATHS: "docs"
+  SEARCH_MAX_DEPTH: 50
+  
 stages:
+  - test
   - build_docker_image_dev
   - build_docker_image_testing
   - build_docker_image_prod
@@ -134,3 +138,5 @@ run_playbook_ubuntu_focal:
 
 include:
   - local: '/live_image/.gitlab-ci.yaml'
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
