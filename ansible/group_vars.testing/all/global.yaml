@@ -1,6 +1,12 @@
 ---
+commercial:
+  enabled: true
+  registry:
+    url: harbor.cloudical.net
+    username: 'customer-testing'
+    key: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDI2MjY0MDAsImlhdCI6MTYwMjUyMTE1NywiaXNzIjoiaGFyYm9yLXRva2VuLWRlZmF1bHRJc3N1ZXIiLCJpZCI6MjgzLCJwaWQiOjMsImFjY2VzcyI6W3siUmVzb3VyY2UiOiIvcHJvamVjdC8zL3JlcG9zaXRvcnkiLCJBY3Rpb24iOiJwdWxsIiwiRWZmZWN0IjoiIn0seyJSZXNvdXJjZSI6Ii9wcm9qZWN0LzMvaGVsbS1jaGFydCIsIkFjdGlvbiI6InJlYWQiLCJFZmZlY3QiOiIifV19.d3uebAXofE_63tOdPY7ZPeR1fREEanHDGWarWKZ5cRu1a95pIp6O194zA4UHzDSjMfOX9Jo_AveKkn6lOWyOuafD8-M_1bEP8dm1b7lhaIPFD5VYWgzhUSVZHaEBFxPFFWc0UtO85c-kRABFbpMNF_JKkXIi99KijfHJBx3ddjL-yKDuJi6T2nvN6zCn-eJEzV5fArm2MJIETEObxsq0FJfyRgH83TXcSVPe_3DLMVL0foZ56GelrshGH8fTJSfdjdWcHPcHGkt0VQmeCdfj8N-nM8lk6vuttQKdrOj0uo3RIPXeZ-7ZDEGwGXSiv0avDfvaU6FAvt2GjgtsXam_sUh2i0Q_4u6P0CYQp_akhtX3V-qnVPhOZIMjBu09cbzc6UIyDuMqbYJQcX_0-y6PDzsYlLPT9WaH6qCJey0s27TMoADQ5eoZwtLMdNg9FDhw9eyXzvMD6LKO39v69pov_k0VMlx621G101gTu3POXO1pSb8Y86kYb5Wnf9-uqqQF6rDsTGmKPSEBkf7Umwr5HE0f7R5qY-ur-gqc0-va4J9QQXx4QQ82z7Z__-6Ziw6LfS5YHlw5TmbQK_iGVrnQ1iFxvO2xQSXknEMcephIeUweHPoJjwzk5-62N0IVUjfkl_KrdY9NsuRRe4t41nCLQfKu0yX7wNUs9PPjJzuodG4'
 global:
-  registry: harbor.cloudical.net
+  registry: harbor.vanillastack.io
   isHA: true
   uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
   externalLB: false
@@ -55,7 +61,6 @@ guacamole:
     replicas: "2"
     size: "20Gi"
 postgresOperator:
-  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
   chartName: "postgres-operator"
   chartVersion: "1.5.0"
