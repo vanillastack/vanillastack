@@ -2,8 +2,8 @@
 {% if openstack.release == "stein" %}
 images:
   tags:
-    horizon: harbor.vanillastack.io/vanillastack/horizon:ubuntu-bionic-20200903
-    horizon_db_sync: harbor.vanillastack.io/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon_db_sync: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
 {% endif %}
 {% if openstack.release == "train" %}
 images:
