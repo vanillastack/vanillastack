@@ -76,10 +76,14 @@ hubble-relay:
 # global groups all configuration options that have effect on all sub-charts
 global:
   # registry is the address of the registry and orgnization for all container images
+{% if commercial.enabled %}
+  registry: "{{commercial.registry.url}}"
+{% elsif %}
   registry: docker.io/cilium
+{% endif %}
 
   # tag is the container image tag to use
-  tag: v1.8.3
+  tag: {{kubernetes.cilium.version}}
 
   # pullPolicy is the container image pull policy
   pullPolicy: IfNotPresent

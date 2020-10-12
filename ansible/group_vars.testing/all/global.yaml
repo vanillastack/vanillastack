@@ -39,6 +39,8 @@ kubernetes:
   kubeadm_opts: ""
   resetCluster: false
   kubeadmin_config: /etc/kubernetes/admin.conf
+  cilium:
+    version: v1.8.3
 cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
