@@ -1,0 +1,24 @@
+---
+- name: Upgrade all packages to the latest version
+  package:
+    name: "*"
+    state: latest
+  retries: 10
+  delay: 30
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'CentOS'
+
+- name: Install Polyverse Repos
+  shell: "curl -s https://repo.polyverse.io/cli | sh -s install {{ polyverse.key }}"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'CentOS'
+
+- name: Reinstall polymorphed packages on Debian and restart Server
+  shell: curl https://repo.polyverse.io/cli | bash -s replace-installed-elf
+  when: ansible_distribution == 'Debian'
+
+- name: Reinstall polymorphed packages on Centos and restart Server
+  shell: "yum reinstall -y *"
+  when: ansible_distribution == 'CentOS'
+
+- name: "Reboot machine to get latest updates"
+  reboot:
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'CentOS'
