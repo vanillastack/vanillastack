@@ -383,7 +383,7 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
             let dryExec;
 
             if (!fail) {
-                const dryRunScriptsPath = path.join(__dirname, 'templates');
+                const dryRunScriptsPath = path.join(__dirname, '../templates');
                 const options = {
                     cwd: dryRunScriptsPath,
                     env: null
