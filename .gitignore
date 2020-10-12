@@ -52,6 +52,7 @@ build/Release
 
 # Dependency directories
 backend/node_modules/
+frontend/node_modules/
 backend/jspm_packages/
 
 # Typescript v1 declaration files
@@ -191,8 +192,5 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-backend/src/public/css
-backend/src/public/images
-backend/src/public/js
-backend/src/public/index.html
-backend/dist/*
+backend/src/public/*
+frontend/dist/*
