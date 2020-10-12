@@ -108,15 +108,10 @@
     - etcd_server_crt_result.stat.exists
   no_log: true
 
-- name: Helm refresh prometheus community repository
-  community.kubernetes.helm_repository:
-    name: prometheus-community
-    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-monitoring
-
 - name: Install prometheus-operator
   community.kubernetes.helm:
     name: prometheus-operator
-    chart_ref: prometheus-community/kube-prometheus-stack
+    chart_ref: vanillastack/kube-prometheus-stack
     release_namespace: monitoring
     values: "{{ lookup('template', 'operator_values.yml.j2') | from_yaml }}"
 

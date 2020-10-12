@@ -1,6 +1,12 @@
 ---
+commercial:
+  enabled: false
+  registry:
+    url: harbor.cloudical.net
+    username: 'REGISTRY_USERNAME'
+    key: 'REGISTRY_KEY'
 global:
-  registry: harbor.cloudical.net
+  registry: harbor.vanillastack.io
   isHA: true
   uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
   externalLB: false
@@ -55,7 +61,6 @@ guacamole:
     replicas: "2"
     size: "20Gi"
 postgresOperator:
-  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
   chartName: "postgres-operator"
   chartVersion: "1.5.0"

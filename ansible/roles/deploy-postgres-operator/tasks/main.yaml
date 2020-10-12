@@ -1,13 +1,8 @@
 ---
-- name: Add helm repository
-  community.kubernetes.helm_repository:
-    name: "vanillastack-postgresOperator"
-    repo_url: "{{postgresOperator.chartRepo}}"
-
 - name: Deploy Postgres-Operator
   community.kubernetes.helm:
     name: postgres-operator
-    chart_ref: "vanillastack-postgresOperator/{{postgresOperator.chartName}}"
+    chart_ref: "vanillastack/{{postgresOperator.chartName}}"
     release_namespace: "{{postgresOperator.namespace}}"
     chart_version: "{{postgresOperator.chartVersion}}"
     create_namespace: yes

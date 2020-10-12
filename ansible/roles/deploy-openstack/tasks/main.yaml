@@ -1,8 +1,4 @@
 ---
-- name: Add repo
-  shell: helm repo add vanilla-openstack {{openstack.chartRepo}}
-  when: openstack.enabled
-
 - name: Create namespace
   k8s:
     name: "{{openstack.namespace}}"

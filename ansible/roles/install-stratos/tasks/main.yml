@@ -1,12 +1,7 @@
 ---
-- name: install CF repository
-  community.kubernetes.helm_repository:
-    name: cloudfoundry
-    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-cloudfoundry
-
 - name: Install stratos
   community.kubernetes.helm:
-    chart_ref: cloudfoundry/console
+    chart_ref: vanillastack/console
     name: console
     release_namespace: console
     create_namespace: true
