@@ -2,7 +2,7 @@
 - name: write commercial authentication file for kubelet
   template:
     src: kubelet-auth.json.j2
-    dest: /var/lib/kubelet/auth.json
+    dest: /etc/crio/auth.json
   when: commercial.enabled
 
 - name: make sure, registry is not set

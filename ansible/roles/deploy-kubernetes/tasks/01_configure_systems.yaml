@@ -188,7 +188,7 @@
       path: /etc/crio/crio.conf
       state: present
       regexp: '^global_auth_file =.*'
-      line: 'global_auth_file = "/var/lib/kubelet/auth.json"'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
     when: commercial.enabled
 
   - name: fix runc runtime path in crio config
@@ -375,7 +375,7 @@
       path: /etc/crio/crio.conf
       state: present
       regexp: '^global_auth_file =.*'
-      line: 'global_auth_file = "/var/lib/kubelet/auth.json"'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
     when: commercial.enabled
 
   - name: remove preconfigures crio.conf from dpkg
@@ -461,7 +461,7 @@
       path: /etc/crio/crio.conf.d/00-default.conf
       state: present
       regexp: '^global_auth_file =.*'
-      line: 'global_auth_file = "/var/lib/kubelet/auth.json"'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
     when: commercial.enabled
 
   ### SUSE OpenStack workaround
