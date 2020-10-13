@@ -301,7 +301,25 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
 
         // Copy necessary files for Ansible
         fs.mkdirSync(`${dir}/group_vars/all`, {recursive: true});
-        fs.copyFileSync(`${basePath}/group_vars.testing/all/cert-manager.yaml`, `${dir}/group_vars/all/cert-manager.yaml`);
+
+        const varDir = `${basePath}/group_vars.testing/all/`;
+        try {
+            const defaultVars = fs.readdirSync(varDir);
+
+            // files object contains all files names
+            // log them on console
+            defaultVars.forEach(defaultVar => {
+                if (debug) {
+                    console.log(`${transactionId} Copy default Vars for ${defaultVar}`);
+                }
+                fs.copyFileSync(`${varDir}${defaultVar}`, `${dir}/group_vars/all/${defaultVar}`);
+            });
+
+        } catch (err) {
+            console.log(err);
+        }
+
+
         fs.copyFileSync(`${basePath}/group_vars.testing/all/global.yaml`, `${dir}/group_vars/all/global.yaml`);
         fs.copyFileSync(`${basePath}/group_vars.testing/all/openstack.yaml`, `${dir}/group_vars/all/openstack.yaml`);
         fs.copyFileSync(`${basePath}/group_vars.testing/all/rook.yaml`, `${dir}/group_vars/all/rook.yaml`);
