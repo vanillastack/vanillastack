@@ -1,9 +1,15 @@
 ---
-{% if openstack.release == "stein" %}
+{% if openstack.release == "stein" and commercial.registry.enabled != true  %}
 images:
   tags:
     horizon: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
     horizon_db_sync: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
+{% endif %}
+{% if openstack.release == "stein" and commercial.registry.enabled %}
+images:
+  tags:
+    horizon: {{commercial.registry.url}}/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon_db_sync: {{commercial.registry.url}}/vanillastack/horizon:ubuntu-bionic-20200903
 {% endif %}
 {% if openstack.release == "train" %}
 images:
