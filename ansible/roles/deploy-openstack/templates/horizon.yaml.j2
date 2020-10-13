@@ -77,16 +77,19 @@ endpoints:
 {% else %}
         host: {{openstack.horizon.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -97,12 +100,12 @@ endpoints:
       api:
         public: 443
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       horizon:
         secretName: horizon-tls
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
 {% endif %}
   identity:
@@ -144,8 +147,8 @@ network:
         kubernetes.io/tls-acme: "true"
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
 {% endif %}
 conf:
   horizon:
