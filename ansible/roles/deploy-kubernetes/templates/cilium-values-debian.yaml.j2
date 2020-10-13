@@ -78,7 +78,7 @@ global:
   # registry is the address of the registry and orgnization for all container images
 {% if commercial.enabled %}
   registry: "{{commercial.registry.url}}"
-{% elsif %}
+{% else %}
   registry: docker.io/cilium
 {% endif %}
 
