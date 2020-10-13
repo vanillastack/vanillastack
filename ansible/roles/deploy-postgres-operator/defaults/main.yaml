@@ -1,5 +1,4 @@
 postgresOperator:
-  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
   chartName: "postgres-operator"
   chartVersion: "1.5.0"
