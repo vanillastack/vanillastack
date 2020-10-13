@@ -1,5 +1,5 @@
 ---
- name: Create namespace
+- name: Create namespace
   k8s:
     name: "{{openstack.namespace}}"
     api_version: v1
