@@ -3,7 +3,7 @@ commercial:
   enabled: true
   registry:
     url: harbor.cloudical.net
-    username: 'robot$gitlab-testing-stage'
+    username: 'gitlab-testing-stage'
     key: 'REGISTRY_KEY'
 global:
   registry: harbor.vanillastack.io
