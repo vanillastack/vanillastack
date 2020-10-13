@@ -1,0 +1,392 @@
+image:
+  registry: docker.io
+  repository: bitnami/mariadb
+  tag: 10.2.33-debian-10-r54
+  pullPolicy: IfNotPresent
+  debug: false
+
+volumePermissions:
+  enabled: false
+  image:
+    registry: docker.io
+    repository: bitnami/minideb
+    tag: buster
+    pullPolicy: Always
+  resources: {}
+
+service:
+  type: ClusterIP
+  port: 3306
+serviceAccount:
+  create: false
+rbac:
+  create: true
+
+securityContext:
+  enabled: true
+  fsGroup: 1001
+  runAsUser: 1001
+
+rootUser:
+  ## MariaDB admin password
+  ## ref: https://github.com/bitnami/bitnami-docker-mariadb#setting-the-root-password-on-first-run
+  ##
+  password: ""
+  ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
+  ## If it is not force, a random password will be generated.
+  ##
+  forcePassword: false
+  ## Mount admin password as a file instead of using an environment variable
+  ##
+  injectSecretsAsVolume: false
+
+## Custom user/db credentials
+##
+db:
+  ## MariaDB username and password
+  ## ref: https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-user-on-first-run
+  ##
+  user: "bn_moodle"
+  password: ""
+  ## Database to create
+  ## ref: https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-on-first-run
+  ##
+  name: bitnami_moodle
+  ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
+  ## If it is not force, a random password will be generated.
+  ##
+  forcePassword: false
+  ## Mount user password as a file instead of using an environment variable
+  ##
+  injectSecretsAsVolume: false
+
+## Replication configuration
+##
+replication:
+  ## Enable replication. This enables the creation of replicas of MariaDB. If false, only a
+  ## master deployment would be created
+  ##
+  enabled: true
+  ## MariaDB replication user
+  ## ref: https://github.com/bitnami/bitnami-docker-mariadb#setting-up-a-replication-cluster
+  ##
+  user: replicator
+  ## MariaDB replication user password
+  ## ref: https://github.com/bitnami/bitnami-docker-mariadb#setting-up-a-replication-cluster
+  ##
+  password: ""
+  ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
+  ## If it is not force, a random password will be generated.
+  ##
+  forcePassword: false
+  ## Mount replication user password as a file instead of using an environment variable
+  ##
+  injectSecretsAsVolume: false
+
+master:
+  ## Affinity for pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  ##
+  affinity: {}
+
+  ## Kept for backwards compatibility. You can now disable it by removing it.
+  ## if you wish to set it through master.affinity.podAntiAffinity instead.
+  ##
+  antiAffinity: soft
+
+  ## Node labels for pod assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
+
+  ## updateStrategy for MariaDB Master StatefulSet
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
+  updateStrategy:
+    type: RollingUpdate
+
+  ## Enable persistence using Persistent Volume Claims
+  ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+  ##
+  persistence:
+    ## If true, use a Persistent Volume Claim, If false, use emptyDir
+    ##
+    enabled: {{ moodle.mariadb.persistence }}
+    mountPath: /bitnami/mariadb
+    storageClass: "{{ moodle.mariadb.classname }}"
+    annotations: {}
+    accessModes:
+    - ReadWriteOnce
+    size: {{ moodle.mariadb.size }}
+
+  extraInitContainers: |
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
+  ## An array to add extra environment variables
+  ## For example:
+  ## extraEnvVars:
+  ##  - name: TZ
+  ##    value: "Europe/Paris"
+  ##
+  # extraEnvVars:
+
+  ## Configure MySQL with a custom my.cnf file
+  ## ref: https://mysql.com/kb/en/mysql/configuring-mysql-with-mycnf/#example-of-configuration-file
+  ##
+  config: |-
+    [mysqld]
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mariadb
+    plugin_dir=/opt/bitnami/mariadb/plugin
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    tmpdir=/opt/bitnami/mariadb/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    log-error=/opt/bitnami/mariadb/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+
+    [client]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    default-character-set=UTF8
+    plugin_dir=/opt/bitnami/mariadb/plugin
+
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+
+  ## Configure master resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: {}
+  livenessProbe:
+    enabled: true
+    ##
+    ## Initializing the database could take some time
+    initialDelaySeconds: 120
+    ##
+    ## Default Kubernetes values
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    ##
+    ## Default Kubernetes values
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    # maxUnavailable: 1
+
+  ## Allow customization of the service resource
+  ##
+  service:
+    ## Add custom annotations to the service
+    ##
+    annotations: {}
+      # external-dns.alpha.kubernetes.io/hostname: db.example.com
+
+slave:
+  replicas: 1
+
+  ## Affinity for pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  ##
+  affinity: {}
+
+  ## Kept for backwards compatibility. You can now disable it by removing it.
+  ## if you wish to set it through slave.affinity.podAntiAffinity instead.
+  ##
+  antiAffinity: soft
+
+  ## Node labels for pod assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
+
+  ## updateStrategy for MariaDB Slave StatefulSet
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
+  updateStrategy:
+    type: RollingUpdate
+
+  persistence:
+    ## If true, use a Persistent Volume Claim, If false, use emptyDir
+    ##
+    enabled: true
+    storageClass: "{{ moodle.mariadb.classname }}"
+    annotations:
+    accessModes:
+    - ReadWriteOnce
+    ## Persistent Volume size
+    ##
+    size: {{ moodle.mariadb.size }}
+
+  extraInitContainers: |
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
+  ## An array to add extra environment variables
+  ## For example:
+  ## extraEnvVars:
+  ##  - name: TZ
+  ##    value: "Europe/Paris"
+  ##
+  # extraEnvVars:
+
+  ## Configure MySQL slave with a custom my.cnf file
+  ## ref: https://mysql.com/kb/en/mysql/configuring-mysql-with-mycnf/#example-of-configuration-file
+  ##
+  config: |-
+    [mysqld]
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mariadb
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    tmpdir=/opt/bitnami/mariadb/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    log-error=/opt/bitnami/mariadb/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+
+    [client]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    default-character-set=UTF8
+
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+
+  ##
+  ## Configure slave resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: {}
+  livenessProbe:
+    enabled: true
+    ##
+    ## Initializing the database could take some time
+    initialDelaySeconds: 120
+    ##
+    ## Default Kubernetes values
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 45
+    ##
+    ## Default Kubernetes values
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    # maxUnavailable: 1
+
+  ## Allow customization of the service resource
+  ##
+  service:
+    ## Add custom annotations to the service
+    ##
+    annotations: {}
+      # external-dns.alpha.kubernetes.io/hostname: rodb.example.com
+
+metrics:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/mysqld-exporter
+    tag: 0.12.1-debian-10-r27
+    pullPolicy: IfNotPresent
+  resources: {}
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9104"
+
+  ## Extra args to be passed to mysqld_exporter
+  ## ref: https://github.com/prometheus/mysqld_exporter/
+  ##
+  extraArgs:
+    master: []
+    slave: []
+
+  livenessProbe:
+    enabled: true
+    ##
+    ## Initializing the database could take some time
+    initialDelaySeconds: 120
+    ##
+    ## Default Kubernetes values
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    ##
+    ## Default Kubernetes values
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+
+  # Enable this if you're using https://github.com/coreos/prometheus-operator
+  serviceMonitor:
+    enabled: false
+    ## Specify a namespace if needed
+    # namespace: monitoring
+    # fallback to the prometheus default unless specified
+    # interval: 10s
+    # scrapeTimeout: 10s
+    ## Defaults to what's used if you follow CoreOS [Prometheus Install Instructions](https://github.com/helm/charts/tree/master/stable/prometheus-operator#tldr)
+    ## [Prometheus Selector Label](https://github.com/helm/charts/tree/master/stable/prometheus-operator#prometheus-operator-1)
+    ## [Kube Prometheus Selector Label](https://github.com/helm/charts/tree/master/stable/prometheus-operator#exporters)
+    selector:
+      prometheus: kube-prometheus
+
+## Bats Framework (= Bash Automated Testing System) is needed to test if MariaDB is accessible
+## See test-runner.yaml and tests.yaml for details.
+## To run the tests after the deployment, enter "helm test <release-name>".
+tests:
+  enabled: true
+  # resources: {}
+  testFramework:
+    image:
+      registry: docker.io
+      repository: dduportal/bats
+      tag: 0.4.0
+    # resources: {}

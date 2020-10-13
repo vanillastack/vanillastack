@@ -183,6 +183,14 @@
       line: 'seccomp_profile = ""'
       backrefs: yes
 
+  - name: Set CRI-O global auth
+    lineinfile:
+      path: /etc/crio/crio.conf
+      state: present
+      regexp: '^global_auth_file =.*'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
+    when: commercial.enabled
+
   - name: fix runc runtime path in crio config
     lineinfile:
       path: /etc/crio/crio.conf
@@ -362,6 +370,14 @@
       regexp: '^seccomp_profile =.*'
       line: 'seccomp_profile = ""'
 
+  - name: Set CRI-O global auth
+    lineinfile:
+      path: /etc/crio/crio.conf
+      state: present
+      regexp: '^global_auth_file =.*'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
+    when: commercial.enabled
+
   - name: remove preconfigures crio.conf from dpkg
     file:
       path: /etc/crio/crio.conf.d/01-crio-runc.conf
@@ -439,6 +455,14 @@
 #      state: present
 #      regexp: '^seccomp_profile =.*'
 #      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+
+  - name: Set CRI-O global auth
+    lineinfile:
+      path: /etc/crio/crio.conf.d/00-default.conf
+      state: present
+      regexp: '^global_auth_file =.*'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
+    when: commercial.enabled
 
   ### SUSE OpenStack workaround
   - name: create neutron user

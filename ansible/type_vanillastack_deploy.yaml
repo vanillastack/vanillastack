@@ -94,6 +94,7 @@
   hosts: master[0]
   gather_facts: true
   roles:
+    - role: prepare-registry
     - role: deploy-kubernetes
       action: 06_configure_network
 
@@ -109,6 +110,8 @@
   become: false
   gather_facts: false
   roles:
+    - role: prepare-registry
+      when: ingress.enabled
     - role: helm-nginx-ingress
       when: ingress.enabled
 
@@ -117,6 +120,7 @@
   become: false
   gather_facts: false
   roles:
+    - role: prepare-registry
     - role: deploy-rook
 
 - name: Deploy Cert Manager
@@ -124,6 +128,8 @@
   become: false
   gather_facts: true
   roles:
+    - role: prepare-registry
+      when: certmanager.enabled
     - role: helm-cert-manager
       when: certmanager.enabled
 
@@ -132,6 +138,8 @@
   become: false
   gather_facts: no
   roles:
+    - role: prepare-registry
+      when: openstack.enabled
     - role: deploy-openstack
       when: openstack.enabled
 
@@ -139,6 +147,8 @@
   hosts: master[0]
   gather_facts: true
   roles:
+    - role: prepare-registry
+      when: kubernetes.dashboard.enabled
     - role: install-kubedashboard
       when: kubernetes.dashboard.enabled
 
@@ -146,6 +156,8 @@
   hosts: master[0]
   gather_facts: true
   roles:
+    - role: prepare-registry
+      when: stratos.enabled
     - role: install-cloudfoundry
       when: cloudfoundry.enabled
 
@@ -153,6 +165,8 @@
   hosts: master[0]
   gather_facts: true
   roles:
+    - role: prepare-registry
+      when: stratos.enabled
     - role: install-stratos
       when: stratos.enabled
 
@@ -160,23 +174,27 @@
   hosts: master[0]
   gather_facts: true
   roles:
-  - role: install-efk
-    action: init
-    when: efkstack.enabled
-  - role: install-efk
-    action: es_deploy
-    when: efkstack.enabled
-  - role: install-efk
-    action: kibana_deploy
-    when: efkstack.enabled
-  - role: install-efk
-    action: "{{ efkstack.logaggregator.name }}_deploy"
-    when: efkstack.enabled
+    - role: prepare-registry
+      when: efkstack.enabled
+    - role: install-efk
+      action: init
+      when: efkstack.enabled
+    - role: install-efk
+      action: es_deploy
+      when: efkstack.enabled
+    - role: install-efk
+      action: kibana_deploy
+      when: efkstack.enabled
+    - role: install-efk
+      action: "{{ efkstack.logaggregator.name }}_deploy"
+      when: efkstack.enabled
 
 - name: Deploy Postgres Operator
   hosts: master[0]
   gather_facts: true
   roles:
+    - role: prepare-registry
+      when: guacamole.enabled
     - role: deploy-postgres-operator
       when: postgresOperator.enabled
 
@@ -184,6 +202,8 @@
   hosts: master[0]
   gather_facts: true
   roles:
+    - role: prepare-registry
+      when: guacamole.enabled
     - role: install-guacamole
       when: guacamole.enabled
 
@@ -191,6 +211,8 @@
   hosts: master[0]
   gather_facts: true
   roles:
+    - role: prepare-registry
+      when: harbor.enabled
     - role: deploy-harbor
       when: harbor.enabled
 
@@ -199,6 +221,8 @@
   become: false
   gather_facts: false
   roles:
+    - role: prepare-registry
+      when: kubevirt.enabled
     - role: deploy-kubevirt
       action: operator
       when: kubevirt.enabled
@@ -208,6 +232,17 @@
   become: true
   gather_facts: false
   roles:
+    - role: prepare-registry
+      when: kubevirt.enabled
     - role: deploy-kubevirt
       action: virtctl
       when: kubevirt.enabled
+
+- name: install moodle
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: prepare-registry
+      when: moodle.enabled
+    - role: install-moodle
+      when: moodle.enabled
