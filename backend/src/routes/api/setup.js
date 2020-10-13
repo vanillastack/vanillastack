@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getClient, setup, sleep, genTransactionId, randPassword} = require('../../websocket');
+const {getClient, setup, sleep, genTransactionId, randPassword} = require('../../services/websocket');
 
 /**
  * Post Setup

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getClient, connectionCheck, sleep, genTransactionId} = require('../../websocket');
+const {getClient, connectionCheck, sleep, genTransactionId} = require('../../services/websocket');
 
 /**
  * POST Connection Check for given Node

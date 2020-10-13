@@ -3,7 +3,7 @@ const path = require('path');
 
 const getVersion = function () {
     try {
-        const versionPath = path.join(__dirname, '../version');
+        const versionPath = path.join(__dirname, '../../version');
         if (fs.existsSync(versionPath)) {
             return fs.readFileSync(versionPath, 'utf8').replace(/(\r\n|\n|\r)/gm, "");
         } else {
