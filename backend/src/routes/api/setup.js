@@ -416,6 +416,10 @@ router.post('/', function (req, res) {
         },
         harbor: {
             enabled: additional.harbor
+        },
+        polyverse: {
+            enabled: additional.polyverse.enable || false,
+            key: additional.polyverse.key || ""
         }
     }
     // Building Inventory
