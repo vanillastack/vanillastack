@@ -1,0 +1,10 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: metadata
+  namespace: {{openstack.namespace}}
+subsets:
+  - addresses:
+      - ip: {{nova_metadata_ip.stdout}}
+    ports:
+      - port: 8775
