@@ -77,7 +77,7 @@ hubble-relay:
 global:
   # registry is the address of the registry and orgnization for all container images
 {% if commercial.enabled %}
-  registry: "{{commercial.registry.url}}"
+  registry: "{{commercial.registry.url}}/vanillastack"
 {% else %}
   registry: docker.io/cilium
 {% endif %}
