@@ -1,5 +1,5 @@
 FROM node:alpine3.12 AS build
-LABEL maintainer="jurlind.budurushi@cloudical.io"
+LABEL maintainer="jeff.chousterman@cloudical.io"
 
 COPY ./frontend/package.json /usr/workdir/
 COPY ./frontend/vue.config.js /usr/workdir/
