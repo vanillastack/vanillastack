@@ -1,4 +1,35 @@
 ---
+{% if commercial.enabled != true %}
+images:
+  tags:
+    mariadb: docker.io/openstackhelm/mariadb:latest-ubuntu_xenial
+    ingress: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.9.0
+    error_pages: gcr.io/google_containers/defaultbackend:1.4
+    prometheus_create_mysql_user: docker.io/mariadb:10.2.31
+    prometheus_mysql_exporter: docker.io/prom/mysqld-exporter:v0.11.0
+    prometheus_mysql_exporter_helm_tests: docker.io/openstackhelm/heat:newton-ubuntu_xenial
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+    mariadb_backup: quay.io/airshipit/porthole-mysqlclient-utility:latest-ubuntu_bionic
+    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    scripted_test: docker.io/openstackhelm/mariadb:ubuntu_xenial-20191031
+{% endif %}
+{% if commercial.enabled %}
+images:
+  tags:
+    mariadb: {{commercial.registry.url}}/vanillastack/mariadb:latest-ubuntu_xenial
+    ingress: {{commercial.registry.url}}/vanillastack/nginx-ingress-controller:0.9.0
+    error_pages: {{commercial.registry.url}}/vanillastack/defaultbackend:1.4
+    prometheus_create_mysql_user: {{commercial.registry.url}}/vanillastack/mariadb:10.2.31
+    prometheus_mysql_exporter: {{commercial.registry.url}}/vanillastack/mysqld-exporter:v0.11.0
+#    prometheus_mysql_exporter_helm_tests: {{commercial.registry.url}}/vanillastack/heat:newton-ubuntu_xenial
+    prometheus_mysql_exporter_helm_tests: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_xenial
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+    mariadb_backup: {{commercial.registry.url}}/vanillastack/porthole-mysqlclient-utility:latest-ubuntu_bionic
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    scripted_test: {{commercial.registry.url}}/vanillastack/mariadb:ubuntu_xenial-20191031
+{% endif %}
 pod:
   replicas:
     server: {{openstack.mariadb.replicas}}
