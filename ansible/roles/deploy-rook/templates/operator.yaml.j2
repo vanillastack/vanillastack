@@ -274,7 +274,7 @@ spec:
       serviceAccountName: rook-ceph-system
       containers:
       - name: rook-ceph-operator
-{% if commercial.registry.enabled %}
+{% if commercial.enabled %}
         image: {{commercial.registry.url}}/vanillastack/ceph:v1.4.4
 {% else %}
         image: rook/ceph:v1.4.4
