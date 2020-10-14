@@ -1,4 +1,4 @@
-image: "harbor.cloudical.net/vanillastack/vanilla-ubuntu-base:20200925"
+image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20200925"
 services:
   - docker:18.09.7-dind
 variables:
