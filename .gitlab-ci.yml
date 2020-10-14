@@ -1,4 +1,4 @@
-image: "harbor.cloudical.net/vanillastack/vanilla-ubuntu-base:20200925"
+image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20200925"
 services:
   - docker:18.09.7-dind
 variables:
@@ -27,7 +27,6 @@ build_docker_image_dev:
   stage: build_docker_image_dev
   interruptible: true
   script:
-    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
     - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:dev-$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-latest .
@@ -42,7 +41,6 @@ build_docker_image_testing:
   interruptible: true
   allow_failure: true
   script:
-    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
     - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:testing-$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-latest .
@@ -56,7 +54,6 @@ build_docker_image_prod:
   stage: build_docker_image_prod
   interruptible: true
   script:
-    - echo docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
     - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
     - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$VERSION -t harbor.cloudical.net/vanillastack/installer:latest .

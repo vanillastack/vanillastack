@@ -355,7 +355,7 @@ openstack:
       service:
         password: lZcmrMgCOYFWe662PQAGdpwAT
   senlin:
-    enabled: true
+    enabled: false
     chartName: senlin
     chartVersion: 20200903
     createService: true

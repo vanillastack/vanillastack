@@ -1,4 +1,9 @@
 ---
+- name: Check if distribution is supported
+  fail:
+    msg: This disribution is currently not supported by VanillaStack
+  when: ansible_os_family == 'Suse'
+
 - name: Install EPEL
   package:
     name: epel-release
@@ -393,6 +398,13 @@
     community.general.zypper_repository:
       name: kubic 
       repo: 'http://download.opensuse.org/repositories/devel:/kubic/openSUSE_Tumbleweed/'
+      auto_import_keys: yes
+      state: present
+
+  - name: Add Tumbleweed repository
+    community.general.zypper_repository:
+      name: tumbleweed
+      repo: 'http://download.opensuse.org/tumbleweed/repo/oss/'
       auto_import_keys: yes
       state: present
 

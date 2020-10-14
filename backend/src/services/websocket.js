@@ -319,11 +319,6 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
             console.log(err);
         }
 
-
-        fs.copyFileSync(`${basePath}/group_vars.testing/all/global.yaml`, `${dir}/group_vars/all/global.yaml`);
-        fs.copyFileSync(`${basePath}/group_vars.testing/all/openstack.yaml`, `${dir}/group_vars/all/openstack.yaml`);
-        fs.copyFileSync(`${basePath}/group_vars.testing/all/rook.yaml`, `${dir}/group_vars/all/rook.yaml`);
-
         fs.writeFileSync(`${dir}/key.pem`, wsClient.privateKey, {mode: 400});
         fs.writeFileSync(`${dir}/hosts.json`, JSON.stringify(hostsJson));
         fs.writeFileSync(`${dir}/extra_vars.json`, JSON.stringify(extraVars));
