@@ -365,7 +365,7 @@ router.post('/', function (req, res) {
                 }
             },
             senlin: {
-                enabled: openstack.senlin,
+                enabled: `${(!!openstack.senlin)}`,
                 endpoints: {
                     publicURLPrefix: openstack.senlin_endpoint
                 },
@@ -420,6 +420,14 @@ router.post('/', function (req, res) {
         polyverse: {
             enabled: `${(!!(additional.polyverse && additional.polyverse.enabled))}`,
             key: `${(additional.polyverse && additional.polyverse.key) ? additional.polyverse.key : ""}`
+        },
+        commercial: {
+            enabled: `${(!!(general.harborUser && general.harborKey))}`,
+            registry: {
+                url: 'harbor.cloudical.net',
+                username: `${general.harborUser ? general.harborUser : ''}`,
+                key: `${general.harborKey ? general.harborKey : ''}`
+            }
         }
     }
     // Building Inventory
