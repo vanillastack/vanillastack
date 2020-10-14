@@ -8,7 +8,6 @@ rook:
     csiEnableCephFS: true
     csiEnableRBD: true
     csiEnableGRPC: true
-    image: rook/ceph:v1.4.4
     csiImages:
       cephCsi: "quay.io/cephcsi/cephcsi:v3.1.0"
       registrar: "quay.io/k8scsi/csi-node-driver-registrar:v1.2.0"
@@ -46,7 +45,6 @@ rook:
   toolbox:
     enabled: true
     name: rook-ceph-tools
-    image: rook/ceph:v1.4.4
   objectStorage:
     enabled: false
     ingress:
