@@ -1,6 +1,6 @@
 ---
 commercial:
-  enabled: false
+  enabled: true
   registry:
     url: harbor.cloudical.net
     username: 'gitlab-testing-stage'
