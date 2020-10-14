@@ -1,4 +1,9 @@
 ---
+- name: Check if distribution is supported
+  fail:
+    msg: This disribution is currently not supported by VanillaStack
+  when: ansible_os_family == 'Suse
+
 - name: Install EPEL
   package:
     name: epel-release
