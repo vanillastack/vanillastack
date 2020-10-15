@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getClient, setup, sleep, genTransactionId, randPassword} = require('../../websocket');
+const {getClient, setup, sleep, genTransactionId, randPassword} = require('../../services/websocket');
 
 /**
  * Post Setup
@@ -365,7 +365,7 @@ router.post('/', function (req, res) {
                 }
             },
             senlin: {
-                enabled: openstack.senlin,
+                enabled: `${(!!openstack.senlin)}`,
                 endpoints: {
                     publicURLPrefix: openstack.senlin_endpoint
                 },
@@ -416,6 +416,18 @@ router.post('/', function (req, res) {
         },
         harbor: {
             enabled: additional.harbor
+        },
+        polyverse: {
+            enabled: `${(!!(additional.polyverse && additional.polyverse.enabled))}`,
+            key: `${(additional.polyverse && additional.polyverse.key) ? additional.polyverse.key : ""}`
+        },
+        commercial: {
+            enabled: `${(!!(general.harborUser && general.harborKey))}`,
+            registry: {
+                url: 'harbor.cloudical.net',
+                username: `${general.harborUser ? general.harborUser : ''}`,
+                key: `${general.harborKey ? general.harborKey : ''}`
+            }
         }
     }
     // Building Inventory

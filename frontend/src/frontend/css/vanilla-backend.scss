@@ -1,3 +1,5 @@
+@import 'bootstrap.min';
+
 $color_red: #DD402D;
 $color_gray: gray;
 $color_white: white;
@@ -344,4 +346,8 @@ h5.mb-0 button {
 
 .col-2 input[type='range'] {
   margin-top: 0.5em;
+}
+
+.error {
+  @extend .is-invalid
 }

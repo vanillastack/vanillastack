@@ -1,6 +1,12 @@
 ---
+commercial:
+  enabled: true
+  registry:
+    url: harbor.cloudical.net
+    username: 'gitlab-testing-stage'
+    key: 'REGISTRY_KEY'
 global:
-  registry: harbor.cloudical.net
+  registry: harbor.vanillastack.io
   isHA: true
   uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
   externalLB: false
@@ -33,6 +39,8 @@ kubernetes:
   kubeadm_opts: ""
   resetCluster: false
   kubeadmin_config: /etc/kubernetes/admin.conf
+  cilium:
+    version: v1.8.3
 cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
@@ -55,7 +63,6 @@ guacamole:
     replicas: "2"
     size: "20Gi"
 postgresOperator:
-  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
   chartName: "postgres-operator"
   chartVersion: "1.5.0"

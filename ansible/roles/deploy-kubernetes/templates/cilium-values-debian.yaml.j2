@@ -36,11 +36,15 @@ hubble-relay:
   # # global values
   #
   # # Configuration for the Hubble CLI
-  # image:
+  image:
   #   # repository of the docker image
-  #   name: hubble-relay
+{% if commercial.enabled %}
+    name: {{commercial.registry.url}}/vanillastack
+{% else %}
+    name: hubble-relay
+{% endif %}
   #   # tag is the container image tag to use
-  #   tag: v1.8.3
+    tag: v1.8.3
   #   # pullPolicy is the container image pull policy
   #   pullPolicy: IfNotPresent
   #
@@ -76,10 +80,14 @@ hubble-relay:
 # global groups all configuration options that have effect on all sub-charts
 global:
   # registry is the address of the registry and orgnization for all container images
+{% if commercial.enabled %}
+  registry: "{{commercial.registry.url}}/vanillastack"
+{% else %}
   registry: docker.io/cilium
+{% endif %}
 
   # tag is the container image tag to use
-  tag: v1.8.3
+  tag: {{kubernetes.cilium.version}}
 
   # pullPolicy is the container image pull policy
   pullPolicy: IfNotPresent
@@ -548,7 +556,11 @@ global:
   proxy:
     # Regular expression matching compatible Istio sidecar istio-proxy
     # container image names
+{% if commercial.enabled %}
+    sidecarImageRegex: "{{commercial.registry.url}}/vanillastack/istio_proxy"
+{% else %}
     sidecarImageRegex: "cilium/istio_proxy"
+{% endif %}
 
   endpointHealthChecking:
     enabled: true

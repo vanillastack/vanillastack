@@ -4,14 +4,13 @@
   register: ceph_cinder_keyring
   when: openstack[item.name]['enabled'] and "{{item.name}}" == "nova"
 
-- name: "{{item.name}} | generate config"
-  template:
-    src: "./templates/{{item.name}}.yaml.j2"
-    dest: "/tmp/openstack_{{item.name}}.yaml"
-  when: openstack[item.name]['enabled']
-
 - name: "{{item.name}} | deploy helm chart"
-  shell: helm upgrade --install {{item.name}} vanilla-openstack/{{ openstack[item.name]['chartName'] }} --version "{{ openstack[item.name]['chartVersion'] }}" --namespace "{{openstack.namespace}}" -f /tmp/openstack_{{item.name}}.yaml
+  community.kubernetes.helm:
+    name: "{{ item.name }}"
+    chart_ref: "vanillastack/{{ openstack[item.name]['chartName'] }}"
+    chart_version: "{{ openstack[item.name]['chartVersion'] }}"
+    release_namespace: "{{openstack.namespace}}"
+    values: "{{ lookup('template', '{{item.name}}.yaml.j2') | from_yaml }}"
   when: openstack[item.name]['enabled']
   retries: 3
   delay: 10
@@ -25,15 +24,9 @@
     state: absent
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
 
-- name: "{{item.name}} | generate svc config"
-  template:
-    src: "./templates/svc.yaml.j2"
-    dest: "/tmp/openstack_{{item.name}}-svc.yaml"
-  when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
-
 - name: "{{item.name}} | deploy svc"
   k8s:
-    src: "/tmp/openstack_{{item.name}}-svc.yaml"
+    definition: "{{ lookup('template', 'svc.yaml.j2') | from_yaml }}"
     state: present
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
 
@@ -51,15 +44,15 @@
   register: nova_metadata_ip
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
 
-- name: "{{item.name}} | generate metadata svc config"
-  template:
-    src: "./templates/svc_metadata.yaml.j2"
-    dest: "/tmp/openstack_metadata-svc.yaml"
-  when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
-
 - name: "{{item.name}} | deploy metadata svc"
   k8s:
-    src: "/tmp/openstack_metadata-svc.yaml"
+    definition: "{{ lookup('template', 'svc_metadata.yaml.j2') | from_yaml }}"
+    state: present
+  when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
+
+- name: "{{item.name}} | deploy metadata endpoint"
+  k8s:
+    definition: "{{ lookup('template', 'endpoint_metadata.yaml.j2') | from_yaml }}"
     state: present
   when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
 
@@ -71,21 +64,3 @@
   shell: kubectl get pods -o json -n "{{openstack.namespace}}" --field-selector=status.phase!=Succeeded
   register: kubectl_get_pods
   until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
-
-- name: "{{item.name}} | cleanup"
-  file:
-    path: "/tmp/openstack_{{item.name}}.yaml"
-    state: absent
-  when: openstack[item.name]['enabled']
-
-- name: "{{item.name}} | cleanup"
-  file:
-    path: "/tmp/openstack_{{item.name}}-svc.yaml"
-    state: absent
-  when: openstack[item.name]['enabled'] and openstack[item.name]['createService']
-
-- name: "{{item.name}} | cleanup"
-  file:
-    path: "/tmp/openstack_metadata-svc.yaml"
-    state: absent
-  when: openstack[item.name]['enabled'] and openstack[item.name]['createService'] and item.name == "nova"
