@@ -29,6 +29,18 @@ preflight:
   # cluster with the right schema.
   validateCNPs: true
 
+# Configure hubble-ui
+hubble-ui:
+  image:
+  #   # repository of the docker image
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/hubble-ui
+{% else %}
+    repository: quay.io/cilium/hubble-ui
+{% endif %}
+  #   # tag is the container image tag to use
+    tag: v0.6.1
+
 # Configure sub-chart values for hubble-relay
 hubble-relay:
   # # Hubble-relay is enabled using global.hubble.relay.enabled
