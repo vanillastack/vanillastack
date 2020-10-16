@@ -1,5 +1,13 @@
+FROM alpine/git:v2.26.2 AS submodules
+
+COPY ./ /usr/workdir
+WORKDIR /usr/workdir
+
+RUN git submodule update --init --recursive
+
+
 FROM node:alpine3.12 AS build
-LABEL maintainer="jurlind.budurushi@cloudical.io"
+LABEL maintainer="jeff.chousterman@cloudical.io"
 
 COPY ./frontend/package.json /usr/workdir/
 COPY ./frontend/vue.config.js /usr/workdir/
@@ -14,6 +22,7 @@ RUN npm run build
 
 
 FROM node:alpine3.12
+LABEL maintainer="jeff.chousterman@cloudical.io"
 
 ## Setting up Env
 ENV PORT=8080
@@ -48,6 +57,7 @@ RUN apk update && \
 #COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
 COPY --from=build  /usr/workdir/dist ./src/public
+COPY --from=submodules  /usr/workdir/ansible/collections/ansible_collections/community ${ANSIBLEPATH}/ansible/collections/ansible_collections/community
 COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
 
