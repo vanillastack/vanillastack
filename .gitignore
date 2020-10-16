@@ -194,3 +194,7 @@ fabric.properties
 
 backend/src/public/*
 frontend/dist/*
+
+# Exclude submodules
+ansible/collections/ansible_collections/community/general/*
+ansible/collections/ansible_collections/community/kubernetes/*
