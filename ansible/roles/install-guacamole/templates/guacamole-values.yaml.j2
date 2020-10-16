@@ -1,16 +1,28 @@
 dbcreation:
   image:
     pullPolicy: "IfNotPresent"
+{% if commercial.enabled %}
+    repository: "{{commercial.registry.url}}/vanillastack/spilo-12"
+{% else %}
     repository: "registry.opensource.zalan.do/acid/spilo-12"
+{% endif %}
     tag: "1.6-p3"
 # fullnameOverridestring: ""
 guacamole:
   image:
+{% if commercial.enabled %}
+    repository: "{{commercial.registry.url}}/vanillastack/guacamole"
+{% else %}
     repository: "vanillastack-guacamole/guacamole"
+{% endif %}
     tag: "{{ guacamole.imageTag }}"
 guacd:
   image:
+{% if commercial.enabled %}
+    repository: "{{commercial.registry.url}}/vanillastack/guacd"
+{% else %}
     repository: "vanillastack-guacamole/guacd"
+{% endif %}
     tag: "{{ guacamole.imageTag }}"
 # imagePullSecretslist: []
 ingress:
