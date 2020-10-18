@@ -112,7 +112,7 @@
   roles:
     - role: prepare-registry
       when: ingress.enabled
-    - role: helm-nginx-ingress
+    - role: helm-ingress-nginx
       when: ingress.enabled
 
 - name: Deploy Rook

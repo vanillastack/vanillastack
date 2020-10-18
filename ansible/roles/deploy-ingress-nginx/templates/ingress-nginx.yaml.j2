@@ -1,0 +1,97 @@
+---
+controller:
+  image:
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/controller
+{% else %}
+    repository: k8s.gcr.io/ingress-nginx/controller
+{% endif %}
+    tag: "v0.40.2"
+    digest: sha256:46ba23c3fbaafd9e5bd01ea85b2f921d9f2217be082580edc22e6c704a83f02f
+    pullPolicy: IfNotPresent
+    # www-data -> uid 101
+    runAsUser: 101
+    allowPrivilegeEscalation: true
+  service:
+    type: "NodePort"
+    nodePorts:
+      http: 30080
+      https: 30443
+
+  replicaCount: 3
+  minAvailable: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 90Mi
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 11
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 50
+
+  admissionWebhooks:
+    annotations: {}
+    enabled: true
+    failurePolicy: Fail
+    # timeoutSeconds: 10
+    port: 8443
+    certificate: "/usr/local/certificates/cert"
+    key: "/usr/local/certificates/key"
+    namespaceSelector: {}
+    objectSelector: {}
+
+    service:
+      annotations: {}
+      # clusterIP: ""
+      externalIPs: []
+      # loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+      servicePort: 443
+      type: ClusterIP
+
+    patch:
+      enabled: true
+      image:
+{% if commercial.enabled %}
+        repository: {{commercial.registry.url}}/vanillastack/kube-webhook-certgen
+{% else %}
+        repository: docker.io/jettech/kube-webhook-certgen
+{% endif %}
+        tag: v1.3.0
+        pullPolicy: IfNotPresent
+      ## Provide a priority class name to the webhook patching job
+      ##
+      priorityClassName: ""
+      podAnnotations: {}
+      nodeSelector: {}
+      tolerations: []
+      runAsUser: 2000
+
+defaultBackend:
+  ##
+  enabled: true
+  image:
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/defaultbackend-amd64
+{% else %}
+    repository: k8s.gcr.io/defaultbackend-amd64
+{% endif %}
+    tag: "1.5"
+    pullPolicy: IfNotPresent
+    # nobody user -> uid 65534
+    runAsUser: 65534
+
+tcp:
+  2222: "kubecf/scheduler:2222"
+  20000: "kubecf/tcp-router:20000"
+  20001: "kubecf/tcp-router:20001"
+  20002: "kubecf/tcp-router:20002"
+  20003: "kubecf/tcp-router:20003"
+  20004: "kubecf/tcp-router:20004"
+  20005: "kubecf/tcp-router:20005"
+  20006: "kubecf/tcp-router:20006"
+  20007: "kubecf/tcp-router:20007"
+  20008: "kubecf/tcp-router:20008"
