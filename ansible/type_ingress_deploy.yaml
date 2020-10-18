@@ -1,6 +1,0 @@
----
-- name: install ingress
-  hosts: bastion
-  gather_facts: true
-  roles:
-    - role: helm-nginx-ingress
