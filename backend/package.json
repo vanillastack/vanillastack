@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node src/bin/www",
     "dev": "nodemon src/bin/www",
-    "dockerdev": "nodemon -L --ignore ansible/ --ignore node_modules/ src/bin/www"
+    "dockerdev": "nodemon -L --ignore ansible/ --ignore node_modules/ src/bin/www",
+    "dockerdebug": "nodemon -L --ignore ansible/ --ignore node_modules/ --debug=5858 src/bin/www"
   },
   "dependencies": {
     "cors": "^2.8.5",
