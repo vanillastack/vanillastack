@@ -56,7 +56,7 @@ RUN apk update && \
 ## copy app files
 #COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
-COPY --from=build  /usr/workdir/dist ./src/public
+COPY --from=build  /usr/workdir/dist ./public
 COPY --from=submodules  /usr/workdir/ansible/collections/ansible_collections/community ${ANSIBLEPATH}/collections/ansible_collections/community
 COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
@@ -73,4 +73,4 @@ RUN echo -e '\n\
     chmod +x /usr/workdir/src/templates/dry-run_setup.sh
 
 ## Run nginx and backend
-CMD ["npm", "run", "dockerdev"]
+CMD ["npm", "run", "dockerdebug"]
