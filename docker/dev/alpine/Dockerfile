@@ -73,4 +73,4 @@ RUN echo -e '\n\
     chmod +x /usr/workdir/src/templates/dry-run_setup.sh
 
 ## Run nginx and backend
-CMD ["npm", "run", "dockerdev"]
+CMD ["npm", "run", "dockerdebug"]
