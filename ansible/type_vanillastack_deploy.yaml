@@ -232,8 +232,6 @@
   become: true
   gather_facts: false
   roles:
-    - role: prepare-registry
-      when: kubevirt.enabled
     - role: deploy-kubevirt
       action: virtctl
       when: kubevirt.enabled

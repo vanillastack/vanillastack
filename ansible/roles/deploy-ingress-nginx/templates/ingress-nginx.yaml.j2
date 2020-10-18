@@ -2,13 +2,12 @@
 controller:
   image:
 {% if commercial.enabled %}
-    registry: {{commercial.registry.url}}
-    repository: vanillastack/controller
+    repository: {{commercial.registry.url}}/vanillastack/controller
 {% else %}
-    registry: eu.gcr.io 
-    repository: k8s-artifacts-prod/ingress-nginx/controller
+    repository: k8s.gcr.io/ingress-nginx/controller
 {% endif %}
-    tag: "v0.34.1"
+    tag: "v0.40.2"
+    digest: sha256:46ba23c3fbaafd9e5bd01ea85b2f921d9f2217be082580edc22e6c704a83f02f
     pullPolicy: IfNotPresent
     # www-data -> uid 101
     runAsUser: 101

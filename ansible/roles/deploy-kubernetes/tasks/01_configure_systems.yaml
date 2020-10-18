@@ -23,6 +23,10 @@
       - tar
       - python3-pip
       - python3-kubernetes
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
 
 - name: Install additional packages
   package:
@@ -291,9 +295,11 @@
     apt:
       name: "*"
       state: latest
+    register: result
+    until: result is not failed
     retries: 10
-    delay: 30
-  
+    delay: 10
+
   - name: get latest kube version
     shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
     register: apt_output
@@ -311,6 +317,10 @@
         - "cri-o"
         - libgtk2.0-0
       update_cache: yes
+    register: result
+    until: result is not failed
+    retries: 10
+    delay: 10
   
   - name: mark packages as hold
     dpkg_selections:
@@ -506,5 +516,7 @@
   package:
     name: "*"
     state: latest
+  register: result
+  until: result is not failed
   retries: 10
-  delay: 30
+  delay: 10

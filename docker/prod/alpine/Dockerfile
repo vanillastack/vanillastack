@@ -1,3 +1,11 @@
+FROM alpine/git:v2.26.2 AS submodules
+
+COPY ./ /usr/workdir
+WORKDIR /usr/workdir
+
+RUN git submodule update --init --recursive
+
+
 FROM node:alpine3.12 AS build
 LABEL maintainer="jeff.chousterman@cloudical.io"
 
@@ -47,8 +55,9 @@ RUN apk update && \
 
 ## copy app files
 COPY ./backend/src ./src/
-RUN rm -rf ./src/public/*
-COPY --from=build  /usr/workdir/dist ./src/public
+#RUN rm -rf ./public/*
+COPY --from=build  /usr/workdir/dist ./public
+COPY --from=submodules  /usr/workdir/ansible/collections/ansible_collections/community ${ANSIBLEPATH}/collections/ansible_collections/community
 COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
 

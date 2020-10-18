@@ -9,7 +9,11 @@ extraEnv: []
 image:
   pullPolicy: IfNotPresent
   pullSecrets: []
+{% if commercial.enabled %}
+  repository: {{commercial.registry.url}}/vanillastack/dashboard
+{% else %}
   repository: kubernetesui/dashboard
+{% endif %}
   tag: v2.0.3
 ingress:
   annotations:
