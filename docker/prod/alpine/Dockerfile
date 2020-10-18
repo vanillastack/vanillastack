@@ -57,7 +57,7 @@ RUN apk update && \
 COPY ./backend/src ./src/
 RUN rm -rf ./src/public/*
 COPY --from=build  /usr/workdir/dist ./src/public
-COPY --from=submodules  /usr/workdir/ansible/collections/ansible_collections/community ${ANSIBLEPATH}/ansible/collections/ansible_collections/community
+COPY --from=submodules  /usr/workdir/ansible/collections/ansible_collections/community ${ANSIBLEPATH}/collections/ansible_collections/community
 COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
 
