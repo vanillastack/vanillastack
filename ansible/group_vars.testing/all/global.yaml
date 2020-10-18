@@ -11,7 +11,7 @@ global:
   uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
   externalLB: false
 ingress:
-  namespace: ingress-nginx
+  namespace: nginx-ingress
   enabled: true
 letsEncrypt:
   # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
