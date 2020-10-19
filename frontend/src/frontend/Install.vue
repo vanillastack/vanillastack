@@ -195,6 +195,12 @@ export default {
             if(!data.general.installCF)
                 data.cf.stratos = false
 
+            // Complimentary data
+            var complimentary = this.$store.state.installer.complimentary;
+            data.additional.polyverse = {}
+            data.additional.polyverse.enable = complimentary.polyverse
+            data.additional.polyverse.key = complimentary.polyverseKey
+
             // Special handling for OpenStack Domain
             data.openstack.domain += '.' + this.$store.state.installer.cluster.fqdn
 

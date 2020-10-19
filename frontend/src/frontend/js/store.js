@@ -213,7 +213,7 @@ const additionalToolsSettings = {
 const complimentaryToolsSettings = {
 
   state: () => ({
-    installPolyverse: false,
+    polyverse: false,
     polyverseKey: ''
   }),
 

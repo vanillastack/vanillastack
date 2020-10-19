@@ -660,7 +660,44 @@
             </div>
             <!-- /additional -->
 
-            <!-- Subscriptiopn -->
+            <!-- Complimentary -->
+            <div class="card margin-1em">
+                <div class="card-header" id="complimentary">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#complimentaryData" 
+                                    aria-expanded="false" aria-controls="complimentaryData">
+                                    Complimentary Tools
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/complimentary" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="complimentaryData" class="collapse" aria-labelledby="complimentary" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Polyverse</div>
+                            <div class="col-2">
+                                <i v-if="complimentary.polyverse" class="fas fa-check-circle green"></i>
+                                <i v-if="!complimentary.polyverse" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div v-if="complimentary.polyverse" class="col-2 offset-md-2 text-align-right padding-right-1em">Polyverse Key</div>
+                            <div v-if="complimentary.polyverse" class="col-2">
+                                {{ complimentary.polyverseKey }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscription -->
             <div class="card margin-1em">
                 <div class="card-header" id="subscription">
                     <div class="row">
@@ -677,7 +714,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="subscriptionData" class="collapse" aria-labelledby="subscription" 
                     data-parent="#accordion">
                     <div class="card-body">
@@ -720,7 +756,8 @@ export default {
             additional: {},
             key: '',
             password: '',
-            letsencrypt: {}
+            letsencrypt: {},
+            complimentary: {}
         }
     },
 
@@ -816,6 +853,8 @@ export default {
         this.key = this.$store.state.base.key
         this.password = this.$store.state.base.password
 
+        // Complimentary
+        this.complimentary = this.$store.state.installer.complimentary
 
         // Add the Let's Encrypt Data
         this.letsencrypt = this.$store.state.installer.letsencrypt
