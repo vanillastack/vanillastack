@@ -178,15 +178,17 @@ export default {
                     installRook: this.$store.state.installer.general.installRook,
                     installCF: this.$store.state.installer.general.installCF,
                     installOS: this.$store.state.installer.general.installOpenStack,
-                    harborKey: this.$store.state.base.key
-                },
+                    harborKey: this.$store.state.base.key,
+                    harborPassword: this.$store.state.base.password
+                    },
                 nodes: nodes,
                 cluster: JSON.parse(JSON.stringify(this.$store.state.installer.cluster)),
                 rook: JSON.parse(JSON.stringify(this.$store.state.installer.rook)),
                 openstack: JSON.parse(JSON.stringify(this.$store.state.installer.openstack)),
                 cf: JSON.parse(JSON.stringify(this.$store.state.installer.cloudfoundry)),
                 additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional)),
-                letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt))
+                letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt)),
+                //key: this.$store.state.base.key
             }
 
             // Handle the stratos installation properly
