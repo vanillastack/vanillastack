@@ -186,7 +186,8 @@ export default {
                 openstack: JSON.parse(JSON.stringify(this.$store.state.installer.openstack)),
                 cf: JSON.parse(JSON.stringify(this.$store.state.installer.cloudfoundry)),
                 additional: JSON.parse(JSON.stringify(this.$store.state.installer.additional)),
-                letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt))
+                letsencrypt: JSON.parse(JSON.stringify(this.$store.state.installer.letsencrypt)),
+                key: this.$store.state.base.key
             }
 
             // Handle the stratos installation properly

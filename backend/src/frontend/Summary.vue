@@ -660,6 +660,37 @@
             </div>
             <!-- /additional -->
 
+            <!-- Subscriptiopn -->
+            <div class="card margin-1em">
+                <div class="card-header" id="subscription">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#subscriptionData" 
+                                    aria-expanded="false" aria-controls="subscriptionData">
+                                    Subscription-Key
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/subscription" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="subscriptionData" class="collapse" aria-labelledby="subscription" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Subscription-Key</div>
+                            <div class="col-2">
+                                <span v-if="key !== ''">{{ key }} </span>
+                                <span v-if="key == ''"><em>No Subscription-Key entered</em></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -744,7 +775,7 @@ export default {
             masters: this.$store.state.installer.general.mastersList.length,
             installRook: this.$store.state.installer.general.installRook,
             installCF: this.$store.state.installer.general.installCF,
-            installOpenStack: this.$store.state.installer.general.installOpenStack,
+            installOpenStack: this.$store.state.installer.general.installOpenStack
         }
 
         this.nodes = {

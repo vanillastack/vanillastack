@@ -53,7 +53,7 @@ const routes = [
     { path: '/openstack', component: OpenStack},
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
-//    { path: '/subscription', component: Subscription},
+    { path: '/subscription', component: Subscription},
     { path: '/summary', component: Summary},
     { path: '/install', component: Install}
   ];

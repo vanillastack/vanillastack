@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row margin-2em">
             <div class="col">
-                <h3>VanillaStack 20.09.01: Terms and Conditions</h3>
+                <h3>VanillaStack 20.10: Terms and Conditions</h3>
             </div>
         </div>
         <div class="row margin-2em">
