@@ -24,7 +24,7 @@
             <div class="form-group">
                 <div class="card margin-2em">
                     <div class="card-header" id="dashboardArea">
-                        <h5 class="mb-0">Subscription-Key</h5>
+                        <h5 class="mb-0">Username</h5>
                     </div>
                     <div id="dashboardAreaData" class="show" aria-labelledby="dashboardArea">
                         <div class="card-body">
@@ -42,7 +42,7 @@
             <div class="form-group">
                 <div class="card margin-2em">
                     <div class="card-header" id="dashboardArea">
-                        <h5 class="mb-0">Subscription-Password</h5>
+                        <h5 class="mb-0">Password</h5>
                     </div>
                     <div id="dashboardAreaData" class="show" aria-labelledby="dashboardArea">
                         <div class="card-body">

@@ -682,10 +682,10 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-1em">
-                            <div class="col-2 text-align-right padding-right-1em">Subscription-Key</div>
+                            <div class="col-2 text-align-right padding-right-1em">Username</div>
                             <div class="col-2">
                                 <span v-if="key !== ''">{{ key }} </span>
-                                <span v-if="key == ''"><em>No Subscription-Key entered</em></span>
+                                <span v-if="key == ''"><em>No Username entered</em></span>
                             </div>
                         </div>
                         <div class="row margin-1em">
