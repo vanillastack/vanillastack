@@ -513,8 +513,8 @@
                             </div>
                         </div>
 
-                        <div class="row margin-1em"><div class="col"><strong>Senlin</strong></div></div>
-                        <div class="row margin-2em">
+                        <div class="row margin-1em" v-if="openstack.release === 'stein'"><div class="col"><strong>Senlin</strong></div></div>
+                        <div class="row margin-2em" v-if="openstack.release === 'stein'">
                             <div class="col-2 text-align-right padding-right-1em">Senlin Clustering</div>
                             <div class="col-2">
                                 <i v-if="openstack.senlin" class="fas fa-check-circle green"></i>

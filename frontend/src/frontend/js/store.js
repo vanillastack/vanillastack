@@ -129,7 +129,7 @@ const openstackSettings = {
     nova: true,
     nova_endpoint: '',
     senlin_endpoint: '',
-    senlin:  true,
+    senlin:  false,
   }),
 
   mutations: {
@@ -150,7 +150,8 @@ const baseSettings = {
     sshKey: '',
     uuid: '',
     mode: 'installer',
-    key: ''
+    key: '',
+    password: ''
   }),
 
   mutations: {
@@ -171,6 +172,10 @@ const baseSettings = {
         key: state.key,
         valid: valid
       })
+    },
+
+    [Constants.Store_UpdateSubscriptionPassword](state, password) {
+      state.password = password
     }
   }
 }

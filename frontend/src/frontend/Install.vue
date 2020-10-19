@@ -193,6 +193,9 @@ export default {
             if(!data.general.installCF)
                 data.cf.stratos = false
 
+            // Special handling for OpenStack Domain
+            data.openstack.domain += '.' + this.$store.state.installer.cluster.fqdn
+
             this.isOpenStack = data.general.installOS
             this.isCloudFoundry = data.general.installCF
 

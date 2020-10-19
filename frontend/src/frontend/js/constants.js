@@ -49,6 +49,7 @@ export default Object.freeze({
     Store_UpdateGeneralSettings: "updateGeneralSettings",
     Store_UpdateLetsEncryptData: "updateLetsEncryptData",
     Store_NodesChecked: "nodesChecked",
+    Store_UpdateSubscriptionPassword: "updateSubscriptionPassword",
 
     Network_LoadedInfo: "Network_LoadedInfo",
     Network_CheckingNodes: "Network_CheckingNodes",
