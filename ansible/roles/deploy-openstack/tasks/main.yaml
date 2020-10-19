@@ -8,8 +8,8 @@
   when: openstack.enabled
 
 - name: Create LetsEncrypt Issuer
-  include_tasks: letsencrypt.yaml
-  when: openstack.tls.letsEncrypt.enabled and openstack.enabled 
+  include_tasks: clusterissuer.yaml
+  when: openstack.tls.useCertManager and openstack.enabled
 
 - name: Deploy ceph connnector
   include_tasks: ceph-connector.yaml

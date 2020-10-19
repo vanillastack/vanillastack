@@ -11,7 +11,7 @@ features:
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      cert-manager.io/cluster-issuer: {{ letsEncrypt.issuerName }}
+      cert-manager.io/cluster-issuer: {{ tls.issuerName }}
       kubernetes.io/tls-acme: "true"
   eirini:
     enabled: true

@@ -1,0 +1,36 @@
+---
+- name: Copy LetsEncrypt Issuer
+  template:
+    src: ./templates/clusterissuer.yaml.j2
+    dest: /tmp/clusterissuer.yaml
+
+- name: Create Cluster Issuer
+  block:
+    - name: Apply Cluster Issuer
+      k8s:
+        src: /tmp/clusterissuer.yaml
+        state: present
+      register: clusterIssuer
+  rescue:
+    - name: restart cert-manager
+      shell: "kubectl delete po -n {{certmanager.namespace}} -l app=cert-manager"
+    - name: restart cert-manager webhook
+      shell: "kubectl delete po -n {{certmanager.namespace}} -l app=webhook"
+    - name: Wait for pods to be ready
+      shell: kubectl wait -n {{certmanager.namespace}} --for=condition=Ready pods --timeout=60s --all
+
+- name: Retry Cluster Issuer
+  k8s:
+    src: /tmp/letsencrypt.yaml
+    state: present
+  when: clusterIssuer is not succeeded
+  register: clusterIssuerRetry
+  until: clusterIssuerRetry is succeeded
+  delay: 20
+  retries: 60
+
+- name: Cleanup ClusterIssuer
+  file:
+    path: /tmp/clusterissuer.yaml
+    state: absent
+

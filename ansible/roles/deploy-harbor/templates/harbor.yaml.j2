@@ -40,7 +40,7 @@ expose:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
 {% if harbor.tls.enabled %}
-      cert-manager.io/cluster-issuer: {{letsEncrypt.issuerName}}
+      cert-manager.io/cluster-issuer: {{tls.issuerName}}
       kubernetes.io/tls-acme: "true"
 {% endif %}
   clusterIP:

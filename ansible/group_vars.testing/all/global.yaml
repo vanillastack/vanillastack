@@ -13,8 +13,8 @@ global:
 ingress:
   namespace: nginx-ingress
   enabled: true
-letsEncrypt:
-  # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
+tls:
+  # possible issuer: "letsencrypt-staging", "letsencrypt-prod" or "certmanager-selfsigned"
   issuerName: "letsencrypt-staging"
   issuerEmail: "testing@test.vanillastack.cloudical.net"
   staging:
@@ -32,7 +32,7 @@ kubernetes:
   clusterName: kube
   version: "1.19"
   crioVersion: "1.18"
-  helm_version: "v3.3.1"    
+  helm_version: "v3.3.1"
   pod_cidr: "10.0.0.0/8"
   service_cidr: "10.96.0.0/12"
   init_opts: ""
@@ -48,7 +48,7 @@ cloudfoundry:
 stratos:
   enabled: false
   adminpassword: 4JOA4l8DK7Sr
-  coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"  
+  coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"
 guacamole:
   imageTag: 202009100849
   enabled: false
@@ -57,7 +57,7 @@ guacamole:
   postgres:
     maxConnections: 400
     backup:
-      enabled: false 
+      enabled: false
       cronjob: "30 */2 * * *"
     version: "12"
     replicas: "2"
