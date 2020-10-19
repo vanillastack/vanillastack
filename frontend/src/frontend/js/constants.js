@@ -26,6 +26,7 @@ export default Object.freeze({
     Event_GeneralSettingsDirty: "Event_GeneralSettingsDirty",
     Event_LetsEncryptDataUpdated: "Event_LetsEncryptDataUpdated",
     Event_StartInstallation: "Event_StartInstallation",
+    Event_ComplimentaryToolsDataUpdated: "Event_ComplimentaryToolsDataUpdated",
 
     Store_UpdateTermsAccepted: "updateTermsAccepted",
     Store_UpdateMasters: "updateMasters",
@@ -50,6 +51,7 @@ export default Object.freeze({
     Store_UpdateLetsEncryptData: "updateLetsEncryptData",
     Store_NodesChecked: "nodesChecked",
     Store_UpdateSubscriptionPassword: "updateSubscriptionPassword",
+    Store_ComplimentaryToolsUpdateData: "complimentaryToolsUpdateData",
 
     Network_LoadedInfo: "Network_LoadedInfo",
     Network_CheckingNodes: "Network_CheckingNodes",

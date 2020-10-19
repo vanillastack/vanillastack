@@ -209,6 +209,27 @@ const additionalToolsSettings = {
 
 }
 
+// ComplimentaryTools-Settings
+const complimentaryToolsSettings = {
+
+  state: () => ({
+    installPolyverse: false,
+    polyverseKey: ''
+  }),
+
+  mutations: {
+    [Constants.Store_ComplimentaryToolsUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_ComplimentaryToolsDataUpdated, state);
+    }
+  }
+
+}
+
 // Rook-Settings-Module
 const rookSetting = {
   state: () => ({
@@ -300,6 +321,7 @@ const installer = {
     openstack: openstackSettings,
     cloudfoundry: cloudfoundrySettings,
     additional: additionalToolsSettings,
+    complimentary: complimentaryToolsSettings,
     rook: rookSetting,
     cluster: clusterSettings,
     general: generalSettings,
