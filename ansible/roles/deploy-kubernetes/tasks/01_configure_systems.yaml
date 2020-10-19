@@ -2,7 +2,7 @@
 - name: Check if distribution is supported
   fail:
     msg: This disribution is currently not supported by VanillaStack
-  when: ansible_os_family == 'Suse'
+  when: ansible_os_family == 'Suse' or (ansible_distribution == 'CentOS' and ansible_distribution_major_version != '8') or (ansible_distribution == 'Fedora' and ansible_distribution_major_version != '32') or (ansible_distribution == 'Debian' and ansible_distribution_major_version != '10') and (ansible_distribution == 'Ubuntu' and ansible_distribution_version != '20.04')
 
 - name: Install EPEL
   package:
