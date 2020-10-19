@@ -1,0 +1,86 @@
+= Community Meetings
+
+== Document State: Draft
+
+Currently this document reflects the thoughts of Alexander Trost. Anybody involved and with own ideas and arguments is urged to add these here.
+
+== Problem statement:
+
+Vanillastack currently has a "community meeting" which is not really open to the public.
+This is due to the fact that we are currently only "internal" people working on the project, but this as demonstrated by issues created on the current GitHub project shows that there is and / or will be a need for the community to be able to bring up points.
+
+To make Vanillastack more open and with that "easier" to work on for contributors, we need to make changes to the established "closed system" to allow this to happen.
+
+== Target
+
+We need to change the community meetings in such a way that the community can actually join and can bring up points for discussion.
+
+== Discussed options
+
+. Moving the current community meeting to be bi-weekly and setting it to be publicly joinable
+
+.. The current closed community meeting should be made publicly joinable and the join info should be added to the README.
+
+.. The current community meeting should be made bi-weekly.
+
+.. In the future we should investigate if the the community meetings should be recorded and uploaded to, e.g., YouTube.
+
+.. Guidelines for the community meeting should be put in place.
+
+... E.g., the meeting should always be in English.
+
+.. A public document for the agenda of the community meeting should be created.
+
+... The "default" agenda will contain quick ticket check-up on the next milestone, see "Community Meeting Agenda" section below.
+
+.... The agenda document doubles as the "notepad" for the outcomes of the agenda points.
+
+... Milestone planning should not be done in its entirety in this meeting, but only the rough points. A milestone planning should be announced as a point on the agenda though to keep everyone in the loop.
+
+.. An additional meeting called "Vanilla Huddle" should be created for the afternoon / evening hours as a quick and easy meeting for contributors to sync and discuss certain topics quickly.
+
+... *Very important to note* this meeting *is not a must join every day* and the meeting is for the people contributing / developing on Vanillastack that want to sync up / discuss, e.g., pull requests. It should be kept "invite only" for that reason.
+
+.. Developers and project managers should use the comment function to keep tickets up-to-date.
+
+... Any discussions / decisions in meetings must be added as a comment to the issue, feature or pull request at least as a summary and / or list of points.
+
+... When there has been no updates to a ticket in a longer time, using "Ping comments" ("@USERNAME could you please give an update on this ticket?") is totally valid to ensure the current progress will be documentedin the ticket / issue, pull request, etc.
+
+=== Community Meeting Agenda
+
+Please note that this is basically "one to one" copy of the link:https://docs.google.com/document/d/1exd8_IG6DkdvyA0eiTtL2z5K2Ra-y68VByUUgwP7I9A[Rook Community Meeting agenda], which I find very straight forward and effective.
+
+. Milestone check up
+.. Check up on coming milestone
+.. If we ever do backports for older milestones, check up on them as well.
+. Community topics and questions
+.. E.g., announcements from the project, topics affecting the community as a whole.
+. "PRs or issues that need attention"
+.. E.g., Introduction / Preparation to PRs which can have effects on the community (example: removal of features, important bugfixes, etc).
+
+In the end there should be a list of action items created with names attached to each item.
+
+== Arguments
+
+Pro::
+- More community focused.
+- "Everything is documented publicly."
+
+Neutral::
+- Technically more meetings, but more focused on the development.
+
+Contra::
+- More "work", which might or might not pay off in the future.
+
+  Implementational Effort: None
+
+== Issues & Comments
+
+. Personal comments Alexander Trost (@galexrt):
+
+.. This should mean more time for developers to discuss and sync on topics, but also the community to be able to easily join to upcoming community meetings but by also having an archive for the past community meetings.
+
+== Decision
+
+No decision yet

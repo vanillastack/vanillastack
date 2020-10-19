@@ -1,0 +1,97 @@
+= Open Sourcing Vanillastack Project
+
+== Document State: Draft
+
+Currently this document reflects the thoughts of Alexander Trost. Anybody involved and with own ideas and arguments is urged to add these here.
+
+== Problem statement:
+
+Vanillastack is open source but the code and development is only partially open source right now.
+This is due to the fact that a private GitLab is currently used for hosting the code, CI and development flow (merge requests, tickets, etc.).
+
+To make Vanillastack more open and with that "easier" to work on for contributors, we need to make changes to the established "closed system" to allow this to happen.
+
+== Target
+
+We need to make changes to the "closed system" that the development of Vanillastack is right now to:
+
+* Allow contributors to easily get started with the project.
+* Ready for Community Interaction (meetings, roadmap plannings, etc.).
+
+== Not in Focus
+
+We don't want to change, e.g., the testing workflow (yet), though there might be some parts hinting at ideas to "use newly available tools".
+The testing setup and / or workflow must be reworked to make it easy for anyone to test their changes and especially to have tests for PRs and not just "after code has been merged".
+Especially with Vanillastack being open source and public, we can look into utilizing available free resources at, e.g., Travis CI, GitHub Actions, etc.
+
+== Discussed options
+
+. Switching to GitHub for all open source Vanillastack efforts
+
+. Switching to any other comparable code hosting (e.g., GitLab.com) for all open source Vanillastack efforts
+
+. Making the current privately hosted GitLab "public"
+
+== Arguments
+
+. Option: Switching to GitHub for all open source Vanillastack efforts
++
+Pro::
+- "It is GitHub", a bunch of additional easy to use features (e.g., code scanning, CI for GitHub Actions, project boards with automation)
+- Easy for many people to get started with contributing to the project
+- We have people with GitHub experience from other open source projects
+
+  Implementational Effort:
+    * Alexander Trost (@galexrt) has GitHub issue (bug report and feature request) and pull request templates available.
+
+Neutral:
+- We can use the CI from gitlab and trigger via webhook/action. https://github.com/marketplace/actions/trigger-gitlab-ci (@ksahm)
+
+Contra::
+- GitHub is run by Microsoft
+
+  Implementational Effort:
+    * Depends on if we migrate all the issues or "start fresh" with all the GitHub features such as project boards and so on.
+    * All branches must be pushed which is easily done.
+    * The documentation repository needs to be adjusted to, e.g., use GitHub Actions (we have people with knowledge about that)
+
+. Switching to any other comparable code hosting (e.g., GitLab.com) for all open source Vanillastack efforts
++
+Pro::
+- "It is *Insert points for that code hosting platform here*", a bunch of features which improve the current situation.
+- Depending on the user count, also easy for people to get started contributing to the project.
+
+Contra::
+- TODO
+
+  Implementational Effort: Same as for GitHub, depends on if we see as a "fresh start" to build up the community from that or we need to migrate tickets and such.
+
+. Making the current privately hosted GitLab "public"
++
+Pro::
+- Current "testing setup" does not need to be altered
+
+Contra::
+- Could "compromise" the privately hosted GitLab instance
+- The privately hosted GitLab is running the "Community Edition" which is very limited in points like "required approvals", integrated code scanning and other points.
+- There would be "no way" to develop in private branches, additional modules, customer specific things in-house, unless "duplicating" repositories. More modularization is needed before that is possible in a good way.
+- There could be a need to upgrade the GitLab license / plan (-> more costs; @ksahm).
+
+  Implementational Effort: None
+
+== Issues & Comments
+
+* Personal comments Alexander Trost (@galexrt):
+** Solution 1) is biased because I know and like GitHub for open source projects, and I am currently and will continue using it for personal and private projects due to the ease of use.
+** This is not all that is needed to improve our current situation with the Vanillastack project, but other "design" / change documents will complement this one.
+
+* Personal comments Jan Walzer (@jan.walzer):
+** Pro: can have internal dev with private customer specific branches
+** Pro: can continue to use existing ci-pipeline on gitlab
+** Pro: it can give us the most flexibility
+** Con: need a concept on how to migrate/sync code between the repos.
+*** A simple sync isn't the problem then, but we will have two distinct input-streams incoming from both, github and gitlab and we will have to somehow cross-sync in both directions, or at least a workflow specified for that.
+
+== Decision
+
+No decision yet
