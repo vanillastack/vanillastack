@@ -1,5 +1,25 @@
-#!/bin/bash -x
-#set -e
+#!/bin/bash
+set -e
+
+_DEBUG="false"
+[[ "$DEBUG" == TRUE ]] && _DEBUG=true
+
+#
+# Preload installer image by starting docker and pulling it
+#
+fetch_container_image() {
+    /usr/bin/containerd &
+    sleep 2
+    /usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False &sleep 2
+    sleep 2
+
+    docker pull harbor.cloudical.net/vanillastack/installer  | tee -a $OUTPUT/build.log
+    mkdir -p config/includes.chroot/vanilla | tee -a $OUTPUT/build.log
+    docker save harbor.cloudical.net/vanillastack/installer | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
+
+    kill "$(cat /run/dockerd.pid)"
+    killall containerd
+}
 
 #
 #  Initialize build
@@ -14,22 +34,13 @@ lb clean | tee -a $OUTPUT/build.log
 
 cp -a $WORKDIR/live-build/auto .
 cp -a $WORKDIR/live-build/config .
+#cp -a $WORKDIR/live-build/local .
 
 #
 # Preload installer image by starting docker and pulling it
-#
+# (not in Debug-Mode)
 
-/usr/bin/containerd &
-sleep 2
-/usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False &sleep 2
-sleep 2
-
-docker pull harbor.cloudical.net/vanillastack/installer  | tee -a $OUTPUT/build.log
-mkdir -p config/includes.chroot/vanilla | tee -a $OUTPUT/build.log
-docker save harbor.cloudical.net/vanillastack/installer | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
-
-kill "$(cat /run/dockerd.pid)"
-killall containerd
+[[ "$_DEBUG" == "true" ]] || fetch_container_image
 
 #
 # Config live-build
@@ -42,7 +53,9 @@ lb config noauto \
         --apt-recommends false \
         --apt-source-archives false \
         --archive-areas "main contrib non-free" \
-        --bootappend-live "boot=live components hostname=vanilla-installa username=vanilla locales=de_DE.UTF-8 keyboard-layouts=de" \
+        --bootappend-live "boot=live components hostname=vanilla-installa username=vanilla locales=de_DE.UTF-8 keyboard-layouts=de quiet vga=current splash" \
+        --bootappend-live_failsave "none" \
+        --project "Vanilla-Stack" \
         --clean \
         --cache false \
         --mode debian \

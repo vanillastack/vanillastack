@@ -18,6 +18,7 @@ build_liveimage:
     - cp -a live_image/rootfs/* $WORKDIR
     - cd $WORKDIR/live-build
     - $WORKDIR/prepare-installer.bash
+    - cp -a live_image/rootfs/usr /usr
     - $WORKDIR/build-installer.bash
     - ls -la $OUTPUT
     - rm $OUTPUT/vanilla*

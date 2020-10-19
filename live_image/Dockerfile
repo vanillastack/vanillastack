@@ -7,13 +7,17 @@ ENV WORKDIR ${WORKDIR:-/}
 ARG OUTPUT
 ENV OUTPUT=${OUTPUT:-/data}
 
+ARG DEBUG
+ENV DEBUG="${DEBUG}"
+
 RUN mkdir -p $WORKDIR
 
+
 COPY rootfs /
+RUN bash prepare-installer.bash
 
-#COPY ../ $WORKDIR/config/includes.chroot/home/vanilla/vanilla-src
-
-RUN bash -x prepare-installer.bash
+# once again because of our fixes
+COPY rootfs /
 
 VOLUME $OUTPUT
 

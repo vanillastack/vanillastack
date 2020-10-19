@@ -27,7 +27,11 @@ PACKAGES_DEBUG+=" aptitude"
 PACKAGES_DEBUG+=" screen"
 PACKAGES_DEBUG+=" live-boot live-boot-doc live-config live-config-doc"
 
+_DEBUG=false
+
 apt-get update && apt-get install -y --no-install-recommends $PACKAGES_NEEDED
+[[ "$DEBUG" == TRUE ]] && apt-get install -y --no-install-recommends $PACKAGES_DEBUG
+[[ "$DEBUG" == TRUE ]] && _DEBUG=true
 
 # Monkeypatching because Bug
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=919659#25
