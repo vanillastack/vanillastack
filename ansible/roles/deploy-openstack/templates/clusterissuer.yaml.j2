@@ -12,7 +12,7 @@ spec:
     email: {{tls.issuerEmail}}
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: openstack-{{ tls.issuerName }}
     # Enable the HTTP-01 challenge provider
     solvers:
     - http01:
