@@ -54,8 +54,6 @@ lb config noauto \
         --apt-source-archives false \
         --archive-areas "main contrib non-free" \
         --bootappend-live "boot=live components hostname=vanilla-installa username=vanilla locales=de_DE.UTF-8 keyboard-layouts=de quiet vga=current splash" \
-        --bootappend-live_failsave "none" \
-        --project "Vanilla-Stack" \
         --clean \
         --cache false \
         --mode debian \
