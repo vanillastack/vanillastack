@@ -3,13 +3,13 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
   name: openstack-{{ tls.issuerName }}
-  namespace: "{{openstack.namespace}}"
+  namespace: "{{ openstack.namespace }}"
 spec:
   acme:
     # The ACME server URL
     server: https://acme-v02.api.letsencrypt.org/directory
     # Email address used for ACME registration
-    email: {{tls.issuerEmail}}
+    email: {{ tls.issuerEmail }}
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: openstack-{{ tls.issuerName }}
@@ -23,7 +23,7 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
   name: openstack-selfsigned-issuer
-  namespace: "{{openstack.namespace}}"
+  namespace: "{{ openstack.namespace }}"
 spec:
   selfSigned: {}
 ---
@@ -31,7 +31,7 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
  name: openstack-ca-custom-tls
- namespace: "{{openstack.namespace}}"
+ namespace: "{{ openstack.namespace }}"
 spec:
  secretName: openstack-ca-custom-tls
  isCA: true
@@ -49,7 +49,7 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
  name: openstack-{{ tls.issuerName }}
- namespace: "{{openstack.namespace}}"
+ namespace: "{{ openstack.namespace }}"
 spec:
  ca:
    secretName: openstack-ca-custom-tls

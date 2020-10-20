@@ -3,3 +3,9 @@ certmanager:
   enabled: true
   namespace: "cert-manager"
   chartVersion: "v0.16.1"
+letscencrypt_issuers:
+  - "letsencrypt-staging"
+  - "letsencrypt-prod"
+custom_issuers:
+  - "certmanager-selfsigned"
+
