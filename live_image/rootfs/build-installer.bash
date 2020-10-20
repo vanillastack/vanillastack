@@ -4,21 +4,36 @@ set -e
 _DEBUG="false"
 [[ "$DEBUG" == TRUE ]] && _DEBUG=true
 
+branch="local_testing/"
+[[ -n "$CI_COMMIT_REF_NAME" ]] && branch="$CI_COMMIT_REF_NAME/"
+echo "running branch: $branch"
+
 #
 # Preload installer image by starting docker and pulling it
 #
 fetch_container_image() {
+    set -x
+    dockerimage_tag=""
+    case "$branch" in
+        master)     dockerimage_tag=":latest" ;;
+        testing)    dockerimage_tag=":testing-latest" ;;
+        *)          dockerimage_tag=":dev-latest" ;;
+    esac
+
+    echo "pulling docker image harbor.cloudical.net/vanillastack/installer$dockerimage_tag"
+
     /usr/bin/containerd &
     sleep 2
-    /usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False &sleep 2
+    /usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False & sleep 2
     sleep 2
 
-    docker pull harbor.cloudical.net/vanillastack/installer  | tee -a $OUTPUT/build.log
+    docker pull harbor.cloudical.net/vanillastack/installer$dockerimage_tag  | tee -a $OUTPUT/build.log
     mkdir -p config/includes.chroot/vanilla | tee -a $OUTPUT/build.log
-    docker save harbor.cloudical.net/vanillastack/installer | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
-
+    docker save harbor.cloudical.net/vanillastack/installer$dockerimage_tag | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
+    echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
     kill "$(cat /run/dockerd.pid)"
     killall containerd
+    set +x
 }
 
 #
@@ -87,8 +102,6 @@ cp vanillastack-installer* $OUTPUT
 
 if [[ -n "$AWS_SECRET_ACCESS_KEY" ]]
   then
-    branch="pure_testing/"
-    [[ -n "$CI_COMMIT_REF_NAME" ]] && branch="$CI_COMMIT_REF_NAME/"
     [[ "$branch" == "master/" ]] && branch=""
 
     mcli config host add vanilla https://s3.cloudical.net \
@@ -101,5 +114,6 @@ if [[ -n "$AWS_SECRET_ACCESS_KEY" ]]
   fi
 #
 # Content will be available via https://s3.cloudical.net/vanillastack-downloads-bkt-3d791dcf-fb62-49c7-a4cf-b153203e3ff2
+echo "+++ Build Image finished +++"
 
 
