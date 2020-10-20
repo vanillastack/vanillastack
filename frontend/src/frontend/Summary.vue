@@ -513,8 +513,8 @@
                             </div>
                         </div>
 
-                        <div class="row margin-1em"><div class="col"><strong>Senlin</strong></div></div>
-                        <div class="row margin-2em">
+                        <div class="row margin-1em" v-if="openstack.release === 'stein'"><div class="col"><strong>Senlin</strong></div></div>
+                        <div class="row margin-2em" v-if="openstack.release === 'stein'">
                             <div class="col-2 text-align-right padding-right-1em">Senlin Clustering</div>
                             <div class="col-2">
                                 <i v-if="openstack.senlin" class="fas fa-check-circle green"></i>
@@ -660,6 +660,80 @@
             </div>
             <!-- /additional -->
 
+            <!-- Complimentary -->
+            <div class="card margin-1em">
+                <div class="card-header" id="complimentary">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#complimentaryData" 
+                                    aria-expanded="false" aria-controls="complimentaryData">
+                                    Complimentary Tools
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/complimentary" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="complimentaryData" class="collapse" aria-labelledby="complimentary" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Polyverse</div>
+                            <div class="col-2">
+                                <i v-if="complimentary.polyverse" class="fas fa-check-circle green"></i>
+                                <i v-if="!complimentary.polyverse" class="fas fa-times-circle red"></i>
+                            </div>
+                            <div v-if="complimentary.polyverse" class="col-2 offset-md-2 text-align-right padding-right-1em">Polyverse Key</div>
+                            <div v-if="complimentary.polyverse" class="col-2">
+                                {{ complimentary.polyverseKey }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscription -->
+            <div class="card margin-1em">
+                <div class="card-header" id="subscription">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#subscriptionData" 
+                                    aria-expanded="false" aria-controls="subscriptionData">
+                                    Subscription
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="col-1">
+                            <router-link to="/subscription" class="summaryLink">Edit</router-link>
+                        </div>
+                    </div>
+                </div>
+                <div id="subscriptionData" class="collapse" aria-labelledby="subscription" 
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Username</div>
+                            <div class="col-2">
+                                <span v-if="key !== ''">{{ key }} </span>
+                                <span v-if="key == ''"><em>No Username entered</em></span>
+                            </div>
+                        </div>
+                        <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Password</div>
+                            <div class="col-2">
+                                <span v-if="password !== ''">*****</span>
+                                <span v-if="password == ''"><em>No Password entered</em></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -681,7 +755,9 @@ export default {
             cf: {},
             additional: {},
             key: '',
-            letsencrypt: {}
+            password: '',
+            letsencrypt: {},
+            complimentary: {}
         }
     },
 
@@ -744,7 +820,7 @@ export default {
             masters: this.$store.state.installer.general.mastersList.length,
             installRook: this.$store.state.installer.general.installRook,
             installCF: this.$store.state.installer.general.installCF,
-            installOpenStack: this.$store.state.installer.general.installOpenStack,
+            installOpenStack: this.$store.state.installer.general.installOpenStack
         }
 
         this.nodes = {
@@ -775,6 +851,10 @@ export default {
 
         // Add the Harbor-Key
         this.key = this.$store.state.base.key
+        this.password = this.$store.state.base.password
+
+        // Complimentary
+        this.complimentary = this.$store.state.installer.complimentary
 
         // Add the Let's Encrypt Data
         this.letsencrypt = this.$store.state.installer.letsencrypt
