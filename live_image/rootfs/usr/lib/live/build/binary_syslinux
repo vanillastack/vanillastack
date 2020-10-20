@@ -232,7 +232,7 @@ case "${LB_MODE}" in
 		;;
 esac
 
-[ -z "$LB_PROJECT" ] && _PROJECT="$LB_PROJECT"
+[ -z "$LB_PROJECT" ] || _PROJECT="$LB_PROJECT"
 
 
 for _FILE in "${_TARGET}"/*.cfg ${_TARGET}/*.svg
