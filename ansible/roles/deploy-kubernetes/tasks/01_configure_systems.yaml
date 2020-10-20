@@ -1,4 +1,9 @@
 ---
+- name: Check if distribution is supported
+  fail:
+    msg: This disribution is currently not supported by VanillaStack
+  when: ansible_os_family == 'Suse' or (ansible_distribution == 'CentOS' and ansible_distribution_major_version != '8') or (ansible_distribution == 'Fedora' and ansible_distribution_major_version != '32') or (ansible_distribution == 'Debian' and ansible_distribution_major_version != '10') or (ansible_distribution == 'Ubuntu' and ansible_distribution_version != '20.04')
+
 - name: Install EPEL
   package:
     name: epel-release
@@ -18,6 +23,10 @@
       - tar
       - python3-pip
       - python3-kubernetes
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
 
 - name: Install additional packages
   package:
@@ -61,6 +70,11 @@
 - name: configure RHEL Systems
   when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
   block:
+  - name: remove cockpit
+    package:
+      state: absent
+      name: cockpit*
+
   - name: Add cf repo      
     yum_repository:
       name: cloudfoundry
@@ -171,12 +185,27 @@
             "nproc=8192:8192"
         ]
   
-  - name: Set CRI-O seccomp profile path
+  - name: remove seccomp from crio
+    lineinfile:
+      path: /etc/crio/crio.conf
+      regexp: '^(.*)seccomp_profile =(.*)$'
+      line: 'seccomp_profile = ""'
+      backrefs: yes
+
+  - name: Set CRI-O global auth
     lineinfile:
       path: /etc/crio/crio.conf
       state: present
-      regexp: '^seccomp_profile =.*'
-      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+      regexp: '^global_auth_file =.*'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
+    when: commercial.enabled
+
+  - name: fix runc runtime path in crio config
+    lineinfile:
+      path: /etc/crio/crio.conf
+      regexp: '^  runtime_path =(.*)$'
+      line: '  runtime_path = "/usr/sbin/runc"'
+      backrefs: yes
 #### REDHAT FAMILY END
 
 #### DEBIAN FAMILY
@@ -218,7 +247,7 @@
       - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
       - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
       - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
-      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/ /"
+      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_Unstable/ /"
       - "deb https://baltocdn.com/helm/stable/debian/ all main"
       - "deb https://packages.cloudfoundry.org/debian stable main"
     retries: 3
@@ -266,7 +295,11 @@
     apt:
       name: "*"
       state: latest
-  
+    register: result
+    until: result is not failed
+    retries: 10
+    delay: 10
+
   - name: get latest kube version
     shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
     register: apt_output
@@ -284,6 +317,10 @@
         - "cri-o"
         - libgtk2.0-0
       update_cache: yes
+    register: result
+    until: result is not failed
+    retries: 10
+    delay: 10
   
   - name: mark packages as hold
     dpkg_selections:
@@ -347,6 +384,20 @@
       state: present
       regexp: '^seccomp_profile =.*'
       line: 'seccomp_profile = ""'
+
+  - name: Set CRI-O global auth
+    lineinfile:
+      path: /etc/crio/crio.conf
+      state: present
+      regexp: '^global_auth_file =.*'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
+    when: commercial.enabled
+
+  - name: remove preconfigures crio.conf from dpkg
+    file:
+      path: /etc/crio/crio.conf.d/01-crio-runc.conf
+      state: absent
+
 #### DEBIAN FAMILY END
 
 #### SUSE FAMILY
@@ -357,6 +408,13 @@
     community.general.zypper_repository:
       name: kubic 
       repo: 'http://download.opensuse.org/repositories/devel:/kubic/openSUSE_Tumbleweed/'
+      auto_import_keys: yes
+      state: present
+
+  - name: Add Tumbleweed repository
+    community.general.zypper_repository:
+      name: tumbleweed
+      repo: 'http://download.opensuse.org/tumbleweed/repo/oss/'
       auto_import_keys: yes
       state: present
 
@@ -419,6 +477,24 @@
 #      state: present
 #      regexp: '^seccomp_profile =.*'
 #      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+
+  - name: Set CRI-O global auth
+    lineinfile:
+      path: /etc/crio/crio.conf.d/00-default.conf
+      state: present
+      regexp: '^global_auth_file =.*'
+      line: 'global_auth_file = "/etc/crio/auth.json"'
+    when: commercial.enabled
+
+  ### SUSE OpenStack workaround
+  - name: create neutron user
+    user:
+      name: neutron
+      comment: "needed for OpenStack"
+      uid: 42424
+      shell: /usr/bin/false
+      home: /var/lib/neutron
+    when: openstack.enabled
 #### SUSE FAMILY END
 
 - name: "Check for installed packages"
@@ -440,4 +516,7 @@
   package:
     name: "*"
     state: latest
-
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10

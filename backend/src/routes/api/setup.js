@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getClient, setup, sleep, genTransactionId, randPassword} = require('../../websocket');
+const {getClient, setup, sleep, genTransactionId, randPassword} = require('../../services/websocket');
 
 /**
  * Post Setup
@@ -38,6 +38,7 @@ router.post('/', function (req, res) {
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry || false;
     const fail = req.body.fail || false;
+    const isHA = req.body.isHA || false;
     const cluster = req.body.cluster;
     const nodes = req.body.nodes;
     const general = req.body.general;
@@ -47,6 +48,7 @@ router.post('/', function (req, res) {
     const additional = req.body.additional;
     const letsencrypt = req.body.letsencrypt;
 
+    // console.log(req.body);
     // Filtering Bad Request Codes; todo: more advance filtering and changing to switch case
     if (!client) {
         res.status(400).json({
@@ -90,7 +92,7 @@ router.post('/', function (req, res) {
         global: {
             registry: cluster.registry_endpoint,
             uuid: client.uuid,
-            isHA: req.body.isHA,
+            isHA: isHA,
             externalLB: cluster.useExternalLb
         },
         ingress: {
@@ -118,7 +120,7 @@ router.post('/', function (req, res) {
             storageclass: 'rook-ceph-block' //  todo: not defined
         },
         stratos: {
-            enabled: cf.stratos,
+            enabled: general.installCF ? cf.stratos : false,
             coreDomain: cf.stratos_endpoint,
             adminpassword: randPassword(4, 4, 8)
         },
@@ -363,7 +365,7 @@ router.post('/', function (req, res) {
                 }
             },
             senlin: {
-                enabled: openstack.senlin,
+                enabled: `${(!!openstack.senlin)}`,
                 endpoints: {
                     publicURLPrefix: openstack.senlin_endpoint
                 },
@@ -408,6 +410,24 @@ router.post('/', function (req, res) {
         },
         guacamole: {
             enabled: false // todo: mapping required; to be implemented
+        },
+        efkstack: {
+            enabled: additional.elastic
+        },
+        harbor: {
+            enabled: additional.harbor
+        },
+        polyverse: {
+            enabled: `${(!!(additional.polyverse && additional.polyverse.enabled))}`,
+            key: `${(additional.polyverse && additional.polyverse.key) ? additional.polyverse.key : ""}`
+        },
+        commercial: {
+            enabled: `${(!!(general.harborUser && general.harborKey))}`,
+            registry: {
+                url: 'harbor.cloudical.net',
+                username: `${general.harborUser ? general.harborUser : ''}`,
+                key: `${general.harborKey ? general.harborKey : ''}`
+            }
         }
     }
     // Building Inventory

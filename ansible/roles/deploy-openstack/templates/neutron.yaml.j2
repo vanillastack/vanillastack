@@ -1,43 +1,177 @@
 ---
-{% if openstack.release == "train" %}
+{% if openstack.release == "stein" and commercial.enabled != true  %}
 images:
   tags:
-    bootstrap: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
-    db_init: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
-    db_drop: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
-    ks_user: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
-    ks_service: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
-    ks_endpoints: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
-    neutron_db_sync: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_dhcp: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_l3: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_l2gw: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_linuxbridge_agent: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_metadata: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_openvswitch_agent: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_server: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_rpc_server: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
-    neutron_bagpipe_bgp: "docker.io/openstackhelm/neutron:train-ubuntu_bionic"
+    bootstrap: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    purge_test: docker.io/openstackhelm/ospurge:latest
+    db_init: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    neutron_db_sync: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    neutron_server: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_rpc_server: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_dhcp: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_metadata: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_l3: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_l2gw: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_openvswitch_agent: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_linuxbridge_agent: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_sriov_agent: docker.io/openstackhelm/neutron:stein-18.04-sriov
+    neutron_sriov_agent_init: docker.io/openstackhelm/neutron:stein-18.04-sriov
+    neutron_bagpipe_bgp: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_ironic_agent: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    neutron_netns_cleanup_cron: docker.io/openstackhelm/neutron:stein-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" %}
+{% if openstack.release == "stein" and commercial.enabled %}
 images:
   tags:
-    bootstrap: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
-    db_init: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
-    db_drop: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
-    ks_user: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
-    ks_service: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
-    ks_endpoints: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
-    neutron_db_sync: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_dhcp: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_l3: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_l2gw: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_linuxbridge_agent: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_metadata: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_openvswitch_agent: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_server: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_rpc_server: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
-    neutron_bagpipe_bgp: "docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic"
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    purge_test: {{commercial.registry.url}}/vanillastack/ospurge:latest
+    db_init: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    neutron_db_sync: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    neutron_server: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_rpc_server: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_dhcp: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_metadata: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_l3: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_l2gw: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_openvswitch_agent: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_linuxbridge_agent: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_sriov_agent: {{commercial.registry.url}}/vanillastack/neutron:stein-18.04-sriov
+    neutron_sriov_agent_init: docker.io/openstackhelm/neutron:stein-18.04-sriov
+    neutron_bagpipe_bgp: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_ironic_agent: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    neutron_netns_cleanup_cron: {{commercial.registry.url}}/vanillastack/neutron:stein-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled != true  %}
+images:
+  tags:
+    bootstrap: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    purge_test: docker.io/openstackhelm/ospurge:latest
+    db_init: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    neutron_db_sync: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    neutron_server: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_rpc_server: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_dhcp: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_metadata: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_l3: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_l2gw: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_openvswitch_agent: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_linuxbridge_agent: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_sriov_agent: docker.io/openstackhelm/neutron:train-18.04-sriov
+    neutron_sriov_agent_init: docker.io/openstackhelm/neutron:train-18.04-sriov
+    neutron_bagpipe_bgp: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_ironic_agent: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    neutron_netns_cleanup_cron: docker.io/openstackhelm/neutron:train-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    purge_test: {{commercial.registry.url}}/vanillastack/ospurge:latest
+    db_init: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    neutron_db_sync: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    neutron_server: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_rpc_server: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_dhcp: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_metadata: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_l3: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_l2gw: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_openvswitch_agent: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_linuxbridge_agent: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_sriov_agent: {{commercial.registry.url}}/vanillastack/neutron:train-18.04-sriov
+    neutron_sriov_agent_init: docker.io/openstackhelm/neutron:train-18.04-sriov
+    neutron_bagpipe_bgp: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_ironic_agent: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    neutron_netns_cleanup_cron: {{commercial.registry.url}}/vanillastack/neutron:train-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+images:
+  tags:
+    bootstrap: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    purge_test: docker.io/openstackhelm/ospurge:latest
+    db_init: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    neutron_db_sync: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    neutron_server: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_rpc_server: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_dhcp: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_metadata: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_l3: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_l2gw: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_openvswitch_agent: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_linuxbridge_agent: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_sriov_agent: docker.io/openstackhelm/neutron:ussuri-18.04-sriov
+    neutron_sriov_agent_init: docker.io/openstackhelm/neutron:ussuri-18.04-sriov
+    neutron_bagpipe_bgp: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_ironic_agent: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    neutron_netns_cleanup_cron: docker.io/openstackhelm/neutron:ussuri-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    purge_test: {{commercial.registry.url}}/vanillastack/ospurge:latest
+    db_init: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    neutron_db_sync: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    neutron_server: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_rpc_server: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_dhcp: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_metadata: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_l3: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_l2gw: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_openvswitch_agent: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_linuxbridge_agent: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_sriov_agent: {{commercial.registry.url}}/vanillastack/neutron:ussuri-18.04-sriov
+    neutron_sriov_agent_init: docker.io/openstackhelm/neutron:ussuri-18.04-sriov
+    neutron_bagpipe_bgp: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_ironic_agent: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    neutron_netns_cleanup_cron: {{commercial.registry.url}}/vanillastack/neutron:ussuri-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
 
 labels:
@@ -89,16 +223,19 @@ endpoints:
     host_fqdn_override:
       public:
         host: {{openstack.neutron.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -109,12 +246,12 @@ endpoints:
       api:
         public: 443
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       neutron:
         secretName: neutron-tls
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
 {% endif %}
   oslo_db:
@@ -203,8 +340,8 @@ network:
         kubernetes.io/tls-acme: "true"
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
 {% endif %}
 manifests:
   secret_ingress_tls: false

@@ -4,6 +4,7 @@ hosts
 *.log
 *[_.]local[_.]*
 .idea
+.vscode
 *.kate-swp
 .*.swp
 *~
@@ -14,7 +15,6 @@ tests/junit_xml/*.xml
 *[_.]pyc
 *[_.]pyo
 *[_/]__pycache__/*
-.vscode/settings.json
 
 
 # Logs
@@ -52,6 +52,7 @@ build/Release
 
 # Dependency directories
 backend/node_modules/
+frontend/node_modules/
 backend/jspm_packages/
 
 # Typescript v1 declaration files
@@ -114,7 +115,7 @@ Temporary Items
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
-
+backend/.vscode/*
 # Local History for Visual Studio Code
 .history/
 
@@ -191,8 +192,9 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-backend/src/public/css
-backend/src/public/images
-backend/src/public/js
-backend/src/public/index.html
-backend/dist/*
+backend/public/*
+frontend/dist/*
+
+# Exclude submodules
+ansible/collections/ansible_collections/community/general/*
+ansible/collections/ansible_collections/community/kubernetes/*

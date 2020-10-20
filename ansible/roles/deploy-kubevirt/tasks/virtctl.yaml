@@ -1,0 +1,6 @@
+---
+- name: Deploy Virtctl
+  get_url:
+    url: "https://github.com/kubevirt/kubevirt/releases/download/{{kubevirt.version}}/virtctl-{{kubevirt.version}}-linux-amd64"
+    dest: /usr/local/bin/virtctl
+    mode: '0755'

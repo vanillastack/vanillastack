@@ -1,14 +1,8 @@
 ---
-- name: "add helm repository - stable"
-  community.kubernetes.helm_repository:
-    name: stable
-    repo_url: https://kubernetes-charts.storage.googleapis.com
-
-
 - name: "helm install nginx-ingress"
   community.kubernetes.helm:
     name: nginx-ingress
-    chart_ref: stable/nginx-ingress
+    chart_ref: vanillastack/nginx-ingress
     release_namespace: "{{ ingress.namespace }}"
     create_namespace: true
     wait: true

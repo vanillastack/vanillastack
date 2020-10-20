@@ -1,14 +1,20 @@
 ---
+commercial:
+  enabled: true
+  registry:
+    url: harbor.cloudical.net
+    username: 'gitlab-testing-stage'
+    key: 'REGISTRY_KEY'
 global:
-  registry: harbor.cloudical.net
+  registry: harbor.vanillastack.io
   isHA: true
   uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
   externalLB: false
 ingress:
   namespace: nginx-ingress
   enabled: true
-letsEncrypt:
-  # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
+tls:
+  # possible issuer: "letsencrypt-staging", "letsencrypt-prod" or "certmanager-selfsigned"
   issuerName: "letsencrypt-staging"
   issuerEmail: "testing@test.vanillastack.cloudical.net"
   staging:
@@ -26,13 +32,15 @@ kubernetes:
   clusterName: kube
   version: "1.19"
   crioVersion: "1.18"
-  helm_version: "v3.3.1"    
+  helm_version: "v3.3.1"
   pod_cidr: "10.0.0.0/8"
   service_cidr: "10.96.0.0/12"
   init_opts: ""
   kubeadm_opts: ""
   resetCluster: false
   kubeadmin_config: /etc/kubernetes/admin.conf
+  cilium:
+    version: v1.8.3
 cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
@@ -40,7 +48,7 @@ cloudfoundry:
 stratos:
   enabled: false
   adminpassword: 4JOA4l8DK7Sr
-  coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"  
+  coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"
 guacamole:
   imageTag: 202009100849
   enabled: false
@@ -49,13 +57,12 @@ guacamole:
   postgres:
     maxConnections: 400
     backup:
-      enabled: false 
+      enabled: false
       cronjob: "30 */2 * * *"
     version: "12"
     replicas: "2"
     size: "20Gi"
 postgresOperator:
-  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
   chartName: "postgres-operator"
   chartVersion: "1.5.0"
@@ -167,3 +174,80 @@ efkstack:
       requests:
         cpu: "100m"
         memory: "200Mi"
+prometheus:
+  enabled: true
+  admin_user: admin
+  admin_password: prompassword
+  ingress:
+    enabled: true
+    dns: "prometheus.{{ kubernetes.loadBalancer.clusterDomain }}"
+  storage:
+    classname: "rook-ceph-block"
+    size: 30Gi
+  resources:
+    limits:
+      cpu: 2500m
+      memory: 2048Mi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  kubeApiServer:
+    enabled: true
+  kubelet:
+    enabled: true
+  kubeControllerManager:
+    enabled: true
+  coreDns:
+    enabled: true
+  kubeDns:
+    enabled: false
+  kubeEtcd:
+    enabled: true
+  kubeScheduler:
+    enabled: true
+  kubeProxy:
+    enabled: true
+  kubeStateMetrics:
+    enabled: true
+alertmanager:
+  enabled: true
+  admin_user: admin
+  admin_password: ampassword
+  ingress:
+    enabled: true
+    dns: "alertmanager.{{ kubernetes.loadBalancer.clusterDomain }}"
+  storage:
+    classname: "rook-ceph-block"
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 2500m
+      memory: 2048Mi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+grafana:
+  enabled: true
+  admin_user: admin
+  admin_password: grafanapassword
+  ingress:
+    enabled: true
+    dns: "grafana.{{ kubernetes.loadBalancer.clusterDomain }}"
+kubevirt:
+  enabled: true
+  namespace: kubevirt
+  version: v0.33.0
+moodle:
+  username: admin
+  enabled: true
+  namespace: moodle
+  storage:
+    classname: "rook-ceph-block"
+    size: 8Gi
+  mariadb:
+    persistence: true
+    classname: "rook-ceph-block"
+    size: 8Gi
+  ingress:
+    enabled: true
+    dns: "moodle.{{ kubernetes.loadBalancer.clusterDomain }}"

@@ -1,0 +1,52 @@
+{% if tls.issuerName in letscencrypt_issuers %}
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: {{ tls.issuerName }}
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: {{ tls.issuerEmail }}
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: {{ tls.issuerName }}
+    # Enable the HTTP-01 challenge provider
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+{% elif tls.issuerName in custom_issuers %}
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+ name: ca-custom-tls
+spec:
+ secretName: ca-custom-tls
+ isCA: true
+ usages:
+   - server auth
+   - client auth
+ issuerRef:
+   name: selfsigned-issuer
+   kind: ClusterIssuer
+ commonName: '{% if kubernetes.loadBalancer.clusterDomain is defined %}{{ kubernetes.loadBalancer.clusterDomain }}{% else %}vanillastack.local{% endif %}'
+ dnsNames:
+   - '{% if kubernetes.loadBalancer.clusterDomain is defined %}{{ kubernetes.loadBalancer.clusterDomain }}{% else %}vanillastack.local{% endif %}'
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+ name: {{ tls.issuerName }}
+spec:
+ ca:
+   secretName: ca-custom-tls
+{% endif %}

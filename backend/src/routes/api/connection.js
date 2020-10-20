@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getClient, connectionCheck, sleep, genTransactionId} = require('../../websocket');
+const {getClient, connectionCheck, sleep, genTransactionId} = require('../../services/websocket');
 
 /**
  * POST Connection Check for given Node
@@ -37,6 +37,9 @@ router.post('/', function (req, res) {
     const client = getClient(req.body.uuid);
     const dryRun = req.body.dry;
     const nodes = req.body.nodes;
+
+    // console.log(req.body);
+
     if (!client) {
         res.status(400).json({
             message: 'uuid invalid'

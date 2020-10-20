@@ -8,10 +8,9 @@ rook:
     csiEnableCephFS: true
     csiEnableRBD: true
     csiEnableGRPC: true
-    image: rook/ceph:v1.4.1
   cluster:
     enabled: true
-    image: ceph/ceph:v15.2.4
+    image: ceph/ceph:v15.2.5-20200916
     name: rook-ceph
     dataHostDir: /var/lib/rook
     mon:
@@ -31,6 +30,7 @@ rook:
     failureDomain: host
     poolName: replicapool
     replicaLevel: 3
+    minSize: 2
   storageClassObject:
     enabled: false
   storageClassFile:
@@ -38,19 +38,20 @@ rook:
   toolbox:
     enabled: true
     name: rook-ceph-tools
-    image: rook/ceph:v1.4.1
   objectStorage:
     enabled: false
     ingress:
       domain: s3.test.vanillastack.cloudical.net
       tls:
         enabled: true
-        issuerName: "{{ letsEncrypt.issuerName }}"
+        issuerName: "{{ tls.issuerName }}"
     name: cephobjectn1
     failureDomain: host
     replicaLevel: 2
+    minSize: 1
   filesystem:
     enabled: false
     name: cephfsn1
     replicaLevel: 2
     failureDomain: host
+    minSize: 1

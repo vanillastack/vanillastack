@@ -1,4 +1,131 @@
 ---
+{% if openstack.release == "stein" and commercial.enabled != true  %}
+images:
+  tags:
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    bootstrap: docker.io/openstackhelm/heat:stein
+    db_init: docker.io/openstackhelm/heat:stein
+    octavia_db_sync: docker.io/loci/octavia:master-ubuntu
+    db_drop: docker.io/openstackhelm/heat:stein
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:stein
+    ks_service: docker.io/openstackhelm/heat:stein
+    ks_endpoints: docker.io/openstackhelm/heat:stein
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+    octavia_api: docker.io/loci/octavia:master-ubuntu
+    octavia_worker: docker.io/loci/octavia:master-ubuntu
+    octavia_housekeeping: docker.io/loci/octavia:master-ubuntu
+    octavia_health_manager: docker.io/loci/octavia:master-ubuntu
+    octavia_health_manager_init: docker.io/kolla/ubuntu-source-octavia-health-manager:stein
+    openvswitch_vswitchd: docker.io/kolla/centos-source-openvswitch-vswitchd:stein
+{% endif %}
+{% if openstack.release == "stein" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:stein
+    db_init: {{commercial.registry.url}}/vanillastack/heat:stein
+    octavia_db_sync: docker.io/loci/octavia:master-ubuntu
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:stein
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    octavia_api: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_worker: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_housekeeping: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_health_manager: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_health_manager_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-octavia-health-manager:stein
+    openvswitch_vswitchd: {{commercial.registry.url}}/vanillastack/centos-source-openvswitch-vswitchd:stein
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled != true  %}
+images:
+  tags:
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    bootstrap: docker.io/openstackhelm/heat:train
+    db_init: docker.io/openstackhelm/heat:train
+    octavia_db_sync: docker.io/loci/octavia:master-ubuntu
+    db_drop: docker.io/openstackhelm/heat:train
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:train
+    ks_service: docker.io/openstackhelm/heat:train
+    ks_endpoints: docker.io/openstackhelm/heat:train
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+    octavia_api: docker.io/loci/octavia:master-ubuntu
+    octavia_worker: docker.io/loci/octavia:master-ubuntu
+    octavia_housekeeping: docker.io/loci/octavia:master-ubuntu
+    octavia_health_manager: docker.io/loci/octavia:master-ubuntu
+    octavia_health_manager_init: docker.io/kolla/ubuntu-source-octavia-health-manager:train
+    openvswitch_vswitchd: docker.io/kolla/centos-source-openvswitch-vswitchd:train
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:train
+    db_init: {{commercial.registry.url}}/vanillastack/heat:train
+    octavia_db_sync: docker.io/loci/octavia:master-ubuntu
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:train
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:train
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:train
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    octavia_api: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_worker: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_housekeeping: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_health_manager: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_health_manager_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-octavia-health-manager:train
+    openvswitch_vswitchd: {{commercial.registry.url}}/vanillastack/centos-source-openvswitch-vswitchd:train
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+images:
+  tags:
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    bootstrap: docker.io/openstackhelm/heat:ussuri
+    db_init: docker.io/openstackhelm/heat:ussuri
+    octavia_db_sync: docker.io/loci/octavia:master-ubuntu
+    db_drop: docker.io/openstackhelm/heat:ussuri
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:ussuri
+    ks_service: docker.io/openstackhelm/heat:ussuri
+    ks_endpoints: docker.io/openstackhelm/heat:ussuri
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+    octavia_api: docker.io/loci/octavia:master-ubuntu
+    octavia_worker: docker.io/loci/octavia:master-ubuntu
+    octavia_housekeeping: docker.io/loci/octavia:master-ubuntu
+    octavia_health_manager: docker.io/loci/octavia:master-ubuntu
+    octavia_health_manager_init: docker.io/kolla/ubuntu-source-octavia-health-manager:ussuri
+    openvswitch_vswitchd: docker.io/kolla/centos-source-openvswitch-vswitchd:ussuri
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:ussuri
+    db_init: {{commercial.registry.url}}/vanillastack/heat:ussuri
+    octavia_db_sync: docker.io/loci/octavia:master-ubuntu
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:ussuri
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    octavia_api: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_worker: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_housekeeping: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_health_manager: {{commercial.registry.url}}/vanillastack/octavia:master-ubuntu
+    octavia_health_manager_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-octavia-health-manager:ussuri
+    openvswitch_vswitchd: {{commercial.registry.url}}/vanillastack/centos-source-openvswitch-vswitchd:ussuri
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+
 pod:
   replicas:
     api: {{openstack.octavia.api.replicas}}
@@ -9,16 +136,19 @@ endpoints:
     host_fqdn_override:
       public:
         host: {{openstack.octavia.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -29,14 +159,14 @@ endpoints:
     port:
       api:
         public: 443
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       octavia:
         secretName: octavia-tls
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
-{% endif %} 
+{% endif %}
   identity:
     name: keystone
     auth:
@@ -96,8 +226,8 @@ network:
         kubernetes.io/tls-acme: "true"
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
 {% endif %}
 manifests:
   secret_ingress_tls: false

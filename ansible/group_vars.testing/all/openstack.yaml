@@ -1,8 +1,7 @@
 ---
 openstack:
-  enabled: false
+  enabled: true
   namespace: openstack
-  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack-openstack"
   publicDomain: "{{ kubernetes.loadBalancer.clusterDomain }}"
   publicProto: "http"
   region: RegionOne
@@ -356,7 +355,7 @@ openstack:
       service:
         password: lZcmrMgCOYFWe662PQAGdpwAT
   senlin:
-    enabled: true
+    enabled: false
     chartName: senlin
     chartVersion: 20200903
     createService: true

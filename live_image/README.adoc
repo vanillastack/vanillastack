@@ -1,0 +1,52 @@
+= live_image
+
+This is the directory, responsible for building the live-image for the installer.
+
+The live image is an ISO image that can be booted directly via CDROM, USB or any other way you please.
+
+
+== Technology
+
+* Debian as a base Image
+* live-build as build-chain
+* Installer itself will be running as docker container
+* Visual Frontend via Running Desktop-Environment with a Webbrowser
+* the container image for the installer will be pulled at build-time and be squashed into the live image.
+* this means that after boot of the live-image it will take some time, until the image is prepared and the container is running.
+* therefore a chromium browser is started in App-mode with an splash-screen website, that is polling the installer for readiness, before redirecting there.
+
+
+== Building
+
+For Development there are two modes how to build:
+
+* via gitlab-ci
+* locally via docker
+
+The scripts are split in a way, that they function as well locally as also in a gitlab-ci pipeline
+
+For local building, we use docker to get the a defined debian:buster installation as base. In gitlab-ci we are already running in a debian:buster container, so steps differ a bit.
+
+=== local building with docker
+
+The Dockerfile mainly just consists of preparing a build-environment for live-build:
+- copying the rootfs/ directory into the container-root
+- calling `prepare-installer.bash`
+
+Build the container:
+
+  docker build -t vanilla-installer .
+
+After you build that simple container you can run it with:
+
+  `docker run -ti --name vanilla -v <OUTPUTPATH>/data:rw --privileged vanilla-installer`
+
+In the container, the script `./build-installer.bash` is automatically started. At the end, the build-artifacts will be copied to `/data` where you should have mounted your output-directory to.
+
+=== building via gitlab-ci-pipeline
+
+Because, we are already running in a fitting docker container, there is no need to rebuild. We just need to adjust the living room.
+
+So its just a matter of copying the files around and calling `prepare-installer.bash` directly followed by `build-installer.bash`
+
+Artifacts will be stored in the defined `OUTPUT` directory

@@ -1,0 +1,60 @@
+---
+prometheus:
+  enabled: true
+  admin_user: admin
+  admin_password: prompassword
+  ingress:
+    enabled: true
+    dns: "prometheus.{{ kubernetes.loadBalancer.clusterDomain }}"
+  storage:
+    classname: "rook-ceph-block"
+    size: 30Gi
+  resources:
+    limits:
+      cpu: 2500m
+      memory: 2048Mi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  kubeApiServer:
+    enabled: true
+  kubelet:
+    enabled: true
+  kubeControllerManager:
+    enabled: true
+  coreDns:
+    enabled: true
+  kubeDns:
+    enabled: false
+  kubeEtcd:
+    enabled: true
+  kubeScheduler:
+    enabled: true
+  kubeProxy:
+    enabled: true
+  kubeStateMetrics:
+    enabled: true
+alertmanager:
+  enabled: true
+  admin_user: admin
+  admin_password: ampassword
+  ingress:
+    enabled: true
+    dns: "alertmanager.{{ kubernetes.loadBalancer.clusterDomain }}"
+  storage:
+    classname: "rook-ceph-block"
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 2500m
+      memory: 2048Mi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+grafana:
+  enabled: true
+  admin_user: admin
+  admin_password: grafanapassword
+  ingress:
+    enabled: true
+    dns: "grafana.{{ kubernetes.loadBalancer.clusterDomain }}"

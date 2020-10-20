@@ -18,7 +18,11 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: rook-ceph-tools
-        image: rook/ceph:v1.4.1
+{% if commercial.enabled %}
+        image: {{commercial.registry.url}}/vanillastack/ceph:v1.4.4
+{% else %}
+        image: rook/ceph:v1.4.4
+{% endif %}
         command: ["/tini"]
         args: ["-g", "--", "/usr/local/bin/toolbox.sh"]
         imagePullPolicy: IfNotPresent
