@@ -418,7 +418,7 @@ router.post('/', function (req, res) {
             enabled: additional.harbor
         },
         polyverse: {
-            enabled: `${(!!(additional.polyverse && additional.polyverse.enabled))}`,
+            enabled: `${additional.polyverse ? additional.polyverse.enable : false}`, // (!!(additional.polyverse && additional.polyverse.enabled))
             key: `${(additional.polyverse && additional.polyverse.key) ? additional.polyverse.key : ""}`
         },
         commercial: {
