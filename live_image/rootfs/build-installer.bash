@@ -13,7 +13,14 @@ dockerimage_tag=""
         master)     dockerimage_tag=":latest" ;;
         testing)    dockerimage_tag=":testing-latest" ;;
     *)          dockerimage_tag=":dev-latest" ;;
-    esac
+esac
+
+
+BUILD_DATE="$(date +%y%m%d-%H%M%S)"
+GIT_COMMIT="$(git rev-parse HEAD || true)"
+[[ -z "$CI_COMMIT_SHA" ]] || GIT_COMMIT="$CI_COMMIT_SHA"
+GIT_BRANCH=""
+[[ -z "$CI_COMMIT_BRANCH" ]] || GIT_BRANCH="$CI_COMMIT_BRANCH"
 
 #
 # Preload installer image by starting docker and pulling it
