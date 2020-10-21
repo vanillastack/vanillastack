@@ -8,10 +8,6 @@ branch="local_testing/"
 [[ -n "$CI_COMMIT_REF_NAME" ]] && branch="$CI_COMMIT_REF_NAME/"
 echo "running branch: $branch"
 
-#
-# Preload installer image by starting docker and pulling it
-#
-fetch_container_image() {
     set -x
     dockerimage_tag=""
     case "$branch" in
@@ -19,6 +15,11 @@ fetch_container_image() {
         testing)    dockerimage_tag=":testing-latest" ;;
         *)          dockerimage_tag=":dev-latest" ;;
     esac
+
+#
+# Preload installer image by starting docker and pulling it
+#
+fetch_container_image() {
 
     echo "pulling docker image harbor.cloudical.net/vanillastack/installer$dockerimage_tag"
 
