@@ -105,6 +105,8 @@ router.post('/', function (req, res) {
         kubernetes: {
             version: '1.19',
             crioVersion: '1.18',
+            pod_cidr: `${(cluster.pod_cidr && cluster.pod_cidr.length > 0) ? cluster.pod_cidr : "10.0.0.0/8"}`, // "10.0.0.0/8",
+            service_cidr: `${(cluster.service_cidr && cluster.service_cidr.length > 0) ? cluster.service_cidr : "10.96.0.0/12"}`, // "10.96.0.0/12",
             dashboard: {
                 enabled: additional.dashboard
             },
@@ -473,7 +475,7 @@ router.post('/', function (req, res) {
         msg: ''
     };
     nodes.forEach((node) => {
-        if (!client.dryRun) {
+        if (!client.dryRun && !dryRun) {
             if (client.verifiedNodes[node.host]) {
                 if (node.role.toUpperCase() === "M") {
                     masterNodes[client.verifiedNodes[node.host]] = {
