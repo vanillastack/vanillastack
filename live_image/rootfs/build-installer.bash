@@ -34,8 +34,8 @@ fetch_container_image() {
     /usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False & sleep 2
     sleep 2
 
-    docker pull harbor.cloudical.net/vanillastack/installer$dockerimage_tag  | tee -a $OUTPUT/build.log
-    mkdir -p config/includes.chroot/vanilla | tee -a $OUTPUT/build.log
+    docker pull "harbor.cloudical.net/vanillastack/installer$dockerimage_tag"  | tee -a "$OUTPUT/build.log"
+    mkdir -p config/includes.chroot/vanilla | tee -a "$OUTPUT/build.log"
     docker save harbor.cloudical.net/vanillastack/installer$dockerimage_tag | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
     echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
     kill "$(cat /run/dockerd.pid)"
@@ -46,15 +46,15 @@ fetch_container_image() {
 #  Initialize build
 #
 
-pwd | tee $OUTPUT/build.log
+pwd | tee "$OUTPUT/build.log"
 
-mkdir -p ${WORKDIR}/build
-cd ${WORKDIR}/build
+mkdir -p "${WORKDIR}/build"
+cd "${WORKDIR}/build"
 
-lb clean | tee -a $OUTPUT/build.log
+lb clean | tee -a "$OUTPUT/build.log"
 
-cp -a $WORKDIR/live-build/auto .
-cp -a $WORKDIR/live-build/config .
+cp -a "$WORKDIR/live-build/auto" .
+cp -a "$WORKDIR/live-build/config" .
 #cp -a $WORKDIR/live-build/local .
 
 #
@@ -66,7 +66,7 @@ cp -a $WORKDIR/live-build/config .
 #
 # Config live-build
 #
-lb config --version | tee -a $OUTPUT/build.log
+lb config --version | tee -a "$OUTPUT/build.log"
 
 lb config noauto \
         --apt apt \

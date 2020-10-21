@@ -2,10 +2,10 @@ FROM debian:buster as Builder
 MAINTAINER maintainer_name "jan.walzer@cloudical.io"
 
 ARG WORKDIR
-ENV WORKDIR ${WORKDIR:-/}
+ENV WORKDIR "${WORKDIR:-/}"
 
 ARG OUTPUT
-ENV OUTPUT=${OUTPUT:-/data}
+ENV OUTPUT="${OUTPUT:-/data}"
 
 ARG DEBUG
 ENV DEBUG="${DEBUG}"
