@@ -9,9 +9,9 @@ branch="local_testing/"
 echo "running branch: $branch"
 
 dockerimage_tag=""
-    case "$branch" in
-        master)     dockerimage_tag=":latest" ;;
-        testing)    dockerimage_tag=":testing-latest" ;;
+case "$branch" in
+    master)     dockerimage_tag=":latest" ;;
+    testing)    dockerimage_tag=":testing-latest" ;;
     *)          dockerimage_tag=":dev-latest" ;;
 esac
 
@@ -38,9 +38,30 @@ fetch_container_image() {
     mkdir -p config/includes.chroot/vanilla | tee -a "$OUTPUT/build.log"
     docker save harbor.cloudical.net/vanillastack/installer$dockerimage_tag | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
     echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
+    docker image ls --digests --format='{{ .ID }}' harbor.cloudical.net/vanillastack/installer$dockerimage_tag > config/includes.chroot/vanilla/hash
     kill "$(cat /run/dockerd.pid)"
     killall containerd
 }
+
+#
+# template some files
+#
+template_file() {
+    if [[ -r "$1.in" ]]
+        then
+            FI=$1.in
+            FO=$1
+            sed -e "s/__BUILD_DATE__/$BUILD_DATE/g" < "$FI" \
+                | sed -e "s/__GIT_COMMIT__/$GIT_COMMIT/g" \
+                | sed -e "s/__GIT_BRANCH__/$GIT_BRANCH/g" \
+                | sed -e "s/__INSTALLER_IMAGE_TAG__/${dockerimage_tag#:}/g" \
+                | sed -e "s/__INSTALLER_IMAGE_HASH__/$INSTALLER_IMAGE_HASH/g" > "$FO"
+        else
+            echo "could not read $1.in"
+            return
+        fi
+}
+
 
 #
 #  Initialize build
@@ -62,6 +83,9 @@ cp -a "$WORKDIR/live-build/config" .
 # (not in Debug-Mode)
 
 [[ "$_DEBUG" == "true" ]] || fetch_container_image
+
+INSTALLER_IMAGE_HASH="$(cat config/includes.chroot/vanilla/hash || true)"
+template_file config/includes.chroot/var/www/html/index.html
 
 #
 # Config live-build
