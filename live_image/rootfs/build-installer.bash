@@ -8,12 +8,11 @@ branch="local_testing/"
 [[ -n "$CI_COMMIT_REF_NAME" ]] && branch="$CI_COMMIT_REF_NAME/"
 echo "running branch: $branch"
 
-    set -x
-    dockerimage_tag=""
+dockerimage_tag=""
     case "$branch" in
         master)     dockerimage_tag=":latest" ;;
         testing)    dockerimage_tag=":testing-latest" ;;
-        *)          dockerimage_tag=":dev-latest" ;;
+    *)          dockerimage_tag=":dev-latest" ;;
     esac
 
 #
@@ -34,7 +33,6 @@ fetch_container_image() {
     echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
     kill "$(cat /run/dockerd.pid)"
     killall containerd
-    set +x
 }
 
 #
