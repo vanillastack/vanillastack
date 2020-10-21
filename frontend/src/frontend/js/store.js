@@ -256,6 +256,8 @@ const clusterSettings = {
   state: () => ({
     ip: '',
     fqdn: '',
+    pod_cidr: '10.0.0.0/8',
+    service_cidr: '10.96.0.0/12',
     usefqdn: true,
     adminfqdn: 'admin',
     useadminfqdn: true,
