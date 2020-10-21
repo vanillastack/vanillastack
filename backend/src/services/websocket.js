@@ -456,7 +456,9 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
                 }
 
                 // Cleanup
-                cleanUpPath(debug, transactionId, dir, ['hosts.json', 'key.pem']);
+                if (!debug) {
+                    cleanUpPath(debug, transactionId, dir, ['hosts.json', 'key.pem']);
+                }
             });
         }
 
@@ -467,7 +469,9 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
         sendMessage(wsMsg, wsClient, debug);
 
         // Cleanup
-        cleanUpPath(debug, transactionId, dir, ['hosts.yml', 'key.pem']);
+        if (!debug) {
+            cleanUpPath(debug, transactionId, dir, ['hosts.yml', 'key.pem']);
+        }
     }
 }
 

@@ -48,7 +48,10 @@ router.post('/', function (req, res) {
     const additional = req.body.additional;
     const letsencrypt = req.body.letsencrypt;
 
-    // console.log(req.body);
+    if (req.app.locals.config.debug) {
+        console.log(req.body);
+    }
+
     // Filtering Bad Request Codes; todo: more advance filtering and changing to switch case
     if (!client) {
         res.status(400).json({
@@ -365,7 +368,7 @@ router.post('/', function (req, res) {
                 }
             },
             senlin: {
-                enabled: `${(!!openstack.senlin)}`,
+                enabled: (!!openstack.senlin),
                 endpoints: {
                     publicURLPrefix: openstack.senlin_endpoint
                 },
@@ -418,11 +421,11 @@ router.post('/', function (req, res) {
             enabled: additional.harbor
         },
         polyverse: {
-            enabled: `${additional.polyverse ? additional.polyverse.enable : false}`, // (!!(additional.polyverse && additional.polyverse.enabled))
+            enabled: (additional.polyverse ? additional.polyverse.enable : false), // (!!(additional.polyverse && additional.polyverse.enabled))
             key: `${(additional.polyverse && additional.polyverse.key) ? additional.polyverse.key : ""}`
         },
         commercial: {
-            enabled: `${(!!(general.harborUser && general.harborKey))}`,
+            enabled: (!!(general.harborUser && general.harborKey)),
             registry: {
                 url: 'harbor.cloudical.net',
                 username: `${general.harborUser ? general.harborUser : ''}`,
