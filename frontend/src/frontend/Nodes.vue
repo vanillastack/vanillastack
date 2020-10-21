@@ -11,16 +11,6 @@
                     Please collect the IP-addresses, the SSH-username and the designation of your cluster nodes here.
                 </div>
             </div>
-            <div class="row margin-1em">
-                <div class="col">
-                    <i class="fas fa-info-circle red"></i>
-                    &#160;<strong class="red">The IP-adress-range 10.0.0.0/8 can not be used.</strong>
-                    <br />This implies, all IP-addresses between <em>10.0.0.1</em> and <em>10.255.255.255</em> are not valid and can't be accepted.
-                    <p>
-                        <strong>Please ensure, none of the network adapters use this ip-address-range</strong>
-                    </p>
-                </div>
-            </div>
             <div class="card margin-2em">
                 <div class="card-header" id="masterNodesArea">
                     <h5 class="mb-0">Master Nodes</h5>
@@ -366,8 +356,7 @@ export default {
                     },
 
                     isValidIp: function() {
-                        return Constants.Validate_IpAddress.test(this.ip) &&
-                               !this.ip.startsWith('10.')
+                        return Constants.Validate_IpAddress.test(this.ip) 
                     },
 
                     triggerValidation: function(field) {

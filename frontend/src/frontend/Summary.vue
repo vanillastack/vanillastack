@@ -94,6 +94,12 @@
                     data-parent="#accordion">
                     <div class="card-body">
                         <div class="row margin-1em">
+                            <div class="col-2 text-align-right padding-right-1em">Pod CIDR</div>
+                            <div class="col-2">{{ cluster.pod_cidr }}</div>
+                            <div class="col-2 offset-md-2 text-align-right padding-right-1em">Service CIDR</div>
+                            <div class="col-2">{{ cluster.service_cidr }}</div>
+                        </div>
+                        <div class="row margin-1em">
                             <div class="col-2 text-align-right padding-right-1em">Use external LoadBalancer</div>
                             <div class="col-2">
                                 <i v-if="cluster.useExternalLb" class="fas fa-check-circle green"></i>
@@ -299,7 +305,7 @@
                         <div class="row margin-1em"><div class="col"><strong>General Settings</strong></div></div>
                         <div class="row margin-1em">
                             <div class="col-2 text-align-right padding-right-1em">Endpoint</div>
-                            <div class="col-2">{{ openstack.domain }}</div>
+                            <div class="col-2">{{ openstack.domain }}.{{ cluster.fqdn }}</div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em">TLS Public Endpoint</div>
                             <div class="col-2">
                                 <i v-if="openstack.tls" class="fas fa-check-circle green"></i>
@@ -344,7 +350,7 @@
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.barbican">Endpoint</div>
                             <div class="col-3" v-if="openstack.barbican">
-                                {{ openstack.barbican_endpoint }}.{{ openstack.domain }}
+                                {{ openstack.barbican_endpoint }}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
 
@@ -357,7 +363,7 @@
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.cinder">Endpoint</div>
                             <div class="col-3" v-if="openstack.cinder">
-                                {{ openstack.cinder_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.cinder_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
                         <div class="row margin-2em">
@@ -377,7 +383,7 @@
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.glance">Endpoint</div>
                             <div class="col-3" v-if="openstack.glance">
-                                {{ openstack.glance_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.glance_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
                         <div class="row margin-2em">
@@ -396,7 +402,7 @@
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.heat">Endpoint</div>
                             <div class="col-3" v-if="openstack.heat">
-                                {{ openstack.heat_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.heat_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
 
@@ -409,7 +415,7 @@
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.horizon">Endpoint</div>
                             <div class="col-3" v-if="openstack.horizon">
-                                {{ openstack.horizon_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.horizon_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
 
@@ -422,7 +428,7 @@
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.keystone">Endpoint</div>
                             <div class="col-3" v-if="openstack.keystone">
-                                {{ openstack.keystone_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.keystone_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
 
@@ -435,7 +441,7 @@
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.mistral">Endpoint</div>
                             <div class="col-3" v-if="openstack.mistral">
-                                {{ openstack.mistral_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.mistral_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
 
@@ -445,7 +451,7 @@
                             <div class="col-3"><i class="fas fa-check-circle green"></i></div>
                             <div class="col-2 offset-md-1 text-align-right padding-right-1em">Endpoint</div>
                             <div class="col-3">
-                                {{ openstack.neutron_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.neutron_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
                         <div class="row margin-1em">
@@ -489,17 +495,17 @@
                             </div>
                             <div class="col-2 offset-md-1 text-align-right padding-right-1em" v-if="openstack.nova">Endpoint</div>
                             <div class="col-3" v-if="openstack.nova">
-                                {{ openstack.nova_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.nova_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
                         <div class="row margin-1em">
                             <div class="col-2 text-align-right padding-right-1em">Public Endpoint NoVNC</div>
                             <div class="col-3">
-                                {{ openstack.nova_novnc_endpoint }}.{{ openstack.domain }}
+                                {{ openstack.nova_novnc_endpoint }}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                             <div class="col-2 offset-md-1 text-align-right padding-right-1em">Endpoint Placement API</div>
                             <div class="col-3">
-                                {{ openstack.nova_placement_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.nova_placement_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
                         <div class="row margin-2em">
@@ -522,7 +528,7 @@
                             </div>
                             <div class="col-2 offset-md-2 text-align-right padding-right-1em" v-if="openstack.senlin">Endpoint</div>
                             <div class="col-3" v-if="openstack.senlin">
-                                {{ openstack.senlin_endpoint}}.{{ openstack.domain }}
+                                {{ openstack.senlin_endpoint}}.{{ openstack.domain }}.{{ cluster.fqdn }}
                             </div>
                         </div>
                     </div>
