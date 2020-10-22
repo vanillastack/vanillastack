@@ -52,7 +52,6 @@ RUN apk update && \
     pip3 install cffi && \
     pip3 install ansible && \
     pip3 install -r requirements.txt && \
-    ansible-galaxy collection install community.kubernetes && \
     npm install && npm audit fix && \
     rm -rf /var/cache/apk*
 
