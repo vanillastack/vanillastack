@@ -22,6 +22,7 @@ import Summary from './Summary.vue'
 import LetsEncrypt from './LetsEncrypt.vue'
 import CF from './CF.vue'
 import Install from './Install.vue'
+import Complimentary from './ComplimentaryTools.vue'
 import 'es6-promise/auto' 
 
 // Call Vue.use(VueRouter)
@@ -53,7 +54,8 @@ const routes = [
     { path: '/openstack', component: OpenStack},
     { path: '/cf', component: CF},
     { path: '/tools', component: Tools},
-//    { path: '/subscription', component: Subscription},
+    { path: '/complimentary', component: Complimentary},
+    { path: '/subscription', component: Subscription},
     { path: '/summary', component: Summary},
     { path: '/install', component: Install}
   ];

@@ -129,7 +129,7 @@ const openstackSettings = {
     nova: true,
     nova_endpoint: '',
     senlin_endpoint: '',
-    senlin:  true,
+    senlin:  false,
   }),
 
   mutations: {
@@ -150,7 +150,8 @@ const baseSettings = {
     sshKey: '',
     uuid: '',
     mode: 'installer',
-    key: ''
+    key: '',
+    password: ''
   }),
 
   mutations: {
@@ -171,6 +172,10 @@ const baseSettings = {
         key: state.key,
         valid: valid
       })
+    },
+
+    [Constants.Store_UpdateSubscriptionPassword](state, password) {
+      state.password = password
     }
   }
 }
@@ -204,6 +209,27 @@ const additionalToolsSettings = {
 
 }
 
+// ComplimentaryTools-Settings
+const complimentaryToolsSettings = {
+
+  state: () => ({
+    polyverse: false,
+    polyverseKey: ''
+  }),
+
+  mutations: {
+    [Constants.Store_ComplimentaryToolsUpdateData](state, data) {
+      for(var key in data) {
+        if(state.hasOwnProperty(key) && data.hasOwnProperty(key))
+          state[key] = data[key]
+      }
+
+      EventBus.$emit(Constants.Event_ComplimentaryToolsDataUpdated, state);
+    }
+  }
+
+}
+
 // Rook-Settings-Module
 const rookSetting = {
   state: () => ({
@@ -230,6 +256,8 @@ const clusterSettings = {
   state: () => ({
     ip: '',
     fqdn: '',
+    pod_cidr: '10.0.0.0/8',
+    service_cidr: '10.96.0.0/12',
     usefqdn: true,
     adminfqdn: 'admin',
     useadminfqdn: true,
@@ -295,6 +323,7 @@ const installer = {
     openstack: openstackSettings,
     cloudfoundry: cloudfoundrySettings,
     additional: additionalToolsSettings,
+    complimentary: complimentaryToolsSettings,
     rook: rookSetting,
     cluster: clusterSettings,
     general: generalSettings,

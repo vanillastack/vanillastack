@@ -2,14 +2,42 @@
 - name: create LetsEncrypt staging CA Certificate
   copy:
     dest: /tmp/openstack_ca.crt
-    content: "{{letsEncrypt.staging.rootCACert | b64decode}}"
-  when: openstack.tls.enabled and openstack.tls.letsEncrypt.enabled and letsEncrypt.issuerName == "letsencrypt-staging"
+    content: "{{tls.staging.rootCACert | b64decode}}"
+  when: openstack.tls.enabled and openstack.tls.letsEncrypt.enabled and tls.issuerName == "letsencrypt-staging"
 
 - name: create LetsEncrypt prod CA Certificate
   copy:
     dest: /tmp/openstack_ca.crt
     content: "{{tls.letsEncrypt.prod.rootCACert | b64decode}}"
-  when: openstack.tls.enabled and openstack.tls.letsEncrypt.enabled and letsEncrypt.issuerName == "letsencrypt-prod"
+  when: openstack.tls.enabled and openstack.tls.letsEncrypt.enabled and tls.issuerName == "letsencrypt-prod"
+
+- name: "Fetch custom selfSigned CA Certificate"
+  shell: !unsafe "kubectl get secrets openstack-ca-custom-tls --namespace {{openstack.namespace}} -o {% raw %}'template={{index .data \"ca.crt\" }}'{% endraw %}"
+  register: selfSignedCAvar
+  when:
+    - openstack.tls.enabled
+    - openstack.tls.useCertManager
+    - openstack.tls.letsEncrypt.enabled is not defined or openstack.tls.letsEncrypt.enabled == false
+    - tls.issuerName is in custom_issuers
+
+- name: Set proper custom CA
+  set_fact:
+    selfSignedCA: "{{ selfSignedCAvar.stdout }}"
+  when:
+    - openstack.tls.enabled
+    - openstack.tls.useCertManager
+    - openstack.tls.letsEncrypt.enabled is not defined or openstack.tls.letsEncrypt.enabled == false
+    - tls.issuerName is in custom_issuers
+
+- name: create selfSigned CA Certificate
+  copy:
+    dest: /tmp/openstack_ca.crt
+    content: "{{selfSignedCA | b64decode}}"
+  when:
+    - openstack.tls.enabled
+    - openstack.tls.useCertManager
+    - openstack.tls.letsEncrypt.enabled is not defined or openstack.tls.letsEncrypt.enabled == false
+    - tls.issuerName is in custom_issuers
 
 - name: "create CAcert secret"
   shell: "kubectl create secret generic cacert --from-file=openstack_ca.crt=/tmp/openstack_ca.crt --namespace {{openstack.namespace}}"

@@ -6,7 +6,6 @@
     mode: '750'
     owner: "{{ ansible_env.USER }}"
   loop:
-    - "{{ kubernetes.clusterName }}"
     - .kube
 
 - name: Copy admin.conf to Home directory

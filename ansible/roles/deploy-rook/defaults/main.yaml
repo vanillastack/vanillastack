@@ -53,7 +53,7 @@ rook:
       domain: ""
       tls:
         enabled: true
-        issuerName: "{{ letsEncrypt.issuerName }}"
+        issuerName: "{{ tls.issuerName }}"
     name: cephobjectn1
     failureDomain: host
     replicaLevel: 2

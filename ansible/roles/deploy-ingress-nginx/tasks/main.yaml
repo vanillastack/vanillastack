@@ -1,0 +1,9 @@
+---
+- name: "helm install ingress-nginx"
+  community.kubernetes.helm:
+    name: ingress-nginx
+    chart_ref: vanillastack/ingress-nginx
+    release_namespace: "{{ ingress.namespace }}"
+    create_namespace: true
+    wait: true
+    values: "{{ lookup('template', 'ingress-nginx.yaml.j2') | from_yaml }}"

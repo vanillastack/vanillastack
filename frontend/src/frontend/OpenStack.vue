@@ -28,9 +28,9 @@
                         <div class="row margin-2em">
                             <div class="col-4">
                                 <p><strong>Endpoint</strong></p>
-                                <input class="form-control" placeholder="openstack" 
+                                <input class="form-control small width-10em" placeholder="openstack" style="display:inline-block"
                                     name="domain" v-model="domain" v-on:blur="triggerValidation()" 
-                                        required="required"  />
+                                        required="required"  />.{{ fqdn }}
                             </div>
                         </div>
                         <div class="row margin-2em">
@@ -138,7 +138,7 @@
                                     v-on:blur="triggerValidation()" 
                                     type="text"
                                     :disabled="!barbican"
-                                    :required="barbican"  /><span>.{{ domain }}</span>
+                                    :required="barbican"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-2_5em" style="padding-top: 2.5em">
@@ -176,7 +176,7 @@
                                 <input class="form-control small" placeholder="cinder" 
                                     name="cinder_endpoint" v-model="cinder_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -235,7 +235,7 @@
                                 <input class="form-control small" placeholder="glance" 
                                     name="glance_endpoint" v-model="glance_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -283,7 +283,7 @@
                                 <input class="form-control small" placeholder="heat" 
                                     name="heat_endpoint" v-model="heat_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -323,7 +323,7 @@
                                 <input class="form-control small" placeholder="horizon" 
                                     name="horizon_endpoint" v-model="horizon_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -363,7 +363,7 @@
                                 <input class="form-control small" placeholder="keystone" 
                                     name="keystone_endpoint" v-model="keystone_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -403,7 +403,7 @@
                                 <input class="form-control small" placeholder="mistral" 
                                     name="mistral_endpoint" v-model="mistral_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -443,7 +443,7 @@
                                 <input class="form-control small" placeholder="neutron" 
                                     name="neutron_endpoint" v-model="neutron_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -539,7 +539,7 @@
                                 <input class="form-control small" placeholder="nova" 
                                     name="nova_endpoint" v-model="nova_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -558,14 +558,14 @@
                                 <input class="form-control small" placeholder="novnc" 
                                     name="nova_novnc_endpoint" v-model="nova_novnc_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col-4">
                                 <p><strong>Public Endpoint Placement API</strong></p>
                                 <input class="form-control small" placeholder="placement" 
                                     name="nova_placement_endpoint" v-model="nova_placement_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                         </div>
                         <div class="row margin-2em">
@@ -599,7 +599,7 @@
             <!-- /nova -->
 
             <!-- Senlin -->
-            <div class="card margin-1em">
+            <div class="card margin-1em" v-if="this.release === 'stein'">
                 <div class="card-header" id="senlinHeading">
                     <h5 class="mb-0">
                         <button class="btn btn-link accordion-link" data-toggle="collapse" data-target="#senlinData" 
@@ -619,7 +619,7 @@
                                 <input class="form-control small" placeholder="senlin" 
                                     name="senlin_endpoint" v-model="senlin_endpoint" 
                                         v-on:blur="triggerValidation()" 
-                                        required="required"  /><span>.{{ domain }}</span>
+                                        required="required"  /><span>.{{ domain }}.{{ fqdn }}</span>
                             </div>
                             <div class="col">
                                 <div class="custom-control custom-switch padding-top-3em">
@@ -651,6 +651,7 @@ export default {
     data: function() {
         return {
             domain: this.$store.state.installer.openstack.domain,
+            fqdn: this.$store.state.installer.cluster.fqdn,
             release: this.$store.state.installer.openstack.release,
             tls: this.$store.state.installer.openstack.tls,
             mariadb: this.$store.state.installer.openstack.mariadb,
@@ -697,6 +698,10 @@ export default {
     methods: {
         triggerValidation: function() {
 
+            if(this.release !== 'stein') {
+                this.senlin = false
+            }
+
             // Check whether VirtType quemu is selected and adjust the CPU-modes accordingly
             if(this.nova_virtType == 'Qemu') {
                 this.prev_cpuMode = this.nova_cpuMode
@@ -730,7 +735,7 @@ export default {
         // Set the OpenStack-Endpoint
         if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&
             this.$store.state.installer.openstack.domain.length == 0)
-            this.domain = 'openstack.' + this.$store.state.installer.cluster.fqdn
+            this.domain = 'openstack'
         
         // Set the Barbican-Endpoint
         if(this.$store.state.installer.cluster.fqdn.length > 0 && this.$store.state.installer.cluster.usefqdn &&

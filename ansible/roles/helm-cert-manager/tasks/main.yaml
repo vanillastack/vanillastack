@@ -10,44 +10,44 @@
     name: cert-manager
     release_namespace: "{{ certmanager.namespace }}"
     create_namespace: true
-    values: 
+    values:
       installCRDs: true
     chart_version: "{{certmanager.chartVersion}}"
     wait: true
 
-- name: Copy LetsEncrypt Issuer
+- name: Copy ClusterIssuer definiton
   template:
-    src: letsencrypt.yaml.j2
-    dest: /tmp/letsencrypt.yaml
-  
-- name: Create LetsEncrypt Issuer
+    src: clusterissuer.yaml.j2
+    dest: /tmp/clusterissuer.yaml
+  when:
+- name: Create ClusterIssuer
   block:
-    - name: Apply LetsEncrypt Issuer
+    - name: Apply ClusterIssuer Issuer
       k8s:
-        src: /tmp/letsencrypt.yaml
+        src: /tmp/clusterissuer.yaml
         state: present
         namespace: "{{ certmanager.namespace }}"
-      register: letsencryptIssuer
-  rescue: 
+      register: clusterIssuer
+  rescue:
     - name: restart cert-manager
       command: "kubectl delete po -n {{certmanager.namespace}} -l app=cert-manager"
     - name: restart cert-manager webhook
       command: "kubectl delete po -n {{certmanager.namespace}} -l app=webhook"
     - name: Wait for pods to be ready
-      command: kubectl wait -n {{certmanager.namespace}} --for=condition=Ready pods --timeout=60s --all 
+      command: kubectl wait -n {{certmanager.namespace}} --for=condition=Ready pods --timeout=60s --all
 
-- name: Retry LetsEncrypt Issuer
+- name: Retry ClusterIssuer Issuer
   k8s:
-    src: /tmp/letsencrypt.yaml
+    src: /tmp/clusterissuer.yaml
     state: present
     namespace: "{{ certmanager.namespace }}"
-  when: letsencryptIssuer is not succeeded
-  register: letsencryptIssuerRetry
-  until: letsencryptIssuerRetry is succeeded
+  when: clusterIssuer is not succeeded
+  register: clusterIssuerRetry
+  until: clusterIssuerRetry is succeeded
   delay: 20
   retries: 60
 
-- name: Cleanup LetsEncrypt Issuer
+- name: Cleanup ClusterIssuer Issuer
   file:
-    path: /tmp/letsencrypt.yaml
-    state: absent 
+    path: /tmp/clusterissuer.yaml
+    state: absent

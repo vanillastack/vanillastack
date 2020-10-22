@@ -2,7 +2,7 @@
 - name: Check if distribution is supported
   fail:
     msg: This disribution is currently not supported by VanillaStack
-  when: ansible_os_family == 'Suse'
+  when: ansible_os_family == 'Suse' or (ansible_distribution == 'CentOS' and ansible_distribution_major_version != '8') or (ansible_distribution == 'Fedora' and ansible_distribution_major_version != '32') or (ansible_distribution == 'Debian' and ansible_distribution_major_version != '10') or (ansible_distribution == 'Ubuntu' and ansible_distribution_version != '20.04')
 
 - name: Install EPEL
   package:
@@ -23,6 +23,10 @@
       - tar
       - python3-pip
       - python3-kubernetes
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
 
 - name: Install additional packages
   package:
@@ -291,9 +295,11 @@
     apt:
       name: "*"
       state: latest
+    register: result
+    until: result is not failed
     retries: 10
-    delay: 30
-  
+    delay: 10
+
   - name: get latest kube version
     shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
     register: apt_output
@@ -311,6 +317,10 @@
         - "cri-o"
         - libgtk2.0-0
       update_cache: yes
+    register: result
+    until: result is not failed
+    retries: 10
+    delay: 10
   
   - name: mark packages as hold
     dpkg_selections:
@@ -506,5 +516,7 @@
   package:
     name: "*"
     state: latest
+  register: result
+  until: result is not failed
   retries: 10
-  delay: 30
+  delay: 10

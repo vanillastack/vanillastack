@@ -97,16 +97,19 @@ endpoints:
     host_fqdn_override:
       public:
         host: {{openstack.barbican.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -117,19 +120,19 @@ endpoints:
     port:
       api:
         public: 443
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       barbican:
         secretName: barbican-tls-public
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
-{% endif %} 
+{% endif %}
   identity:
     auth:
 {% if openstack.tls.enabled %}
       cacert: /tmp/openstack_ca.crt
-{% endif %} 
+{% endif %}
       admin:
         region_name: {{openstack.region}}
         username: admin
@@ -175,8 +178,8 @@ network:
         kubernetes.io/tls-acme: "true"
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
 {% endif %}
 manifests:
   secret_ingress_tls: false
