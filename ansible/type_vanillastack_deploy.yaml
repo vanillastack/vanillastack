@@ -244,3 +244,11 @@
       when: moodle.enabled
     - role: install-moodle
       when: moodle.enabled
+
+- name: install monitoring
+  hosts: master[0]
+  gather_facts: true
+  roles:
+  - role: install-monitoring
+    action: operator
+    when: prometheus.enabled
