@@ -79,7 +79,7 @@ postgresOperator:
       bucketName: nul
     cron: "30 00 * * *"
 harbor:
-  enabled: true
+  enabled: false
   chartVersion: 1.4.0
   namespace: harbor
   ingress:
