@@ -332,13 +332,25 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
                 env: null
             };
 
-            console.log(`${transactionId} Calling Ansible`);
-            const ans = proc.spawn('ansible-playbook',
-                ['-i', `${dir}/hosts.json`,
-                    `${basePath}/type_vanillastack_deploy.yaml`,
-                    "--extra-vars", `@${dir}/extra_vars.json`],
-                options
-            );
+            let ans;
+            if (debug) {
+                console.log(`${transactionId} Calling Ansible with Debug enabled`);
+                ans = proc.spawn('ansible-playbook',
+                    ['-i', `${dir}/hosts.json`,
+                        `${basePath}/type_vanillastack_deploy.yaml`,
+                        "-vvvv",
+                        "--extra-vars", `@${dir}/extra_vars.json`],
+                    options
+                );
+            } else {
+                console.log(`${transactionId} Calling Ansible with Debug disabled`);
+                ans = proc.spawn('ansible-playbook',
+                    ['-i', `${dir}/hosts.json`,
+                        `${basePath}/type_vanillastack_deploy.yaml`,
+                        "--extra-vars", `@${dir}/extra_vars.json`],
+                    options
+                );
+            }
 
             ans.stdout.on('data', (data) => {
                 if (debug) {
@@ -386,7 +398,9 @@ const setup = function (transactionId, basePath, dryRun, wsClient, hostsJson, ex
                     wsMsg.payload = -1;
                     sendMessage(wsMsg, wsClient, debug);
                 }
-                cleanUpPath(debug, transactionId, dir, ['hosts.json', 'key.pem']);
+                if (!debug) {
+                    cleanUpPath(debug, transactionId, dir, ['hosts.json', 'key.pem']);
+                }
             });
 
         } else {
