@@ -1,0 +1,28 @@
+---
+- name: Deploy Keycloak CRDs
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    state: present
+  with_items:
+    - keycloak.org_keycloakbackups_crd.yaml.j2
+    - keycloak.org_keycloakrealms_crd.yaml.j2
+    - keycloak.org_keycloakusers_crd.yaml.j2
+    - keycloak.org_keycloakclients_crd.yaml.j2
+    - keycloak.org_keycloaks_crd.yaml.j2
+
+- name: Create Keycloak namespace
+  community.kubernetes.k8s:
+    name: "{{keycloak.namespace}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Deploy Keycloak Operator
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    state: present
+  with_items:
+    - role.yaml.j2
+    - role_binding.yaml.j2
+    - service_account.yaml.j2
+    - operator.yaml.j2

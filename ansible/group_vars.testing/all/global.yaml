@@ -253,3 +253,6 @@ moodle:
   ingress:
     enabled: true
     dns: "moodle.{{ kubernetes.loadBalancer.clusterDomain }}"
+keycloak:
+  enabled: true
+  namespace: keycloak
