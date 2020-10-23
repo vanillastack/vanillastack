@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: {{tls.issuerName}}
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  labels:
+    app: keycloak
+  name: keycloak
+  namespace: keycloak
+spec:
+  rules:
+  - host: {{keycloak.ingress.publicDomain}}
+    http:
+      paths:
+      - backend:
+          serviceName: keycloak
+          servicePort: 8443
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - {{keycloak.ingress.publicDomain}}
+    secretName: keycloak-tls

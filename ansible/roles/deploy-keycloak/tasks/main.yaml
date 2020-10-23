@@ -1,6 +1,6 @@
 ---
 - name: Deploy Keycloak CRDs
-  community.kubernetes.k8s:
+  k8s:
     definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
   with_items:
@@ -11,14 +11,14 @@
     - keycloak.org_keycloaks_crd.yaml.j2
 
 - name: Create Keycloak namespace
-  community.kubernetes.k8s:
+  k8s:
     name: "{{keycloak.namespace}}"
     api_version: v1
     kind: Namespace
     state: present
 
 - name: Deploy Keycloak Operator
-  community.kubernetes.k8s:
+  k8s:
     definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
   with_items:
@@ -26,3 +26,34 @@
     - role_binding.yaml.j2
     - service_account.yaml.j2
     - operator.yaml.j2
+
+- name: Create PostgreSQL
+  k8s:
+    definition: "{{ lookup('template', 'postgres.yaml.j2') | from_yaml }}"
+    state: present
+
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+
+- name: "register postgres application password"
+  shell: echo "$(kubectl get secret -n {{ keycloak.namespace }} -o json keycloak.{{keycloak.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
+  register: postgrespassword
+
+- name: Deploy postgres secret
+  k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak-db-secret.yaml.j2') | from_yaml }}"
+    state: present
+
+- name: Deploy VanillaStack Keycloak instance
+  k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak.yaml.j2') | from_yaml }}"
+    state: present
+
+- name: Deploy ingress
+  k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak-ingress.yaml.j2') | from_yaml }}"
+    state: present
