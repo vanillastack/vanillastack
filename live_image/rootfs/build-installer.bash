@@ -23,24 +23,30 @@ GIT_BRANCH=""
 [[ -z "$CI_COMMIT_BRANCH" ]] || GIT_BRANCH="$CI_COMMIT_BRANCH"
 
 #
-# Preload installer image by starting docker and pulling it
+# Preload installer image by skopeo
 #
 fetch_container_image() {
+set -x
+    echo "pulling docker image harbor.cloudical.net/vanillastack/installer$dockerimage_tag"  | tee -a "$OUTPUT/build.log"
 
-    echo "pulling docker image harbor.cloudical.net/vanillastack/installer$dockerimage_tag"
-
-    /usr/bin/containerd &
-    sleep 2
-    /usr/bin/dockerd -p /run/dockerd.pid --containerd=/run/containerd/containerd.sock -D -b none --iptables=False & sleep 2
-    sleep 2
-
-    docker pull "harbor.cloudical.net/vanillastack/installer$dockerimage_tag"  | tee -a "$OUTPUT/build.log"
+    pwd  | tee -a "$OUTPUT/build.log"
+    ls -l  | tee -a "$OUTPUT/build.log"
     mkdir -p config/includes.chroot/vanilla | tee -a "$OUTPUT/build.log"
-    docker save harbor.cloudical.net/vanillastack/installer$dockerimage_tag | pixz -p 8 -9 > config/includes.chroot/vanilla/vanilla-installer.tar.xz
+
+    echo "+++ pulling image" | tee -a "$OUTPUT/build.log"
+    skopeo copy "docker://harbor.cloudical.net/vanillastack/installer$dockerimage_tag" "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar:harbor.cloudical.net/vanillastack/installer$dockerimage_tag" | tee -a "$OUTPUT/build.log"
+    skopeo inspect "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar" | grep "Digest" | cut -d \" -f4 -d \" | cut -d : -f 2
+
+    echo "+++ image pulled - compressing image" | tee -a "$OUTPUT/build.log"
+    pixz -p 8 -0  config/includes.chroot/vanilla/vanilla-installer.tar config/includes.chroot/vanilla/vanilla-installer.tar.xz  | tee -a "$OUTPUT/build.log"
+    echo "+++ compression finished" | tee -a "$OUTPUT/build.log"
+
     echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
-    docker image ls --digests --format='{{ .ID }}' harbor.cloudical.net/vanillastack/installer$dockerimage_tag > config/includes.chroot/vanilla/hash
-    kill "$(cat /run/dockerd.pid)"
-    killall containerd
+    echo "+++ export finished" | tee -a "$OUTPUT/build.log"
+
+    pwd  | tee -a "$OUTPUT/build.log"
+    ls -l config/includes.chroot/vanilla  | tee -a "$OUTPUT/build.log"
+set +x
 }
 
 #

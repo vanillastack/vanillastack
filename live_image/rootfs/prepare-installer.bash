@@ -45,7 +45,12 @@ echo "deb [arch=amd64] https://download.docker.com/linux/debian buster stable" >
 curl -fsSL https://download.docker.com/linux/debian/gpg > $WORKDIR/live-build/config/archives/docker.key.chroot
 cat $WORKDIR/live-build/config/archives/docker.key.chroot | apt-key add -
 
-apt-get update && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io
+# Skopeo Repo
+echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+curl -L 'https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key' | apt-key add -
+
+
+apt-get update && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io skopeo
 
 wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mcli
 chmod +x /usr/local/bin/mcli
