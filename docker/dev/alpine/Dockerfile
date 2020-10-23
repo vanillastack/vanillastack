@@ -1,13 +1,3 @@
-FROM alpine/git:v2.26.2 AS submodules
-
-COPY ./.git /usr/workdir/.git
-COPY ./ansible /usr/workdir/ansible
-COPY ./.gitmodules /usr/workdir/
-WORKDIR /usr/workdir
-
-RUN git submodule update --init --recursive
-
-
 FROM node:alpine3.12 AS build
 LABEL maintainer="jeff.chousterman@cloudical.io"
 
@@ -40,7 +30,6 @@ WORKDIR /usr/workdir
 ## Copy package files
 COPY ./backend/package.json ./
 COPY ./ansible/requirements.txt ./
-COPY --from=submodules  /usr/workdir/ansible/collections/ansible_collections/community ${ANSIBLEPATH}/collections/ansible_collections/community
 
 ## Install nginx, Ansible and pre-req
 RUN apk update && \
