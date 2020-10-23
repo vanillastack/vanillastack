@@ -1,7 +1,7 @@
 #!/bin/bash
 tag_file="${1%/*}/tag"
 tag=""
-[[ -r "$tag_file" ]] && tag="$(cat "$tag_file")" && "tag found: $tag"
+[[ -r "$tag_file" ]] && tag="$(cat "$tag_file")" && echo "tag found: $tag"
 
 echo "decompressing container image"
 xz -c -v -d < "$1" | docker load
