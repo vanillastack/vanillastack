@@ -1,6 +1,3 @@
-RUN git submodule update --init --recursive
-
-
 FROM node:alpine3.12 AS build
 LABEL maintainer="jeff.chousterman@cloudical.io"
 
