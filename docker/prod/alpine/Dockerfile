@@ -2,6 +2,7 @@ FROM node:alpine3.12 AS build
 LABEL maintainer="jeff.chousterman@cloudical.io"
 
 COPY ./frontend/package.json /usr/workdir/
+COPY ./frontend/package-lock.json /usr/workdir/
 COPY ./frontend/vue.config.js /usr/workdir/
 COPY ./frontend/public /usr/workdir/public
 COPY ./frontend/src /usr/workdir/src
