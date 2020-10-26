@@ -41,6 +41,7 @@ set -x
     pixz -p 8 -0  config/includes.chroot/vanilla/vanilla-installer.tar config/includes.chroot/vanilla/vanilla-installer.tar.xz  | tee -a "$OUTPUT/build.log"
     echo "+++ compression finished" | tee -a "$OUTPUT/build.log"
 
+    rm config/includes.chroot/vanilla/vanilla-installer.tar
     echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
     echo "+++ export finished" | tee -a "$OUTPUT/build.log"
 
