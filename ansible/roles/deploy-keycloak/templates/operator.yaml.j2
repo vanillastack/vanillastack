@@ -36,3 +36,30 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "keycloak-operator"
+{% if commercial.enabled %}
+            - name: RELATED_IMAGE_KEYCLOAK
+              value: "{{commercial.registry.url}}/vanillastack/keycloak:9.0.2"
+#            - name: RELATED_IMAGE_RHSSO_OPENJ9
+#              value: "{{commercial.registry.url}}/vanillastack/sso74-openshift-rhel8:7.4-1"
+#            - name: RELATED_IMAGE_RHSSO_OPENJDK
+#              value: "{{commercial.registry.url}}/vanillastack/sso74-openshift-rhel8:7.4-1"
+            - name: RELATED_IMAGE_KEYCLOAK_INIT_CONTAINER
+              value: "{{commercial.registry.url}}/vanillastack/keycloak-init-container:master"
+            - name: RELATED_IMAGE_RHMI_BACKUP_CONTAINER
+              value: "{{commercial.registry.url}}/vanillastack/backup-container:1.0.10"
+            - name: RELATED_IMAGE_POSTGRESQL
+              value: "{{commercial.registry.url}}/vanillastack/postgresql-10-rhel7:1"
+{% else %}
+            - name: RELATED_IMAGE_KEYCLOAK
+              value: "quay.io/keycloak/keycloak:9.0.2"
+#            - name: RELATED_IMAGE_RHSSO_OPENJ9
+#              value: "registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4-1"
+#            - name: RELATED_IMAGE_RHSSO_OPENJDK
+#              value: "registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4-1"
+            - name: RELATED_IMAGE_KEYCLOAK_INIT_CONTAINER
+              value: "quay.io/keycloak/keycloak-init-container:master"
+            - name: RELATED_IMAGE_RHMI_BACKUP_CONTAINER
+              value: "quay.io/integreatly/backup-container:1.0.10"
+            - name: RELATED_IMAGE_POSTGRESQL
+              value: "registry.access.redhat.com/rhscl/postgresql-10-rhel7:1"
+{% endif %}
