@@ -1,6 +1,6 @@
 ---
 commercial:
-  enabled: true
+  enabled: false
   registry:
     url: harbor.cloudical.net
     username: 'gitlab-testing-stage'
@@ -256,3 +256,17 @@ moodle:
 keycloak:
   enabled: true
   namespace: keycloak
+  externalDatabase: false
+  postgres:
+    size: "20Gi"
+    replicas: 2
+    version: "12"
+    maxConnections: 400
+    backup:
+      enabled: false
+      cronjob: "30 */2 * * *"
+  ingress:
+    publicDomain: "keycloak.{{ kubernetes.loadBalancer.clusterDomain }}"
+  realm:
+    name: "{{ kubernetes.loadBalancer.clusterDomain }}"
+    id: "{{ kubernetes.loadBalancer.clusterDomain }}"
