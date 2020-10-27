@@ -43,6 +43,8 @@ After you build that simple container you can run it with:
 
 In the container, the script `./build-installer.bash` is automatically started. At the end, the build-artifacts will be copied to `/data` where you should have mounted your output-directory to.
 
+The privileged mode is currently neccessary for the builder to work, but we're trying to work around that.
+
 === building via gitlab-ci-pipeline
 
 Because, we are already running in a fitting docker container, there is no need to rebuild. We just need to adjust the living room.

@@ -75,10 +75,21 @@
   <body>
       <img src="img/vanilla.svg" id="loading"/>
     <div id=main>
-    <p> I'm sorry, we have to wait a short moment, until everything is ready.</p>
+    <p> Initializing Installer ...</p>
       <div>
       <p>You can read more on VanillaStack on <a href="https://vanillastack.io">vanillastack.io</a></p>
       </div>
+    </div>
+    <div id="buildinfo">
+      <table>
+        <tbody>
+        <tr><td>Builddate:</td><td>__BUILD_DATE__</td></tr>
+        <tr><td rowspan="2">ISO-Builder:</td><td>__GIT_COMMIT__</td></tr>
+        <tr><td>__GIT_BRANCH__</td></tr>
+        <tr><td>Installer-Image-Tag:</td><td>__INSTALLER_IMAGE_TAG__</td></tr>
+        <tr><td>Installer-Image-Hash:</td><td>__INSTALLER_IMAGE_HASH__</td></tr>
+      </tbody>
+      </table>
     </div>
   </body>
   <script src="js/jquery-3.5.1.min.js"></script>
