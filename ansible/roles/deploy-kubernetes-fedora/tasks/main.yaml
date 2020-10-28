@@ -1,4 +1,0 @@
----
-# tasks file for deploy-kubernetes
-- name: "{{ action }}"
-  include_tasks: "{{ action }}.yaml"

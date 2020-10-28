@@ -1,14 +1,20 @@
 ---
+commercial:
+  enabled: true
+  registry:
+    url: harbor.cloudical.net
+    username: 'gitlab-testing-stage'
+    key: 'REGISTRY_KEY'
 global:
-  registry: harbor.cloudical.net
+  registry: harbor.vanillastack.io
   isHA: true
   uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
   externalLB: false
 ingress:
   namespace: nginx-ingress
   enabled: true
-letsEncrypt:
-  # possible issuer: "letsencrypt-staging" or "letsencrypt-prod"
+tls:
+  # possible issuer: "letsencrypt-staging", "letsencrypt-prod" or "certmanager-selfsigned"
   issuerName: "letsencrypt-staging"
   issuerEmail: "testing@test.vanillastack.cloudical.net"
   staging:
@@ -26,13 +32,17 @@ kubernetes:
   clusterName: kube
   version: "1.19"
   crioVersion: "1.18"
-  helm_version: "v3.3.1"    
-  pod_cidr: "10.0.0.0/8"
-  service_cidr: "10.96.0.0/12"
+  helm_version: "v3.3.1"
+#  pod_cidr: "10.0.0.0/8"
+#  service_cidr: "10.96.0.0/12"
+  pod_cidr: "172.16.0.0/12"
+  service_cidr: "172.31.0.0/16"
   init_opts: ""
   kubeadm_opts: ""
   resetCluster: false
   kubeadmin_config: /etc/kubernetes/admin.conf
+  cilium:
+    version: v1.8.3
 cloudfoundry:
   enabled: false
   storageclass: rook-ceph-block
@@ -40,7 +50,7 @@ cloudfoundry:
 stratos:
   enabled: false
   adminpassword: 4JOA4l8DK7Sr
-  coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"  
+  coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"
 guacamole:
   imageTag: 202009100849
   enabled: false
@@ -49,13 +59,12 @@ guacamole:
   postgres:
     maxConnections: 400
     backup:
-      enabled: false 
+      enabled: false
       cronjob: "30 */2 * * *"
     version: "12"
     replicas: "2"
     size: "20Gi"
 postgresOperator:
-  chartRepo: "https://{{global.registry}}/chartrepo/vanillastack"
   enabled: true
   chartName: "postgres-operator"
   chartVersion: "1.5.0"
@@ -70,7 +79,7 @@ postgresOperator:
       bucketName: nul
     cron: "30 00 * * *"
 harbor:
-  enabled: true
+  enabled: false
   chartVersion: 1.4.0
   namespace: harbor
   ingress:
@@ -230,3 +239,17 @@ kubevirt:
   enabled: true
   namespace: kubevirt
   version: v0.33.0
+moodle:
+  username: admin
+  enabled: true
+  namespace: moodle
+  storage:
+    classname: "rook-ceph-block"
+    size: 8Gi
+  mariadb:
+    persistence: true
+    classname: "rook-ceph-block"
+    size: 8Gi
+  ingress:
+    enabled: true
+    dns: "moodle.{{ kubernetes.loadBalancer.clusterDomain }}"

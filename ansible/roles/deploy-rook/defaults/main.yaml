@@ -8,10 +8,17 @@ rook:
     csiEnableCephFS: true
     csiEnableRBD: true
     csiEnableGRPC: true
-    image: rook/ceph:v1.4.1
+    image: rook/ceph:v1.4.4
+    csiImages:
+      cephCsi: "quay.io/cephcsi/cephcsi:v3.1.0"
+      registrar: "quay.io/k8scsi/csi-node-driver-registrar:v1.2.0"
+      resizer: "quay.io/k8scsi/csi-resizer:v0.4.0"
+      provisioner: "quay.io/k8scsi/csi-provisioner:v1.6.0"
+      snapshotter: "quay.io/k8scsi/csi-snapshotter:v2.1.1"
+      attacher: "quay.io/k8scsi/csi-attacher:v2.1.0"
   cluster:
     enabled: true
-    image: ceph/ceph:v15.2.4
+    image: ceph/ceph:v15.2.5-20200916
     name: rook-ceph
     dataHostDir: /var/lib/rook
     mon:
@@ -31,26 +38,29 @@ rook:
     failureDomain: host
     poolName: replicapool
     replicaLevel: 3
+    minSize: 2
   storageClassObject:
     enabled: false
   storageClassFile:
-    enabled: false
+    enabled: true
   toolbox:
     enabled: true
     name: rook-ceph-tools
-    image: rook/ceph:v1.4.1
+    image: rook/ceph:v1.4.4
   objectStorage:
     enabled: false
     ingress:
       domain: ""
       tls:
         enabled: true
-        issuerName: "{{ letsEncrypt.issuerName }}"
+        issuerName: "{{ tls.issuerName }}"
     name: cephobjectn1
     failureDomain: host
     replicaLevel: 2
+    minSize: 1
   filesystem:
     enabled: false
     name: cephfsn1
     replicaLevel: 2
+    minSize: 1
     failureDomain: host

@@ -16,7 +16,7 @@ spec:
       size: {{rook.filesystem.replicaLevel}}
       requireSafeReplicaSize: false
     parameters:
-      min_size: "1"
+      min_size: "{{rook.filesystem.minSize}}"
       # Inline compression mode for the data pool
       # Further reference: https://docs.ceph.com/docs/nautilus/rados/configuration/bluestore-config-ref/#inline-compression
       compression_mode: none
@@ -35,7 +35,7 @@ spec:
         # for more info: https://docs.ceph.com/docs/master/rados/operations/placement-groups/#specifying-expected-pool-size
         #targetSizeRatio: .5
       parameters:
-        min_size: "1"
+        min_size: "{{rook.filesystem.minSize}}"
         # Inline compression mode for the data pool
         # Further reference: https://docs.ceph.com/docs/nautilus/rados/configuration/bluestore-config-ref/#inline-compression
         compression_mode: none
@@ -50,7 +50,7 @@ spec:
     activeCount: 1
     # Whether each active MDS instance will have an active standby with a warm metadata cache for faster failover.
     # If false, standbys will be available, but will not have a warm cache.
-    activeStandby: false
+    activeStandby: true
     # The affinity rules to apply to the mds deployment
     placement:
     #  nodeAffinity:

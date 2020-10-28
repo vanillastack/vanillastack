@@ -1,4 +1,118 @@
 ---
+{% if openstack.release == "stein" and commercial.enabled != true  %}
+images:
+  tags:
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    bootstrap: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    db_init: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    mistral_db_sync: docker.io/kolla/ubuntu-source-mistral-api:stein
+    db_drop: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    mistral_api: docker.io/kolla/ubuntu-source-mistral-api:stein
+    mistral_engine: docker.io/kolla/ubuntu-source-mistral-engine:stein
+    mistral_event_engine: docker.io/kolla/ubuntu-source-mistral-engine:stein
+    mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:stein
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "stein" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    mistral_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:stein
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    mistral_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:stein
+    mistral_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:stein
+    mistral_event_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:stein
+    mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:stein
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled != true  %}
+images:
+  tags:
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    bootstrap: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    db_init: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    mistral_db_sync: docker.io/kolla/ubuntu-source-mistral-api:train
+    db_drop: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    mistral_api: docker.io/kolla/ubuntu-source-mistral-api:train
+    mistral_engine: docker.io/kolla/ubuntu-source-mistral-engine:train
+    mistral_event_engine: docker.io/kolla/ubuntu-source-mistral-engine:train
+    mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:train
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    mistral_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:train
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    mistral_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:train
+    mistral_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:train
+    mistral_event_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:train
+    mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:train
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+images:
+  tags:
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    bootstrap: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    db_init: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    mistral_db_sync: docker.io/kolla/ubuntu-source-mistral-api:ussuri
+    db_drop: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    mistral_api: docker.io/kolla/ubuntu-source-mistral-api:ussuri
+    mistral_engine: docker.io/kolla/ubuntu-source-mistral-engine:ussuri
+    mistral_event_engine: docker.io/kolla/ubuntu-source-mistral-engine:ussuri
+    mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:ussuri
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    mistral_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:ussuri
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    mistral_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:ussuri
+    mistral_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:ussuri
+    mistral_event_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:ussuri
+    mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:ussuri
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
 pod:
   replicas:
     api: {{openstack.mistral.api.replicas}}
@@ -10,16 +124,19 @@ endpoints:
     host_fqdn_override:
       public:
         host: {{openstack.mistral.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -30,12 +147,12 @@ endpoints:
       api:
         public: 443
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       mistral:
         secretName: mistral-tls
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
 {% endif %}
   identity:
@@ -71,7 +188,7 @@ endpoints:
     auth:
       admin:
         username: root
-        password: {{openstack.mariadb.auth.admin.password}} 
+        password: {{openstack.mariadb.auth.admin.password}}
       mistral:
         username: mistral
         password: {{openstack.mistral.auth.db.password}}
@@ -97,8 +214,8 @@ network:
         kubernetes.io/tls-acme: "true"
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
 {% endif %}
 secrets:
   identity:

@@ -1,15 +1,10 @@
 ---
 - name: helm installation kubecf
   block:
-  - name: install CF repository
-    community.kubernetes.helm_repository:
-      name: cloudfoundry
-      repo_url: https://{{ global.registry }}/chartrepo/vanillastack-cloudfoundry
-        
   - name: Deploy latest version of CloudFoundry
     community.kubernetes.helm:
       name: cf-operator
-      chart_ref: cloudfoundry/cf-operator
+      chart_ref: vanillastack/cf-operator
       release_namespace: cf-operator
       values: 
         global:
@@ -21,7 +16,7 @@
   - name: install Kubecf
     community.kubernetes.helm:
       name: kubecf
-      chart_ref: cloudfoundry/kubecf
+      chart_ref: vanillastack/kubecf
       release_namespace: kubecf
       values: "{{ lookup('template', 'kubecf-values.yaml.j2') | from_yaml }}"
     register: kubecf_install
@@ -68,5 +63,3 @@
 
 - debug:
     msg: "{{ kubecf_install.stdout_lines }}"
-
-    

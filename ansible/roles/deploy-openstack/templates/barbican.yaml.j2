@@ -1,4 +1,94 @@
 ---
+{% if openstack.release == "stein" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    scripted_test: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    db_init: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    barbican_db_sync: {{commercial.registry.url}}/vanillastack/barbican:stein-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    barbican_api: {{commercial.registry.url}}/vanillastack/barbican:stein-ubuntu_bionic
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "stein" and commercial.enabled != true %}
+images:
+  tags:
+    bootstrap: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    scripted_test: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    db_init: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    barbican_db_sync: docker.io/openstackhelm/barbican:stein-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    barbican_api: docker.io/openstackhelm/barbican:stein-ubuntu_bionic
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: "{{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic"
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    scripted_test: "{{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic"
+    db_init: "{{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic"
+    barbican_db_sync: "{{commercial.registry.url}}/vanillastack/barbican:train-ubuntu_bionic"
+    db_drop: "{{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic"
+    ks_user: "{{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic"
+    ks_service: "{{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic"
+    ks_endpoints: "{{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic"
+    barbican_api: "{{commercial.registry.url}}/vanillastack/barbican:train-ubuntu_bionic"
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled != true %}
+images:
+  tags:
+    bootstrap: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    scripted_test: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    db_init: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    barbican_db_sync: "docker.io/openstackhelm/barbican:train-ubuntu_bionic"
+    db_drop: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_user: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_service: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    ks_endpoints: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
+    barbican_api: "docker.io/openstackhelm/barbican:train-ubuntu_bionic"
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: "{{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic"
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    scripted_test: "{{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic"
+    db_init: "{{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic"
+    barbican_db_sync: "{{commercial.registry.url}}/vanillastack/barbican:ussuri-ubuntu_bionic"
+    db_drop: "{{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic"
+    ks_user: "{{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic"
+    ks_service: "{{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic"
+    ks_endpoints: "{{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic"
+    barbican_api: "{{commercial.registry.url}}/vanillastack/barbican:ussuri-ubuntu_bionic"
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled != true %}
+images:
+  tags:
+    bootstrap: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    scripted_test: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    db_init: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    barbican_db_sync: "docker.io/openstackhelm/barbican:ussuri-ubuntu_bionic"
+    db_drop: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_user: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_service: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    ks_endpoints: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
+    barbican_api: "docker.io/openstackhelm/barbican:ussuri-ubuntu_bionic"
+{% endif %}
 pod:
   replicas:
     api: {{openstack.barbican.api.replicas}}
@@ -7,16 +97,19 @@ endpoints:
     host_fqdn_override:
       public:
         host: {{openstack.barbican.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -27,19 +120,19 @@ endpoints:
     port:
       api:
         public: 443
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       barbican:
         secretName: barbican-tls-public
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
-{% endif %} 
+{% endif %}
   identity:
     auth:
 {% if openstack.tls.enabled %}
       cacert: /tmp/openstack_ca.crt
-{% endif %} 
+{% endif %}
       admin:
         region_name: {{openstack.region}}
         username: admin
@@ -85,8 +178,8 @@ network:
         kubernetes.io/tls-acme: "true"
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
 {% endif %}
 manifests:
   secret_ingress_tls: false

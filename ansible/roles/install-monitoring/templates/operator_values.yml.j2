@@ -85,7 +85,7 @@ alertmanager:
     enabled: "{{ alertmanager.ingress.enabled }}"
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/cluster-issuer: {{ tls.issuerName }}
       kubernetes.io/tls-acme: "true"
       nginx.ingress.kubernetes.io/auth-secret: alertmanager-basic-auth
       nginx.ingress.kubernetes.io/auth-type: basic
@@ -201,7 +201,7 @@ grafana:
     enabled: "{{ grafana.ingress.enabled }}"
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/cluster-issuer: {{ tls.issuerName }}
       kubernetes.io/tls-acme: "true"
     labels: {}
     hosts:
@@ -540,7 +540,7 @@ prometheus:
     enabled: "{{ prometheus.ingress.enabled }}"
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      cert-manager.io/cluster-issuer: letsencrypt-prod
+      cert-manager.io/cluster-issuer: {{ tls.issuerName }}
       kubernetes.io/tls-acme: "true"
       nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
       nginx.ingress.kubernetes.io/auth-type: basic

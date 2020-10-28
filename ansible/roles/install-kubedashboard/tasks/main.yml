@@ -1,15 +1,9 @@
 ---
 # tasks file for install-kubedashboard
 #
-- name: add infrastructure repo
-  community.kubernetes.helm_repository:
-    name: vsinfrastructure
-    repo_url: https://{{ global.registry }}/chartrepo/vanillastack-infrastructure
-
-
 - name: Install Kube Dashboard
   community.kubernetes.helm:
-    chart_ref: vsinfrastructure/kubernetes-dashboard
+    chart_ref: vanillastack/kubernetes-dashboard
     name: kubernetes-dashboard
     release_namespace: kube-system
     create_namespace: true

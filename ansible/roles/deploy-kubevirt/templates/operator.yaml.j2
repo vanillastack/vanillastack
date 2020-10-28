@@ -723,13 +723,17 @@ spec:
         - "2"
         env:
         - name: OPERATOR_IMAGE
-          value: index.docker.io/kubevirt/virt-operator@sha256:288cc081df8d81487db08db3c60b95b372718c118a8bc61eb8a06e7c81ee8ac0
+{% if commercial.enabled %}
+          value: {{commercial.registry.url}}/vanillastack/virt-operator:v0.34.0
+{% else %}
+          value: index.docker.io/kubevirt/virt-operator:v0.34.0
+{% endif %}
         - name: WATCH_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.annotations['olm.targetNamespaces']
         - name: KUBEVIRT_VERSION
-          value: v0.33.0
+          value: v0.34.0
         - name: VIRT_API_SHASUM
           value: sha256:d4e93b98111f3ee5a52bc8408dfff7ce928dcf49e2f01f587f42e261d5f40270
         - name: VIRT_CONTROLLER_SHASUM
@@ -738,7 +742,11 @@ spec:
           value: sha256:65da881f84ea254b2342a6ac659950364c74274af518a47e7d4a723efcce98a9
         - name: VIRT_LAUNCHER_SHASUM
           value: sha256:c82e420fb4220c1f945a51dbf459813e86301784f71eb8cd797faf23e9dca295
-        image: index.docker.io/kubevirt/virt-operator@sha256:288cc081df8d81487db08db3c60b95b372718c118a8bc61eb8a06e7c81ee8ac0
+{% if commercial.enabled %}
+        image: {{commercial.registry.url}}/vanillastack/virt-operator:v0.34.0
+{% else %}
+        image: index.docker.io/kubevirt/virt-operator:v0.34.0
+{% endif %}
         imagePullPolicy: IfNotPresent
         name: virt-operator
         ports:

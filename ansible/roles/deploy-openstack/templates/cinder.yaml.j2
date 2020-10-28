@@ -1,5 +1,70 @@
 ---
-{% if openstack.release == "train" %}
+{% if openstack.release == "stein" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    cinder_db_sync: {{commercial.registry.url}}/vanillastack/cinder:stein-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    cinder_api: {{commercial.registry.url}}/vanillastack/cinder:stein-ubuntu_bionic
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    cinder_scheduler: {{commercial.registry.url}}/vanillastack/cinder:stein-ubuntu_bionic
+    cinder_volume: {{commercial.registry.url}}/vanillastack/cinder:stein-ubuntu_bionic
+    cinder_volume_usage_audit: {{commercial.registry.url}}/vanillastack/cinder:stein-ubuntu_bionic
+    cinder_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    cinder_backup: {{commercial.registry.url}}/vanillastack/cinder:stein-ubuntu_bionic
+    cinder_backup_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "stein" and commercial.enabled != true %}
+images:
+  tags:
+    test: docker.io/xrally/xrally-openstack:2.0.0
+    db_init: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    cinder_db_sync: docker.io/openstackhelm/cinder:stein-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    rabbit_init: docker.io/rabbitmq:3.7-management
+    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    cinder_api: docker.io/openstackhelm/cinder:stein-ubuntu_bionic
+    bootstrap: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    cinder_scheduler: docker.io/openstackhelm/cinder:stein-ubuntu_bionic
+    cinder_volume: docker.io/openstackhelm/cinder:stein-ubuntu_bionic
+    cinder_volume_usage_audit: docker.io/openstackhelm/cinder:stein-ubuntu_bionic
+    cinder_storage_init: docker.io/openstackhelm/ceph-config-helper:latest-ubuntu_bionic
+    cinder_backup: docker.io/openstackhelm/cinder:stein-ubuntu_bionic
+    cinder_backup_storage_init: docker.io/openstackhelm/ceph-config-helper:latest-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    cinder_db_sync: {{commercial.registry.url}}/vanillastack/cinder:train-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    cinder_api: {{commercial.registry.url}}/vanillastack/cinder:train-ubuntu_bionic
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    cinder_scheduler: {{commercial.registry.url}}/vanillastack/cinder:train-ubuntu_bionic
+    cinder_volume: {{commercial.registry.url}}/vanillastack/cinder:train-ubuntu_bionic
+    cinder_volume_usage_audit: {{commercial.registry.url}}/vanillastack/cinder:train-ubuntu_bionic
+    cinder_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    cinder_backup: {{commercial.registry.url}}/vanillastack/cinder:train-ubuntu_bionic
+    cinder_backup_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled != true %}
 images:
   tags:
     db_init: "docker.io/openstackhelm/heat:train-ubuntu_bionic"
@@ -17,7 +82,28 @@ images:
     cinder_backup: "docker.io/openstackhelm/cinder:train-ubuntu_bionic"
     cinder_backup_storage_init: "docker.io/openstackhelm/ceph-config-helper:latest-ubuntu_bionic"
 {% endif %}
-{% if openstack.release == "ussuri" %}
+{% if openstack.release == "ussuri" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    cinder_db_sync: {{commercial.registry.url}}/vanillastack/cinder:ussuri-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    cinder_api: {{commercial.registry.url}}/vanillastack/cinder:ussuri-ubuntu_bionic
+    bootstrap: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    cinder_scheduler: {{commercial.registry.url}}/vanillastack/cinder:ussuri-ubuntu_bionic
+    cinder_volume: {{commercial.registry.url}}/vanillastack/cinder:ussuri-ubuntu_bionic
+    cinder_volume_usage_audit: /cinder:ussuri-ubuntu_bionic
+    cinder_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    cinder_backup: {{commercial.registry.url}}/vanillastack/cinder:ussuri-ubuntu_bionic
+    cinder_backup_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled != true %}
 images:
   tags:
     db_init: "docker.io/openstackhelm/heat:ussuri-ubuntu_bionic"
@@ -116,16 +202,19 @@ endpoints:
     host_fqdn_override:
       public:
         host: {{openstack.cinder.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -136,28 +225,31 @@ endpoints:
       api:
         public: 443
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       barbican:
         secretName: barbican-tls
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
 {% endif %}
   volumev2:
     host_fqdn_override:
       public:
         host: {{openstack.cinder.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -168,28 +260,31 @@ endpoints:
       api:
         public: 443
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       barbican:
         secretName: barbican-tls
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
 {% endif %}
   volumev3:
     host_fqdn_override:
       public:
         host: {{openstack.cinder.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
         tls:
           key: dummy
           crt: dummy
-{% if letsEncrypt.issuerName == "letsencrypt-staging" %}
+{% if tls.issuerName == "letsencrypt-staging" %}
           ca: |
-{{letsEncrypt.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% else %}
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
           ca: |
-{{letsEncrypt.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
 {% endif %}
     scheme:
@@ -200,12 +295,12 @@ endpoints:
       api:
         public: 443
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
     certs:
       barbican:
         secretName: barbican-tls
         issuerRef:
-          name: {{letsEncrypt.issuerName}}
+          name: openstack-{{tls.issuerName}}
           kind: Issuer
 {% endif %}
   identity:
@@ -267,11 +362,11 @@ network:
         nginx.ingress.kubernetes.io/rewrite-target: /
         kubernetes.io/ingress.class: nginx
 {% if openstack.tls.enabled and openstack.tls.useCertManager %}
-        kubernetes.io/tls-acme: "true"
+#        kubernetes.io/tls-acme: "true"
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
-{% if openstack.tls.enabled and openstack.tls.letsEncrypt.enabled %}
-        cert-manager.io/issuer: "{{letsEncrypt.issuerName}}"
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
 {% endif %}
 
 manifests:

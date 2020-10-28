@@ -1,0 +1,26 @@
+---
+#- name: reconfigure global.registry
+#  set_fact:
+#    vanillastackRegistry: "{{ global.registry }}"
+#  when: commercial.enabled != true
+#
+#- name: reconfigure global.registry
+#  set_fact:
+#    vanillastackRegistry: "{{ commercial.registry.url }}"
+#  when: commercial.enabled
+
+- name: install VanillasStack Helm repository
+  community.kubernetes.helm_repository:
+    name: vanillastack
+    repo_url: https://{{ global.registry }}/chartrepo/vanillastack
+  when: commercial.enabled != true
+  ignore_errors: yes
+
+- name: install VanillasStack Helm repository - commercial
+  community.kubernetes.helm_repository:
+    name: vanillastack
+    repo_url: https://{{ commercial.registry.url }}/chartrepo/vanillastack
+    repo_username: "robot${{commercial.registry.username}}"
+    repo_password: "{{commercial.registry.key}}"
+  when: commercial.enabled
+  ignore_errors: yes

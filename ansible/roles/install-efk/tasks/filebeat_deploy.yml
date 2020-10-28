@@ -2,7 +2,7 @@
 - name: Install filebeat
   community.kubernetes.helm:
     name: filebeat
-    chart_ref: elastic/filebeat
+    chart_ref: vanillastack/filebeat
     release_namespace: kube-logging
     values: "{{ lookup('template', 'filebeat_values.yml.j2') | from_yaml }}"
     create_namespace: true
