@@ -42,6 +42,7 @@ mkdir -p ${OUTPUT}
 
 echo "deb [arch=amd64] https://download.docker.com/linux/debian buster stable" > /etc/apt/sources.list.d/docker.list
 
+# Docker Repo
 curl -fsSL https://download.docker.com/linux/debian/gpg > $WORKDIR/live-build/config/archives/docker.key.chroot
 cat $WORKDIR/live-build/config/archives/docker.key.chroot | apt-key add -
 
