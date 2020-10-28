@@ -18,7 +18,7 @@ export LC_TELEPHONE=C.UTF-8
 export LC_MEASUREMENT=C.UTF-8
 export LC_IDENTIFICATION=C.UTF-8
 
-PACKAGES_NEEDED="live-build xz-utils pixz procps psmisc cpio"
+PACKAGES_NEEDED="live-build xz-utils pixz procps psmisc cpio pv"
 PACKAGES_NEEDED+=" curl ca-certificates git"
 PACKAGES_NEEDED+=" gnupg gnupg-agent software-properties-common"
 
