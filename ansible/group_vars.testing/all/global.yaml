@@ -44,11 +44,11 @@ kubernetes:
   cilium:
     version: v1.8.3
 cloudfoundry:
-  enabled: false
+  enabled: true
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
-  enabled: false
+  enabled: true
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"
 guacamole:
