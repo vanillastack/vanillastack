@@ -503,7 +503,11 @@ sysctlImage:
   enabled: false
   command: []
   registry: docker.io
+{% if commercial.enabled %}
+  repository: {{commercial.registry.url}}/vanillastack/minideb
+{% else %}
   repository: bitnami/minideb
+{% endif %}
   tag: buster
   pullPolicy: Always
   ## Optionally specify an array of imagePullSecrets.
