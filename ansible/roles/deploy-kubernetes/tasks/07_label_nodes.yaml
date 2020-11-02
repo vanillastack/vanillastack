@@ -25,4 +25,20 @@
   with_items:
   - "{{ groups['compute'] }}"
   ignore_errors: true
+- name: manage access creds
+  block:
+  - name: copy ssh key to master1
+    copy: 
+      src: "{{ ansible_ssh_private_key_file }}"
+      dest: /tmp/tempkey.pem
+  
+  - name: add ssh key as secret
+    command: >
+      kubectl create secret generic --namespace kube-system management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem
+  
+  - name: make sure, ssh key is removed
+    file:
+      path: /tmp/tempkey.pem
+      state: absent
+  when: ansible_ssh_private_key_file is defined and ansible_ssh_private_key_file|length>0
 
