@@ -1,0 +1,315 @@
+#!/bin/sh
+
+## live-build(7) - System Build Scripts
+## Copyright (C) 2006-2015 Daniel Baumann <mail@daniel-baumann.ch>
+##
+## This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
+## This is free software, and you are welcome to redistribute it
+## under certain conditions; see COPYING for details.
+
+
+set -e
+
+# Including common functions
+[ -e "${LIVE_BUILD}/scripts/build.sh" ] && . "${LIVE_BUILD}/scripts/build.sh" || . /usr/lib/live/build.sh
+
+# Setting static variables
+DESCRIPTION="$(Echo 'installs syslinux into binary')"
+HELP=""
+USAGE="${PROGRAM} [--force]"
+
+Arguments "${@}"
+
+# Reading configuration files
+Read_conffiles config/all config/common config/bootstrap config/chroot config/binary config/source
+Set_defaults
+
+Check_Any_Bootloader_Role "syslinux"
+
+Echo_message "Begin installing syslinux..."
+
+# Requiring stage file
+Require_stagefile .build/config .build/bootstrap
+
+# Checking stage file
+Check_stagefile .build/binary_syslinux
+
+# Checking lock file
+Check_lockfile .lock
+
+# Creating lock file
+Create_lockfile .lock
+
+# Check architecture
+Check_architectures amd64 i386
+Check_crossarchitectures
+
+case "${LB_INITRAMFS}" in
+	*)
+		_INITRAMFS="live"
+		;;
+esac
+
+# Assembling image specifics
+case "${LIVE_IMAGE_TYPE}" in
+	iso*)
+		_BOOTLOADER="isolinux"
+
+		case "${LB_MODE}" in
+			progress-linux)
+				_TARGET="binary/boot"
+				;;
+
+			*)
+				_TARGET="binary/isolinux"
+				;;
+		esac
+		;;
+
+	netboot)
+		_BOOTLOADER="pxelinux"
+		_TARGET="tftpboot"
+		;;
+
+	hdd*|*)
+		case ${LB_BINARY_FILESYSTEM} in
+			fat*|ntfs)
+				_BOOTLOADER=syslinux
+
+				case "${LB_MODE}" in
+					progress-linux)
+						_TARGET="binary/boot"
+						;;
+
+					*)
+						_TARGET="binary/syslinux"
+						;;
+				esac
+				;;
+
+			ext[234]|btrfs)
+				_BOOTLOADER=extlinux
+				_TARGET="binary/boot/extlinux"
+				;;
+			*)
+				Echo_error "syslinux/extlinux doesn't support ${LB_BINARY_FILESYSTEM}"
+				exit 1
+				;;
+		esac
+		;;
+esac
+
+if [ -e "config/bootloaders/${_BOOTLOADER}" ]
+then
+	# Internal local copy
+	_SOURCE="config/bootloaders/${_BOOTLOADER}"
+else
+	# Internal system copy
+	if [ -n "${LIVE_BUILD}" ]
+	then
+		_SOURCE="${LIVE_BUILD}/share/bootloaders/${_BOOTLOADER}"
+	else
+		_SOURCE="/usr/share/live/build/bootloaders/${_BOOTLOADER}"
+	fi
+fi
+
+# Checking depends
+Check_package chroot /usr/lib/$(echo ${_BOOTLOADER} | tr [a-z] [A-Z]) ${_BOOTLOADER}
+Check_package chroot /usr/lib/syslinux syslinux-common
+
+if ls "${_SOURCE}"/*.svg* > /dev/null 2>&1
+then
+	Check_package chroot /usr/bin/rsvg-convert librsvg2-bin
+fi
+
+# Restoring cache
+Restore_cache cache/packages.binary
+
+# Installing depends
+Install_package
+
+# Copying files
+case "${LB_BUILD_WITH_CHROOT}" in
+	true)
+		mkdir -p ${_TARGET}
+
+		# Copy in two steps since the theme can have absolute symlinks and would therefore not be dereferenced correctly
+		cp -a ${_SOURCE} chroot/root
+		Chroot chroot cp -aL /root/$(basename ${_SOURCE}) /root/$(basename ${_SOURCE}).tmp > /dev/null 2>&1 || true
+		cp -a chroot/root/$(basename ${_SOURCE}).tmp/* ${_TARGET}
+		rm -rf chroot/root/$(basename ${_SOURCE}) chroot/root/$(basename ${_SOURCE}).tmp
+		;;
+
+	false)
+		mkdir -p ${_TARGET}
+
+		cp -aL ${_SOURCE}/* ${_TARGET} > /dev/null 2>&1 || true
+		;;
+esac
+
+# Configuring files
+if [ -e "${_TARGET}/live.cfg.in" ]
+then
+	# This is all rather suboptimal.. needs prettifying at some point
+	_FLAVOURS="$(echo ${LB_LINUX_FLAVOURS} | wc -w)"
+
+	case "${_FLAVOURS}" in
+		1)
+			# If multiple initrd images are being generated (by DKMS packages, etc),
+			# we likely only want the latest version.
+			ln $(ls -r1 --sort=version binary/${_INITRAMFS}/vmlinuz-* | head -n 1) binary/${_INITRAMFS}/vmlinuz
+			ln $(ls -r1 --sort=version binary/${_INITRAMFS}/initrd.img-* | head -n 1) binary/${_INITRAMFS}/initrd.img
+
+			sed -e "s|@FLAVOUR@|${LB_LINUX_FLAVOURS}|g" \
+			    -e "s|@LINUX@|/${_INITRAMFS}/vmlinuz|g" \
+			    -e "s|@INITRD@|/${_INITRAMFS}/initrd.img|g" \
+			"${_TARGET}/live.cfg.in" >> "${_TARGET}/live.cfg"
+
+			rm -f "${_TARGET}/live.cfg.in"
+			;;
+
+		*)
+			_NUMBER="0"
+
+			for _FLAVOUR in ${LB_LINUX_FLAVOURS}
+			do
+				_NUMBER="$((${_NUMBER} + 1))"
+
+				ln binary/${_INITRAMFS}/vmlinuz-*-${_FLAVOUR} binary/${_INITRAMFS}/vmlinuz${_NUMBER}
+				ln binary/${_INITRAMFS}/initrd.img-*-${_FLAVOUR} binary/${_INITRAMFS}/initrd${_NUMBER}.img
+
+				if [ "${_NUMBER}" -gt 1 ]
+				then
+					echo "" >> "${_TARGET}/live.cfg"
+					grep -v 'menu default' "${_TARGET}/live.cfg.in" >> "${_TARGET}/live.cfg"
+				else
+					cat "${_TARGET}/live.cfg.in" >> "${_TARGET}/live.cfg"
+				fi
+
+				sed -i -e "s|@FLAVOUR@|${_FLAVOUR}|g" \
+				       -e "s|@LINUX@|/${_INITRAMFS}/vmlinuz${_NUMBER}|g" \
+				       -e "s|@INITRD@|/${_INITRAMFS}/initrd${_NUMBER}.img|g" \
+				"${_TARGET}/live.cfg"
+			done
+
+			rm -f "${_TARGET}/live.cfg.in"
+			;;
+	esac
+fi
+
+if [ -e chroot/etc/os-release ]
+then
+	_VERSION="$(. chroot/etc/os-release && echo ${VERSION_ID})"
+fi
+
+_VERSION="${_VERSION:-none}"
+
+_DISTRIBUTION="${LB_DISTRIBUTION}"
+_ARCHITECTURE="${LB_ARCHITECTURES}"
+
+_DATE=$(date -R)
+_YEAR="$(date +%Y)"
+_MONTH="$(date +%m)"
+_DAY="$(date +%d)"
+_HOUR="$(date +%H)"
+_MINUTE="$(date +%M)"
+_SECOND="$(date +%S)"
+
+_LINUX_VERSIONS="$(for _LINUX in chroot/boot/vmlinuz-* ; do chroot chroot apt-cache policy $(basename ${_LINUX} | sed -e 's|vmlinuz-|linux-image-|') | awk '/Installed: / { print $2 }' ; done | sort -Vru | tr "\n" " ")"
+
+_LIVE_BUILD_VERSION="$(lb --version)"
+_LIVE_BOOT_VERSION="$(chroot chroot apt-cache policy live-boot | awk '/Installed: / { print $2 }')"
+_LIVE_CONFIG_VERSION="$(chroot chroot apt-cache policy live-config | awk '/Installed: / { print $2 }')"
+_LIVE_TOOLS_VERSION="$(chroot chroot apt-cache policy live-tools | awk '/Installed: / { print $2 }')"
+
+case "${LB_MODE}" in
+	progress-linux)
+		_PROJECT="Progress Linux"
+		;;
+
+	*)
+		_PROJECT="Debian GNU/Linux"
+		;;
+esac
+
+[ -z "$LB_PROJECT" ] || _PROJECT="$LB_PROJECT"
+
+
+for _FILE in "${_TARGET}"/*.cfg ${_TARGET}/*.svg
+do
+	if [ -e "${_FILE}" ] && [ ! -d "${_FILE}" ]
+	then
+		sed -i  -e "s#@APPEND_LIVE@#${LB_BOOTAPPEND_LIVE}#g" \
+			-e "s#@APPEND_LIVE_FAILSAFE@#${LB_BOOTAPPEND_LIVE_FAILSAFE}#g" \
+			-e "s#@APPEND_INSTALL@#${LB_BOOTAPPEND_INSTALL}#g" \
+			-e "s#@APPEND_INSTALL_FAILSAFE@#${LB_BOOTAPPEND_INSTALL_FAILSAFE}#g" \
+			-e "s|@PROJECT@|${_PROJECT}|g" \
+			-e "s|@DISTRIBUTION@|${_DISTRIBUTION}|g" \
+			-e "s|@PARENT_DISTRIBUTION@|${LB_PARENT_DISTRIBUTION}|g" \
+			-e "s|@VERSION@|${_VERSION}|g" \
+			-e "s|@ARCHITECTURE@|${_ARCHITECTURE}|g" \
+			-e "s|@DATE@|${_DATE}|g" \
+			-e "s|@YEAR@|${_YEAR}|g" \
+			-e "s|@MONTH@|${_MONTH}|g" \
+			-e "s|@DAY@|${_DAY}|g" \
+			-e "s|@HOUR@|${_HOUR}|g" \
+			-e "s|@MINUTE@|${_MINUTE}|g" \
+			-e "s|@SECOND@|${_SECOND}|g" \
+			-e "s|@LINUX_VERSIONS@|${_LINUX_VERSIONS}|g" \
+			-e "s|@LIVE_BUILD_VERSION@|${_LIVE_BUILD_VERSION}|g" \
+			-e "s|@LIVE_BOOT_VERSION@|${_LIVE_BOOT_VERSION}|g" \
+			-e "s|@LIVE_CONFIG_VERSION@|${_LIVE_CONFIG_VERSION}|g" \
+			-e "s|@LIVE_TOOLS_VERSION@|${_LIVE_TOOLS_VERSION}|g" \
+		"${_FILE}"
+	fi
+done
+
+if [ -e "${_TARGET}/splash.svg" ]
+then
+	case "${LB_BUILD_WITH_CHROOT}" in
+		true)
+			cp "${_TARGET}/splash.svg" chroot
+			Chroot chroot "rsvg-convert --format png --height 480 --width 640 splash.svg -o splash.png"
+			mv chroot/splash.png "${_TARGET}"
+			rm -f chroot/splash.svg
+			;;
+
+		false)
+			rsvg-convert --format png --height 480 --width 640 "${_TARGET}/splash.svg" -o "${_TARGET}/splash.png"
+			;;
+	esac
+
+	rm -f "${_TARGET}/splash.svg"
+fi
+
+# Tweak the grub theme to reuse the syslinux background image
+if [ -e binary/boot/grub/live-theme/theme.txt ]; then
+    sed -i -e 's|^desktop-image:.*|desktop-image: "/isolinux/splash.png"|' \
+	-e 's|^title-text:.*|title-text: ""|' \
+	binary/boot/grub/live-theme/theme.txt
+fi
+
+case "${LB_MODE}" in
+	progress-linux)
+		for _FILE in "${_TARGET}/isolinux.bin" "${_TARGET}/isolinux.cfg" "${_TARGET}/syslinux.cfg"
+		do
+			if [ -e "${_FILE}" ]
+			then
+				mv "${_FILE}" "${_TARGET}/$(echo ${_FILE} | sed -e 's|.*linux|boot|')"
+			fi
+		done
+		;;
+esac
+
+case "${LB_BUILD_WITH_CHROOT}" in
+	true)
+		# Saving cache
+		Save_cache cache/packages.binary
+
+		# Removing depends
+		Remove_package
+		;;
+esac
+
+# Creating stage file
+Create_stagefile .build/binary_syslinux

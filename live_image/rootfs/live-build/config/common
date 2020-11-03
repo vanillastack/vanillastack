@@ -1,0 +1,4 @@
+LB_BOOTAPPEND_LIVE="boot=live components hostname=vanilla-installa username=vanilla locales=de_DE.UTF-8 keyboard-layouts=de quiet vga=current splash"
+LB_BOOTAPPEND_LIVE_FAILSAFE="none"
+
+LB_PROJECT="Vanilla-Stack"

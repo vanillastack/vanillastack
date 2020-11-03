@@ -2,3 +2,6 @@ procps psmisc apt-transport-https ca-certificates curl gnupg-agent xz-utils soft
 task-lxde-desktop task-german task-german-desktop
 live-tools user-setup sudo eject
 chromium chromium-sandbox lighttpd
+plymouth plymouth-label plymouth-themes
+qemu-guest-agent ovirt-guest-agent cloud-guest-utils open-vm-tools
+screen aptitude mc less plymouth-x11 openssh-server
