@@ -1,0 +1,5 @@
+---
+# tasks file for reset-kubernetes
+- name: Reboot all nodes
+  reboot:
+
