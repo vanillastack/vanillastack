@@ -3,7 +3,7 @@ kind: KeycloakRealm
 metadata:
   name: "{{keycloak.realm.name}}"
   labels:
-    app: sso
+    app: vanillastack-sso
   namespace: {{keycloak.namespace}}
 spec:
   realm:
@@ -37,4 +37,4 @@ spec:
       identityProvider: "openshift-v4"
   instanceSelector:
     matchLabels:
-      app: sso
+      app: vanillastack-sso

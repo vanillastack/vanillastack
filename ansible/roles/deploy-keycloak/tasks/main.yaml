@@ -66,3 +66,8 @@
   k8s:
     definition: "{{ lookup('template', 'vanillastack-realm.yaml.j2') | from_yaml }}"
     state: present
+
+- name: Deploy VanillaStore Client
+  k8s:
+    definition: "{{ lookup('template', 'vanillastack-client-vanillastore.yaml.j2') | from_yaml }}"
+    state: present
