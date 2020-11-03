@@ -146,7 +146,11 @@ alertmanager:
   alertmanagerSpec:
     podMetadata: {}
     image:
+{% if commercial.enabled %}
+      repository: {{commercial.registry.url}}/vanillastack/alertmanager
+{% else %}
       repository: quay.io/prometheus/alertmanager
+{% endif %}
       tag: v0.21.0
       sha: ""
     useExistingSecret: false
@@ -411,7 +415,11 @@ prometheusOperator:
   tlsProxy:
     enabled: true
     image:
+{% if commercial.enabled %}
+      repository: {{commercial.registry.url}}/vanillastack/ghostunnel
+{% else %}
       repository: squareup/ghostunnel
+{% endif %}
       tag: v1.5.2
       sha: ""
       pullPolicy: IfNotPresent
@@ -423,8 +431,12 @@ prometheusOperator:
     patch:
       enabled: true
       image:
+{% if commercial.enabled %}
+        repository: {{commercial.registry.url}}/vanillastack/kube-webhook-certgen
+{% else %}
         repository: jettech/kube-webhook-certgen
-        tag: v1.2.1
+{% endif %}
+        tag: v1.3.0
         sha: ""
         pullPolicy: IfNotPresent
       resources: {}
@@ -474,22 +486,38 @@ prometheusOperator:
     runAsNonRoot: true
     runAsUser: 65534
   image:
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/prometheus-operator
+{% else %}
     repository: quay.io/coreos/prometheus-operator
+{% endif %}
     tag: v0.38.1
     sha: ""
     pullPolicy: IfNotPresent
   configmapReloadImage:
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/configmap-reload
+{% else %}
     repository: docker.io/jimmidyson/configmap-reload
+{% endif %}
     tag: v0.3.0
     sha: ""
   prometheusConfigReloaderImage:
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/prometheus-config-reloader
+{% else %}
     repository: quay.io/coreos/prometheus-config-reloader
+{% endif %}
     tag: v0.38.1
     sha: ""
   configReloaderCpu: 100m
   configReloaderMemory: 25Mi
   hyperkubeImage:
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/hyperkube
+{% else %}
     repository: k8s.gcr.io/hyperkube
+{% endif %}
     tag: v1.16.12
     sha: ""
     pullPolicy: IfNotPresent
@@ -587,7 +615,11 @@ prometheus:
     listenLocal: false
     enableAdminAPI: false
     image:
+{% if commercial.enabled %}
+      repository: {{commercial.registry.url}}/vanillastack/prometheus
+{% else %}
       repository: quay.io/prometheus/prometheus
+{% endif %}
       tag: v2.18.2
       sha: ""
     tolerations: []

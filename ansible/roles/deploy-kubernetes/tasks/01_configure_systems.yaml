@@ -73,7 +73,7 @@
   - name: remove cockpit
     package:
       state: absent
-      name: cockpit*
+      name: cockpit
 
   - name: Add cf repo      
     yum_repository:
