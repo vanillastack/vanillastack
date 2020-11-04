@@ -18,7 +18,6 @@ stages:
   - run_playbook_centos8
   - run_playbook_debian10
   - run_playbook_ubuntu_focal
-  - run_playbook_opensuse15_2
 
 build_docker_image_dev:
   only:
