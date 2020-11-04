@@ -35,29 +35,35 @@
   until: result.rc == 0
   loop: "{{ groups.master }}"
 
-- name: sleep 5 seconds
+- name: sleep 10 seconds
   pause:
-    seconds: 5
+    seconds: 10
+- name:  Deploy latest version of Cilium
+  block:
+    - set_fact:
+        template_version: "cilium-values"
+      when: ansible_os_family == 'Suse' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Ubuntu'
+    - set_fact: 
+        template_version: "cilium-values-debian"
+      when: ansible_distribution == 'Debian'
+    - name: deploy cilium chart
+      community.kubernetes.helm:
+        name: cilium
+        chart_ref: vanillastack/cilium
+        release_namespace: kube-system
+        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
+        create_namespace: true
+        wait: true
+  rescue:
+    - name: redeploy cilium
+      community.kubernetes.helm:
+        name: cilium
+        chart_ref: vanillastack/cilium
+        release_namespace: kube-system
+        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
+        create_namespace: true
+        wait: true
 
-- name: Deploy latest version of Cilium
-  community.kubernetes.helm:
-    name: cilium
-    chart_ref: vanillastack/cilium
-    release_namespace: kube-system
-    values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
-    create_namespace: true
-    wait: true
-  when: ansible_os_family == 'Suse' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Ubuntu'
-
-- name: Deploy latest version of Cilium
-  community.kubernetes.helm:
-    name: cilium
-    chart_ref: vanillastack/cilium
-    release_namespace: kube-system
-    values: "{{ lookup('template', 'cilium-values-debian.yaml.j2') | from_yaml }}"
-    create_namespace: true
-    wait: true
-  when: ansible_distribution == 'Debian'
 
 - name: save vars to kubeconfig
   k8s:
@@ -70,7 +76,7 @@
         namespace: kube-system
       data:
         clusterConfig: |
-          {{ hostvars[inventory_hostname] | to_json }}
+          "{{ hostvars[inventory_hostname] | to_json }}"
 
 ### To get running config, execute 
 ### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq
