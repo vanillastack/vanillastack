@@ -28,11 +28,16 @@
   command: helm repo update
 
 - name: wait for etcd to be ready
-  command: kubectl wait --namespace=kube-system --for=condition=ready pods -l component=etcd --timeout=10s
+  command: kubectl wait --namespace=kube-system --for=condition=ready pods etcd-{{ item }} --timeout=10s
   retries: 180
   delay: 10
   register: result
   until: result.rc == 0
+  loop: "{{ groups.master }}"
+
+- name: sleep 5 seconds
+  pause:
+    seconds: 5
 
 - name: Deploy latest version of Cilium
   community.kubernetes.helm:
