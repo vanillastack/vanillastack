@@ -498,9 +498,9 @@ chartmuseum:
   image:
     tag: v2.0.0
 {% if commercial.enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/harbor-chartmuseum
+    repository: {{commercial.registry.url}}/vanillastack/chartmuseum-photon
 {% else %}
-    repository: goharbor/harbor-chartmuseum
+    repository: goharbor/chartmuseum-photon
 {% endif %}
   enabled: {{harbor.chartmuseum.enabled}}
   # set the service account to be used, default if left empty
