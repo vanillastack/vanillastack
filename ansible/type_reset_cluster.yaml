@@ -14,11 +14,3 @@
   roles:
     - role: reset-cluster
       action: reset-ceph
-
-- name: reboot kubernetes nodes
-  hosts: kube_cluster
-  become: true
-  gather_facts: no
-  roles:
-    - role: reset-cluster
-      action: reboot-nodes

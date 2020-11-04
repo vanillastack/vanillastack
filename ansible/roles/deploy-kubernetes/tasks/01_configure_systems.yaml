@@ -74,6 +74,12 @@
     package:
       state: absent
       name: cockpit
+  - name: install pip modules
+    pip:
+      name:
+        - wheel
+      extra_args: --ignore-installed
+
 
   - name: Add cf repo      
     yum_repository:
@@ -125,9 +131,7 @@
   - name: Install packages
     package:
       name:
-#        - python-pip
         - python3-pip
-#        - python-kubernetes
         - python3-kubernetes
         - cf7-cli
         - "kubelet-{{ versions }}"
