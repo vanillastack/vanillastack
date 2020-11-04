@@ -1,4 +1,4 @@
 ---
 # handlers file for reset-kubernetes
-- name: Reboot all nodes
+- name: reboot_all_nodes
   include_tasks: handlers/reboot.yml
