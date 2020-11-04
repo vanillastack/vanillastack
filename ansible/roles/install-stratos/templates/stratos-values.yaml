@@ -1,15 +1,15 @@
 # Tag for images - do not edit
 consoleVersion: 4.0.1-aaac31f4e
-    ingress:
-      ## If true, Ingress will be created
-      host: "{{ stratos.coreDomain }}"
-      enabled: "{{ ingress.enabled }}"
-      annotations:
-        nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-        cert-manager.io/cluster-issuer: {{ tls.issuerName }}
-        kubernetes.io/tls-acme: "true"
-  localAdminPassword: {{ stratos.adminpassword }}
+ingress:
+  ## If true, Ingress will be created
+  host: "{{ stratos.coreDomain }}"
+  enabled: "{{ ingress.enabled }}"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: {{ tls.issuerName }}
+    kubernetes.io/tls-acme: "true"
+localAdminPassword: {{ stratos.adminpassword }}
 
 images:
   console: stratos-console
