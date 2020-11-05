@@ -1,15 +1,25 @@
 ---
 - name: Install Keepalived
-  hosts: haproxy
+  hosts: haproxy[0]
   become: true
   gather_facts: true
+  vars:
+    keepalived_MASTER_SLAVE: MASTER
+    keepalived_priority: 110
   roles:
     - role: install-haproxy
       action: 01_install_keepalived
+
+- name: Install Keepalived
+  hosts: haproxy[1:]
+  become: true
+  roles:
+    - role: install-haproxy
+      action: 01_install_keepalived
+
 - name: Install HaProxy
   hosts: haproxy
   become: true
-  gather_facts: true
   roles:
     - role: install-haproxy
       action: 02_install_haproxy

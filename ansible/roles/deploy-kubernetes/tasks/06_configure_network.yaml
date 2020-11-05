@@ -64,6 +64,8 @@
         create_namespace: true
         wait: true
 
+- set_fact:
+    configuration: "{{ hostvars[inventory_hostname] }}"
 
 - name: save vars to kubeconfig
   k8s:
@@ -76,7 +78,7 @@
         namespace: kube-system
       data:
         clusterConfig: |
-          "{{ hostvars[inventory_hostname] | to_json }}"
+          "{{ configuration | to_json }}"
 
 ### To get running config, execute 
 ### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq

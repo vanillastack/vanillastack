@@ -73,7 +73,9 @@
   - name: remove cockpit
     package:
       state: absent
-      name: cockpit
+      name: cockpit*
+    ignore_errors: yes
+
   - name: install pip modules
     pip:
       name:
@@ -216,6 +218,11 @@
 - name: configure Debian Systems
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   block:
+  - name: make sure, unattended upgrades is removed
+    package:
+      name: unattended-upgrade
+      state: absent
+      
   - name: Add key from keyserver
     apt_key:
       keyserver: keyserver.ubuntu.com

@@ -1,0 +1,11 @@
+---
+- name: Install Redis Cluster
+  community.kubernetes.helm:
+    chart_ref: vanillastack/redis-setup
+    name: redis-setup
+    release_namespace: "{{ redis.namespace }}"
+    create_namespace: true
+    values: "{{ lookup('template', 'redis-cluster-values.yaml') | from_yaml }}"
+    wait: true
+
+# tasks file for install-redis-cluster
