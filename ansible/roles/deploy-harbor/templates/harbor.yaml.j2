@@ -363,7 +363,7 @@ proxy:
 
 portal:
   image:
-    tag: v2.0.0
+    tag: v2.1.1
 {% if commercial.enabled %}
     repository: {{commercial.registry.url}}/vanillastack/harbor-portal
 {% else %}
@@ -382,7 +382,7 @@ portal:
 
 core:
   image:
-    tag: v2.0.0
+    tag: v2.1.1
 {% if commercial.enabled %}
     repository: {{commercial.registry.url}}/vanillastack/harbor-core
 {% else %}
@@ -417,7 +417,7 @@ core:
 
 jobservice:
   image:
-    tag: v2.0.0
+    tag: v2.1.1
 {% if commercial.enabled %}
     repository: {{commercial.registry.url}}/vanillastack/harbor-jobservice
 {% else %}
@@ -447,7 +447,7 @@ jobservice:
 registry:
   registry:
     image:
-      tag: v2.0.0
+      tag: v2.1.1
 {% if commercial.enabled %}
       repository: {{commercial.registry.url}}/vanillastack/registry-photon
 {% else %}
@@ -455,7 +455,7 @@ registry:
 {% endif %}
   controller:
     image:
-      tag: v2.0.0
+      tag: v2.1.1
 {% if commercial.enabled %}
       repository: {{commercial.registry.url}}/vanillastack/harbor-registryctl
 {% else %}
@@ -496,7 +496,7 @@ registry:
 
 chartmuseum:
   image:
-    tag: v2.0.0
+    tag: v2.1.1
 {% if commercial.enabled %}
     repository: {{commercial.registry.url}}/vanillastack/chartmuseum-photon
 {% else %}
@@ -520,7 +520,7 @@ chartmuseum:
 
 clair:
   image:
-    tag: v2.0.0
+    tag: v2.1.1
 {% if commercial.enabled %}
     repository: {{commercial.registry.url}}/vanillastack/clair-photon
 {% else %}
@@ -541,7 +541,7 @@ clair:
 
 trivy:
   image:
-    tag: v2.0.0
+    tag: v2.1.1
 {% if commercial.enabled %}
     repository: {{commercial.registry.url}}/vanillastack/trivy-adapter-photon
 {% else %}
@@ -599,7 +599,7 @@ notary:
   enabled: {{harbor.notary.enabled}}
   server:
     image:
-      tag: v2.0.0
+      tag: v2.1.1
 {% if commercial.enabled %}
       repository: {{commercial.registry.url}}/vanillastack/notary-server-photon
 {% else %}
@@ -613,7 +613,7 @@ notary:
     #    cpu: 100m
   signer:
     image:
-      tag: v2.0.0
+      tag: v2.1.1
 {% if commercial.enabled %}
       repository: {{commercial.registry.url}}/vanillastack/notary-signer-photon
 {% else %}
@@ -662,7 +662,7 @@ nginx:
 {% else %}
     repository: goharbor/nginx-photon
 {% endif %}
-    tag: v2.0.0
+    tag: v2.1.1
   replicas: 1
   # resources:
   #  requests:

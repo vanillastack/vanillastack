@@ -89,7 +89,7 @@ redis:
     imagetag: "1.0"    
 harbor:
   enabled: true
-  chartVersion: 1.4.0
+  chartVersion: 1.5.1
   namespace: harbor
   ingress:
     coreDomain: "harbor.{{ kubernetes.loadBalancer.clusterDomain }}"
