@@ -216,6 +216,11 @@
 - name: configure Debian Systems
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   block:
+  - name: make sure, unattended upgrades is removed
+    package:
+      name: unattended-upgrade
+      state: absent
+      
   - name: Add key from keyserver
     apt_key:
       keyserver: keyserver.ubuntu.com
