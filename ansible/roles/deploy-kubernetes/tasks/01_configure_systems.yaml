@@ -8,6 +8,11 @@
   package:
     name: epel-release
   when: ansible_distribution == 'CentOS'
+
+- name: Update Cache when on Debian Systems
+  apt:
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
  
 - name: Install neccessary packages
   package:
@@ -130,6 +135,11 @@
     set_fact:
       versions: "{{ dnf_output.stdout }}"
   
+  - name: Update Cache when on Debian Systems
+    apt:
+      update_cache: yes
+    when: ansible_os_family == 'Debian'
+
   - name: Install packages
     package:
       name:
