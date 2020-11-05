@@ -3,7 +3,6 @@
 keepalived:
   interval: 2
   debug: 2
-  interface: ens192
-  MASTER_SLAVE: SLAVE
-  priority: 101
+keepalived_MASTER_SLAVE: SLAVE
+keepalived_priority: 101
 

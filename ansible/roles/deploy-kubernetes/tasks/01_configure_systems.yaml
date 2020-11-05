@@ -73,7 +73,9 @@
   - name: remove cockpit
     package:
       state: absent
-      name: cockpit
+      name: cockpit*
+    ignore_errors: yes
+
   - name: install pip modules
     pip:
       name:

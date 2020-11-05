@@ -1,0 +1,71 @@
+---
+name: {{ redis.name }}
+setupMode: cluster
+cluster:
+  size: 3
+  master:
+    serviceType: ClusterIP
+  slave:
+    serviceType: ClusterIP
+global:
+{% if commercial.enabled %}
+  image: {{ commercial.registry.url }}/vanillastack/redis
+{% else %}  
+  image: quay.io/opstree/redis
+{% endif %}
+  tag: "{{ redis.global.imagetag }}"
+  imagePullPolicy: IfNotPresent
+  password: {{ redis.global.password }}
+  resources: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+exporter:
+  enabled: true
+{% if commercial.enabled %}
+  image: {{ commercial.registry.url }}/vanillastack/redis-exporter
+{% else %}    
+  image: quay.io/opstree/redis-exporter
+{% endif %}
+  tag: "{{ redis.exporter.imagetag }}"
+  imagePullPolicy: IfNotPresent
+  resources: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+# priorityClassName: "-"
+
+nodeSelector: {}
+  # memory: medium
+
+storageSpec:
+  volumeClaimTemplate:
+    spec:
+      storageClassName: {{ rook.storageClassRBD.name }}
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 5Gi
+    selector: {}
+
+securityContext: {}
+  # runAsUser: 1000
+
+affinity: {}
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     nodeSelectorTerms:
+  #     - matchExpressions:
+  #       - key: disktype
+  #         operator: In
+  #         values:
+  #         - ssd
+
