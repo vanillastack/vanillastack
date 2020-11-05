@@ -235,9 +235,7 @@
       state: absent
       
   - name: Add key from keyserver
-    apt_key:
-      keyserver: keyserver.ubuntu.com
-      id: "{{ item }}"
+    command: "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys {{ item }}"
     loop:
       - 93C4A3FD7BB9C367
       - 8BECF1637AD8C79D
