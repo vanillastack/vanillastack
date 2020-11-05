@@ -1,0 +1,6 @@
+---
+- name: install redis operator
+  hosts: master[0]
+  gather_facts: false
+  roles:
+  - role: install-redis-operator
