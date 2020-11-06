@@ -220,7 +220,7 @@
   block:
   - name: make sure, unattended upgrades is removed
     package:
-      name: unattended-upgrade
+      name: unattended-upgrades
       state: absent
       
   - name: Add key from keyserver
