@@ -42,3 +42,4 @@
     - { name: mistral, wait: true}
     - { name: congress, wait: true}
     - { name: octavia, wait: true}
+    - { name: rally, wait: false }
