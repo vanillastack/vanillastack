@@ -1,0 +1,42 @@
+---
+- name: Create Velero namespace
+  k8s:
+    name: "{{velero.namespace}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Deploy MinIO nfs pv
+  k8s:
+    state: present
+    definition: "{{ lookup('template','minio-nfs-pv.yaml.j2')}}"
+  when: velero.minio.enabled
+
+- name: Deploy MinIO nfs pvc
+  k8s:
+    state: present
+    definition: "{{ lookup('template','minio-nfs-pvc.yaml.j2')}}"
+  when: velero.minio.enabled
+
+- name: deploy minio
+  community.kubernetes.helm:
+    chart_ref: vanillastack/minio
+    name: minio
+    release_namespace: "{{ velero.namespace }}"
+    create_namespace: true
+    chart_version: "{{velero.minio.chartVersion}}"
+    values: "{{ lookup('template', 'minio.yaml.j2') | from_yaml }}"
+    wait: true
+    update_repo_cache: true
+  when: velero.minio.enabled
+
+- name: deploy velero helm
+  community.kubernetes.helm:
+    chart_ref: vanillastack/velero
+    name: velero
+    release_namespace: "{{ velero.namespace }}"
+    create_namespace: true
+    chart_version: "{{velero.chartVersion}}"
+    values: "{{ lookup('template', 'velero.yaml.j2') | from_yaml }}"
+    wait: true 
+    update_repo_cache: true

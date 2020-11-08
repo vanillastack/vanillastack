@@ -1,0 +1,15 @@
+---
+velero:
+  enabled: false
+  version: v1.5.2
+  chartVersion: 2.13.6
+  namespace: velero
+  minio:
+    enabled: true
+    chartVersion: 8.0.2
+    nfs:
+      size: 50Gi
+      server: <NFS server ip>
+      path: <NFS path>
+    accessKey: <access key>
+    secretKey: <secret key>

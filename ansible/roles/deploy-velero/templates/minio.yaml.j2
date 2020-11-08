@@ -1,0 +1,40 @@
+---
+image:
+{% if commercial.enabled %}
+  repository: {{commercial.registry.url}}/vanillastack/minio
+{% else %}
+  repository: minio/minio
+{% endif %}
+
+mcImage:
+{% if commercial.enabled %}
+  repository: {{commercial.registry.url}}/vanillastack/mc
+{% else %}
+  repository: minio/mc
+{% endif %}
+
+ingress:
+  enabled: false
+
+mode: standalone
+accessKey: {{velero.minio.accessKey}}
+secretKey: {{velero.minio.secretKey}}
+
+service:
+  type: ClusterIP
+  port: 9000
+
+persistence:
+  enabled: true
+  existingClaim: minio-nfs-pvc
+  storageClass: nfs
+  size: {{velero.minio.nfs.size}}
+
+metrics:
+  serviceMonitor:
+    enabled: true
+
+buckets:
+  - name: velero
+    policy: none
+    purge: false
