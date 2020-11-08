@@ -370,6 +370,27 @@ openstack:
     auth:
       service:
         password: lZcmrMgCOYFWe662PQAGdpwAT
+  rally:
+    # IMPORTANT: enable Rally for testing only!
+    enabled: false
+    chartName: rally
+    chartVersion: 20201108
+    createService: false
+    enabledTasks:
+      - cinder
+      - glance
+      - heat
+      - keystone
+      # - magnum
+      #- neutron
+      - nova
+      - senlin
+    auth:
+      service:
+        password: u27quXoDJegu2QIWZnqxakP7G
+      db:
+        password: lnB2Dj3UpezGJ0F4n22pOraYT 
+    storageClass: "rook-ceph-block"
   senlin:
     enabled: false
     chartName: senlin
