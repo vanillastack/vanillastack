@@ -7,9 +7,9 @@ images:
     db_init: docker.io/xrally/xrally-openstack:2.0.0
     rally_db_sync: docker.io/xrally/xrally-openstack:2.0.0
     run_task: docker.io/xrally/xrally-openstack:2.0.0
-    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_xenial
-    ks_service: docker.io/openstackhelm/heat:stein-ubuntu_xenial
-    ks_endpoints: docker.io/openstackhelm/heat:stein-ubuntu_xenial
+    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:stein-ubuntu_bionic
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
 {% if openstack.release == "stein" and commercial.enabled %}
@@ -20,9 +20,9 @@ images:
     db_init: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
     rally_db_sync: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
     run_task: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
-    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_xenial
-    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_xenial
-    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_xenial
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
 {% if openstack.release == "train" and commercial.enabled != true  %}
@@ -33,9 +33,9 @@ images:
     db_init: docker.io/xrally/xrally-openstack:2.0.0
     rally_db_sync: docker.io/xrally/xrally-openstack:2.0.0
     run_task: docker.io/xrally/xrally-openstack:2.0.0
-    ks_user: docker.io/openstackhelm/heat:train-ubuntu_xenial
-    ks_service: docker.io/openstackhelm/heat:train-ubuntu_xenial
-    ks_endpoints: docker.io/openstackhelm/heat:train-ubuntu_xenial
+    ks_user: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:train-ubuntu_bionic
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
 {% if openstack.release == "train" and commercial.enabled %}
@@ -46,9 +46,9 @@ images:
     db_init: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
     rally_db_sync: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
     run_task: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
-    ks_user: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_xenial
-    ks_service: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_xenial
-    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_xenial
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
 {% if openstack.release == "ussuri" and commercial.enabled != true  %}
@@ -59,9 +59,9 @@ images:
     db_init: docker.io/xrally/xrally-openstack:2.0.0
     rally_db_sync: docker.io/xrally/xrally-openstack:2.0.0
     run_task: docker.io/xrally/xrally-openstack:2.0.0
-    ks_user: docker.io/openstackhelm/heat:ussuri-ubuntu_xenial
-    ks_service: docker.io/openstackhelm/heat:ussuri-ubuntu_xenial
-    ks_endpoints: docker.io/openstackhelm/heat:ussuri-ubuntu_xenial
+    ks_user: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
 {% if openstack.release == "ussuri" and commercial.enabled %}
@@ -72,9 +72,9 @@ images:
     db_init: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
     rally_db_sync: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
     run_task: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
-    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_xenial
-    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_xenial
-    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_xenial
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
 
