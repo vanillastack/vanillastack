@@ -1,0 +1,118 @@
+---
+{% if openstack.release == "stein" and commercial.enabled != true  %}
+images:
+  tags:
+    bootstrap: docker.io/xrally/xrally-openstack:2.0.0
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    db_init: docker.io/xrally/xrally-openstack:2.0.0
+    rally_db_sync: docker.io/xrally/xrally-openstack:2.0.0
+    run_task: docker.io/xrally/xrally-openstack:2.0.0
+    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "stein" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    rally_db_sync: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    run_task: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled != true  %}
+images:
+  tags:
+    bootstrap: docker.io/xrally/xrally-openstack:2.0.0
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    db_init: docker.io/xrally/xrally-openstack:2.0.0
+    rally_db_sync: docker.io/xrally/xrally-openstack:2.0.0
+    run_task: docker.io/xrally/xrally-openstack:2.0.0
+    ks_user: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    rally_db_sync: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    run_task: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+images:
+  tags:
+    bootstrap: docker.io/xrally/xrally-openstack:2.0.0
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    db_init: docker.io/xrally/xrally-openstack:2.0.0
+    rally_db_sync: docker.io/xrally/xrally-openstack:2.0.0
+    run_task: docker.io/xrally/xrally-openstack:2.0.0
+    ks_user: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    rally_db_sync: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    run_task: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+
+enabled_tasks: {{openstack.rally.enabledTasks}}
+
+endpoints:
+  identity:
+    name: keystone
+    auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
+      admin:
+        region_name: {{openstack.region}}
+        username: admin
+        password: {{openstack.keystone.auth.admin.password}}
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+      rally:
+        role: admin
+        region_name: {{openstack.region}}
+        username: rally
+        password: {{openstack.rally.auth.service.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+      senlin:
+        username: rally
+        password: {{openstack.rally.auth.service.password}}
+
+pvc:
+  name: pvc-rally
+  requests:
+    storage: 2Gi
+  storage_class: {{openstack.rally.storageClass}} 
