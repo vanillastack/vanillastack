@@ -1,0 +1,44 @@
+# Default values for pxc-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+{% if commercial.enabled %}
+  repository: {{commercial.registry.url}}/vanillastack/percona-xtradb-cluster-operator
+{% else %}
+  repository: percona/percona-xtradb-cluster-operator
+{% endif %}
+  tag: 1.6.0
+  pullPolicy: IfNotPresent
+
+# set if you want to specify a namespace to watch
+# defaults to `.Release.namespace` if left blank
+# watchNamespace:
+
+# set if you want to use a different operator name
+# defaults to `percona-xtradb-cluster-operator`
+# operatorName:
+
+# set to false if you don't want the helm chart to
+# automatically create the CRD.
+createCRD: true
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
