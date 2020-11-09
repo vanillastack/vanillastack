@@ -15,3 +15,8 @@ velero:
       path: /srv/nfs
     accessKey: NQhlZ2qu6Gi73f4AfTBbGyLob
     secretKey: p7v1jHW8cW3BQNMknrTAJqpUX
+perconaOperator:
+  enabled: true
+  chartName: "pxc-operator"
+  chartVersion: "0.1.10"
+  namespace: "pxc-operator"
