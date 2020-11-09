@@ -27,25 +27,45 @@
 - name: refresh repo
   command: helm repo update
 
-- name: Deploy latest version of Cilium
-  community.kubernetes.helm:
-    name: cilium
-    chart_ref: vanillastack/cilium
-    release_namespace: kube-system
-    values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
-    create_namespace: true
-    wait: true
-  when: ansible_os_family == 'Suse' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Ubuntu'
+- name: wait for etcd to be ready
+  command: kubectl wait --namespace=kube-system --for=condition=ready pods etcd-{{ item }} --timeout=10s
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
+  loop: "{{ groups.master }}"
 
-- name: Deploy latest version of Cilium
-  community.kubernetes.helm:
-    name: cilium
-    chart_ref: vanillastack/cilium
-    release_namespace: kube-system
-    values: "{{ lookup('template', 'cilium-values-debian.yaml.j2') | from_yaml }}"
-    create_namespace: true
-    wait: true
-  when: ansible_distribution == 'Debian'
+- name: sleep 10 seconds
+  pause:
+    seconds: 10
+- name:  Deploy latest version of Cilium
+  block:
+    - set_fact:
+        template_version: "cilium-values"
+      when: ansible_os_family == 'Suse' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Ubuntu'
+    - set_fact: 
+        template_version: "cilium-values-debian"
+      when: ansible_distribution == 'Debian'
+    - name: deploy cilium chart
+      community.kubernetes.helm:
+        name: cilium
+        chart_ref: vanillastack/cilium
+        release_namespace: kube-system
+        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
+        create_namespace: true
+        wait: true
+  rescue:
+    - name: redeploy cilium
+      community.kubernetes.helm:
+        name: cilium
+        chart_ref: vanillastack/cilium
+        release_namespace: kube-system
+        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
+        create_namespace: true
+        wait: true
+
+- set_fact:
+    configuration: "{{ hostvars[inventory_hostname] }}"
 
 - name: save vars to kubeconfig
   k8s:
@@ -58,7 +78,7 @@
         namespace: kube-system
       data:
         clusterConfig: |
-          {{ hostvars[inventory_hostname] | to_json }}
+          "{{ configuration | to_json }}"
 
 ### To get running config, execute 
 ### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq

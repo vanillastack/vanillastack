@@ -18,7 +18,6 @@ stages:
   - run_playbook_centos8
   - run_playbook_debian10
   - run_playbook_ubuntu_focal
-  - run_playbook_opensuse15_2
 
 build_docker_image_dev:
   only:
@@ -107,20 +106,20 @@ run_playbook_fedora32:
     - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
-run_playbook_opensuse15_2:
-  only:
-    refs:
-      - testing
-  stage: run_playbook_opensuse15_2
-  interruptible: true
-  allow_failure: true
-  script:
-    - curl $WEBHOOK_REDEPLOY_OPENSUSE15_2 && sleep 60
-    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-    - cd ansible
-    - mv group_vars.testing group_vars
-    - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
-    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+#run_playbook_opensuse15_2:
+#  only:
+#    refs:
+#      - testing
+#  stage: run_playbook_opensuse15_2
+#  interruptible: true
+#  allow_failure: true
+#  script:
+#    - curl $WEBHOOK_REDEPLOY_OPENSUSE15_2 && sleep 60
+#    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+#    - cd ansible
+#    - mv group_vars.testing group_vars
+#    - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
+#    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_ubuntu_focal:
   only:
@@ -141,4 +140,4 @@ run_playbook_ubuntu_focal:
 include:
   - local: '/live_image/.gitlab-ci.yaml'
   - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
+#  - template: Security/Secret-Detection.gitlab-ci.yml

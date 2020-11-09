@@ -1,4 +1,2 @@
 ---
 # vars file for install_haproxy
-
-keepalived_MASTER_SLAVE: "{{ keepalived.MASTER_SLAVE}}"
