@@ -651,8 +651,7 @@ database:
 redis:
   type: "external"
   external:
-    host: "redis-headless.{{harbor.namespace}}.svc"
-    port: "6379"
+    addr: "redis-headless.{{harbor.namespace}}.svc:6379"
     password: "{{harbor.redis.password}}"
 
 nginx:
