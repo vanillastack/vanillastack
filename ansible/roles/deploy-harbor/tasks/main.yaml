@@ -22,11 +22,6 @@
     src: /tmp/harbor_postgres.yaml
     state: present
 
-- name: Add Redis helm repository
-  community.kubernetes.helm_repository:
-    name: bitnami
-    repo_url: "https://charts.bitnami.com/bitnami"
-
 - name: refresh helm repo
   command: helm repo update
 
@@ -35,7 +30,7 @@
     name: redis
     release_namespace: "{{harbor.namespace}}"
     create_namespace: yes
-    chart_ref: "bitnami/redis"
+    chart_ref: "vanillastack/redis"
     chart_version: "{{harbor.redis.chartVersion}}"
     values: "{{ lookup('template', 'redis.yaml.j2') | from_yaml }}"
 
@@ -50,17 +45,12 @@
   shell: echo "$(kubectl get secret -n {{ harbor.namespace }} -o json harbor.{{harbor.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
   register: postgrespassword
 
-- name: Add Harbor helm repository
-  community.kubernetes.helm_repository:
-    name: harbor
-    repo_url: "https://helm.goharbor.io"
-
 - name: Deploy Harbor
   community.kubernetes.helm:
     name: harbor
     release_namespace: "{{harbor.namespace}}"
     create_namespace: yes
-    chart_ref: "harbor/harbor"
+    chart_ref: "vanillastack/harbor"
     chart_version: "{{harbor.chartVersion}}"
     values: "{{ lookup('template', 'harbor.yaml.j2') | from_yaml }}"
 

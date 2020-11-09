@@ -74,6 +74,14 @@
     package:
       state: absent
       name: cockpit*
+    ignore_errors: yes
+
+  - name: install pip modules
+    pip:
+      name:
+        - wheel
+      extra_args: --ignore-installed
+
 
   - name: Add cf repo      
     yum_repository:
@@ -125,9 +133,7 @@
   - name: Install packages
     package:
       name:
-#        - python-pip
         - python3-pip
-#        - python-kubernetes
         - python3-kubernetes
         - cf7-cli
         - "kubelet-{{ versions }}"
@@ -212,6 +218,11 @@
 - name: configure Debian Systems
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   block:
+  - name: make sure, unattended upgrades is removed
+    package:
+      name: unattended-upgrades
+      state: absent
+      
   - name: Add key from keyserver
     apt_key:
       keyserver: keyserver.ubuntu.com

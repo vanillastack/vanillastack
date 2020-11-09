@@ -1,0 +1,203 @@
+---
+{% if openstack.release == "stein" and commercial.enabled != true  %}
+images:
+  tags:
+    placement: docker.io/openstackhelm/placement:stein-ubuntu_bionic
+    ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    db_init: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:stein-ubuntu_bionic
+    db_migrate: quay.io/airshipit/porthole-mysqlclient-utility:latest-ubuntu_bionic
+    placement_db_sync: docker.io/openstackhelm/placement:stein-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "stein" and commercial.enabled %}
+images:
+  tags:
+    placement: {{commercial.registry.url}}/vanillastack/placement:stein-ubuntu_bionic
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    db_init: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
+    db_migrate: {{commercial.registry.url}}/vanillastack/porthole-mysqlclient-utility:latest-ubuntu_bionic
+    placement_db_sync: {{commercial.registry.url}}/vanillastack/placement:stein-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled != true  %}
+images:
+  tags:
+    placement: docker.io/openstackhelm/placement:train-ubuntu_bionic
+    ks_user: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    db_init: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:train-ubuntu_bionic
+    db_migrate: quay.io/airshipit/porthole-mysqlclient-utility:latest-ubuntu_bionic
+    placement_db_sync: docker.io/openstackhelm/placement:train-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "train" and commercial.enabled %}
+images:
+  tags:
+    placement: {{commercial.registry.url}}/vanillastack/placement:train-ubuntu_bionic
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    db_init: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
+    db_migrate: {{commercial.registry.url}}/vanillastack/porthole-mysqlclient-utility:latest-ubuntu_bionic
+    placement_db_sync: {{commercial.registry.url}}/vanillastack/placement:train-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+images:
+  tags:
+    placement: docker.io/openstackhelm/placement:ussuri-ubuntu_bionic
+    ks_user: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_service: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    ks_endpoints: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    db_init: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    db_drop: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
+    db_migrate: quay.io/airshipit/porthole-mysqlclient-utility:latest-ubuntu_bionic
+    placement_db_sync: docker.io/openstackhelm/placement:ussuri-ubuntu_bionic
+    dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: docker.io/docker:17.07.0
+{% endif %}
+{% if openstack.release == "ussuri" and commercial.enabled %}
+images:
+  tags:
+    placement: {{commercial.registry.url}}/vanillastack/placement:ussuri-ubuntu_bionic
+    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    db_init: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    db_drop: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    db_migrate: {{commercial.registry.url}}/vanillastack/porthole-mysqlclient-utility:latest-ubuntu_bionic
+    placement_db_sync: {{commercial.registry.url}}/vanillastack/placement:ussuri-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+
+labels:
+  api_metadata:
+    node_selector_key: openstack-compute-node
+    node_selector_value: enabled
+pod:
+  use_fqdn:
+    compute: false
+  replicas:
+    api: {{openstack.placement.api.replicas}}
+endpoints:
+  placement:
+    host_fqdn_override:
+      public:
+        host: {{openstack.placement.endpoints.publicURLPrefix}}.{{openstack.publicDomain}}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        tls:
+          key: dummy
+          crt: dummy
+{% if tls.issuerName == "letsencrypt-staging" %}
+          ca: |
+{{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "letsencrypt-prod" %}
+          ca: |
+{{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
+{% elif tls.issuerName == "certmanager-selfsigned" %}
+          ca: |
+{{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
+{% endif %}
+{% endif %}
+    scheme:
+      default: http
+{% if openstack.tls.enabled %}
+      public: https
+    port:
+      api:
+        public: 443
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+    certs:
+      nova:
+        secretName: placement-tls
+        issuerRef:
+          name: openstack-{{tls.issuerName}}
+          kind: Issuer
+{% endif %}
+  oslo_db:
+    auth:
+      admin:
+        username: root
+        password: {{openstack.mariadb.auth.admin.password}}
+        secret:
+          tls:
+            internal: mariadb-tls-direct
+      placement:
+        username: placement
+        password: {{openstack.placement.auth.db.password}}
+      nova_api:
+        username: nova
+        password: {{openstack.nova.auth.db.password}}
+  oslo_messaging:
+    auth:
+      admin:
+        username: rabbitmq
+        password: {{openstack.rabbitmq.auth.admin.password}}
+      nova:
+        username: nova
+        password: {{openstack.placement.auth.messaging.password}}
+  identity:
+    name: keystone
+    auth:
+{% if openstack.tls.enabled %}
+      cacert: /tmp/openstack_ca.crt
+{% endif %}
+      admin:
+        region_name: {{openstack.region}}
+        username: admin
+        password: {{openstack.keystone.auth.admin.password}}
+        project_name: admin
+        user_domain_name: default
+        project_domain_name: default
+      placement:
+        role: admin
+        region_name: {{openstack.region}}
+        username: placement
+        password: {{openstack.placement.auth.service.password}}
+        project_name: service
+        user_domain_name: service
+        project_domain_name: service
+
+network:
+  api:
+    ingress:
+      public: true
+      classes:
+        namespace: "nginx"
+        cluster: "nginx-cluster"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        kubernetes.io/tls-acme: "true"
+#        nginx.ingress.kubernetes.io/backend-protocol: "https"
+{% endif %}
+{% if openstack.tls.enabled and openstack.tls.useCertManager %}
+        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
+{% endif %}
+
+manifests:
+  secret_ingress_tls: false
+  job_db_migrate: true
+
+dependencies:
+  static:
+    db_sync:
+      jobs:
+        - placement-db-init
+        - placement-db-migrate

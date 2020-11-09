@@ -1,0 +1,97 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>VanillaStack Installer</title>
+    <meta name="description" content="The VanillaStack Installer">
+    <meta name="author" content="Cloudical.io">
+    <!-- meta http-equiv="refresh" content="60;url=http://localhost:8080" /-->
+    <style>
+      body {
+          background-color: #142d50;
+          font-family: Montserrat, Arial, Helvetica, sans-serif;
+          font-weight: 400;
+
+          background-image: url(header.png);
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          background-position: left top;
+      }
+
+
+      h1   {
+          color: #8b96a8;
+          text-align: right;
+          font-size: 36pt ;
+          padding-left: 5% ;
+          padding-right: 10% ;
+          padding-top: 5% ;
+          padding-bottop: 0 ;
+          font-weight: bold;
+          float:right;
+      }
+      div {
+          padding:25%;
+          text-align: center;
+          vertical-align: middle;
+      }
+      div#main {
+          font-size:20pt;
+      }
+      p    {
+          color: #d3d6de;
+      }
+      a { color: #6677ff; }
+
+      #loading {
+        position: fixed;
+        top: calc(50%-144px);
+        left: calc(50%-144px);
+        /* bring your own prefixes */
+
+        display: inline-block;
+        width: 144px;
+        height: 144px;
+#        border: 3px solid rgba(255,255,255,.3);
+#        border-radius: 50%;
+#        border-top-color: #fff;
+        animation: spin 5s infinite;
+        -webkit-animation: spin 5s infinite;
+      }
+
+      @keyframes spin {
+        to { -webkit-transform: rotate(720deg);}
+      }
+      @-webkit-keyframes spin {
+        to { -webkit-transform: rotate(720deg);}
+      }
+
+    </style>
+  </head>
+
+  <body>
+      <img src="img/vanilla.svg" id="loading"/>
+    <div id=main>
+    <p> Initializing Installer ...</p>
+      <div>
+      <p>You can read more on VanillaStack on <a href="https://vanillastack.io">vanillastack.io</a></p>
+      </div>
+    </div>
+    <div id="buildinfo">
+      <table>
+        <tbody>
+        <tr><td>Builddate:</td><td>__BUILD_DATE__</td></tr>
+        <tr><td rowspan="2">ISO-Builder:</td><td>__GIT_COMMIT__</td></tr>
+        <tr><td>__GIT_BRANCH__</td></tr>
+        <tr><td>Installer-Image-Tag:</td><td>__INSTALLER_IMAGE_TAG__</td></tr>
+        <tr><td>Installer-Image-Hash:</td><td>__INSTALLER_IMAGE_HASH__</td></tr>
+      </tbody>
+      </table>
+    </div>
+  </body>
+  <script src="js/jquery-3.5.1.min.js"></script>
+  <script src="js/local.js"></script>
+</html>

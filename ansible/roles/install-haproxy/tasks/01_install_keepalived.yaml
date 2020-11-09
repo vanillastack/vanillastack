@@ -5,11 +5,6 @@
     name:
       - keepalived
 
-- name: set primary node as Master
-  set_fact:
-    keepalived_MASTER_SLAVE: MASTER
-  run_once: true
-
 - name: Put configuration file for keepalived
   template: 
     src: keepalived.conf.j2 
