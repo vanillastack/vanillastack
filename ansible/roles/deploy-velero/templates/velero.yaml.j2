@@ -12,6 +12,7 @@ installCRDs: true
 snapshotsEnabled: true
 
 configuration:
+{% if velero.backend == "minio" %}
   provider: aws
   backupStorageLocation:
     name: default
@@ -29,15 +30,38 @@ configuration:
       s3ForcePathStyle: "true"
       publicUrl: "http://minio:9000"
       s3Url: "http://minio:9000"
+{% elif velero.backend == "aws" %}
+  provider: aws
+  backupStorageLocation:
+    name: default
+    bucket: {{velero.aws.bucketName}}
+    config:
+      region: {{velero.aws.region}}
+      s3ForcePathStyle: "true"
+      publicUrl: "{{velero.aws.publicURL}}"
+      s3Url: "{{velero.aws.s3URL}}"
+  volumeSnapshotLocation:
+    name: default
+    bucket: {{velero.aws.snapshotBucketName}}
+    config:
+      region: {{velero.aws.region}}
+      s3ForcePathStyle: "true"
+      publicUrl: "{{velero.aws.publicURL}}"
+      s3Url: "{{velero.aws.s3URL}}"
+{% endif %)
 
 credentials:
   useSecret: true
   secretContents:
     cloud: |
       [default]
+{% if velero.backend == "minio" %}
       aws_access_key_id = {{velero.minio.accessKey}}
       aws_secret_access_key = {{velero.minio.secretKey}}
-
+{% elif velero.backend == "aws" %}
+      aws_access_key_id = {{velero.aws.accessKey}}
+      aws_secret_access_key = {{velero.aws.secretKey}}
+{% endif %)
 deployRestic: true
 restic:
   podVolumePath: /var/lib/kubelet/pods

@@ -6,6 +6,7 @@ velero:
   version: v1.5.2
   chartVersion: 2.13.6
   namespace: velero
+  backend: minio
   minio:
     enabled: true
     chartVersion: 8.0.2
