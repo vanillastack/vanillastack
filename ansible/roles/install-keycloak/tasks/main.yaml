@@ -69,5 +69,5 @@
 
 - name: Deploy VanillaStore Client
   k8s:
-    definition: "{{ lookup('template', 'vanillastack-client-vanillastore.yaml.j2') | from_yaml }}"
+    definition: "{{ lookup('template', 'vanillastack-client-vanillamanager.yaml.j2') | from_yaml }}"
     state: present

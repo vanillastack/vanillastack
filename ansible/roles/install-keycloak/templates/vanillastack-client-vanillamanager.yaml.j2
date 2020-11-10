@@ -1,7 +1,7 @@
 apiVersion: keycloak.org/v1alpha1
 kind: KeycloakClient
 metadata:
-  name: vanillastore-client
+  name: vanillamanager-client
   labels:
     app: vanillastack-sso
   namespace: {{keycloak.namespace}}
@@ -12,7 +12,7 @@ pec:
   client:
     clientId: "admin.{{kubernetes.loadBalancer.clusterDomain}}"
     name: "admin.{{kubernetes.loadBalancer.clusterDomain}}"
-    secret: vanillastore-client-secret
+    secret: vanillamanager-client-secret
     clientAuthenticatorType: client-secret
     protocol: openid-connect
     enabled: true
