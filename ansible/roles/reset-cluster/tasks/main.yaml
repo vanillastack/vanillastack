@@ -1,0 +1,4 @@
+---
+# tasks file for reset-kubernetes
+- name: "{{ action }}"
+  include_tasks: "{{ action }}.yml"

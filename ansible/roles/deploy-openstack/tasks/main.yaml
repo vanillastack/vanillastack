@@ -33,6 +33,7 @@
     - { name: openvswitch, wait: true}
     - { name: neutron, wait: false}
     - { name: libvirt, wait: false}
+    - { name: placement, wait: false}
     - { name: nova, wait: true}
     - { name: heat, wait: true}
     - { name: radosgw, wait: true}
@@ -41,3 +42,4 @@
     - { name: mistral, wait: true}
     - { name: congress, wait: true}
     - { name: octavia, wait: true}
+    - { name: rally, wait: false }

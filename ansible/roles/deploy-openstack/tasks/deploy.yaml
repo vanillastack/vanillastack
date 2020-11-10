@@ -11,7 +11,20 @@
     chart_version: "{{ openstack[item.name]['chartVersion'] }}"
     release_namespace: "{{openstack.namespace}}"
     values: "{{ lookup('template', '{{item.name}}.yaml.j2') | from_yaml }}"
-  when: openstack[item.name]['enabled']
+    update_repo_cache: yes
+  when: openstack[item.name]['enabled'] and item.name != "placement"
+  retries: 3
+  delay: 10
+
+- name: "{{item.name}} | deploy helm chart"
+  community.kubernetes.helm:
+    name: "{{ item.name }}"
+    chart_ref: "vanillastack/{{ openstack[item.name]['chartName'] }}"
+    chart_version: "{{ openstack[item.name]['chartVersion'] }}"
+    release_namespace: "{{openstack.namespace}}"
+    values: "{{ lookup('template', '{{item.name}}.yaml.j2') | from_yaml }}"
+    update_repo_cache: yes
+  when: openstack[item.name]['enabled'] and item.name == "placement" and openstack.release != "stein"
   retries: 3
   delay: 10
 

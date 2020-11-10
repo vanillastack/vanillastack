@@ -1,0 +1,20 @@
+---
+- name: catch disk information
+  setup:
+  register: setup_res
+
+- set_fact:
+    device_list: "{{ setup_res | json_query('ansible_facts.ansible_devices') | to_json |  from_json }}"
+
+- name: whipe disks on storage nodes
+  command: "wipefs -fa /dev/{{ item.key }}" 
+  loop: "{{ q('dict', device_list) }}"
+  when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+  notify: reboot_all_nodes
+
+- name: make sure, rook folder is absent
+  file: 
+    path: /var/lib/rook
+    state: absent  
+  notify: reboot_all_nodes
+

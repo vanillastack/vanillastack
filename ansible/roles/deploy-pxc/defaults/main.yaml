@@ -1,0 +1,5 @@
+perconaOperator:
+  enabled: false
+  chartName: "pxc-operator"
+  chartVersion: "0.1.10"
+  namespace: "pxc-operator"

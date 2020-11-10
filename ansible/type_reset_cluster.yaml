@@ -1,0 +1,16 @@
+---
+- name: reset kubernetes cluster
+  hosts: kube_cluster
+  become: true
+  gather_facts: no
+  roles:
+    - role: reset-cluster
+      action: reset-kubernetes
+
+- name: reset osds
+  hosts: storage
+  become: true
+  gather_facts: no
+  roles:
+    - role: reset-cluster
+      action: reset-ceph

@@ -1,0 +1,13 @@
+[Plymouth Theme]
+Name=Vanilla
+Description=Copy of spinner-theme adjusted for vanilla
+ModuleName=two-step
+
+[two-step]
+ImageDir=/usr/share/plymouth/themes/vanilla
+HorizontalAlignment=.5
+VerticalAlignment=.75
+Transition=none
+TransitionDuration=0.0
+BackgroundStartColor=0x142D50
+BackgroundEndColor=0x202020

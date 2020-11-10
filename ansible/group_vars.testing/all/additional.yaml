@@ -1,0 +1,23 @@
+polyverse:
+  enabled: false
+  key: "POLYVERSE_KEY"
+velero:
+  enabled: false
+  version: v1.5.2
+  chartVersion: 2.13.6
+  namespace: velero
+  backend: minio
+  minio:
+    enabled: true
+    chartVersion: 8.0.2
+    nfs:
+      size: 50Gi
+      server: 95.217.63.249
+      path: /srv/nfs
+    accessKey: NQhlZ2qu6Gi73f4AfTBbGyLob
+    secretKey: p7v1jHW8cW3BQNMknrTAJqpUX
+perconaOperator:
+  enabled: true
+  chartName: "pxc-operator"
+  chartVersion: "0.1.10"
+  namespace: "pxc-operator"

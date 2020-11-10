@@ -1,0 +1,24 @@
+---
+velero:
+  enabled: false
+  version: v1.5.2
+  chartVersion: 2.13.6
+  namespace: velero
+  backend: minio
+  minio:
+    enabled: true
+    chartVersion: 8.0.2
+    nfs:
+      size: 50Gi
+      server: <NFS server ip>
+      path: <NFS path>
+    accessKey: <access key>
+    secretKey: <secret key>
+  aws:
+    bucketName: velero
+    snapshotBucketName: kubernetes-pv
+    region: <region name>
+    publicURL: <public url>
+    s3URL: <s3 url> 
+    accessKey: <access key>
+    secretKey: <secret key>

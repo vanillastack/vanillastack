@@ -1,15 +1,39 @@
-consoleVersion: latest
+# Tag for images - do not edit
+consoleVersion: 4.0.1-aaac31f4e
+ingress:
+  ## If true, Ingress will be created
+  host: "{{ stratos.coreDomain }}"
+  enabled: "{{ ingress.enabled }}"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: {{ tls.issuerName }}
+    kubernetes.io/tls-acme: "true"
+localAdminPassword: {{ stratos.adminpassword }}
 
-console:
-  service:
-    ingress:
-      ## If true, Ingress will be created
-      host: "{{ stratos.coreDomain }}"
-      enabled: "{{ ingress.enabled }}"
-      annotations:
-        nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-        cert-manager.io/cluster-issuer: {{ tls.issuerName }}
-        kubernetes.io/tls-acme: "true"
-  localAdminPassword: {{ stratos.adminpassword }}
+images:
+  console: stratos-console
+  proxy: stratos-jetstream
+  mariadb: stratos-mariadb
+  configInit: stratos-config-init
 
+kube:
+  # Whether RBAC is enabled in the Kubernetes cluster
+  auth: "rbac"
+  external_console_https_port: 8443
+  storage_class:
+    persistent:
+{% if commercial.enabled %}
+  organization: vanillastack
+{% else %}
+  organization: splatform
+{% endif %}
+  registry:
+{% if commercial.enabled %}
+    hostname: {{commercial.registry.url}}
+{% else %}
+    hostname: docker.io
+{% endif %}
+    username:
+    password:
+    email: default

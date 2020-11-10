@@ -6,9 +6,10 @@ openstack:
   publicProto: "http"
   region: RegionOne
   # releases available:
+  # - stein (EOL 2020.11.11)
   # - train
   # - ussuri (not tested)
-  release: "stein"
+  release: "ussuri"
   tls:
     enabled: true
     useCertManager: true
@@ -17,7 +18,7 @@ openstack:
   mariadb:
     enabled: true
     chartName: mariadb
-    chartVersion: 0.1.0
+    chartVersion: 0.1.4
     createService: false
     replicas: 3
     persistence:
@@ -36,7 +37,7 @@ openstack:
   rabbitmq:
     enabled: true
     chartName: rabbitmq
-    chartVersion: 0.1.0
+    chartVersion: 0.1.1
     createService: false
     replicas: 2
     persistence:
@@ -49,7 +50,7 @@ openstack:
   memcached:
     enabled: true
     chartName: memcached
-    chartVersion: 0.1.0
+    chartVersion: 0.1.1
     createService: false
     replicas: 1
   ceph:
@@ -60,7 +61,7 @@ openstack:
   barbican:
     enabled: true
     chartName: barbican
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     api:
       replicas: 2
@@ -76,7 +77,7 @@ openstack:
   cinder:
     enabled: true
     chartName: cinder
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     rbd:
       enabled: true
@@ -109,7 +110,7 @@ openstack:
   congress:
     enabled: false
     chartName: congress
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     api:
       replicas: 2
@@ -120,7 +121,7 @@ openstack:
   designate:
     enabled: false
     chartName: designate
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     auth:
       service: 
@@ -128,7 +129,7 @@ openstack:
   glance:
     enabled: true
     chartName: glance
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     defaultBackend: rbd
     rbd:
@@ -160,7 +161,7 @@ openstack:
   heat:
     enabled: true
     chartName: heat
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     api:
       replicas: 2
@@ -189,7 +190,7 @@ openstack:
   horizon:
     enabled: true
     chartName: horizon
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     replicas: 2
     endpoints:
@@ -201,7 +202,7 @@ openstack:
   ironic:
     enabled: false
     chartName: ironic
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     auth:
       service: 
@@ -209,7 +210,7 @@ openstack:
   keystone:
     enabled: true
     chartName: keystone
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     endpoints:
       publicURLPrefix: "keystone"
@@ -227,12 +228,12 @@ openstack:
   libvirt:
     enabled: true
     chartName: libvirt
-    chartVersion: 0.1.0
+    chartVersion: 0.1.3
     createService: false
   mistral:
     enabled: true
     chartName: mistral
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     api:
       replicas: 2
@@ -256,7 +257,7 @@ openstack:
   neutron:
     enabled: true
     chartName: neutron
-    chartVersion: 20200913
+    chartVersion: 20201108
     createService: true
     extInterface: "enp3s0"
     tunnelInterface: "enp2s0"
@@ -281,7 +282,7 @@ openstack:
   nova:
     enabled: true
     chartName: nova
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     apiMetadata:
       replicas: 1
@@ -320,7 +321,7 @@ openstack:
   octavia:
     enabled: false
     chartName: octavia
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     api:
       replicas: 2
@@ -342,22 +343,59 @@ openstack:
   openvswitch:
     enabled: true
     chartName: openvswitch
-    chartVersion: 0.1.0
+    chartVersion: 0.1.2
     createService: false
+  placement:
+    enabled: true
+    chartName: placement
+    chartVersion: 20201108
+    createService: true
+    endpoints:
+      publicURLPrefix: "placement"
+    api:
+      replicas: 2
+    auth:
+      service:
+        password: A2Ok9qgQCf1ZfK2f2LyqkCvdh
+      db:
+        password: Fn9G0ZbExTemElnj8vmcKjlqq
+      messaging:
+        password: bw9r6DosLd8uRNy58bDnb6ozo
   radosgw:
     enabled: false
     chartName: ceph-rgw
-    chartVersion: 0.1.0
+    chartVersion: 0.1.1
     createService: true
     endpoints:
       publicURLPrefix: "radosgw"
     auth:
       service:
         password: lZcmrMgCOYFWe662PQAGdpwAT
+  rally:
+    # IMPORTANT: enable Rally for testing only!
+    enabled: false
+    chartName: rally
+    chartVersion: 20201108
+    createService: false
+    enabledTasks:
+      - cinder
+      - glance
+      - heat
+      - keystone
+      # - magnum
+      #- neutron
+      - nova
+      - senlin
+    auth:
+      service:
+        password: u27quXoDJegu2QIWZnqxakP7G
+      db:
+        password: lnB2Dj3UpezGJ0F4n22pOraYT 
+    storageClass: "rook-ceph-block"
   senlin:
     enabled: false
     chartName: senlin
-    chartVersion: 20200903
+    chartVersion: 20201108
     createService: true
     api:
       replicas: 2

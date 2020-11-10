@@ -33,8 +33,6 @@ kubernetes:
   version: "1.19"
   crioVersion: "1.18"
   helm_version: "v3.3.1"
-#  pod_cidr: "10.0.0.0/8"
-#  service_cidr: "10.96.0.0/12"
   pod_cidr: "172.16.0.0/12"
   service_cidr: "172.31.0.0/16"
   init_opts: ""
@@ -42,13 +40,13 @@ kubernetes:
   resetCluster: false
   kubeadmin_config: /etc/kubernetes/admin.conf
   cilium:
-    version: v1.8.3
+    version: v1.8.5
 cloudfoundry:
-  enabled: false
+  enabled: true
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
-  enabled: false
+  enabled: true
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"
 guacamole:
@@ -78,13 +76,24 @@ postgresOperator:
       endpoint: nul
       bucketName: nul
     cron: "30 00 * * *"
+redis:
+  enabled: true
+  namespace: "testing"
+  name: "redis-cluster"
+  global:
+    imagetag: "v2.0"
+    password: "Opstree@1235"
+  operator:
+    imagetag: "v0.2"
+  exporter:
+    imagetag: "1.0"    
 harbor:
   enabled: true
-  chartVersion: 1.4.0
+  chartVersion: 1.5.1
   namespace: harbor
   ingress:
-    coreDomain: "harbor.test.vanillastack.cloudical.net"
-    notaryDomain: "notary.test.vanillastack.cloudical.net"
+    coreDomain: "harbor.{{ kubernetes.loadBalancer.clusterDomain }}"
+    notaryDomain: "notary.{{ kubernetes.loadBalancer.clusterDomain }}"
   tls:
     enabled: true
   portal:
@@ -241,7 +250,7 @@ kubevirt:
   version: v0.33.0
 moodle:
   username: admin
-  enabled: true
+  enabled: false
   namespace: moodle
   storage:
     classname: "rook-ceph-block"

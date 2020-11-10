@@ -362,6 +362,13 @@ proxy:
 # uaaSecretName:
 
 portal:
+  image:
+    tag: v2.1.1
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/harbor-portal
+{% else %}
+    repository: goharbor/harbor-portal
+{% endif %}
   replicas: {{harbor.portal.replicas}}
 # resources:
 #  requests:
@@ -374,6 +381,13 @@ portal:
   podAnnotations: {}
 
 core:
+  image:
+    tag: v2.1.1
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/harbor-core
+{% else %}
+    repository: goharbor/harbor-core
+{% endif %}
   replicas: {{harbor.core.replicas}}
   ## Liveness probe values
   livenessProbe:
@@ -402,6 +416,13 @@ core:
   xsrfKey: ""
 
 jobservice:
+  image:
+    tag: v2.1.1
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/harbor-jobservice
+{% else %}
+    repository: goharbor/harbor-jobservice
+{% endif %}
   replicas: {{harbor.jobservice.replicas}}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
@@ -424,6 +445,22 @@ jobservice:
   secret: ""
 
 registry:
+  registry:
+    image:
+      tag: v2.1.1
+{% if commercial.enabled %}
+      repository: {{commercial.registry.url}}/vanillastack/registry-photon
+{% else %}
+      repository: goharbor/registry-photon
+{% endif %}
+  controller:
+    image:
+      tag: v2.1.1
+{% if commercial.enabled %}
+      repository: {{commercial.registry.url}}/vanillastack/harbor-registryctl
+{% else %}
+      repository: goharbor/harbor-registryctl
+{% endif %}
   replicas: {{harbor.registry.replicas}}
   nodeSelector: {}
   tolerations: []
@@ -458,6 +495,13 @@ registry:
       privateKeySecret: "my-secret"
 
 chartmuseum:
+  image:
+    tag: v2.1.1
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/chartmuseum-photon
+{% else %}
+    repository: goharbor/chartmuseum-photon
+{% endif %}
   enabled: {{harbor.chartmuseum.enabled}}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
@@ -475,6 +519,13 @@ chartmuseum:
   podAnnotations: {}
 
 clair:
+  image:
+    tag: v2.1.1
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/clair-photon
+{% else %}
+    repository: goharbor/clair-photon
+{% endif %}
   enabled: {{harbor.clair.enabled}}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
@@ -489,6 +540,13 @@ clair:
   podAnnotations: {}
 
 trivy:
+  image:
+    tag: v2.1.1
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/trivy-adapter-photon
+{% else %}
+    repository: goharbor/trivy-adapter-photon
+{% endif %}
   # enabled the flag to enable Trivy scanner
   enabled: {{harbor.trivy.enabled}}
   # replicas the number of Pod replicas
@@ -540,6 +598,13 @@ trivy:
 notary:
   enabled: {{harbor.notary.enabled}}
   server:
+    image:
+      tag: v2.1.1
+{% if commercial.enabled %}
+      repository: {{commercial.registry.url}}/vanillastack/notary-server-photon
+{% else %}
+      repository: goharbor/notary-server-photon
+{% endif %}
     # set the service account to be used, default if left empty
     replicas: {{harbor.notary.replicas}}
     # resources:
@@ -547,6 +612,13 @@ notary:
     #    memory: 256Mi
     #    cpu: 100m
   signer:
+    image:
+      tag: v2.1.1
+{% if commercial.enabled %}
+      repository: {{commercial.registry.url}}/vanillastack/notary-signer-photon
+{% else %}
+      repository: goharbor/notary-signer-photon
+{% endif %}
     # set the service account to be used, default if left empty
     serviceAccountName: ""
     replicas: {{harbor.notary.replicas}}
@@ -579,6 +651,24 @@ database:
 redis:
   type: "external"
   external:
-    host: "redis-headless.{{harbor.namespace}}.svc"
-    port: "6379"
+    addr: "redis-headless.{{harbor.namespace}}.svc:6379"
     password: "{{harbor.redis.password}}"
+
+nginx:
+  image:
+{% if commercial.enabled %}
+    repository: {{commercial.registry.url}}/vanillastack/nginx-photon
+{% else %}
+    repository: goharbor/nginx-photon
+{% endif %}
+    tag: v2.1.1
+  replicas: 1
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ## Additional deployment annotations
+  podAnnotations: {}

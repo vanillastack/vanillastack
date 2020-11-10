@@ -1,0 +1,110 @@
+---
+image:
+{% if commercial.enabled %}
+  repository: {{commercial.registry.url}}/vanillastack/velero
+{% else %}
+  repository: velero/velero
+{% endif %}
+  tag: {{velero.version}}
+
+installCRDs: true
+
+snapshotsEnabled: true
+
+configuration:
+{% if velero.backend == "minio" %}
+  provider: aws
+  backupStorageLocation:
+    name: default
+    bucket: velero
+    config:
+      region: minio
+      s3ForcePathStyle: "true"
+      publicUrl: "http://minio:9000"
+      s3Url: "http://minio:9000"
+  volumeSnapshotLocation:
+    name: default
+    bucket: kubernetes-pv
+    config:
+      region: minio
+      s3ForcePathStyle: "true"
+      publicUrl: "http://minio:9000"
+      s3Url: "http://minio:9000"
+{% elif velero.backend == "aws" %}
+  provider: aws
+  backupStorageLocation:
+    name: default
+    bucket: {{velero.aws.bucketName}}
+    config:
+      region: {{velero.aws.region}}
+      s3ForcePathStyle: "true"
+      publicUrl: "{{velero.aws.publicURL}}"
+      s3Url: "{{velero.aws.s3URL}}"
+  volumeSnapshotLocation:
+    name: default
+    bucket: {{velero.aws.snapshotBucketName}}
+    config:
+      region: {{velero.aws.region}}
+      s3ForcePathStyle: "true"
+      publicUrl: "{{velero.aws.publicURL}}"
+      s3Url: "{{velero.aws.s3URL}}"
+{% endif %)
+
+credentials:
+  useSecret: true
+  secretContents:
+    cloud: |
+      [default]
+{% if velero.backend == "minio" %}
+      aws_access_key_id = {{velero.minio.accessKey}}
+      aws_secret_access_key = {{velero.minio.secretKey}}
+{% elif velero.backend == "aws" %}
+      aws_access_key_id = {{velero.aws.accessKey}}
+      aws_secret_access_key = {{velero.aws.secretKey}}
+{% endif %)
+deployRestic: true
+restic:
+  podVolumePath: /var/lib/kubelet/pods
+  privileged: false
+  # Pod priority class name to use for the Restic daemonset. Optional.
+  priorityClassName: ""
+  # Resource requests/limits to specify for the Restic daemonset deployment. Optional.
+  resources: {}
+  # Tolerations to use for the Restic daemonset. Optional.
+  tolerations: []
+
+  # Extra volumes for the Restic daemonset. Optional.
+  extraVolumes: []
+
+  # Extra volumeMounts for the Restic daemonset. Optional.
+  extraVolumeMounts: []
+
+  # SecurityContext to use for the Velero deployment. Optional.
+  # Set fsGroup for `AWS IAM Roles for Service Accounts`
+  # see more informations at: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
+  securityContext: {}
+    # fsGroup: 1337
+
+# Backup schedules to create.
+# Eg:
+# schedules:
+#   mybackup:
+#     labels:
+#       myenv: foo
+#     schedule: "0 0 * * *"
+#     template:
+#       ttl: "240h"
+#       includedNamespaces:
+#       - foo
+schedules: {}
+
+initContainers:
+  - name: velero-plugin-for-aws
+{% if commercial.enabled %}
+    image: {{commercial.registry.url}}/vanillastack/velero-plugin-for-aws:v1.1.0
+{% else %}
+    image: velero/velero-plugin-for-aws:v1.1.0
+{% endif %}
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
