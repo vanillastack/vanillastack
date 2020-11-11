@@ -1,4 +1,7 @@
 ---
+### kubectl delete crd $(kubectl get crd -o json | jq -r '.items[] | select(.spec.group=="monitoring.coreos.com")' | jq -r '.metadata.name')
+### kubectl delete validatingwebhookconfigurations.admissionregistration.k8s.io prometheus-operator-admission
+### kubectl delete MutatingWebhookConfiguration prometheus-operator-admission
 - name: Deploy Cert Manager
   hosts: master[0]
   become: false
