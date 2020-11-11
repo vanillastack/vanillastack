@@ -15,16 +15,11 @@
     chart_version: "{{certmanager.chartVersion}}"
     wait: true
 
-- name: Copy ClusterIssuer definiton
-  template:
-    src: clusterissuer.yaml.j2
-    dest: /tmp/clusterissuer.yaml
-  when:
 - name: Create ClusterIssuer
   block:
     - name: Apply ClusterIssuer Issuer
       k8s:
-        src: /tmp/clusterissuer.yaml
+        definition: "{{ lookup('template', 'clusterissuer.yaml.j2') | from_yaml }}"
         state: present
         namespace: "{{ certmanager.namespace }}"
       register: clusterIssuer
@@ -38,7 +33,7 @@
 
 - name: Retry ClusterIssuer Issuer
   k8s:
-    src: /tmp/clusterissuer.yaml
+    definition: "{{ lookup('template', 'clusterissuer.yaml.j2') | from_yaml }}"
     state: present
     namespace: "{{ certmanager.namespace }}"
   when: clusterIssuer is not succeeded
@@ -46,8 +41,3 @@
   until: clusterIssuerRetry is succeeded
   delay: 20
   retries: 60
-
-- name: Cleanup ClusterIssuer Issuer
-  file:
-    path: /tmp/clusterissuer.yaml
-    state: absent
