@@ -108,6 +108,11 @@
     - etcd_server_crt_result.stat.exists
   no_log: true
 
+- name: create template
+  template:
+    src: operator_values.yml.j2
+    dest: /tmp/operator.yml
+
 - name: Install prometheus-operator
   community.kubernetes.helm:
     name: prometheus-operator

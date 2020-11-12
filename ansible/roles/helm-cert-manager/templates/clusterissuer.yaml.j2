@@ -6,7 +6,11 @@ metadata:
 spec:
   acme:
     # The ACME server URL
+{% if tls.issuerName == "letsencrypt-prod" %}
     server: https://acme-v02.api.letsencrypt.org/directory
+{% else %}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+{% endif %}
     # Email address used for ACME registration
     email: {{ tls.issuerEmail }}
     # Name of a secret used to store the ACME account private key

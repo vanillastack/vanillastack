@@ -393,16 +393,18 @@ endpoints:
         project_domain_name: service
         username: ironic
         password: {{openstack.ironic.auth.service.password}}
-{% if openstack.release == "stein" %}
       placement:
         role: admin
         region_name: {{openstack.region}}
         username: placement
+{% if openstack.release == "stein" %}
         password: {{openstack.nova.auth.placement.password}}
+{% else %}
+        password: {{openstack.placement.auth.service.password}}
+{% endif %}
         project_name: service
         user_domain_name: service
         project_domain_name: service
-{% endif %}
       test:
         role: admin
         region_name: {{openstack.region}}
@@ -482,10 +484,10 @@ network:
 
 manifests:
   secret_ingress_tls: false
-{% if openstack.release == "train" or openstack.release == "ussuri" %}
   cron_job_cell_setup: false
   cron_job_service_cleaner: false
   statefulset_compute_ironic: false
+  deployment_consoleauth: false
   deployment_placement: false
   ingress_placement: false
   job_db_init_placement: false
@@ -496,4 +498,3 @@ manifests:
   secret_keystone_placement: false
   service_ingress_placement: false
   service_placement: false
-{% endif %}

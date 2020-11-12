@@ -7,9 +7,9 @@ vrrp_script chk_haproxy {
 vrrp_instance lb_1 {
    debug {{ keepalived.debug }}
    interface {{ ansible_default_ipv4.interface }}	# interface to monitor
-   state {{ keepalived.MASTER_SLAVE }}
+   state {{ keepalived_MASTER_SLAVE }}
    virtual_router_id 22          	# Assign one ID for this route
-   priority {{ keepalived.priority }}	# 101 on master, 100 on backup
+   priority {{ keepalived_priority }}	# 101 on master, 100 on backup
    virtual_ipaddress {
        {{ kubernetes.loadBalancer.virtualIP }} 	# peer IP
    }

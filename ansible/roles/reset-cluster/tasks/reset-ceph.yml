@@ -10,10 +10,11 @@
   command: "wipefs -fa /dev/{{ item.key }}" 
   loop: "{{ q('dict', device_list) }}"
   when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+  notify: reboot_all_nodes
 
 - name: make sure, rook folder is absent
   file: 
     path: /var/lib/rook
     state: absent  
-
+  notify: reboot_all_nodes
 

@@ -1,0 +1,10 @@
+---
+- name: Install Redis Operator
+  community.kubernetes.helm:
+    chart_ref: vanillastack/redis-operator
+    name: redis-operator
+    release_namespace: "{{ redis.namespace }}"
+    create_namespace: true
+    values: "{{ lookup('template', 'redis-operator-values.yaml') | from_yaml }}"
+    wait: true
+

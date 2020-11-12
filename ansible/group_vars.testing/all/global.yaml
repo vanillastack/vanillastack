@@ -40,7 +40,7 @@ kubernetes:
   resetCluster: false
   kubeadmin_config: /etc/kubernetes/admin.conf
   cilium:
-    version: v1.8.3
+    version: v1.8.5
 cloudfoundry:
   enabled: true
   storageclass: rook-ceph-block
@@ -76,13 +76,24 @@ postgresOperator:
       endpoint: nul
       bucketName: nul
     cron: "30 00 * * *"
+redis:
+  enabled: true
+  namespace: "testing"
+  name: "redis-cluster"
+  global:
+    imagetag: "v2.0"
+    password: "Opstree@1235"
+  operator:
+    imagetag: "v0.2"
+  exporter:
+    imagetag: "1.0"    
 harbor:
   enabled: true
-  chartVersion: 1.4.0
+  chartVersion: 1.5.1
   namespace: harbor
   ingress:
-    coreDomain: "harbor.test.vanillastack.cloudical.net"
-    notaryDomain: "notary.test.vanillastack.cloudical.net"
+    coreDomain: "harbor.{{ kubernetes.loadBalancer.clusterDomain }}"
+    notaryDomain: "notary.{{ kubernetes.loadBalancer.clusterDomain }}"
   tls:
     enabled: true
   portal:
