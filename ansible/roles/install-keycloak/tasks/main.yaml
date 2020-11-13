@@ -27,6 +27,13 @@
     - service_account.yaml.j2
     - operator.yaml.j2
 
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+
 - name: Create PostgreSQL
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'postgres.yaml.j2') | from_yaml }}"
@@ -56,6 +63,13 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-keycloak.yaml.j2') | from_yaml }}"
     state: present
+
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
 
 - name: Deploy ingress
   community.kubernetes.k8s:
