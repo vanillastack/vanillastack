@@ -35,13 +35,6 @@
       - gcc-*
   when: ansible_os_family == 'Suse' or ansible_distribution == 'CentOS'
 
-- name: install pip modules
-  pip:
-    name:
-      - pyhelm
-      - openshift
-    extra_args: --ignore-installed
-
 - name: make sure, domain search is not set
   lineinfile:
     regexp: '^(.*)search(.*)$'
@@ -82,6 +75,12 @@
         - wheel
       extra_args: --ignore-installed
 
+  - name: install pip modules
+    pip:
+      name:
+        - pyhelm
+        - openshift
+      extra_args: --ignore-installed
 
   - name: Add cf repo      
     yum_repository:
@@ -287,6 +286,13 @@
     until: result is success
     when: ansible_distribution == 'Debian'
 
+  - name: install pip modules
+    pip:
+      name:
+        - pyhelm
+        - openshift
+      extra_args: --ignore-installed
+
   - name: Install packages
     apt:
       pkg:
@@ -431,6 +437,13 @@
       repo: 'http://download.opensuse.org/tumbleweed/repo/oss/'
       auto_import_keys: yes
       state: present
+
+  - name: install pip modules
+    pip:
+      name:
+        - pyhelm
+        - openshift
+      extra_args: --ignore-installed
 
   - name: Install packages
     community.general.zypper:
