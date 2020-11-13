@@ -15,8 +15,8 @@ controller:
   service:
     type: "NodePort"
     nodePorts:
-      http: 30080
-      https: 30443
+      http: {{ ingress_http_port | default(30080) }}
+      https: {{ ingress_https_port | default(30443) }}
 
   replicaCount: 3
   minAvailable: 1
