@@ -1,0 +1,96 @@
+---
+- name: Deploy Keycloak CRDs
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    state: present
+  with_items:
+    - keycloak.org_keycloakbackups_crd.yaml.j2
+    - keycloak.org_keycloakrealms_crd.yaml.j2
+    - keycloak.org_keycloakusers_crd.yaml.j2
+    - keycloak.org_keycloakclients_crd.yaml.j2
+    - keycloak.org_keycloaks_crd.yaml.j2
+
+- name: Create Keycloak namespace
+  community.kubernetes.k8s:
+    name: "{{keycloak.namespace}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Deploy Keycloak Operator
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    state: present
+  with_items:
+    - role.yaml.j2
+    - role_binding.yaml.j2
+    - service_account.yaml.j2
+    - operator.yaml.j2
+
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+
+- name: Create PostgreSQL
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'postgres.yaml.j2') | from_yaml }}"
+    state: present
+  when: keycloak.externalDatabase
+
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  when: keycloak.externalDatabase
+
+- name: "register postgres application password"
+  shell: echo "$(kubectl get secret -n {{ keycloak.namespace }} -o json keycloak.{{keycloak.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
+  register: postgrespassword
+  when: keycloak.externalDatabase
+
+- name: Deploy postgres secret
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak-db-secret.yaml.j2') | from_yaml }}"
+    state: present
+  when: keycloak.externalDatabase
+
+- name: Deploy VanillaStack Keycloak instance
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak.yaml.j2') | from_yaml }}"
+    state: present
+
+- name: startup delay
+  pause:
+    seconds: 30
+
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+
+- name: Deploy ingress
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak-ingress.yaml.j2') | from_yaml }}"
+    state: present
+  when: keycloak.ingress.enabled
+
+- name: Deploy VanillaStack Realm
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-realm.yaml.j2') | from_yaml }}"
+    state: present
+
+- name: startup delay
+  pause:
+    seconds: 10
+
+- name: Deploy VanillaStore Client
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-client-vanillamanager.yaml.j2') | from_yaml }}"
+    state: present

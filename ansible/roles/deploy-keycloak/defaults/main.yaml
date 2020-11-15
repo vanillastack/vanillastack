@@ -1,0 +1,19 @@
+---
+keycloak:
+  enabled: false
+  namespace: keycloak
+  externalDatabase: false
+  postgres:
+    size: "20Gi"
+    replicas: 2
+    version: "12"
+    maxConnections: 400
+    backup:
+      enabled: false
+      cronjob: "30 */2 * * *"
+  ingress:
+    enabled: false
+    publicDomain: "keycloak.{{ kubernetes.loadBalancer.clusterDomain }}"
+  realm:
+    name: "{{ kubernetes.loadBalancer.clusterDomain }}"
+    id: "{{ kubernetes.loadBalancer.clusterDomain }}"

@@ -1,0 +1,16 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: vanillastack-keycloak
+  labels:
+    app: vanillastack-sso
+  namespace: {{keycloak.namespace}}
+spec:
+  instances: 2
+  externalAccess:
+    enabled: false
+    tlsTermination: reencrypt
+  podDisruptionBudget:
+    enabled: True
+  externalDatabase:
+    enabled: {{keycloak.externalDatabase}}

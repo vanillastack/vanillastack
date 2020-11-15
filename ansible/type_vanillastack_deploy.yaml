@@ -144,6 +144,14 @@
     - role: helm-cert-manager
       when: certmanager.enabled
 
+- name: Deploy Keycloak
+  hosts: master[0]
+  become: false
+  gather_facts: no
+  roles:
+    - role: deploy-keycloak
+      when: keycloak.enabled
+
 - name: Deploy OpenStack
   hosts: master[0]
   become: false
