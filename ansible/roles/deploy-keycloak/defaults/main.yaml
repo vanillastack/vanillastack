@@ -12,6 +12,7 @@ keycloak:
       enabled: false
       cronjob: "30 */2 * * *"
   ingress:
+    enabled: false
     publicDomain: "keycloak.{{ kubernetes.loadBalancer.clusterDomain }}"
   realm:
     name: "{{ kubernetes.loadBalancer.clusterDomain }}"

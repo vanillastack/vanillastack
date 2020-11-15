@@ -5,7 +5,7 @@ metadata:
   labels:
     app: vanillastack-sso
   namespace: {{keycloak.namespace}}
-pec:
+spec:
   realmSelector:
     matchLabels:
       app: vanillastack-sso
@@ -16,5 +16,6 @@ pec:
     clientAuthenticatorType: client-secret
     protocol: openid-connect
     enabled: true
-#    redirectUris:
+    redirectUris: 
+      - "https://admin.{{kubernetes.loadBalancer.clusterDomain}}"
     rootUrl: "https://admin.{{kubernetes.loadBalancer.clusterDomain}}" 

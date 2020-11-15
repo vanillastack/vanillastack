@@ -64,6 +64,10 @@
     definition: "{{ lookup('template', 'vanillastack-keycloak.yaml.j2') | from_yaml }}"
     state: present
 
+- name: startup delay
+  pause:
+    seconds: 30
+
 - name: wait for pods to come up
   retries: 120
   delay: 10
@@ -75,11 +79,16 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-keycloak-ingress.yaml.j2') | from_yaml }}"
     state: present
+  when: keycloak.ingress.enabled
 
 - name: Deploy VanillaStack Realm
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-realm.yaml.j2') | from_yaml }}"
     state: present
+
+- name: startup delay
+  pause:
+    seconds: 10
 
 - name: Deploy VanillaStore Client
   community.kubernetes.k8s:

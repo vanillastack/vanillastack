@@ -18,9 +18,9 @@ spec:
         - name: keycloak-operator
           # Replace this with the built image name
 {% if commercial.enabled %}
-          image: {{commercial.registry.url}}/vanillastack/keycloak-operator:master
+          image: {{commercial.registry.url}}/vanillastack/keycloak-operator:11.0.3
 {% else %}
-          image: quay.io/keycloak/keycloak-operator:master
+          image: quay.io/keycloak/keycloak-operator:11.0.3
 {% endif %}
           command:
           - keycloak-operator
