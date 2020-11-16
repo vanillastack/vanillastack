@@ -1,0 +1,30 @@
+- name: Deploy Grafana Client
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-client-keycloack.yaml.j2') | from_yaml }}"
+    state: present
+  register: grafana_client
+- debug:
+    msg: "{{ grafana_client.result.spec.client.id }}"
+
+      #- name: create grafana rule
+      #  uri:
+      #    url: https://keycloak.{{kubernetes.loadBalancer.clusterDomain}}/auth/admin/realms/{{kubernetes.loadBalancer.clusterDomain}}/clients/{{ grafana_client.result.spec.client.id }}/roles
+      #    headers:
+      #      api_key: "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJfUENTeFBrRGhvZEZzX052TU1FSVVHVHlkS0xNMmFwZXBWR1VnXzlJYTBjIn0.eyJleHAiOjE2MDU1NTYzOTMsImlhdCI6MTYwNTU1NjA5MywianRpIjoiNmQ2MDUxNGUtZjM0Ny00YWJlLWFiYTgtMzUyNGI3MDlkNTkxIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay50ZXN0LnZhbmlsbGFzdGFjay5jbG91ZGljYWwubmV0L2F1dGgvcmVhbG1zL3Rlc3QudmFuaWxsYXN0YWNrLmNsb3VkaWNhbC5uZXQiLCJzdWIiOiJiMDgyYzllYy03ZjFiLTRjYzgtYWE3Ni00N2Y0MmRiNWQxNDQiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJncmFmYW5hLnRlc3QudmFuaWxsYXN0YWNrLmNsb3VkaWNhbC5uZXQiLCJzZXNzaW9uX3N0YXRlIjoiNTg3N2M3MWQtYTY2Yy00ZmRkLTk2ZmUtZmM3OGQ2MmY5NTk2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIiXSwicmVzb3VyY2VfYWNjZXNzIjp7ImdyYWZhbmEudGVzdC52YW5pbGxhc3RhY2suY2xvdWRpY2FsLm5ldCI6eyJyb2xlcyI6WyJhZG1pbiJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJyb2xlcyI6WyJhZG1pbiJdLCJuYW1lIjoidmFuaWxsYSB1c2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoidmFuaWxsYS1hcHBsaWNhdGlvbi11c2VyIiwiZ2l2ZW5fbmFtZSI6InZhbmlsbGEiLCJmYW1pbHlfbmFtZSI6InVzZXIiLCJlbWFpbCI6InZhbmlsbGFAY2xvdWRpY2FsLm5ldCJ9.B4L_47rT1PcJR6EdQu8IkcDpabJnaPbrPlqfaV8adgr04bTGXLysd8joBQzLcfCVoK148tBvqNv0BO3T2p_hwkFkqJPbKg4ClOQzhT7a9r7K1gc46pLFrjRzj-WkVE4qdFKBOpxytVvofmeu5AOOuSC2IgTnCYOEt6CXiRPL5cS-3TbNhYCJJ0e2xZeNLEK-LbQXevM7QbdIkuTXhu99n0akC---68ShM65ikwnBNj9aVf8I9-9rbKGUiu45RPTxvhDerP0Q5M1YKN3k5k_xfmq99hHz1-VV_NF5jhSe9u3gy6X_iHX_SPltCBkV8qmpUQvUFwM0BsrdRvPt1NR8pw"
+      #    body:
+      #    - [ name, admin ]
+      #    - [ composite, false ]
+      #    - [ clientRole, true ]
+      #    user: "admin"
+      #    password: "ned-46i4OMakMw=="
+      #    method: POST
+      #    validate_certs: false
+      #    force_basic_auth: yes
+      #      #status_code: 201
+- name: apply grafana configmap
+  k8s:
+    state: present     
+    definition: "{{ lookup('template', 'grafana_configmap.yml.j2') | from_yaml }}"
+
+- name: 
+  command: kubectl delete po -n monitoring -l app.kubernetes.io/name=grafana
