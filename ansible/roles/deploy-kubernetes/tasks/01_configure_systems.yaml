@@ -141,6 +141,7 @@
         - grubby
         - cri-o
         - nfs-utils
+        - iproute
       disable_excludes: kubernetes
   
   - name: Disable SELinux
@@ -279,6 +280,7 @@
         - python-kubernetes
         - python3-kubernetes
         - nfs-common
+        - iproute2
       update_cache: yes
     retries: 3
     delay: 1
