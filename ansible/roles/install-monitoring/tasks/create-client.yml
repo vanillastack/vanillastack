@@ -2,9 +2,10 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-client-keycloack.yaml.j2') | from_yaml }}"
     state: present
+    wait: true
   register: grafana_client
 - debug:
-    msg: "{{ grafana_client.result.spec.client.id }}"
+    msg: "{{ grafana_client.result.spec.client }}"
 
       #- name: create grafana rule
       #  uri:
