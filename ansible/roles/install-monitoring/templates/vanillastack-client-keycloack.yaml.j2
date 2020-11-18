@@ -13,7 +13,7 @@ spec:
     clientId: "grafana.{{kubernetes.loadBalancer.clusterDomain}}"
     name: "grafana.{{kubernetes.loadBalancer.clusterDomain}}"
     directAccessGrantsEnabled: true
-    secret: grafana-client-secret
+    secret: "{{ grafana_client_secret }}"
     clientAuthenticatorType: client-secret
     protocol: openid-connect
     enabled: true

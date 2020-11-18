@@ -152,118 +152,118 @@
     - role: deploy-keycloak
       when: keycloak.enabled
 
-- name: Deploy OpenStack
-  hosts: master[0]
-  become: false
-  gather_facts: no
-  roles:
-    - role: prepare-registry
-      when: openstack.enabled
-    - role: deploy-openstack
-      when: openstack.enabled
-
-- name: install K8S Dashboard
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: kubernetes.dashboard.enabled
-    - role: install-kubedashboard
-      when: kubernetes.dashboard.enabled
-
-- name: Deploy cloudfoundry
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: stratos.enabled
-    - role: install-cloudfoundry
-      when: cloudfoundry.enabled
-
-- name: install stratos
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: stratos.enabled
-    - role: install-stratos
-      when: stratos.enabled
-
-- name: Deploy efk
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: efkstack.enabled
-    - role: install-efk
-      action: init
-      when: efkstack.enabled
-    - role: install-efk
-      action: es_deploy
-      when: efkstack.enabled
-    - role: install-efk
-      action: kibana_deploy
-      when: efkstack.enabled
-    - role: install-efk
-      action: "{{ efkstack.logaggregator.name }}_deploy"
-      when: efkstack.enabled
-
-- name: Deploy Postgres Operator
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: guacamole.enabled
-    - role: deploy-postgres-operator
-      when: postgresOperator.enabled
-
-- name: install guacamole
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: guacamole.enabled
-    - role: install-guacamole
-      when: guacamole.enabled
-
-- name: Deploy Harbor
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: harbor.enabled
-    - role: deploy-harbor
-      when: harbor.enabled
-
-- name: Deploy KubeVirt
-  hosts: master[0]
-  become: false
-  gather_facts: false
-  roles:
-    - role: prepare-registry
-      when: kubevirt.enabled
-    - role: deploy-kubevirt
-      action: operator
-      when: kubevirt.enabled
-
-- name: Deploy KubeVirt CLI
-  hosts: master[0]
-  become: true
-  gather_facts: false
-  roles:
-    - role: deploy-kubevirt
-      action: virtctl
-      when: kubevirt.enabled
-
-- name: install moodle
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: moodle.enabled
-    - role: install-moodle
-      when: moodle.enabled
-
+#- name: Deploy OpenStack
+#  hosts: master[0]
+#  become: false
+#  gather_facts: no
+#  roles:
+#    - role: prepare-registry
+#      when: openstack.enabled
+#    - role: deploy-openstack
+#      when: openstack.enabled
+#
+#- name: install K8S Dashboard
+#  hosts: master[0]
+#  gather_facts: true
+#  roles:
+#    - role: prepare-registry
+#      when: kubernetes.dashboard.enabled
+#    - role: install-kubedashboard
+#      when: kubernetes.dashboard.enabled
+#
+#- name: Deploy cloudfoundry
+#  hosts: master[0]
+#  gather_facts: true
+#  roles:
+#    - role: prepare-registry
+#      when: stratos.enabled
+#    - role: install-cloudfoundry
+#      when: cloudfoundry.enabled
+#
+#- name: install stratos
+#  hosts: master[0]
+#  gather_facts: true
+#  roles:
+#    - role: prepare-registry
+#      when: stratos.enabled
+#    - role: install-stratos
+#      when: stratos.enabled
+#
+#- name: Deploy efk
+#  hosts: master[0]
+#  gather_facts: true
+#  roles:
+#    - role: prepare-registry
+#      when: efkstack.enabled
+#    - role: install-efk
+#      action: init
+#      when: efkstack.enabled
+#    - role: install-efk
+#      action: es_deploy
+#      when: efkstack.enabled
+#    - role: install-efk
+#      action: kibana_deploy
+#      when: efkstack.enabled
+#    - role: install-efk
+#      action: "{{ efkstack.logaggregator.name }}_deploy"
+#      when: efkstack.enabled
+#
+#- name: Deploy Postgres Operator
+#  hosts: master[0]
+#  gather_facts: true
+#  roles:
+#    - role: prepare-registry
+#      when: guacamole.enabled
+#    - role: deploy-postgres-operator
+#      when: postgresOperator.enabled
+#
+#- name: install guacamole
+#  hosts: master[0]
+#  gather_facts: true
+#  roles:
+#    - role: prepare-registry
+#      when: guacamole.enabled
+#    - role: install-guacamole
+#      when: guacamole.enabled
+#
+#- name: Deploy Harbor
+#  hosts: master[0]
+#  gather_facts: true
+#  roles:
+#    - role: prepare-registry
+#      when: harbor.enabled
+#    - role: deploy-harbor
+#      when: harbor.enabled
+#
+#- name: Deploy KubeVirt
+#  hosts: master[0]
+#  become: false
+#  gather_facts: false
+#  roles:
+#    - role: prepare-registry
+#      when: kubevirt.enabled
+#    - role: deploy-kubevirt
+#      action: operator
+#      when: kubevirt.enabled
+#
+#- name: Deploy KubeVirt CLI
+#  hosts: master[0]
+#  become: true
+#  gather_facts: false
+#  roles:
+#    - role: deploy-kubevirt
+#      action: virtctl
+#      when: kubevirt.enabled
+#
+#- name: install moodle
+#  hosts: master[0]
+#  gather_facts: true
+#  roles:
+#    - role: prepare-registry
+#      when: moodle.enabled
+#    - role: install-moodle
+#      when: moodle.enabled
+#
 - name: install monitoring
   hosts: master[0]
   gather_facts: true
@@ -271,15 +271,11 @@
   - role: install-monitoring
     action: operator
     when: prometheus.enabled
-  - role: install-monitoring
-    action: create-client
-    when: prometheus.enabled
-
-- name: install redis cluster
-  hosts: master[0]
-  gather_facts: false
-  roles:
-  - role: install-redis-operator
-    when: redis.enabled
-  - role: install-redis-cluster
-    when: redis.enabled
+      #- name: install redis cluster
+      #  hosts: master[0]
+      #  gather_facts: false
+      #  roles:
+      #  - role: install-redis-operator
+      #    when: redis.enabled
+      #  - role: install-redis-cluster
+      #    when: redis.enabled

@@ -3,6 +3,7 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
+    wait: true
   with_items:
     - keycloak.org_keycloakbackups_crd.yaml.j2
     - keycloak.org_keycloakrealms_crd.yaml.j2
@@ -16,11 +17,13 @@
     api_version: v1
     kind: Namespace
     state: present
+    wait: true
 
 - name: Deploy Keycloak Operator
   community.kubernetes.k8s:
     definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
+    wait: true
   with_items:
     - role.yaml.j2
     - role_binding.yaml.j2
@@ -38,6 +41,7 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'postgres.yaml.j2') | from_yaml }}"
     state: present
+    wait: true
   when: keycloak.externalDatabase
 
 - name: wait for pods to come up
@@ -63,6 +67,7 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-keycloak.yaml.j2') | from_yaml }}"
     state: present
+    wait: true
 
 - name: startup delay
   pause:
@@ -79,12 +84,14 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-keycloak-ingress.yaml.j2') | from_yaml }}"
     state: present
+    wait: true
   when: keycloak.ingress.enabled
 
 - name: Deploy VanillaStack Realm
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-realm.yaml.j2') | from_yaml }}"
     state: present
+    wait: true
 
 - name: startup delay
   pause:
@@ -94,7 +101,11 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-client-vanillamanager.yaml.j2') | from_yaml }}"
     state: present
-      
+
+- name: startup delay
+  pause:
+    seconds: 10
+
 - name: check if adminpassword is already created
   k8s_info:
     kind: Secret
@@ -123,7 +134,10 @@
           password: "{{ keycloakcred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
           grant_type: password
       register: bearertoken
-    
+      retries: 120
+      delay: 10
+      until: bearertoken.status == 200
+
     - name: get admin id
       uri:
         url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"

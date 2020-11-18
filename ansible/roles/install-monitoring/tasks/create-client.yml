@@ -1,75 +1,28 @@
-#
-#- name: get admin id
-#  uri:
-#    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"
-#    validate_certs: false
-#    method: GET
-#    headers:
-#      Authorization: "bearer {{ bearertoken.json.access_token }}"
-#      Content-Type: application/json
-#  register: userids
-
-#- name: check if adminpassword is already created
-#  k8s_info:
-#    kind: Secret
-#    namespace: "{{ keycloak.namespace }}"
-#    name: credential-admin-keycloak
-#  register: admincred
-#   
-#- debug:
-#    msg: "{{ admincred.resources }}"  
-#    #- set_fact:
-#    #admin_password: "{{ keycloakcred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
-#
-#- name: create admincredentials
-#  block:
-#    - name: create adminuser password
-#      set_fact:
-#        my_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
-#       
-#    - name: store admin password in cluster
-#      k8s:
-#        state: present
-#        definition:
-#          apiVersion: v1
-#          kind: Secret
-#          type: Opaque
-#          metadata:
-#            labels:
-#              app: keycloak
-#              keycloak: vanillastack-keycloak
-#            name: credential-admin-keycloak
-#            namespace: "{{ keycloak.namespace }}"
-#          data:
-#            ADMIN_PASSWORD: "{{ my_pass | b64encode}}"
-#            ADMIN_USERNAME: "{{ 'admin' | b64encode}}"
-#  when: admincred.resources|length<1
-#
-#- name: generate admin user password
-#  uri:
-#    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/reset-password"
-#    validate_certs: false
-#    headers:
-#      Authorization: "bearer {{ bearertoken.json.access_token }}"
-#      Content-Type: application/json
-#    method: PUT
-#    body_format: json
-#    status_code: 204
-#    body: '{"type":"password","value":"{{ my_pass }}","temporary":false}'
-#  register: admincreation
-
-- name: Deploy Grafana Client
-  community.kubernetes.k8s:
-    definition: "{{ lookup('template', 'vanillastack-client-keycloack.yaml.j2') | from_yaml }}"
-    state: present
-    wait: true
-  register: grafana_client
+- name: check if client is already created
+  k8s_info:
+    api_version: keycloak.org/v1alpha1
+    kind: KeycloakClient
+    namespace: "{{ keycloak.namespace }}"
+    name: grafana-client
+  register: clientsecret
+- name: create grafanaclient
+  block:
+    - name: create grafanasecret password
+      set_fact:
+        grafana_client_secret: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+    
+    - name: Deploy Grafanaclient
+      community.kubernetes.k8s:
+        definition: "{{ lookup('template', 'vanillastack-client-keycloack.yaml.j2') | from_yaml }}"
+        state: present
+        wait: true
+  when: clientsecret.resources|length<1
 
 - name: get admin password
   k8s_info:
     kind: Secret
     namespace: "{{ keycloak.namespace }}"
-    name: credential-admin-keycloak
+    name: credential-vanillastack-keycloak
   register: admincred
 
 - set_fact:
@@ -77,39 +30,141 @@
 
 - name: generate bearertoken
   uri:
-    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/{{ kubernetes.loadBalancer.clusterDomain }}/protocol/openid-connect/token"
+    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/master/protocol/openid-connect/token"
     validate_certs: false
     method: POST
     body_format: form-urlencoded
     body:
-      client_id: grafana.test.vanillastack.cloudical.net
+      client_id: admin-cli
       username: admin
       password: "{{ admin_password }}"
       grant_type: password
   register: bearertoken
 
-    #- debug:
-    #    msg: "{{ grafana_user.result.spec.user }}"
+- name: get grafana client id
+  uri:
+    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/clients"
+    validate_certs: false
+    method: GET
+    headers:
+      Authorization: "bearer {{ bearertoken.json.access_token }}"
+      Content-Type: application/json
+  register: clientids
 
-      #- name: create grafana rule
-      #  uri:
-      #    url: https://keycloak.{{kubernetes.loadBalancer.clusterDomain}}/auth/admin/realms/{{kubernetes.loadBalancer.clusterDomain}}/clients/{{ grafana_client.result.spec.client.id }}/roles
-      #    headers:
-      #      api_key: "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJfUENTeFBrRGhvZEZzX052TU1FSVVHVHlkS0xNMmFwZXBWR1VnXzlJYTBjIn0.eyJleHAiOjE2MDU1NTYzOTMsImlhdCI6MTYwNTU1NjA5MywianRpIjoiNmQ2MDUxNGUtZjM0Ny00YWJlLWFiYTgtMzUyNGI3MDlkNTkxIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay50ZXN0LnZhbmlsbGFzdGFjay5jbG91ZGljYWwubmV0L2F1dGgvcmVhbG1zL3Rlc3QudmFuaWxsYXN0YWNrLmNsb3VkaWNhbC5uZXQiLCJzdWIiOiJiMDgyYzllYy03ZjFiLTRjYzgtYWE3Ni00N2Y0MmRiNWQxNDQiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJncmFmYW5hLnRlc3QudmFuaWxsYXN0YWNrLmNsb3VkaWNhbC5uZXQiLCJzZXNzaW9uX3N0YXRlIjoiNTg3N2M3MWQtYTY2Yy00ZmRkLTk2ZmUtZmM3OGQ2MmY5NTk2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIiXSwicmVzb3VyY2VfYWNjZXNzIjp7ImdyYWZhbmEudGVzdC52YW5pbGxhc3RhY2suY2xvdWRpY2FsLm5ldCI6eyJyb2xlcyI6WyJhZG1pbiJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJyb2xlcyI6WyJhZG1pbiJdLCJuYW1lIjoidmFuaWxsYSB1c2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoidmFuaWxsYS1hcHBsaWNhdGlvbi11c2VyIiwiZ2l2ZW5fbmFtZSI6InZhbmlsbGEiLCJmYW1pbHlfbmFtZSI6InVzZXIiLCJlbWFpbCI6InZhbmlsbGFAY2xvdWRpY2FsLm5ldCJ9.B4L_47rT1PcJR6EdQu8IkcDpabJnaPbrPlqfaV8adgr04bTGXLysd8joBQzLcfCVoK148tBvqNv0BO3T2p_hwkFkqJPbKg4ClOQzhT7a9r7K1gc46pLFrjRzj-WkVE4qdFKBOpxytVvofmeu5AOOuSC2IgTnCYOEt6CXiRPL5cS-3TbNhYCJJ0e2xZeNLEK-LbQXevM7QbdIkuTXhu99n0akC---68ShM65ikwnBNj9aVf8I9-9rbKGUiu45RPTxvhDerP0Q5M1YKN3k5k_xfmq99hHz1-VV_NF5jhSe9u3gy6X_iHX_SPltCBkV8qmpUQvUFwM0BsrdRvPt1NR8pw"
-      #    body:
-      #    - [ name, admin ]
-      #    - [ composite, false ]
-      #    - [ clientRole, true ]
-      #    user: "admin"
-      #    password: "ned-46i4OMakMw=="
-      #    method: POST
-      #    validate_certs: false
-      #    force_basic_auth: yes
-      #      #status_code: 201
+- set_fact:
+    query: "[?clientId=='grafana.{{ kubernetes.loadBalancer.clusterDomain }}'].id"
+
+- name: create grafana role
+  ignore_errors: true
+  uri:
+    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/clients/{{ clientids.json | json_query(query) | first }}/roles"
+    validate_certs: false
+    headers:
+      Authorization: "bearer {{ bearertoken.json.access_token }}"
+      Content-Type: application/json
+    method: POST
+    body_format: json
+    status_code: 201
+    body: '{ "name": "{{ item }}", "clientRole": true, "composite": false }'
+  loop:
+    - admin
+    - viewer
+    - editor
+- name: create grafana mapping
+  ignore_errors: true
+  uri:
+    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/clients/{{ clientids.json | json_query(query) | first }}/protocol-mappers/models"
+    validate_certs: false
+    headers:
+      Authorization: "bearer {{ bearertoken.json.access_token }}"
+      Content-Type: application/json
+    method: POST
+    body_format: json
+    status_code: 201
+    body: '{ "config": {
+                "access.token.claim": "true",
+                "claim.name": "roles",
+                "id.token.claim": "true",
+                "jsonType.label": "String",
+                "multivalued": "true",
+                "userinfo.token.claim": "true",
+                "usermodel.clientRoleMapping.clientId": "grafana.{{ kubernetes.loadBalancer.clusterDomain }}"
+            },
+            "consentRequired": false,
+            "name": "Roles",
+            "protocol": "openid-connect",
+            "protocolMapper": "oidc-usermodel-client-role-mapper"
+          }'
+- name: get grafana secret if not defined
+  block:
+    - name: get grafana client secret
+      k8s_info:
+        api_version: keycloak.org/v1alpha1
+        kind: KeycloakClient
+        namespace: "{{ keycloak.namespace }}"
+        name: grafana-client
+      register: clientsecret
+    
+    - set_fact:
+        grafana_client_secret: "{{ clientsecret.resources[0].spec.client.secret }}"
+  when: grafana_client_secret is undefined or grafana_client_secret|length<1
+
+- name: get admin user id
+  uri:
+    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"
+    validate_certs: false
+    method: GET
+    headers:
+      Authorization: "bearer {{ bearertoken.json.access_token }}"
+      Content-Type: application/json
+  register: userids
+
+- name: get admin role id
+  uri:
+    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/clients/{{ clientids.json | json_query(query) | first }}/roles"
+    validate_certs: false
+    method: GET
+    headers:
+      Authorization: "bearer {{ bearertoken.json.access_token }}"
+      Content-Type: application/json
+  register: roleids
+
+- set_fact:
+    roleid: "{{ roleids.json | json_query(\"[?name=='admin'].id\") | first }}"
+- name: map user to role
+  #ignore_errors: true
+  uri:
+    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/role-mappings/clients/{{ clientids.json | json_query(query) | first }}"
+    validate_certs: false
+    headers:
+      Authorization: "bearer {{ bearertoken.json.access_token }}"
+      Content-Type: application/json
+    method: POST
+    body_format: json
+    status_code: 204
+    body: '[ 
+      { 
+        "id": "{{ roleid }}",
+        "name": "admin",
+        "composite": false,
+        "clientRole": true
+      }
+      ]'
+
 - name: apply grafana configmap
   k8s:
     state: present     
     definition: "{{ lookup('template', 'grafana_configmap.yml.j2') | from_yaml }}"
 
-- name: 
+- name: restart grafana to get latest configmap
   command: kubectl delete po -n monitoring -l app.kubernetes.io/name=grafana
+
+- name: get admin password
+  k8s_info:
+    kind: Secret
+    namespace: "{{ keycloak.namespace }}"
+    name: credential-admin-keycloak
+  register: usercred
+    
+- debug: 
+    msg: "admin password for grafana:  {{ usercred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
