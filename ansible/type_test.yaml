@@ -1,5 +1,0 @@
----
-- name: create folder for config
-  hosts: master[0]
-  roles:
-    - role: test-cluster

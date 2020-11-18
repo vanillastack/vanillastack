@@ -94,3 +94,77 @@
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-client-vanillamanager.yaml.j2') | from_yaml }}"
     state: present
+      
+- name: check if adminpassword is already created
+  k8s_info:
+    kind: Secret
+    namespace: "{{ keycloak.namespace }}"
+    name: credential-admin-keycloak
+  register: admincred
+
+- name: create admincredentials
+  block:
+    - name: get admin password
+      k8s_info:
+        kind: Secret
+        namespace: "{{ keycloak.namespace }}"
+        name: credential-vanillastack-keycloak
+      register: keycloakcred
+    
+    - name: generate bearertoken
+      uri:
+        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/master/protocol/openid-connect/token"
+        validate_certs: false
+        method: POST
+        body_format: form-urlencoded
+        body:
+          client_id: admin-cli
+          username: admin
+          password: "{{ keycloakcred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
+          grant_type: password
+      register: bearertoken
+    
+    - name: get admin id
+      uri:
+        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"
+        validate_certs: false
+        method: GET
+        headers:
+          Authorization: "bearer {{ bearertoken.json.access_token }}"
+          Content-Type: application/json
+      register: userids
+    
+    - name: create adminuser password
+      set_fact:
+        admin_vanilla_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+    - name: store admin password in cluster
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          type: Opaque
+          metadata:
+            labels:
+              app: keycloak
+              keycloak: vanillastack-keycloak
+            name: credential-admin-keycloak
+            namespace: "{{ keycloak.namespace }}"
+          data:
+            ADMIN_PASSWORD: "{{ admin_vanilla_pass | b64encode}}"
+            ADMIN_USERNAME: "{{ 'admin' | b64encode}}"
+
+    - name: set vanilla admin user password
+      uri:
+        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/reset-password"
+        validate_certs: false
+        headers:
+          Authorization: "bearer {{ bearertoken.json.access_token }}"
+          Content-Type: application/json
+        method: PUT
+        body_format: json
+        status_code: 204
+        body: '{"type":"password","value":"{{ admin_vanilla_pass }}","temporary":false}'
+  when: admincred.resources|length<1
+

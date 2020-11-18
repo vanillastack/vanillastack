@@ -1,11 +1,95 @@
+#
+#- name: get admin id
+#  uri:
+#    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"
+#    validate_certs: false
+#    method: GET
+#    headers:
+#      Authorization: "bearer {{ bearertoken.json.access_token }}"
+#      Content-Type: application/json
+#  register: userids
+
+#- name: check if adminpassword is already created
+#  k8s_info:
+#    kind: Secret
+#    namespace: "{{ keycloak.namespace }}"
+#    name: credential-admin-keycloak
+#  register: admincred
+#   
+#- debug:
+#    msg: "{{ admincred.resources }}"  
+#    #- set_fact:
+#    #admin_password: "{{ keycloakcred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
+#
+#- name: create admincredentials
+#  block:
+#    - name: create adminuser password
+#      set_fact:
+#        my_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+#       
+#    - name: store admin password in cluster
+#      k8s:
+#        state: present
+#        definition:
+#          apiVersion: v1
+#          kind: Secret
+#          type: Opaque
+#          metadata:
+#            labels:
+#              app: keycloak
+#              keycloak: vanillastack-keycloak
+#            name: credential-admin-keycloak
+#            namespace: "{{ keycloak.namespace }}"
+#          data:
+#            ADMIN_PASSWORD: "{{ my_pass | b64encode}}"
+#            ADMIN_USERNAME: "{{ 'admin' | b64encode}}"
+#  when: admincred.resources|length<1
+#
+#- name: generate admin user password
+#  uri:
+#    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/reset-password"
+#    validate_certs: false
+#    headers:
+#      Authorization: "bearer {{ bearertoken.json.access_token }}"
+#      Content-Type: application/json
+#    method: PUT
+#    body_format: json
+#    status_code: 204
+#    body: '{"type":"password","value":"{{ my_pass }}","temporary":false}'
+#  register: admincreation
+
 - name: Deploy Grafana Client
   community.kubernetes.k8s:
     definition: "{{ lookup('template', 'vanillastack-client-keycloack.yaml.j2') | from_yaml }}"
     state: present
     wait: true
   register: grafana_client
-- debug:
-    msg: "{{ grafana_client.result.spec.client }}"
+
+- name: get admin password
+  k8s_info:
+    kind: Secret
+    namespace: "{{ keycloak.namespace }}"
+    name: credential-admin-keycloak
+  register: admincred
+
+- set_fact:
+    admin_password: "{{ admincred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
+
+- name: generate bearertoken
+  uri:
+    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/{{ kubernetes.loadBalancer.clusterDomain }}/protocol/openid-connect/token"
+    validate_certs: false
+    method: POST
+    body_format: form-urlencoded
+    body:
+      client_id: grafana.test.vanillastack.cloudical.net
+      username: admin
+      password: "{{ admin_password }}"
+      grant_type: password
+  register: bearertoken
+
+    #- debug:
+    #    msg: "{{ grafana_user.result.spec.user }}"
 
       #- name: create grafana rule
       #  uri:
