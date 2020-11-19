@@ -17,4 +17,5 @@
     when: efkstack.enabled
   - role: install-efk
     action: create-client
+    when: efkstack.enabled and keycloak.enabled
 
