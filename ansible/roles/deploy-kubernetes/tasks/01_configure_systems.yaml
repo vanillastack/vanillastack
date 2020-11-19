@@ -125,7 +125,6 @@
   - name: get latest kube version
     shell: dnf --showduplicate list  kubelet --disableexcludes=kubernetes | grep {{ kubernetes.version }} | tail -1 | tr -s ' ' | cut -d ' ' -f2
     register: dnf_output
-    warn: false
 
   - name: get kubeversion
     set_fact:
