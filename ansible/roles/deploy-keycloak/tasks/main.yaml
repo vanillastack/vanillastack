@@ -106,16 +106,16 @@
   pause:
     seconds: 10
 
-- name: check if adminpassword is already created
+- name: check if realmadminpassword is already created
   k8s_info:
     kind: Secret
     namespace: "{{ keycloak.namespace }}"
     name: credential-admin-keycloak
   register: admincred
 
-- name: create admincredentials
+- name: create realmadmincredentials
   block:
-    - name: get admin password
+    - name: get masteradmin password
       k8s_info:
         kind: Secret
         namespace: "{{ keycloak.namespace }}"
@@ -138,7 +138,7 @@
       delay: 10
       until: bearertoken.status == 200
 
-    - name: get admin id
+    - name: get realmadmin id
       uri:
         url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"
         validate_certs: false
@@ -147,7 +147,10 @@
           Authorization: "bearer {{ bearertoken.json.access_token }}"
           Content-Type: application/json
       register: userids
-    
+      retries: 120
+      delay: 10
+      until: userids.status == 200    
+
     - name: create adminuser password
       set_fact:
         admin_vanilla_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
