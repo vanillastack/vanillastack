@@ -35,5 +35,5 @@ velero:
         - '*'
         #includedResources:
         #- '*'
-        storageLocation: incluster-cephobjectn1
+        storageLocation: default
         ttl: 336h0m0s

@@ -41,7 +41,7 @@ configuration:
       publicUrl: "{{velero.aws.publicURL}}"
       s3Url: "{{velero.aws.s3URL}}"
   volumeSnapshotLocation:
-    name: default
+    name: default-snap
     bucket: {{velero.aws.snapshotBucketName}}
     config:
       region: {{velero.aws.region}}
