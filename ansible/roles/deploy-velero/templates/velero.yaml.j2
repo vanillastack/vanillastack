@@ -96,7 +96,8 @@ restic:
 #       ttl: "240h"
 #       includedNamespaces:
 #       - foo
-schedules: {}
+schedules:
+  {{ velero.schedules|indent(width=2) }}
 
 initContainers:
   - name: velero-plugin-for-aws

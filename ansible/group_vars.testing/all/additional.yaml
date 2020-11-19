@@ -16,6 +16,21 @@ velero:
       path: /srv/nfs
     accessKey: NQhlZ2qu6Gi73f4AfTBbGyLob
     secretKey: p7v1jHW8cW3BQNMknrTAJqpUX
+  schedules:
+    k8s-cluster:
+      schedule: 15 */4 * * *
+      template:
+        excludedResources:
+        - pvcs
+        - pvs
+        hooks: {}
+        includeClusterResources: true
+        includedNamespaces:
+        - '*'
+        #includedResources:
+        #- '*'
+        storageLocation: incluster-cephobjectn1
+        ttl: 336h0m0s
 perconaOperator:
   enabled: true
   chartName: "pxc-operator"
