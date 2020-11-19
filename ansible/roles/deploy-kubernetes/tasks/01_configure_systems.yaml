@@ -57,7 +57,6 @@
   command: /tmp/get_helm.sh
   environment:
     DESIRED_VERSION: "{{ kubernetes.helm_version }}"
-    PATH: "$PATH:/usr/local/bin"
   ignore_errors: yes
 
 #### REDHAT FAMILY
