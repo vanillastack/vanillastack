@@ -207,6 +207,9 @@
     - role: install-efk
       action: "{{ efkstack.logaggregator.name }}_deploy"
       when: efkstack.enabled
+    - role: install-efk
+      action: create-client
+      when: efkstack.enabled and keycloak.enabled
 
 - name: Deploy Postgres Operator
   hosts: master[0]
@@ -273,7 +276,8 @@
     when: prometheus.enabled
   - role: install-monitoring
     action: create-client
-    when: prometheus.enabled
+    when: prometheus.enabled and keycloak.enabled
+
 
 - name: install redis cluster
   hosts: master[0]

@@ -1,0 +1,27 @@
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: kibana-client
+  labels:
+    app: vanillastack-sso
+  namespace: {{ keycloak.namespace }}
+spec:
+  realmSelector:
+    matchLabels:
+      app: vanillastack-sso
+  client:
+    clientId: "kibana.{{kubernetes.loadBalancer.clusterDomain}}"
+    name: "kibana.{{kubernetes.loadBalancer.clusterDomain}}"
+    directAccessGrantsEnabled: true
+    secret: "{{ kibana_client_secret }}"
+    clientAuthenticatorType: client-secret
+    protocol: openid-connect
+    enabled: true
+    baseUrl: "/oauth/callback"
+    rootUrl: "https://kibana.{{kubernetes.loadBalancer.clusterDomain}}"
+    redirectUris:
+      - "https://kibana.{{kubernetes.loadBalancer.clusterDomain}}/oauth/callback"
+      - "http://kibana.{{kubernetes.loadBalancer.clusterDomain}}/oauth/callback"
+    standardFlowEnabled: true
+    fullScopeAllowed: false
+

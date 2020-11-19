@@ -57,6 +57,7 @@
   command: /tmp/get_helm.sh
   environment:
     DESIRED_VERSION: "{{ kubernetes.helm_version }}"
+    PATH: "$PATH:/usr/local/bin"
   ignore_errors: yes
 
 #### REDHAT FAMILY
@@ -102,6 +103,7 @@
   - name: enable crio
     command: "dnf module enable cri-o:{{ kubernetes.crioVersion }} -y" 
     when: ansible_distribution == 'Fedora'
+    warn: false
 
   - name: Add kubic stable repo
     yum_repository:
@@ -124,7 +126,8 @@
   - name: get latest kube version
     shell: dnf --showduplicate list  kubelet --disableexcludes=kubernetes | grep {{ kubernetes.version }} | tail -1 | tr -s ' ' | cut -d ' ' -f2
     register: dnf_output
-  
+    warn: false
+
   - name: get kubeversion
     set_fact:
       versions: "{{ dnf_output.stdout }}"
