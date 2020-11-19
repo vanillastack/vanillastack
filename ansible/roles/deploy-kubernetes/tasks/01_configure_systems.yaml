@@ -103,7 +103,6 @@
   - name: enable crio
     command: "dnf module enable cri-o:{{ kubernetes.crioVersion }} -y" 
     when: ansible_distribution == 'Fedora'
-    warn: false
 
   - name: Add kubic stable repo
     yum_repository:
