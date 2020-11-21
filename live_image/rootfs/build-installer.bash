@@ -27,14 +27,14 @@ GIT_BRANCH=""
 #
 fetch_container_image() {
 set -x
-    echo "pulling docker image harbor.cloudical.net/vanillastack/installer$dockerimage_tag"  | tee -a "$OUTPUT/build.log"
+    echo "pulling docker image harbor.vanillastack.io/vanillastack/installer$dockerimage_tag"  | tee -a "$OUTPUT/build.log"
 
     pwd  | tee -a "$OUTPUT/build.log"
     ls -l  | tee -a "$OUTPUT/build.log"
     mkdir -p config/includes.chroot/vanilla | tee -a "$OUTPUT/build.log"
 
     echo "+++ pulling image" | tee -a "$OUTPUT/build.log"
-    skopeo copy "docker://harbor.cloudical.net/vanillastack/installer$dockerimage_tag" "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar:harbor.cloudical.net/vanillastack/installer$dockerimage_tag" | tee -a "$OUTPUT/build.log"
+    skopeo copy "docker://harbor.vanillastack.io/vanillastack/installer$dockerimage_tag" "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar:harbor.vanillastack.io/vanillastack/installer$dockerimage_tag" | tee -a "$OUTPUT/build.log"
     skopeo inspect "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar" | grep "Digest" | cut -d \" -f4 -d \" | cut -d : -f 2
 
     echo "+++ image pulled - compressing image" | tee -a "$OUTPUT/build.log"
