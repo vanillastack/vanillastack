@@ -1,0 +1,26 @@
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: grafana-client
+  labels:
+    app: vanillastack-sso
+  namespace: {{ keycloak.namespace }}
+spec:
+  realmSelector:
+    matchLabels:
+      app: vanillastack-sso
+  client:
+    clientId: "grafana.{{kubernetes.loadBalancer.clusterDomain}}"
+    name: "grafana.{{kubernetes.loadBalancer.clusterDomain}}"
+    directAccessGrantsEnabled: true
+    secret: "{{ grafana_client_secret }}"
+    clientAuthenticatorType: client-secret
+    protocol: openid-connect
+    enabled: true
+    baseUrl: "/login/generic_oauth"
+    rootUrl: "https://grafana.{{kubernetes.loadBalancer.clusterDomain}}"
+    redirectUris:
+      - "https://grafana.{{kubernetes.loadBalancer.clusterDomain}}/login/generic_oauth"
+    standardFlowEnabled: true
+    fullScopeAllowed: false
+

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gatekeeper-config
+  namespace: kube-logging
+data:
+  keycloak-gatekeeper.conf: |+
+    discovery-url: https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/{{ kubernetes.loadBalancer.clusterDomain }}
+    skip-openid-provider-tls-verify: true
+    client-id: kibana.{{ kubernetes.loadBalancer.clusterDomain }}
+    client-secret: {{ kibana_client_secret }}
+    listen: :3000
+    enable-refresh-tokens: true
+    enable-logging: true
+    enable-default-deny: true
+    enable-session-cookies: true
+    tls-cert:
+    tls-private-key:
+    redirection-url: https://kibana.{{ kubernetes.loadBalancer.clusterDomain }}
+    secure-cookie: false
+    encryption-key: vGcLt8ZUdPX5fXhtLZaPHZkGWHZrT6aa
+    upstream-url: http://127.0.0.1:5601/
+    forbidden-page: /html/access-forbidden.html
+    ingress.enabled: true
+    resources:
+    - uri: /*
+      roles:
+        - kibana.{{ kubernetes.loadBalancer.clusterDomain }}:admin
+

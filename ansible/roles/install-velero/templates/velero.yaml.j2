@@ -41,14 +41,14 @@ configuration:
       publicUrl: "{{velero.aws.publicURL}}"
       s3Url: "{{velero.aws.s3URL}}"
   volumeSnapshotLocation:
-    name: default
+    name: default-snap
     bucket: {{velero.aws.snapshotBucketName}}
     config:
       region: {{velero.aws.region}}
       s3ForcePathStyle: "true"
       publicUrl: "{{velero.aws.publicURL}}"
       s3Url: "{{velero.aws.s3URL}}"
-{% endif %)
+{% endif %}
 
 credentials:
   useSecret: true
@@ -61,7 +61,7 @@ credentials:
 {% elif velero.backend == "aws" %}
       aws_access_key_id = {{velero.aws.accessKey}}
       aws_secret_access_key = {{velero.aws.secretKey}}
-{% endif %)
+{% endif %}
 deployRestic: true
 restic:
   podVolumePath: /var/lib/kubelet/pods
@@ -96,7 +96,8 @@ restic:
 #       ttl: "240h"
 #       includedNamespaces:
 #       - foo
-schedules: {}
+schedules:
+  {{ velero.schedules }}
 
 initContainers:
   - name: velero-plugin-for-aws

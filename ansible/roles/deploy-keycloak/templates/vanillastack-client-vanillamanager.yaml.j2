@@ -1,0 +1,21 @@
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: vanillamanager-client
+  labels:
+    app: vanillastack-sso
+  namespace: {{keycloak.namespace}}
+spec:
+  realmSelector:
+    matchLabels:
+      app: vanillastack-sso
+  client:
+    clientId: "admin.{{kubernetes.loadBalancer.clusterDomain}}"
+    name: "admin.{{kubernetes.loadBalancer.clusterDomain}}"
+    secret: vanillamanager-client-secret
+    clientAuthenticatorType: client-secret
+    protocol: openid-connect
+    enabled: true
+    redirectUris: 
+      - "https://admin.{{kubernetes.loadBalancer.clusterDomain}}"
+    rootUrl: "https://admin.{{kubernetes.loadBalancer.clusterDomain}}" 
