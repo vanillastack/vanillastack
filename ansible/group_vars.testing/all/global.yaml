@@ -81,7 +81,7 @@ redis:
   namespace: "testing"
   name: "redis-cluster"
   global:
-    imagetag: "v2.0"
+    imagetag: "2.0"
     password: "Opstree@1235"
   operator:
     imagetag: "v0.2"

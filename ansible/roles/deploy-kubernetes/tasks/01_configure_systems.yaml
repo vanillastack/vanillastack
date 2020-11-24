@@ -525,6 +525,13 @@
     when: openstack.enabled
 #### SUSE FAMILY END
 
+- name: Set CRI-O seccomp profile path
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: '^pids_limit*.'
+    line: 'pids_limit = 8192'
+
 - name: "Check for installed packages"
   package_facts:
     manager: "auto"
