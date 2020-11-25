@@ -16,6 +16,8 @@
         definition: "{{ lookup('template', 'vanillastack-client-keycloack.yaml.j2') | from_yaml }}"
         state: present
         wait: true
+    - pause:
+        seconds: 30          
   when: clientsecret.resources|length<1
 
 - name: get admin password
