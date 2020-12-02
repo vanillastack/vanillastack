@@ -81,7 +81,7 @@ redis:
   namespace: "testing"
   name: "redis-cluster"
   global:
-    imagetag: "v2.0"
+    imagetag: "2.0"
     password: "Opstree@1235"
   operator:
     imagetag: "v0.2"
@@ -237,6 +237,21 @@ alertmanager:
     requests:
       cpu: 200m
       memory: 512Mi
+  config: |
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'null'
+      routes:
+      - match:
+          alertname: Watchdog
+        receiver: 'null'
+    receivers:
+    - name: 'null'
 grafana:
   enabled: true
   admin_user: admin
@@ -262,3 +277,21 @@ moodle:
   ingress:
     enabled: true
     dns: "moodle.{{ kubernetes.loadBalancer.clusterDomain }}"
+keycloak:
+  enabled: true
+  namespace: keycloak
+  externalDatabase: false
+  postgres:
+    size: "20Gi"
+    replicas: 2
+    version: "12"
+    maxConnections: 400
+    backup:
+      enabled: false
+      cronjob: "30 */2 * * *"
+  ingress:
+    enabled: true
+    publicDomain: "keycloak.{{ kubernetes.loadBalancer.clusterDomain }}"
+  realm:
+    name: "{{ kubernetes.loadBalancer.clusterDomain }}"
+    id: "{{ kubernetes.loadBalancer.clusterDomain }}"

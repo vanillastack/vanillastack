@@ -124,7 +124,7 @@
   - name: get latest kube version
     shell: dnf --showduplicate list  kubelet --disableexcludes=kubernetes | grep {{ kubernetes.version }} | tail -1 | tr -s ' ' | cut -d ' ' -f2
     register: dnf_output
-  
+
   - name: get kubeversion
     set_fact:
       versions: "{{ dnf_output.stdout }}"
@@ -141,6 +141,7 @@
         - grubby
         - cri-o
         - nfs-utils
+        - iproute
       disable_excludes: kubernetes
   
   - name: Disable SELinux
@@ -239,8 +240,7 @@
     apt_key:
       url: "{{ item }}"
     loop:
-      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.18:/1.18.3/Debian_Unstable/Release.key"
-      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_Unstable/Release.key"
+      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_10/Release.key"
       - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key"
       - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
       - "https://baltocdn.com/helm/signing.asc"
@@ -256,9 +256,9 @@
       state: present
     loop:
       - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
-      - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_10/ /"
       - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
-      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_Unstable/ /"
+      - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
       - "deb https://baltocdn.com/helm/stable/debian/ all main"
       - "deb https://packages.cloudfoundry.org/debian stable main"
     retries: 3
@@ -279,6 +279,7 @@
         - python-kubernetes
         - python3-kubernetes
         - nfs-common
+        - iproute2
       update_cache: yes
     retries: 3
     delay: 1
@@ -523,6 +524,13 @@
       home: /var/lib/neutron
     when: openstack.enabled
 #### SUSE FAMILY END
+
+- name: Set CRI-O seccomp profile path
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: '^pids_limit*.'
+    line: 'pids_limit = 8192'
 
 - name: "Check for installed packages"
   package_facts:

@@ -4,7 +4,7 @@
   become: true
   gather_facts: no
   roles:
-    - role: deploy-velero
+    - role: install-velero
       action: cli
       when: velero.enabled
 
@@ -13,6 +13,6 @@
   become: false
   gather_facts: no
   roles:
-    - role: deploy-velero
+    - role: install-velero
       action: velero
       when: velero.enabled

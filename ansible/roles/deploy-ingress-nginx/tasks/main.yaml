@@ -1,7 +1,7 @@
 ---
 - name: "helm install ingress-nginx"
   community.kubernetes.helm:
-    name: ingress-nginx
+    name: nginx-ingress
     chart_ref: vanillastack/ingress-nginx
     release_namespace: "{{ ingress.namespace }}"
     create_namespace: true

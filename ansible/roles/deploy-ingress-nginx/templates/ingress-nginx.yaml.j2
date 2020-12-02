@@ -84,6 +84,7 @@ defaultBackend:
     # nobody user -> uid 65534
     runAsUser: 65534
 
+{% if cloudfoundry.enabled %}
 tcp:
   2222: "kubecf/scheduler:2222"
   20000: "kubecf/tcp-router:20000"
@@ -95,3 +96,4 @@ tcp:
   20006: "kubecf/tcp-router:20006"
   20007: "kubecf/tcp-router:20007"
   20008: "kubecf/tcp-router:20008"
+{% endif %}

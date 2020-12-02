@@ -49,6 +49,7 @@
     - name: deploy cilium chart
       community.kubernetes.helm:
         name: cilium
+        chart_version: 1.8.5
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
         values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
@@ -58,6 +59,7 @@
     - name: redeploy cilium
       community.kubernetes.helm:
         name: cilium
+        chart_version: 1.8.5
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
         values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
@@ -84,7 +86,11 @@
 ### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq
           
 - name: Wait for control-plane pods become ready
-  command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=600s"
+  command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s"
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
 
 - name: restart kubedns
   command: kubectl delete po -n kube-system -l k8s-app=kube-dns

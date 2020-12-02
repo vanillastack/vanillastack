@@ -1,0 +1,187 @@
+---
+- name: Deploy Keycloak CRDs
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    state: present
+    wait: true
+  with_items:
+    - keycloak.org_keycloakbackups_crd.yaml.j2
+    - keycloak.org_keycloakrealms_crd.yaml.j2
+    - keycloak.org_keycloakusers_crd.yaml.j2
+    - keycloak.org_keycloakclients_crd.yaml.j2
+    - keycloak.org_keycloaks_crd.yaml.j2
+
+- name: Create Keycloak namespace
+  community.kubernetes.k8s:
+    name: "{{keycloak.namespace}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+    wait: true
+
+- name: Deploy Keycloak Operator
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    state: present
+    wait: true
+  with_items:
+    - role.yaml.j2
+    - role_binding.yaml.j2
+    - service_account.yaml.j2
+    - operator.yaml.j2
+
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+
+- name: Create PostgreSQL
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'postgres.yaml.j2') | from_yaml }}"
+    state: present
+    wait: true
+  when: keycloak.externalDatabase
+
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  when: keycloak.externalDatabase
+
+- name: "register postgres application password"
+  shell: echo "$(kubectl get secret -n {{ keycloak.namespace }} -o json keycloak.{{keycloak.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
+  register: postgrespassword
+  when: keycloak.externalDatabase
+
+- name: Deploy postgres secret
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak-db-secret.yaml.j2') | from_yaml }}"
+    state: present
+  when: keycloak.externalDatabase
+
+- name: Deploy VanillaStack Keycloak instance
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak.yaml.j2') | from_yaml }}"
+    state: present
+    wait: true
+
+- name: startup delay
+  pause:
+    seconds: 30
+
+- name: wait for pods to come up
+  retries: 120
+  delay: 10
+  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  register: kubectl_get_pods
+  until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+
+- name: Deploy ingress
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-keycloak-ingress.yaml.j2') | from_yaml }}"
+    state: present
+    wait: true
+  when: keycloak.ingress.enabled
+
+- name: Deploy VanillaStack Realm
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-realm.yaml.j2') | from_yaml }}"
+    state: present
+    wait: true
+
+- name: startup delay
+  pause:
+    seconds: 10
+
+- name: Deploy VanillaStore Client
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'vanillastack-client-vanillamanager.yaml.j2') | from_yaml }}"
+    state: present
+
+- name: startup delay
+  pause:
+    seconds: 10
+
+- name: check if realmadminpassword is already created
+  k8s_info:
+    kind: Secret
+    namespace: "{{ keycloak.namespace }}"
+    name: credential-admin-keycloak
+  register: admincred
+
+- name: create realmadmincredentials
+  block:
+    - name: get masteradmin password
+      k8s_info:
+        kind: Secret
+        namespace: "{{ keycloak.namespace }}"
+        name: credential-vanillastack-keycloak
+      register: keycloakcred
+    
+    - name: generate bearertoken
+      uri:
+        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/master/protocol/openid-connect/token"
+        validate_certs: false
+        method: POST
+        body_format: form-urlencoded
+        body:
+          client_id: admin-cli
+          username: admin
+          password: "{{ keycloakcred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
+          grant_type: password
+      register: bearertoken
+      retries: 120
+      delay: 10
+      until: bearertoken.status == 200
+
+    - name: get realmadmin id
+      uri:
+        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"
+        validate_certs: false
+        method: GET
+        headers:
+          Authorization: "bearer {{ bearertoken.json.access_token }}"
+          Content-Type: application/json
+      register: userids
+      retries: 120
+      delay: 10
+      until: userids.status == 200    
+
+    - name: create adminuser password
+      set_fact:
+        admin_vanilla_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+    - name: store admin password in cluster
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          type: Opaque
+          metadata:
+            labels:
+              app: keycloak
+              keycloak: vanillastack-keycloak
+            name: credential-admin-keycloak
+            namespace: "{{ keycloak.namespace }}"
+          data:
+            ADMIN_PASSWORD: "{{ admin_vanilla_pass | b64encode}}"
+            ADMIN_USERNAME: "{{ 'admin' | b64encode}}"
+
+    - name: set vanilla admin user password
+      uri:
+        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/reset-password"
+        validate_certs: false
+        headers:
+          Authorization: "bearer {{ bearertoken.json.access_token }}"
+          Content-Type: application/json
+        method: PUT
+        body_format: json
+        status_code: 204
+        body: '{"type":"password","value":"{{ admin_vanilla_pass }}","temporary":false}'
+  when: admincred.resources|length<1
+

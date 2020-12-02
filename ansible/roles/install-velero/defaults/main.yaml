@@ -22,3 +22,18 @@ velero:
     s3URL: <s3 url> 
     accessKey: <access key>
     secretKey: <secret key>
+  schedules:
+    k8s-cluster:
+      schedule: 15 */4 * * *
+      template:
+        excludedResources:
+        - pvcs
+        - pvs
+        hooks: {}
+        includeClusterResources: true
+        includedNamespaces:
+        - '*'
+        #includedResources:
+        #- '*'
+        storageLocation: default
+        ttl: 336h0m0s
