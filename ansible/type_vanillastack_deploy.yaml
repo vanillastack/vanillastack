@@ -141,7 +141,7 @@
   roles:
     - role: prepare-registry
       when: certmanager.enabled
-    - role: helm-cert-manager
+    - role: deploy-certmanager
       when: certmanager.enabled
 
 - name: Deploy Keycloak
