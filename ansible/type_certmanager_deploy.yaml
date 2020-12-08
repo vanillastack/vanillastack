@@ -7,4 +7,4 @@
   become: false
   gather_facts: true
   roles:
-    - role: helm-cert-manager
+    - role: deploy-certmanager
