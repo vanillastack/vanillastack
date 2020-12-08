@@ -423,7 +423,7 @@ prometheusOperator:
 {% else %}
         repository: jettech/kube-webhook-certgen
 {% endif %}
-        tag: v1.3.0
+        tag: v1.5.0
         sha: ""
         pullPolicy: IfNotPresent
       resources: {}
@@ -478,7 +478,7 @@ prometheusOperator:
 {% else %}
     repository: quay.io/coreos/prometheus-operator
 {% endif %}
-    tag: v0.38.1
+    tag: v0.44.0
     sha: ""
     pullPolicy: IfNotPresent
   configmapReloadImage:
@@ -487,7 +487,7 @@ prometheusOperator:
 {% else %}
     repository: docker.io/jimmidyson/configmap-reload
 {% endif %}
-    tag: v0.3.0
+    tag: v0.4.0
     sha: ""
   prometheusConfigReloaderImage:
 {% if commercial.enabled %}
@@ -495,7 +495,7 @@ prometheusOperator:
 {% else %}
     repository: quay.io/coreos/prometheus-config-reloader
 {% endif %}
-    tag: v0.38.1
+    tag: v0.44.0
     sha: ""
   configReloaderCpu: 100m
   configReloaderMemory: 25Mi
@@ -607,7 +607,7 @@ prometheus:
 {% else %}
       repository: quay.io/prometheus/prometheus
 {% endif %}
-      tag: v2.18.2
+      tag: v2.22.1
       sha: ""
     tolerations: []
     alertingEndpoints: []
