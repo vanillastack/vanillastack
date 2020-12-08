@@ -279,8 +279,8 @@ kubeControllerManager:
   enabled: {{ prometheus.kubeControllerManager.enabled }}
   endpoints: []
   service:
-    port: 10252
-    targetPort: 10252
+    port: 10257
+    targetPort: 10257
 
   serviceMonitor:
     interval: ""
@@ -338,8 +338,8 @@ kubeScheduler:
   enabled: {{ prometheus.kubeScheduler.enabled }}
   endpoints: []
   service:
-    port: 10251
-    targetPort: 10251
+    port: 10259
+    targetPort: 10259
 
   serviceMonitor:
     interval: ""
