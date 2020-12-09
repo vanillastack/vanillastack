@@ -1,7 +1,60 @@
 = VanillaStack
 
+There are multiple Vendor-Stacks out there, that promise to deliver an installation without hazzles, full integration and total flexibility - only to vendor lock you to the tools, frameworks and interfaces of a product.
+
+VanillaStack wants to be and is different: VanillaStack offers the integration of plain upstream projects. VanillaStack will use directly the core components of Kubernetes, OpenStack, Ceph, Rook, Cloudfoundry, Harbor and many more.
+
+This ensures, at any time, to work around or without VanillaStack, because, Vanilla doesn't want to own the stack. Vanilla wants to help but imposes no limits on your tooling.
+
+== The VanillaStack project
+
+VanillaStack understands Kubernetes as the operating system of your datacenter and helps you to setup a seamless installation of core cloud services.
+It offers a cloudstack installation of the following OpenSource projects:
+* Kubernetes
+* Ceph via Rook
+* OpenStack
+* Cloudfoundry
+* Guacamole
+* Kubevirt
+* ... and more
+
+ ... all including Monitoring and Metrics preconfigured.
+
+The VanillaStack project is licensed under link:LICENSE[Apache 2.0 License].
+
 == CI/CD status
 Testing: image:https://gitlab.cloudical.net/vanillastack/vanillastack/badges/testing/pipeline.svg[link="https://gitlab.cloudical.net/vanillastack/vanillastack/-/commits/testing",title="pipeline status"]
+
+
+== VanillaStack Project Scope & Core Design Goals
+
+Kubernetes First::
+VanillaStack understands Kubernetes as its operating system.
+All additional components are rolled out within containers.
+Always and everwhere.
+
+IaaS. CaaS. PaaS. All included. All working::
+VanillaStack is based on the best Container-as-a-Service-platform: Kubernetes.
+It allows you to roll out the best Infrastructure-as-a-Service-platform: OpenStack.
+It runs the best Platform-as-a-Service-platform: Cloud Foundry.
+All from an easy to use installer, all working out-of-the-box.
+
+The best management and operations tools::
+With VanillaStack, the most commonly used management and operations tools, are just a click away.
+Install Prometheus, Grafana and the EFK-stack with ease.
+Enjoy operations.
+
+Commercial and Open-Source ecosystem::
+VanillaStack is not a Kubernetes distribution. VanillaStack is an open-source ecosystem.
+The core of VanillaStack are a web-based installer and a web-based AppStore.
+Open for everyone, be it open-source or commercial offering.
+But always quality assured and curated.
+
+Only Open-Source. Only Community-Projects::
+VanillaStack is made of open-source projects only.
+We use the vanilla community projects.
+No vendor lock, no proprietary code, no hidden magic.
+Only open-source and only community.
 
 == Requirements
 VanillaStack requirements:
