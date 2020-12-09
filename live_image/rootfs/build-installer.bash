@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+export VANILLA_REGISTRY_URL=harbor.vanillastack.io/vanillastack/installer
+
 _DEBUG="false"
 [[ "$DEBUG" == TRUE ]] && _DEBUG=true
 
@@ -26,15 +28,14 @@ GIT_BRANCH=""
 # Preload installer image by skopeo
 #
 fetch_container_image() {
-set -x
-    echo "pulling docker image harbor.vanillastack.io/vanillastack/installer$dockerimage_tag"  | tee -a "$OUTPUT/build.log"
+    echo "pulling docker image $VANILLA_REGISTRY_URL$dockerimage_tag"  | tee -a "$OUTPUT/build.log"
 
     pwd  | tee -a "$OUTPUT/build.log"
     ls -l  | tee -a "$OUTPUT/build.log"
     mkdir -p config/includes.chroot/vanilla | tee -a "$OUTPUT/build.log"
 
     echo "+++ pulling image" | tee -a "$OUTPUT/build.log"
-    skopeo copy "docker://harbor.vanillastack.io/vanillastack/installer$dockerimage_tag" "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar:harbor.vanillastack.io/vanillastack/installer$dockerimage_tag" | tee -a "$OUTPUT/build.log"
+    skopeo copy "docker://$VANILLA_REGISTRY_URL$dockerimage_tag" "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar:$VANILLA_REGISTRY_URL$dockerimage_tag" | tee -a "$OUTPUT/build.log"
     skopeo inspect "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar" | grep "Digest" | cut -d \" -f4 -d \" | cut -d : -f 2
 
     echo "+++ image pulled - compressing image" | tee -a "$OUTPUT/build.log"
@@ -43,11 +44,11 @@ set -x
 
     rm config/includes.chroot/vanilla/vanilla-installer.tar
     echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
+    echo "${VANILLA_REGISTRY_URL#:}" > config/includes.chroot/vanilla/image
     echo "+++ export finished" | tee -a "$OUTPUT/build.log"
 
     pwd  | tee -a "$OUTPUT/build.log"
     ls -l config/includes.chroot/vanilla  | tee -a "$OUTPUT/build.log"
-set +x
 }
 
 #
