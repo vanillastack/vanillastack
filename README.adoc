@@ -70,24 +70,48 @@ Vanilla is continuously growing and adapting. As a community project, there is n
 
 We are excited about your interest in Vanilla and hope you will join us. We take our community very seriously, and we are committed to creating a community built on respectful interactions and inclusivity
 
+== How to Get Started
+
+* Use a machine with an ready made installation ISO image:
+
+** Download the ISO and Boot it: `https://downloads.vanillastack.io/iso/live-image/vanillastack-installer-amd64.hybrid.iso`
+
+* Use an already running Docker instance:
+
+** pull and run the Docker-Container if you have a local docker running already:
+
+ $ docker run --name vanilla --rm harbor.vanillastack.io/vanillastack/installer
+
+** Point your browser to the installer at `http://localhost:8080`
+
+
 == Requirements
+
+VanillaStack Installer:
+
+* a working local Docker installation __or...__
+* __...or__ a empty machine (can be virtual) for running ISO image
+* SSH-access to the machines that vanillastack should be installed on
+*
+
+
 VanillaStack requirements:
+
+* Internet network access
+  ** `https://harbour.vanillastack.io`
 
 * Fedora 32
 
-== Documentation
-The dev documentation is stored at: [docs.vanillastack.io]
+== Ressources
 
-== Report a Bug
-For filing bugs, suggesting improvements, or requesting new features, please open an issue.
+* Main Hub around the Project is the link:https://vanillastack.io/[Website]
+* Check out our link:https://www.youtube.com/playlist?list=PLJcz3tF8m0MS7DbVXzutPpJW-Vc_-9d_N[Youtube Channel]
+* The development documentation is stored at: [docs.vanillastack.io]
+* Discussions are happening on our link:https://discourse.vanillastack.io/[Discourse] Channels
+* Bugs, Suggestions, Feature Requests are reported in our link:gitlab.cloudical.net/vanillastack/vanillastack/-/issues[Vanillastack-Gitlab]
 
+== Contribution
 
-== Contact
-Please use the following to reach members of the community:
-
-[Discource](https://discourse.vanillastack.io/)
-
-== Contribute
 Please read and apply the following rules to contribute to this project:
 
 * One git repository for all automation code (THIS REPOSITORY ONLY!)
