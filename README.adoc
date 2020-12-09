@@ -56,6 +56,20 @@ We use the vanilla community projects.
 No vendor lock, no proprietary code, no hidden magic.
 Only open-source and only community.
 
+== Vanilla Community Values
+
+Inclusive::
+Our ambitions are global. The Vanilla community is, too. The perspectives and skills necessary to achieve our goals are wide and varied; we believe in creating a community and a project that is inclusive, accessible, and welcoming to everyone.
+Open::
+We are dedicated to remaining open and transparent. We believe in keeping Vanilla Community code freely and fully available to be viewed, modified, and used without vendor lock-in or other in-built limitations.
+Inspired::
+Vanilla is all about the challenge. Our goals are not small: we want to build the best and simple to use Cloud stack, one that can work with any hardware and interoperate with all workloads. Vanilla is built on hard work, ingenuity, and an engineering mindset. We embrace hard problems and find inspired solutions.
+Evolving::
+Vanilla is continuously growing and adapting. As a community project, there is no limit to its development. We continuously make room for improvement and welcome the opportunities offered by the ever-evolving nature of community projects.
+
+
+We are excited about your interest in Vanilla and hope you will join us. We take our community very seriously, and we are committed to creating a community built on respectful interactions and inclusivity
+
 == Requirements
 VanillaStack requirements:
 
