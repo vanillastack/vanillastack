@@ -10,15 +10,19 @@ This ensures, at any time, to work around or without VanillaStack, because, Vani
 
 VanillaStack understands Kubernetes as the operating system of your datacenter and helps you to setup a seamless installation of core cloud services.
 It offers a cloudstack installation of the following OpenSource projects:
+
 * Kubernetes
 * Ceph via Rook
 * OpenStack
 * Cloudfoundry
 * Guacamole
 * Kubevirt
+* Prometheus
+* Promtail
+* Grafana
+* all including Monitoring, Metrics and alerting preconfigured.
 * ... and more
 
- ... all including Monitoring and Metrics preconfigured.
 
 The VanillaStack project is licensed under link:LICENSE[Apache 2.0 License].
 
@@ -72,18 +76,20 @@ We are excited about your interest in Vanilla and hope you will join us. We take
 
 == How to Get Started
 
-* Use a machine with an ready made installation ISO image:
+* The installer is only a side module that can run anywhere on your network (even locally on your desktop).
+* The installer must be able to login via SSH into the nodes that VanillaStack will be installed on.
+* The User for the login must be able to do sudo
+* The installer will create an unique SSH Keypair everytime it runs. This Key must be manually installed on your nodes by *YOU* footnote:[This ensures that none of *your* private keys get leaked while possibly transferring them. This way, a key ist created and destroyed after installation and you are free to remove the key anytime you wish from your nodes]
 
+* Variant a) Use a machine with an ready made installation ISO image:
 ** Download the ISO and Boot it: `https://downloads.vanillastack.io/iso/live-image/vanillastack-installer-amd64.hybrid.iso`
 
-* Use an already running Docker instance:
-
+* Variant b) Use an already running Docker instance:
 ** pull and run the Docker-Container if you have a local docker running already:
 
  $ docker run --name vanilla --rm harbor.vanillastack.io/vanillastack/installer
 
 ** Point your browser to the installer at `http://localhost:8080`
-
 
 == Requirements
 
