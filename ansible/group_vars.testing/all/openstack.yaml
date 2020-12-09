@@ -1,12 +1,11 @@
 ---
 openstack:
-  enabled: true
+  enabled: false
   namespace: openstack
   publicDomain: "{{ kubernetes.loadBalancer.clusterDomain }}"
   publicProto: "http"
   region: RegionOne
   # releases available:
-  # - stein (EOL 2020.11.11)
   # - train
   # - ussuri (not tested)
   release: "ussuri"
