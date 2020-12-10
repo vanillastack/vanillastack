@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: keycloak
+  annotations:
+    cert-manager.io/cluster-issuer: {{tls.issuerName}}
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  labels:
+    app: keycloak
+  name: keycloak
+spec:
+  tls:
+  - hosts:
+      - {{keycloak.ingress.publicDomain}}
+    secretName: keycloak-tls
+  rules:
+  - host: {{keycloak.ingress.publicDomain}}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: keycloak
+            port:
+              number: 8443

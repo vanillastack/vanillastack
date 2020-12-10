@@ -1,0 +1,23 @@
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  name: keycloak-postgresql
+  namespace: {{keycloak.namespace}}
+spec:
+  teamId: "keycloak"
+  volume:
+    size: {{keycloak.postgres.size}}
+  numberOfInstances: {{keycloak.postgres.replicas}}
+  users:
+    postgres:
+    - superuser
+    - createdb
+    keycloak: []
+  databases:
+    keycloak: keycloak
+  postgresql:
+    version: "{{keycloak.postgres.version}}"
+    parameters:
+      max_connections: "{{keycloak.postgres.maxConnections}}"
+  enableLogicalBackup: {{keycloak.postgres.backup.enabled}}
+  logicalBackupSchedule: {{keycloak.postgres.backup.cronjob}}

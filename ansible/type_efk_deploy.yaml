@@ -15,3 +15,7 @@
   - role: install-efk
     action: "{{ efkstack.logaggregator.name }}_deploy"
     when: efkstack.enabled
+  - role: install-efk
+    action: create-client
+    when: efkstack.enabled and keycloak.enabled
+

@@ -102,10 +102,10 @@
 
 - name: Persist swapoff
   template:
-    src: ./templates/boot.local
+    src: boot.local
     dest: /etc/init.d/boot.local
     mode: 0755
-  when: ansible_os_family == 'Suse'
+  when: ansible_os_family == 'Suse' or ansible_distribution == 'CentOS'
 
 - name: "Reboot machine to get latest updates"
   reboot:

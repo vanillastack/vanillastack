@@ -123,7 +123,7 @@
   roles:
     - role: prepare-registry
       when: ingress.enabled
-    - role: helm-nginx-ingress
+    - role: deploy-ingress-nginx
       when: ingress.enabled
 
 - name: Deploy Rook
@@ -143,6 +143,14 @@
       when: certmanager.enabled
     - role: helm-cert-manager
       when: certmanager.enabled
+
+- name: Deploy Keycloak
+  hosts: master[0]
+  become: false
+  gather_facts: no
+  roles:
+    - role: deploy-keycloak
+      when: keycloak.enabled
 
 - name: Deploy OpenStack
   hosts: master[0]
@@ -199,6 +207,9 @@
     - role: install-efk
       action: "{{ efkstack.logaggregator.name }}_deploy"
       when: efkstack.enabled
+    - role: install-efk
+      action: create-client
+      when: efkstack.enabled and keycloak.enabled
 
 - name: Deploy Postgres Operator
   hosts: master[0]
@@ -263,6 +274,11 @@
   - role: install-monitoring
     action: operator
     when: prometheus.enabled
+  - role: install-monitoring
+    action: create-client
+    when: prometheus.enabled and keycloak.enabled
+
+
 - name: install redis cluster
   hosts: master[0]
   gather_facts: false

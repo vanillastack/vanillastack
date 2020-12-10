@@ -1,0 +1,7 @@
+---
+- name: Deploy Keycloak
+  hosts: master[0]
+  become: false
+  gather_facts: no
+  roles:
+    - role: deploy-keycloak

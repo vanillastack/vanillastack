@@ -1,0 +1,40 @@
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakRealm
+metadata:
+  name: "{{keycloak.realm.name}}"
+  labels:
+    app: vanillastack-sso
+  namespace: {{keycloak.namespace}}
+spec:
+  realm:
+    id: "{{keycloak.realm.id}}"
+    realm: "{{keycloak.realm.name}}"
+    enabled: True
+    displayName: "VanillaStack Realm"
+    eventsListeners:
+      - "metrics-listener"
+    users:
+      - username: "admin"
+        firstName: "VanillaStack"
+        lastName: "Admin"
+        email: "admin@vanillastack"
+        enabled: True
+        emailVerified: True
+        realmRoles:
+          - "offline_access"
+          - "uma_authorization"
+        clientRoles:
+          account:
+            - "manage-account"
+            - "view-profile"
+          realm-management:
+            - "manage-users"
+            - "view-users"
+            - "query-users"
+            - "create-client"
+  realmOverrides:
+    - forFlow: "browser"
+      identityProvider: "openshift-v4"
+  instanceSelector:
+    matchLabels:
+      app: vanillastack-sso

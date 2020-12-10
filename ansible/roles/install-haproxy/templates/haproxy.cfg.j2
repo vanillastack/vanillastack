@@ -87,8 +87,9 @@ backend worker-http
         option tcp-check
             timeout server 300000
 {% for host in groups['worker'] %}
-        server {{ host }} {{ hostvars[host].ansible_host }}:30080 check
+        server {{ host }} {{ hostvars[host].ansible_host }}:{{ ingress_http_port | default(30080) }} check
 {% endfor %}
+
 frontend worker-https
         bind {{ kubernetes.loadBalancer.virtualIP }}:443
         mode tcp
@@ -101,5 +102,5 @@ backend worker-https
         option tcp-check
             timeout server 300000
 {% for host in groups['worker'] %}
-        server {{ host }} {{ hostvars[host].ansible_host }}:30443 check
+        server {{ host }} {{ hostvars[host].ansible_host }}:{{ ingress_https_port | default(30443) }} check
 {% endfor %}

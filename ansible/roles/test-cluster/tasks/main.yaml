@@ -1,0 +1,14 @@
+--- 
+- name: check lb ip
+  command: "ping -c 1 -t 60 {{ kubernetes.loadBalancer.virtualIP }}"
+  register: ping
+  ignore_errors: true
+
+- debug:
+    msg: "{{ kubernetes.loadBalancer.virtualIP }} is not reachable via Ping"
+  when: not ping.rc == 0
+
+- name: check dns entry
+  debug:
+    msg: "{{ lookup('dig', kubernetes.loadBalancer.clusterDomain)}}"
+
