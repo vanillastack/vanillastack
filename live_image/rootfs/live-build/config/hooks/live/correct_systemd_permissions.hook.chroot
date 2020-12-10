@@ -1,0 +1,2 @@
+#!/bin/bash
+chmod o-wx /etc/systemd/system/start_vanilla.service
