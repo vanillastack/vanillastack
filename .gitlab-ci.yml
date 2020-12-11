@@ -1,9 +1,5 @@
 ---
-<<<<<<< HEAD
 image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20201211"
-=======
-image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20200925"
->>>>>>> d68df11 (add community env)
 services:
   - docker:18.09.7-dind
 variables:
@@ -78,11 +74,7 @@ run_playbook_centos8:
     - mv group_vars.testing group_vars
     - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
     - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
-<<<<<<< HEAD
     - if [ "$COMMUNITY" == true ]; then yq -Yi .commercial.enabled='false' group_vars/all/global.yaml; fi
-=======
-    - if [ "$COMMUNITY" == true ]; then sed -iEz 's/(community:\n\s*enabled: )true/\1false/g' group_vars/all/global.yaml; fi
->>>>>>> d68df11 (add community env)
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_debian10:
