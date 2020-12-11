@@ -73,6 +73,7 @@ run_playbook_centos8:
     - mv group_vars.testing group_vars
     - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
     - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
+    - if [ "$COMMUNITY" == true ]; then sed -i '/^ *commercial:/,/^ *[^:]*:/s/enabled: true/enabled: false/' group_vars/all/global.yaml; fi
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_debian10:
@@ -89,6 +90,7 @@ run_playbook_debian10:
     - mv group_vars.testing group_vars
     - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
     - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
+    - if [ "$COMMUNITY" == true ]; then sed -i '/^ *commercial:/,/^ *[^:]*:/s/enabled: true/enabled: false/' group_vars/all/global.yaml; fi
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_fedora32:
@@ -105,6 +107,7 @@ run_playbook_fedora32:
     - mv group_vars.testing group_vars
     - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
     - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
+    - if [ "$COMMUNITY" == true ]; then sed -i '/^ *commercial:/,/^ *[^:]*:/s/enabled: true/enabled: false/' group_vars/all/global.yaml; fi
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 #run_playbook_opensuse15_2:
@@ -121,6 +124,7 @@ run_playbook_fedora32:
 #    - mv group_vars.testing group_vars
 #    - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
 #    - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
+#    - if [ "$COMMUNITY" == true ]; then sed -i '/^ *commercial:/,/^ *[^:]*:/s/enabled: true/enabled: false/' group_vars/all/global.yaml; fi
 #    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 run_playbook_ubuntu_focal:
@@ -137,8 +141,8 @@ run_playbook_ubuntu_focal:
     - mv group_vars.testing group_vars
     - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
     - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
+    - if [ "$COMMUNITY" == true ]; then sed -i '/^ *commercial:/,/^ *[^:]*:/s/enabled: true/enabled: false/' group_vars/all/global.yaml; fi
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
-
 
 include:
   - local: '/live_image/.gitlab-ci.yaml'
