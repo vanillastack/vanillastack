@@ -1,6 +1,6 @@
 ---
 openstack:
-  enabled: false
+  enabled: true
   namespace: openstack
   publicDomain: "{{ kubernetes.loadBalancer.clusterDomain }}"
   publicProto: "http"

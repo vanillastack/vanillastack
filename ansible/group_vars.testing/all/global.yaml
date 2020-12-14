@@ -42,11 +42,11 @@ kubernetes:
   cilium:
     version: v1.8.5
 cloudfoundry:
-  enabled: true
+  enabled: false
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ kubernetes.loadBalancer.clusterDomain }}"
 stratos:
-  enabled: true
+  enabled: false
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ kubernetes.loadBalancer.clusterDomain }}"
 guacamole:
@@ -88,7 +88,7 @@ redis:
   exporter:
     imagetag: "1.0"    
 harbor:
-  enabled: true
+  enabled: false
   chartVersion: 1.5.1
   namespace: harbor
   ingress:
@@ -147,7 +147,7 @@ harbor:
       enabled: false
       cronjob: "30 */2 * * *"
 efkstack:
-  enabled: true
+  enabled: false
   imageTag: "7.9.1"
   kibana:
     user: kibana_test
@@ -186,7 +186,7 @@ efkstack:
         cpu: "100m"
         memory: "200Mi"
 prometheus:
-  enabled: true
+  enabled: false
   admin_user: admin
   admin_password: prompassword
   ingress:
@@ -221,7 +221,7 @@ prometheus:
   kubeStateMetrics:
     enabled: true
 alertmanager:
-  enabled: true
+  enabled: false
   admin_user: admin
   admin_password: ampassword
   ingress:
@@ -253,7 +253,7 @@ alertmanager:
     receivers:
     - name: 'null'
 grafana:
-  enabled: true
+  enabled: false
   admin_user: admin
   admin_password: grafanapassword
   ingress:
@@ -278,7 +278,7 @@ moodle:
     enabled: true
     dns: "moodle.{{ kubernetes.loadBalancer.clusterDomain }}"
 keycloak:
-  enabled: true
+  enabled: false
   namespace: keycloak
   externalDatabase: false
   postgres:
