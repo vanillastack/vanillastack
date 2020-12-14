@@ -43,7 +43,7 @@
       when: not global.externalLB and global.isHA
 
 - name: Install HaProxy
-  hosts: master
+  hosts: haproxy
   become: true
   gather_facts: true
   roles:
