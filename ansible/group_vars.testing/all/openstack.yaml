@@ -8,7 +8,7 @@ openstack:
   # releases available:
   # - train
   # - ussuri (not tested)
-  release: "ussuri"
+  release: "train"
   tls:
     enabled: true
     useCertManager: true
