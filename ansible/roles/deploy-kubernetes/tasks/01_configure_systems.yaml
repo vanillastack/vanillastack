@@ -32,7 +32,9 @@
   package:
     name:
       - python3-devel
-      - gcc-*
+      - gcc
+      - gcc-c++
+      - gcc-toolset-9
   when: ansible_os_family == 'Suse' or ansible_distribution == 'CentOS'
 
 - name: make sure, domain search is not set
