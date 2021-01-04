@@ -433,6 +433,7 @@
       repo: "{{ item }}"
       state: present
     loop:
+      - "deb {{repo.url}} {{repo.debian.tag}}-pip3 main"
       - "deb {{repo.url}} {{repo.debian.tag}}-ansible main"
       - "deb {{repo.url}} {{repo.debian.tag}}-debian-buster-main main"
       - "deb {{repo.url}} {{repo.debian.tag}}-debian10-crio-1.19 main"
@@ -453,25 +454,18 @@
         - helm
         - cf-cli
         - vim
-        - python-pip
         - python3-pip
-        - python-kubernetes
         - python3-kubernetes
         - nfs-common
         - iproute2
+        - python3-openshift
+        - python3-pyhelm
       update_cache: yes
     retries: 3
     delay: 1
     register: result
     until: result is success
     when: ansible_distribution == 'Debian'
-
-  - name: install pip modules
-    pip:
-      name:
-        - pyhelm
-        - openshift
-      extra_args: --ignore-installed
 
   - name: Upgrade all packages to the latest version
     apt:
