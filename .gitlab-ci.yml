@@ -15,10 +15,10 @@ stages:
   - build_docker_image_testing
   - build_docker_image_prod
   - build_liveimage
-  - run_playbook_fedora32
+#  - run_playbook_fedora32
   - run_playbook_centos8
-  - run_playbook_debian10
-  - run_playbook_ubuntu_focal
+#  - run_playbook_debian10
+#  - run_playbook_ubuntu_focal
 
 build_docker_image_dev:
   only:
