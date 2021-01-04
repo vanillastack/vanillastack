@@ -1,0 +1,208 @@
+---
+- name: Check if distribution is supported
+  fail:
+    msg: This disribution is currently not supported by VanillaStack
+  when: ansible_distribution != 'Debian'
+
+- name: Remove old repositories
+  file:
+    path: "{{item}}"
+    state: absent
+  with_items:
+    - "/etc/apt/sources.list.d"
+    - /etc/apt/sources.list
+
+- name: Add key for cri-o repos
+  apt_key:
+    url: "{{ item }}"
+  loop:
+    - "{{repo.url}}/public-gpg-key"
+  retries: 3
+  delay: 1
+  register: result
+  until: result is success
+
+- name: Add repositories
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  loop:
+    - "deb {{repo.url}} {{repo.debian.tag}}-pip3 main"
+    - "deb {{repo.url}} {{repo.debian.tag}}-ansible main"
+    - "deb {{repo.url}} {{repo.debian.tag}}-debian-buster-main main"
+    - "deb {{repo.url}} {{repo.debian.tag}}-debian10-crio-1.19 main"
+    - "deb {{repo.url}} {{repo.debian.tag}}-helm main"
+    - "deb {{repo.url}} {{repo.debian.tag}}-kubernetes-xenial main"
+    - "deb {{repo.url}} {{repo.debian.tag}}-cloudfoundry main"
+  retries: 3
+  delay: 1
+  register: result
+  until: result is success
+
+- name: Install neccessary packages
+  apt:
+    name:
+      - gnupg
+      - git
+      - ansible
+      - vim
+      - lvm2
+      - jq
+      - curl
+      - tar
+      - ansible
+      - needrestart
+      - helm
+      - cf-cli
+      - nfs-common
+      - iproute2
+      - python3-openshift
+      - python3-pyhelm
+      - python3-pip
+      - python3-kubernetes
+      - python3-passlib
+    update_cache: yes
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+
+- name: Upgrade all packages to the latest version
+  apt:
+    name: "*"
+    state: latest
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+
+- name: make sure, domain search is not set
+  lineinfile:
+    regexp: '^(.*)search(.*)$'
+    state: absent
+    path: /etc/resolv.conf
+
+- name: make sure, unattended upgrades is removed
+  package:
+    name: unattended-upgrades
+    state: absent
+
+- name: get latest kube version
+  shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  register: apt_output
+
+- name: get kubeversion
+  set_fact:
+    versions: "{{ apt_output.stdout }}"
+
+- name: Install packages
+  apt:
+    pkg:
+      - "kubelet={{ versions }}"
+      - "kubeadm={{ versions }}"
+      - "kubectl={{ versions }}"
+      - "cri-o"
+      - libgtk2.0-0
+    update_cache: yes
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+
+- name: mark packages as hold
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o"
+
+- name: configure crio
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^(.*)conmon =(.*)$'
+    line: 'conmon = "/usr/bin/conmon"'
+    backrefs: yes
+
+## Bug needs to be tracked
+- name: remove seccomp from crio
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^(.*)seccomp_profile =(.*)$'
+    line: 'seccomp_profile = ""'
+    backrefs: yes
+
+- name: fix runc runtime path in crio config
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: '^  runtime_path =(.*)$'
+    line: '  runtime_path = "/usr/sbin/runc"'
+    backrefs: yes
+
+- name: configure kubelet
+  lineinfile:
+    path: /etc/default/kubelet
+    regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
+    line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
+    create: true
+
+- name: Set CRI-O cgroups driver
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: '^cgroup_manager =.*'
+    line: 'cgroup_manager = "systemd"'
+
+- name: Set CRI-O default_ulimits
+  blockinfile:
+    path: /etc/crio/crio.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      default_ulimits = [
+          "nofile=16384:24576",
+          "nproc=8192:8192"
+      ]
+
+- name: Set CRI-O seccomp profile path
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: '^seccomp_profile =.*'
+    line: 'seccomp_profile = ""'
+
+- name: Set CRI-O global auth
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: '^global_auth_file =.*'
+    line: 'global_auth_file = "/etc/crio/auth.json"'
+  when: commercial.enabled
+
+- name: remove preconfigures crio.conf from dpkg
+  file:
+    path: /etc/crio/crio.conf.d/01-crio-runc.conf
+    state: absent
+
+- name: Set CRI-O seccomp profile path
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: '^pids_limit*.'
+    line: 'pids_limit = 8192'
+
+- name: "Check for installed packages"
+  package_facts:
+    manager: "auto"
+
+- name: Disable Firewall
+  systemd:
+    name: "{{ item }}"
+    masked: true
+    enabled: false
+    state: stopped
+  when: "item in ansible_facts.packages"
+  loop:
+    - "firewalld"
+    - "ufw"

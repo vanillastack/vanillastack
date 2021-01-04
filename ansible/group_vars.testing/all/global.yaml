@@ -10,6 +10,10 @@ global:
   isHA: true
   uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
   externalLB: false
+repo:
+  url:  https://repo.vanillastack.cloudical.net
+  debian:
+    tag: "20210104"
 ingress:
   namespace: nginx-ingress
   enabled: true
