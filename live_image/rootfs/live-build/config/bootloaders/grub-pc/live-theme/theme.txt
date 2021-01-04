@@ -7,7 +7,7 @@ terminal-font: "Unifont Regular 16"
 
 #help bar at the bottom
 + label {
-        top = 100%-50
+        top = 220
         left = 0
         width = 100%
         height = 20
@@ -39,7 +39,7 @@ terminal-font: "Unifont Regular 16"
 + progress_bar {
         id = "__timeout__"
         left = 15%
-        top = 100%-80
+        top = 250
         height = 16
         width = 70%
         font = "DejaVu Sans Regular 14"
