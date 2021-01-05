@@ -106,7 +106,7 @@ VanillaStack requirements:
 * Internet network access
   ** `https://harbour.vanillastack.io`
 
-* Fedora 32
+* Debian 10
 
 == Ressources
 
