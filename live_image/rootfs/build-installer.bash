@@ -12,8 +12,8 @@ echo "running branch: $branch"
 
 dockerimage_tag=""
 case "$branch" in
-    master)     dockerimage_tag=":latest" ;;
-    testing)    dockerimage_tag=":testing-latest" ;;
+    master/)     dockerimage_tag=":latest" ;;
+    testing/)    dockerimage_tag=":testing-latest" ;;
     *)          dockerimage_tag=":dev-latest" ;;
 esac
 
