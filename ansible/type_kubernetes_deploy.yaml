@@ -13,6 +13,10 @@
   roles:
     - role: deploy-kubernetes
       action: 01_configure_systems
+      when: ansible_distribution != 'Debian'
+    - role: deploy-kubernetes
+      action: 01_configure_systems_debian
+      when: ansible_distribution == 'Debian'
 
 - name: Configure Kube Systems
   hosts: master,worker
