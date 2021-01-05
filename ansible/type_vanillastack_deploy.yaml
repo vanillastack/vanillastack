@@ -21,6 +21,10 @@
   roles:
     - role: deploy-kubernetes
       action: 01_configure_systems
+      when: ansible_distribution != 'Debian'
+    - role: deploy-kubernetes
+      action: 01_configure_systems_debian
+      when: ansible_distribution == 'Debian'
 
 - name: Install Keepalived
   hosts: haproxy[0]
@@ -43,7 +47,7 @@
       when: not global.externalLB and global.isHA
 
 - name: Install HaProxy
-  hosts: master
+  hosts: haproxy
   become: true
   gather_facts: true
   roles:
@@ -141,7 +145,7 @@
   roles:
     - role: prepare-registry
       when: certmanager.enabled
-    - role: helm-cert-manager
+    - role: deploy-certmanager
       when: certmanager.enabled
 
 - name: Deploy Keycloak

@@ -1,26 +1,123 @@
 = VanillaStack
 
+There are multiple Vendor-Stacks out there, that promise to deliver an installation without hazzles, full integration and total flexibility - only to vendor lock you to the tools, frameworks and interfaces of a product.
+
+VanillaStack wants to be and is different: VanillaStack offers the integration of plain upstream projects. VanillaStack will use directly the core components of Kubernetes, OpenStack, Ceph, Rook, Cloudfoundry, Harbor and many more.
+
+This ensures, at any time, to work around or without VanillaStack, because, Vanilla doesn't want to own the stack. Vanilla wants to help but imposes no limits on your tooling.
+
+== The VanillaStack project
+
+VanillaStack understands Kubernetes as the operating system of your datacenter and helps you to setup a seamless installation of core cloud services.
+It offers a cloudstack installation of the following OpenSource projects:
+
+* Kubernetes
+* Ceph via Rook
+* OpenStack
+* Cloudfoundry
+* Guacamole
+* Kubevirt
+* Prometheus
+* Promtail
+* Grafana
+* all including Monitoring, Metrics and alerting preconfigured.
+* ... and more
+
+
+The VanillaStack project is licensed under link:LICENSE[Apache 2.0 License].
+
 == CI/CD status
 Testing: image:https://gitlab.cloudical.net/vanillastack/vanillastack/badges/testing/pipeline.svg[link="https://gitlab.cloudical.net/vanillastack/vanillastack/-/commits/testing",title="pipeline status"]
 
+
+== VanillaStack Project Scope & Core Design Goals
+
+Kubernetes First::
+VanillaStack understands Kubernetes as its operating system.
+All additional components are rolled out within containers.
+Always and everwhere.
+
+IaaS. CaaS. PaaS. All included. All working::
+VanillaStack is based on the best Container-as-a-Service-platform: Kubernetes.
+It allows you to roll out the best Infrastructure-as-a-Service-platform: OpenStack.
+It runs the best Platform-as-a-Service-platform: Cloud Foundry.
+All from an easy to use installer, all working out-of-the-box.
+
+The best management and operations tools::
+With VanillaStack, the most commonly used management and operations tools, are just a click away.
+Install Prometheus, Grafana and the EFK-stack with ease.
+Enjoy operations.
+
+Commercial and Open-Source ecosystem::
+VanillaStack is not a Kubernetes distribution. VanillaStack is an open-source ecosystem.
+The core of VanillaStack are a web-based installer and a web-based AppStore.
+Open for everyone, be it open-source or commercial offering.
+But always quality assured and curated.
+
+Only Open-Source. Only Community-Projects::
+VanillaStack is made of open-source projects only.
+We use the vanilla community projects.
+No vendor lock, no proprietary code, no hidden magic.
+Only open-source and only community.
+
+== Vanilla Community Values
+
+Inclusive::
+Our ambitions are global. The Vanilla community is, too. The perspectives and skills necessary to achieve our goals are wide and varied; we believe in creating a community and a project that is inclusive, accessible, and welcoming to everyone.
+Open::
+We are dedicated to remaining open and transparent. We believe in keeping Vanilla Community code freely and fully available to be viewed, modified, and used without vendor lock-in or other in-built limitations.
+Inspired::
+Vanilla is all about the challenge. Our goals are not small: we want to build the best and simple to use Cloud stack, one that can work with any hardware and interoperate with all workloads. Vanilla is built on hard work, ingenuity, and an engineering mindset. We embrace hard problems and find inspired solutions.
+Evolving::
+Vanilla is continuously growing and adapting. As a community project, there is no limit to its development. We continuously make room for improvement and welcome the opportunities offered by the ever-evolving nature of community projects.
+
+
+We are excited about your interest in Vanilla and hope you will join us. We take our community very seriously, and we are committed to creating a community built on respectful interactions and inclusivity
+
+== How to Get Started
+
+* The installer is only a side module that can run anywhere on your network (even locally on your desktop).
+* The installer must be able to login via SSH into the nodes that VanillaStack will be installed on.
+* The User for the login must be able to do sudo
+* The installer will create an unique SSH Keypair everytime it runs. This Key must be manually installed on your nodes by *YOU* footnote:[This ensures that none of *your* private keys get leaked while possibly transferring them. This way, a key ist created and destroyed after installation and you are free to remove the key anytime you wish from your nodes]
+
+* Variant a) Use a machine with an ready made installation ISO image:
+** Download the ISO and Boot it: `https://downloads.vanillastack.io/iso/live-image/vanillastack-installer-amd64.hybrid.iso`
+
+* Variant b) Use an already running Docker instance:
+** pull and run the Docker-Container if you have a local docker running already:
+
+ $ docker run --name vanilla --rm harbor.vanillastack.io/vanillastack/installer
+
+** Point your browser to the installer at `http://localhost:8080`
+
 == Requirements
+
+VanillaStack Installer:
+
+* a working local Docker installation __or...__
+* __...or__ a empty machine (can be virtual) for running ISO image
+* SSH-access to the machines that vanillastack should be installed on
+*
+
+
 VanillaStack requirements:
 
-* Fedora 32
+* Internet network access
+  ** `https://harbour.vanillastack.io`
 
-== Documentation
-The dev documentation is stored at: [docs.vanillastack.io]
+* Debian 10
 
-== Report a Bug
-For filing bugs, suggesting improvements, or requesting new features, please open an issue.
+== Ressources
 
+* Main Hub around the Project is the link:https://vanillastack.io/[Website]
+* Check out our link:https://www.youtube.com/playlist?list=PLJcz3tF8m0MS7DbVXzutPpJW-Vc_-9d_N[Youtube Channel]
+* The development documentation is stored at: [docs.vanillastack.io]
+* Discussions are happening on our link:https://discourse.vanillastack.io/[Discourse] Channels
+* Bugs, Suggestions, Feature Requests are reported in our link:gitlab.cloudical.net/vanillastack/vanillastack/-/issues[Vanillastack-Gitlab]
 
-== Contact
-Please use the following to reach members of the community:
+== Contribution
 
-[Discource](https://discourse.vanillastack.io/)
-
-== Contribute
 Please read and apply the following rules to contribute to this project:
 
 * One git repository for all automation code (THIS REPOSITORY ONLY!)
