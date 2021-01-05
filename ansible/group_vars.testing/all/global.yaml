@@ -13,7 +13,7 @@ global:
 repo:
   url:  https://repo.vanillastack.cloudical.net
   debian:
-    tag: "20210104"
+    tag: "testing"
 ingress:
   namespace: nginx-ingress
   enabled: true
