@@ -1,5 +1,5 @@
 ---
-{% if openstack.release == "stein" and commercial.enabled != true  %}
+{% if openstack.release == "stein" and commercial_enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -18,7 +18,7 @@ images:
     mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:stein
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "stein" and commercial.enabled %}
+{% if openstack.release == "stein" and commercial_enabled %}
 images:
   tags:
     test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
@@ -37,7 +37,7 @@ images:
     mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:stein
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "train" and commercial.enabled != true  %}
+{% if openstack.release == "train" and commercial_enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -56,7 +56,7 @@ images:
     mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:train
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "train" and commercial.enabled %}
+{% if openstack.release == "train" and commercial_enabled %}
 images:
   tags:
     test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
@@ -75,7 +75,7 @@ images:
     mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:train
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+{% if openstack.release == "ussuri" and commercial_enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -94,7 +94,7 @@ images:
     mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:ussuri
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" and commercial.enabled %}
+{% if openstack.release == "ussuri" and commercial_enabled %}
 images:
   tags:
     test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
@@ -128,13 +128,13 @@ endpoints:
         tls:
           key: dummy
           crt: dummy
-{% if tls.issuerName == "letsencrypt-staging" %}
+{% if LE_issuer_name == "letsencrypt-staging" %}
           ca: |
 {{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% elif tls.issuerName == "letsencrypt-prod" %}
+{% elif LE_issuer_name == "letsencrypt-prod" %}
           ca: |
 {{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
-{% elif tls.issuerName == "certmanager-selfsigned" %}
+{% elif LE_issuer_name == "certmanager-selfsigned" %}
           ca: |
 {{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
@@ -152,7 +152,7 @@ endpoints:
       mistral:
         secretName: mistral-tls
         issuerRef:
-          name: openstack-{{tls.issuerName}}
+          name: openstack-{{LE_issuer_name}}
           kind: Issuer
 {% endif %}
   identity:
@@ -215,7 +215,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.useCertManager %}
-        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
+        cert-manager.io/issuer: "openstack-{{LE_issuer_name}}"
 {% endif %}
 secrets:
   identity:

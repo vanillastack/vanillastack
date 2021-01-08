@@ -6,13 +6,13 @@
 
 - name: define port, kubelet is listening on
   set_fact:
-    apiport: "{% if global.externalLB %}6443{% else %}8443{% endif %}"
+    apiport: "{% if create_extLB %}6443{% else %}8443{% endif %}"
 
 - name: Join to Kubernetes cluster
   command: >
     kubeadm join --token {{ token }} --node-name {{ inventory_hostname_short }} \
                  --discovery-token-unsafe-skip-ca-verification \
-                 --control-plane api.{{ kubernetes.loadBalancer.clusterDomain }}:6443 \
+                 --control-plane api.{{ clusterTLDomain }}:6443 \
                  --certificate-key {{ certificate_key }} \
                  --apiserver-bind-port {{ apiport }}
 

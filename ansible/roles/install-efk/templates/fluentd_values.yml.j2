@@ -1,5 +1,5 @@
 image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   repository: {{commercial.registry.url}}/vanillastack/fluentd
 {% else %}
   repository: quay.io/fluentd_elasticsearch/fluentd

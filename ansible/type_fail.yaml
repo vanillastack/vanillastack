@@ -7,7 +7,7 @@
     - name: make sure local uuid directory exists
       file:
         state: directory
-        path: "/tmp/ansible/{{ global.uuid }}"
+        path: "/tmp/ansible/{{ cluster_uuid }}"
         recurse: yes
       register: success
       failed_when: success

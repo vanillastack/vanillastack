@@ -1,13 +1,13 @@
 ---
 image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   repository: {{commercial.registry.url}}/vanillastack/minio
 {% else %}
   repository: minio/minio
 {% endif %}
 
 mcImage:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   repository: {{commercial.registry.url}}/vanillastack/mc
 {% else %}
   repository: minio/mc

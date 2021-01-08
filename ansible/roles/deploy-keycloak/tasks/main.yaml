@@ -124,7 +124,7 @@
     
     - name: generate bearertoken
       uri:
-        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/master/protocol/openid-connect/token"
+        url: "https://keycloak.{{ clusterTLDomain }}/auth/realms/master/protocol/openid-connect/token"
         validate_certs: false
         method: POST
         body_format: form-urlencoded
@@ -140,7 +140,7 @@
 
     - name: get realmadmin id
       uri:
-        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"
+        url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/users"
         validate_certs: false
         method: GET
         headers:
@@ -174,7 +174,7 @@
 
     - name: set vanilla admin user password
       uri:
-        url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/reset-password"
+        url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/reset-password"
         validate_certs: false
         headers:
           Authorization: "bearer {{ bearertoken.json.access_token }}"

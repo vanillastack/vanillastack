@@ -5,17 +5,17 @@
     kind: Namespace
     state: present
 
-- name: Create prometheus user apache
+- name: Create monitoring.user apache
   htpasswd:
-    path: "/tmp/prometheus_auth"
-    name: "{{ prometheus.admin_user }}"
-    password: "{{ prometheus.admin_password }}"
+    path: "/tmp/monitoring.auth"
+    name: "{{ monitoring.admin_user }}"
+    password: "{{ monitoring.admin_password }}"
     mode: 0640
 
 - name: Slurp auth file prometheus
   slurp:
-    src: "/tmp/prometheus_auth"
-  register: prometheus_auth_slurp
+    src: "/tmp/monitoring.auth"
+  register: monitoring.auth_slurp
 
 - name: Create secret prometheus
   k8s:
@@ -24,11 +24,11 @@
       apiVersion: v1
       kind: Secret
       metadata:
-        name: prometheus-basic-auth
+        name: monitoring.basic-auth
         namespace: monitoring
       type: Opaque
       data:
-        auth: "{{ prometheus_auth_slurp.content }}"
+        auth: "{{ monitoring.auth_slurp.content }}"
 
 - name: Create alertmanager user apache
   htpasswd:
@@ -113,10 +113,10 @@
     src: operator_values.yml.j2
     dest: /tmp/operator.yml
 
-- name: Install prometheus-operator
+- name: Install monitoring.operator
   community.kubernetes.helm:
-    name: prometheus-operator
-    chart_ref: vanillastack/kube-prometheus-stack
+    name: monitoring.operator
+    chart_ref: vanillastack/kube-monitoring.stack
     release_namespace: monitoring
     values: "{{ lookup('template', 'operator_values.yml.j2') | from_yaml }}"
 
@@ -125,5 +125,5 @@
     state: absent
     path: "{{ item }}"
   loop:
-    - /tmp/prometheus_auth
+    - /tmp/monitoring.auth
     - /tmp/alertmanager_auth

@@ -21,7 +21,7 @@
   become: true
   fetch:
     src: "{{ kubernetes.kubeadmin_config }}"
-    dest: "/tmp/ansible/{{ global.uuid }}/"
+    dest: "/tmp/ansible/{{ cluster_uuid }}/"
     flat: true
 
 - name: refresh repo

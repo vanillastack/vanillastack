@@ -1,5 +1,5 @@
 ---
-{% if openstack.release == "stein" and commercial.enabled != true  %}
+{% if openstack.release == "stein" and commercial_enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -20,7 +20,7 @@ images:
     octavia_health_manager_init: docker.io/kolla/ubuntu-source-octavia-health-manager:stein
     openvswitch_vswitchd: docker.io/kolla/centos-source-openvswitch-vswitchd:stein
 {% endif %}
-{% if openstack.release == "stein" and commercial.enabled %}
+{% if openstack.release == "stein" and commercial_enabled %}
 images:
   tags:
     test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
@@ -41,7 +41,7 @@ images:
     openvswitch_vswitchd: {{commercial.registry.url}}/vanillastack/centos-source-openvswitch-vswitchd:stein
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "train" and commercial.enabled != true  %}
+{% if openstack.release == "train" and commercial_enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -62,7 +62,7 @@ images:
     octavia_health_manager_init: docker.io/kolla/ubuntu-source-octavia-health-manager:train
     openvswitch_vswitchd: docker.io/kolla/centos-source-openvswitch-vswitchd:train
 {% endif %}
-{% if openstack.release == "train" and commercial.enabled %}
+{% if openstack.release == "train" and commercial_enabled %}
 images:
   tags:
     test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
@@ -83,7 +83,7 @@ images:
     openvswitch_vswitchd: {{commercial.registry.url}}/vanillastack/centos-source-openvswitch-vswitchd:train
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+{% if openstack.release == "ussuri" and commercial_enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -104,7 +104,7 @@ images:
     octavia_health_manager_init: docker.io/kolla/ubuntu-source-octavia-health-manager:ussuri
     openvswitch_vswitchd: docker.io/kolla/centos-source-openvswitch-vswitchd:ussuri
 {% endif %}
-{% if openstack.release == "ussuri" and commercial.enabled %}
+{% if openstack.release == "ussuri" and commercial_enabled %}
 images:
   tags:
     test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
@@ -140,13 +140,13 @@ endpoints:
         tls:
           key: dummy
           crt: dummy
-{% if tls.issuerName == "letsencrypt-staging" %}
+{% if LE_issuer_name == "letsencrypt-staging" %}
           ca: |
 {{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% elif tls.issuerName == "letsencrypt-prod" %}
+{% elif LE_issuer_name == "letsencrypt-prod" %}
           ca: |
 {{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
-{% elif tls.issuerName == "certmanager-selfsigned" %}
+{% elif LE_issuer_name == "certmanager-selfsigned" %}
           ca: |
 {{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
@@ -164,7 +164,7 @@ endpoints:
       octavia:
         secretName: octavia-tls
         issuerRef:
-          name: openstack-{{tls.issuerName}}
+          name: openstack-{{LE_issuer_name}}
           kind: Issuer
 {% endif %}
   identity:
@@ -227,7 +227,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.useCertManager %}
-        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
+        cert-manager.io/issuer: "openstack-{{LE_issuer_name}}"
 {% endif %}
 manifests:
   secret_ingress_tls: false

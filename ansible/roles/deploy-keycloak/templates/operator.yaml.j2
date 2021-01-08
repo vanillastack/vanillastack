@@ -17,7 +17,7 @@ spec:
       containers:
         - name: keycloak-operator
           # Replace this with the built image name
-{% if commercial.enabled %}
+{% if commercial_enabled %}
           image: {{commercial.registry.url}}/vanillastack/keycloak-operator:11.0.3
 {% else %}
           image: quay.io/keycloak/keycloak-operator:11.0.3
@@ -36,7 +36,7 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "keycloak-operator"
-{% if commercial.enabled %}
+{% if commercial_enabled %}
             - name: RELATED_IMAGE_KEYCLOAK
               value: "{{commercial.registry.url}}/vanillastack/keycloak:9.0.2"
 #            - name: RELATED_IMAGE_RHSSO_OPENJ9

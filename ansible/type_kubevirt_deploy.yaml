@@ -6,7 +6,7 @@
   roles:
     - role: deploy-kubevirt
       action: operator
-      when: kubevirt.enabled
+      when: vanillaservices.kubevirt_enabled
 
 - name: Deploy KubeVirt CLI
   hosts: master[0]
@@ -15,4 +15,4 @@
   roles:
     - role: deploy-kubevirt
       action: virtctl
-      when: kubevirt.enabled
+      when: vanillaservices.kubevirt_enabled

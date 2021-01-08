@@ -8,7 +8,7 @@ cluster:
   slave:
     serviceType: ClusterIP
 global:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   image: {{ commercial.registry.url }}/vanillastack/redis
 {% else %}  
   image: quay.io/opstree/redis
@@ -26,7 +26,7 @@ global:
 
 exporter:
   enabled: true
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   image: {{ commercial.registry.url }}/vanillastack/redis-exporter
 {% else %}    
   image: quay.io/opstree/redis-exporter

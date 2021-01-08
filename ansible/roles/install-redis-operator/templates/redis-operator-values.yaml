@@ -1,5 +1,5 @@
 redisOperator:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   imageName: {{commercial.registry.url}}/vanillastack/redis-operator
   imageTag: {{ redis.operator.imagetag }} 
 {% else %}
