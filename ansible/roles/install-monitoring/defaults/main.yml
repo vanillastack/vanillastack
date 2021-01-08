@@ -3,6 +3,7 @@ prometheus:
   enabled: true
   admin_user: admin
   admin_password: prompassword
+  replicas: 1
   ingress:
     enabled: true
     dns: "prometheus.{{ kubernetes.loadBalancer.clusterDomain }}"
@@ -38,6 +39,7 @@ alertmanager:
   enabled: true
   admin_user: admin
   admin_password: ampassword
+  replicas: 1
   ingress:
     enabled: true
     dns: "alertmanager.{{ kubernetes.loadBalancer.clusterDomain }}"
