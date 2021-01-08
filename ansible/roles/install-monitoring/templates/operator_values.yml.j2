@@ -145,7 +145,7 @@ alertmanager:
     configMaps: []
     logFormat: logfmt
     logLevel: info
-    replicas: 1
+    replicas: {{alertmanager.replicas |default(1)}}
     retention: 120h
     storageSpec:
       volumeClaimTemplate:
@@ -635,7 +635,7 @@ prometheus:
     retentionSize: ""
     walCompression: false
     paused: false
-    replicas: 1
+    replicas: {{prometheus.replicas |default(1)}}
     logLevel: info
     logFormat: logfmt
     routePrefix: /
