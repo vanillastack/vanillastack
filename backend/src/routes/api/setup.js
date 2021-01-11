@@ -94,21 +94,43 @@ router.post('/', function (req, res) {
   const basePath = req.app.locals.config.ansibleBasePath;
   // Building
   const extraVars = {
+    commercial_enabled: !!(general.harborUser && general.harborKey),
+    make_ha: isHA,
+    create_extLB: cluster.useExternalLb,
+    cluster_uuid: client.uuid,
+    repo: {
+      registry: cluster.registry_endpoint,
+    },
+    staging_tag: 'testing', // todo: needs to be clarified
+    LE_issuer_name: letsencrypt.issuer,
+    LE_issuer_mail: letsencrypt.issuerEmail,
+    loadbalancerIP: `${
+      cluster.useExternalLb ? cluster.externalLbIp : cluster.ip
+    }`,
+    clusterTLDomain: cluster.fqdn,
+    reset_environment: false, // todo: not yet implemented
+    vanillaservices: {
+      dashboard_enabled: additional.dashboard,
+      cloudfoundry_enabled: general.installCF,
+      stratos_enabled: general.installCF ? cf.stratos : true,
+      guacamole_enabled: true, // todo: mapping required; to be implemented
+      pgOperator_enabled: true, // todo: not yet implemented
+      redis_enabled: true, // todo: not yet implemented
+      harbor_enabled: additional.harbor,
+      loggingStack_enabled: additional.elastic,
+      monitoring_enabled: additional.prometheus, // todo: not yet implemented
+      kubevirt_enabled: true, // todo: not yet implemented
+      moodle_enabled: false, // todo: not yet implemented
+      keycloak_enabled: true, // todo: not yet implemented
+      openstack_enabled: general.installOS,
+    },
+  };
+  const extraVarsOld = {
     certmanager: {
       enabled: additional.certmgr,
     },
-    global: {
-      registry: cluster.registry_endpoint,
-      uuid: client.uuid,
-      isHA: isHA,
-      externalLB: cluster.useExternalLb,
-    },
     ingress: {
       enabled: additional.nginx,
-    },
-    letsEncrypt: {
-      issuerName: letsencrypt.issuer,
-      issuerEmail: letsencrypt.issuerEmail,
     },
     kubernetes: {
       version: '1.19',
@@ -123,29 +145,17 @@ router.post('/', function (req, res) {
           ? cluster.service_cidr
           : '10.96.0.0/12'
       }`, // "10.96.0.0/12",
-      dashboard: {
-        enabled: additional.dashboard,
-      },
-      loadBalancer: {
-        virtualIP: `${
-          cluster.useExternalLb ? cluster.externalLbIp : cluster.ip
-        }`,
-        clusterDomain: cluster.fqdn,
-      },
       clusterName: 'kube', // todo: not defined
     },
     cloudfoundry: {
-      enabled: general.installCF,
       coreDomain: cf.fqdn,
       storageclass: 'rook-ceph-block', //  todo: not defined
     },
     stratos: {
-      enabled: general.installCF ? cf.stratos : false,
       coreDomain: cf.stratos_endpoint,
       adminpassword: randPassword(4, 4, 8),
     },
     openstack: {
-      enabled: general.installOS,
       publicDomain: openstack.domain,
       publicProto: 'http', // todo: unclear (openstack.tls ? 'https' : 'http')
       region: 'RegionOne',
@@ -428,15 +438,6 @@ router.post('/', function (req, res) {
         replicaLevel: rook.replicaLevel,
       },
     },
-    guacamole: {
-      enabled: false, // todo: mapping required; to be implemented
-    },
-    efkstack: {
-      enabled: additional.elastic,
-    },
-    harbor: {
-      enabled: additional.harbor,
-    },
     polyverse: {
       enabled: additional.polyverse ? additional.polyverse.enable : false, // (!!(additional.polyverse && additional.polyverse.enabled))
       key: `${
@@ -446,7 +447,6 @@ router.post('/', function (req, res) {
       }`,
     },
     commercial: {
-      enabled: !!(general.harborUser && general.harborKey),
       registry: {
         url: 'harbor.cloudical.net',
         username: `${general.harborUser ? general.harborUser : ''}`,
