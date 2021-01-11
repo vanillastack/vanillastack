@@ -4,7 +4,7 @@ namespaceOverride: "monitoring"
 
 kubeTargetVersionOverride: "{{ kubernetes.version }}"
 
-fullnameOverride: "monitoring.operator"
+fullnameOverride: "prometheus-operator"
 
 commonLabels: {}
 
@@ -32,8 +32,8 @@ defaultRules:
     kubeStateMetrics: true
     network: true
     node: true
-    monitoring. true
-    monitoring.perator: true
+    prometheus: true     
+    prometheusOperator: true
     time: true
 
   runbookUrl: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#
@@ -329,8 +329,8 @@ kubeEtcd:
     insecureSkipVerify: true
     serverName: ""
     caFile: ""
-    certFile: /etc/monitoring.secrets/etcd-certs/client.crt
-    keyFile: /etc/monitoring.secrets/etcd-certs/client.key
+    certFile: /etc/prometheus-secrets/etcd-certs/client.crt
+    keyFile: /etc/prometheus-secrets/etcd-certs/client.key
     metricRelabelings: []
     relabelings: []
 
@@ -387,7 +387,7 @@ nodeExporter:
     metricRelabelings: []
     relabelings: []
 
-monitoring.node-exporter:
+prometheus-node-exporter:
   namespaceOverride: ""
   podLabels:
     jobLabel: node-exporter
@@ -395,7 +395,7 @@ monitoring.node-exporter:
     - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
     - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
 
-monitoring.perator:
+prometheusOperator:
   enabled: true
   manageCrds: true
 
@@ -474,9 +474,9 @@ monitoring.perator:
     runAsUser: 65534
   image:
 {% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/monitoring.operator
+    repository: {{commercial.registry.url}}/vanillastack/prometheus-operator
 {% else %}
-    repository: quay.io/coreos/monitoring.operator
+    repository: quay.io/coreos/prometheus-operator
 {% endif %}
     tag: v0.44.0
     sha: ""
@@ -491,9 +491,9 @@ monitoring.perator:
     sha: ""
   monitoring.onfigReloaderImage:
 {% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/monitoring.config-reloader
+    repository: {{commercial.registry.url}}/vanillastack/prometheus-config-reloader
 {% else %}
-    repository: quay.io/coreos/monitoring.config-reloader
+    repository: quay.io/coreos/prometheus-config-reloader
 {% endif %}
     tag: v0.44.0
     sha: ""
@@ -509,7 +509,7 @@ monitoring.perator:
     sha: ""
     pullPolicy: IfNotPresent
 
-monitoring.
+prometheus:
   enabled: {{ vanillaservices.monitoring_enabled }}
   annotations: {}
   serviceAccount:
@@ -557,7 +557,7 @@ monitoring.
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
       cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
       kubernetes.io/tls-acme: "true"
-      nginx.ingress.kubernetes.io/auth-secret: monitoring.basic-auth
+      nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
       nginx.ingress.kubernetes.io/auth-type: basic
       nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
     labels: {}
@@ -568,7 +568,7 @@ monitoring.
     tls:
     - hosts:
       - "{{ monitoring.ingress.dns }}"
-      secretName: monitoring.ingress-tls
+      secretName: monitoring-ingress-tls
 
   ingressPerReplica:
     enabled: false
@@ -580,7 +580,7 @@ monitoring.
     tlsSecretName: ""
     tlsSecretPerReplica:
       enabled: false
-      prefix: "monitoring.
+      prefix: "prometheus"
 
   podSecurityPolicy:
     allowedCapabilities: []
@@ -594,7 +594,7 @@ monitoring.
     metricRelabelings: []
     relabelings: []
 
-  monitoring.pec:
+  monitoring-pec:
     disableCompaction: false
     apiserverConfig: {}
     scrapeInterval: ""
@@ -605,7 +605,7 @@ monitoring.
 {% if commercial_enabled %}
       repository: {{commercial.registry.url}}/vanillastack/prometheus
 {% else %}
-      repository: quay.io/monitoring.prometheus
+      repository: quay.io/prometheus/prometheus
 {% endif %}
       tag: v2.22.1
       sha: ""
