@@ -114,7 +114,25 @@ images:
     dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-
+{% if openstack.release == "victoria" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/ubuntu-source-rally:victoria_20201215
+    glance_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    glance_metadefs_load: {{commercial.registry.url}}/vanillastack/ubuntu-source-glance-base:victoria_20201215
+    db_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    glance_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-glance-base:victoria_20201215
+    db_drop: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    ks_user: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    ks_service: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
+    glance_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-glance-api:victoria_20201215
+    glance_registry: {{commercial.registry.url}}/vanillastack/ubuntu-source-glance-base:victoria_20201215
+    bootstrap: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
 storage: {{openstack.glance.defaultBackend}}
 pod:
   replicas:

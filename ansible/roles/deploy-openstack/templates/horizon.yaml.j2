@@ -65,6 +65,17 @@ images:
     dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
+{% if openstack.release == "victoria" and commercial.enabled %}
+images:
+  tags:
+    horizon: {{commercial.registry.url}}/vanillastack/ubuntu-source-horizon:victoria_20201215
+    horizon_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-horizon:victoria_20201215
+    db_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    db_drop: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    test: {{commercial.registry.url}}/vanillastack/osh-selenium:latest-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
 pod:
   replicas:
     server: {{openstack.horizon.replicas}}

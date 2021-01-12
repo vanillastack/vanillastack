@@ -121,7 +121,27 @@ images:
     cinder_backup: "docker.io/openstackhelm/cinder:ussuri-ubuntu_bionic"
     cinder_backup_storage_init: "docker.io/openstackhelm/ceph-config-helper:latest-ubuntu_bionic"
 {% endif %}
-
+{% if openstack.release == "victoria" and commercial.enabled %}
+images:
+  tags:
+    test: {{commercial.registry.url}}/vanillastack/ubuntu-source-rally:victoria_20201215
+    db_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    cinder_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-cinder-base:victoria_20201215
+    db_drop: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    ks_user: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    ks_service: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    cinder_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-cinder-api:victoria_20201215
+    bootstrap: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    cinder_scheduler: {{commercial.registry.url}}/vanillastack/ubuntu-source-cinder-scheduler:victoria_20201215
+    cinder_volume: {{commercial.registry.url}}/vanillastack/ubuntu-source-cinder-volume:victoria_20201215
+    cinder_volume_usage_audit: {{commercial.registry.url}}/vanillastack/ubuntu-source-cinder-volume:victoria_20201215
+    cinder_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    cinder_backup: {{commercial.registry.url}}/vanillastack/ubuntu-source-cinder-backup:victoria_20201215
+    cinder_backup_storage_init: {{commercial.registry.url}}/vanillastack/ceph-config-helper:latest-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
 pod:
   replicas:
     api: {{openstack.cinder.api.replicas}}
