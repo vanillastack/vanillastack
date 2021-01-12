@@ -1,14 +1,31 @@
 ---
-- name: Include certificate var
-  include_vars:
-    file: /tmp/cluster_vars.yml
-  when: certificate_key is not defined or certificate_key|length <1
+- name: create join token
+  command: kubeadm token generate
+  register: generated_token
+
+- name: create certificate key
+  command: "kubeadm alpha certs certificate-key"
+  register: generated_certificate_key
+
+- name: save certificate key
+  lineinfile:
+    path: /tmp/cluster_vars.yml
+    regexp: '^(.*)certificate_key(.*)$'
+    line: "certificate_key: {{ generated_certificate_key.stdout }}"
+    create: true
+
+- set_fact:
+    token: "{{ generated_token.stdout }}"
+
+- set_fact:
+    certificate_key: "{{ generated_certificate_key.stdout }}"
 
 - name: define port, kubelet is listening on
   set_fact:
     apiport: "{% if create_extLB %}6443{% else %}8443{% endif %}"
 
 - name: Init Cluster
+  become: true
   command: > 
     kubeadm init --service-cidr {{ kubernetes.service_cidr }} \
                  --token {{ token }} --node-name {{ inventory_hostname_short }} \
@@ -31,3 +48,46 @@
                  {{ kubernetes.kubeadm_opts }} \
                  {{ kubernetes.init_opts }}
   register: init_cluster
+
+- name: create folder
+  file: 
+    path: "{{ ansible_env.HOME }}/{{ item }}/"
+    state: directory
+    mode: '750'
+    owner: "{{ ansible_env.USER  }}"
+  loop:
+    - .kube
+
+- name: Copy admin.conf to Home directory
+  become: true
+  copy:
+    src: "{{ kubernetes.kubeadmin_config }}"
+    dest: ".kube/config"
+    owner: "{{ ansible_env.USER }}"
+    mode: 0600
+    remote_src: true
+
+- name: fetch kubeadm config
+  become: true
+  fetch:
+    src: "{{ kubernetes.kubeadmin_config }}"
+    dest: "/tmp/ansible/{{ cluster_uuid }}/"
+    flat: true
+
+- set_fact:
+    configuration: "{{ hostvars[inventory_hostname] }}"
+
+- name: save vars to kubeconfig
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: cluster-config
+        namespace: kube-system
+      data:
+        clusterConfig: |
+          "{{ configuration | to_json }}"
+
+

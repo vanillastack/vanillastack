@@ -1,6 +1,6 @@
 ---
 - name: reset kubernetes cluster
-  hosts: kube_cluster
+  hosts: master,worker
   become: true
   gather_facts: no
   roles:

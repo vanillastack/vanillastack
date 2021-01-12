@@ -1,13 +1,13 @@
+---
 - name: get nodes in cluster
   command: kubectl get nodes -o name
   register: worker
-- debug: 
-    var: worker.stdout
+  ignore_errors: yes
 
 - name: Add all hosts running this playbook to the done group
   add_host:
     name: '{{ item }}'
-    group: scaleout_nodes
-  when: item not in worker.stdout
+    group: install_nodes
+  when: 'worker.rc != 0 or item not in worker.stdout'
   loop: "{{ groups.worker }}"      
 
