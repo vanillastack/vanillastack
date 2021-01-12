@@ -77,7 +77,19 @@ images:
     ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-
+{% if openstack.release == "victoria" and commercial.enabled %}
+images:
+  tags:
+    bootstrap: {{commercial.registry.url}}/vanillastack/ubuntu-source-rally:victoria-20201215
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-rally:victoria-20201215
+    rally_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-rally:victoria-20201215
+    run_task: {{commercial.registry.url}}/vanillastack/ubuntu-source-rally:victoria-20201215
+    ks_user: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria-20201215
+    ks_service: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria-20201215
+    ks_endpoints: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria-20201215
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
 enabled_tasks: {{openstack.rally.enabledTasks}}
 
 endpoints:

@@ -23,7 +23,7 @@ kubernetes:
   kubeadm_opts: ""
   kubeadmin_config: /etc/kubernetes/admin.conf
   cilium:
-    version: v1.8.5
+    version: v1.8.6
 cloudfoundry:
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ clusterTLDomain }}"
@@ -164,6 +164,7 @@ efkstack:
 monitoring:
   admin_user: admin
   admin_password: prompassword
+  replicas: 2
   ingress:
     enabled: true
     dns: "prometheus.{{ clusterTLDomain }}"
@@ -199,6 +200,7 @@ alertmanager:
   enabled: true
   admin_user: admin
   admin_password: ampassword
+  replicas: 2
   ingress:
     enabled: true
     dns: "alertmanager.{{ clusterTLDomain }}"
