@@ -651,7 +651,7 @@ database:
 redis:
   type: "external"
   external:
-    addr: "redis-headless.{{harbor.namespace}}.svc:6379"
+    addr: "redis-master.{{harbor.namespace}}.svc:6379"
     password: "{{harbor.redis.password}}"
 
 nginx:
