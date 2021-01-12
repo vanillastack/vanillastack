@@ -114,7 +114,7 @@ images:
     dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "victoria" and commercial.enabled %}
+{% if openstack.release == "victoria" and commercial_enabled %}
 images:
   tags:
     test: {{commercial.registry.url}}/vanillastack/ubuntu-source-rally:victoria_20201215
