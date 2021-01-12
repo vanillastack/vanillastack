@@ -26,7 +26,7 @@ gen_version:
   stage: gen_version
   interruptible: false
   script:
-    - echo "VERSION=$(date +'%Y%M')-$CI_COMMIT_SHORT_SHA" > vars.env
+    - echo "VERSION=$(date +'%Y%m')-$CI_COMMIT_SHORT_SHA" > vars.env
     - cat vars.env
   artifacts:
     reports:
