@@ -165,6 +165,8 @@ release:
   release:
     tag_name: "$VERSION" 
     description: "VanillaStack stable release $VERSION"
+  script:
+    - echo "Publish release $VERSION"
 
 include:
   - local: '/live_image/.gitlab-ci.yaml'
