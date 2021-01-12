@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   repository: {{commercial.registry.url}}/vanillastack/percona-xtradb-cluster-operator
 {% else %}
   repository: percona/percona-xtradb-cluster-operator

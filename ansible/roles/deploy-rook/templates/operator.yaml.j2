@@ -45,7 +45,7 @@ data:
   # The default version of CSI supported by Rook will be started. To change the version
   # of the CSI driver to something other than what is officially supported, change
   # these images to the desired release of the CSI driver.
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   ROOK_CSI_CEPH_IMAGE: "{{commercial.registry.url}}/vanillastack/cephcsi:v3.1.0"
   ROOK_CSI_REGISTRAR_IMAGE: "{{commercial.registry.url}}/vanillastack/csi-node-driver-registrar:v1.2.0"
   ROOK_CSI_RESIZER_IMAGE: "{{commercial.registry.url}}/vanillastack/csi-resizer:v0.4.0"
@@ -283,7 +283,7 @@ spec:
       serviceAccountName: rook-ceph-system
       containers:
       - name: rook-ceph-operator
-{% if commercial.enabled %}
+{% if commercial_enabled %}
         image: {{commercial.registry.url}}/vanillastack/ceph:v1.4.4
 {% else %}
         image: rook/ceph:v1.4.4

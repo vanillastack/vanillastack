@@ -32,7 +32,7 @@
 
 - name: generate bearertoken
   uri:
-    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/master/protocol/openid-connect/token"
+    url: "https://keycloak.{{ clusterTLDomain }}/auth/realms/master/protocol/openid-connect/token"
     validate_certs: false
     method: POST
     body_format: form-urlencoded
@@ -45,7 +45,7 @@
 
 - name: get kibana client id
   uri:
-    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/clients"
+    url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/clients"
     validate_certs: false
     method: GET
     headers:
@@ -54,12 +54,12 @@
   register: clientids
 
 - set_fact:
-    query: "[?clientId=='kibana.{{ kubernetes.loadBalancer.clusterDomain }}'].id"
+    query: "[?clientId=='kibana.{{ clusterTLDomain }}'].id"
 
 - name: create kibana role
   ignore_errors: true
   uri:
-    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/clients/{{ clientids.json | json_query(query) | first }}/roles"
+    url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/clients/{{ clientids.json | json_query(query) | first }}/roles"
     validate_certs: false
     headers:
       Authorization: "bearer {{ bearertoken.json.access_token }}"
@@ -76,7 +76,7 @@
 - name: create kibana mapping
   ignore_errors: true
   uri:
-    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/clients/{{ clientids.json | json_query(query) | first }}/protocol-mappers/models"
+    url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/clients/{{ clientids.json | json_query(query) | first }}/protocol-mappers/models"
     validate_certs: false
     headers:
       Authorization: "bearer {{ bearertoken.json.access_token }}"
@@ -91,7 +91,7 @@
                 "jsonType.label": "String",
                 "multivalued": "true",
                 "userinfo.token.claim": "true",
-                "usermodel.clientRoleMapping.clientId": "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"
+                "usermodel.clientRoleMapping.clientId": "kibana.{{ clusterTLDomain }}"
             },
             "consentRequired": false,
             "name": "Roles",
@@ -115,7 +115,7 @@
 
 - name: get admin user id
   uri:
-    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users"
+    url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/users"
     validate_certs: false
     method: GET
     headers:
@@ -125,7 +125,7 @@
 
 - name: get admin role id
   uri:
-    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/clients/{{ clientids.json | json_query(query) | first }}/roles"
+    url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/clients/{{ clientids.json | json_query(query) | first }}/roles"
     validate_certs: false
     method: GET
     headers:
@@ -138,7 +138,7 @@
 - name: map user to role
   #ignore_errors: true
   uri:
-    url: "https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/admin/realms/{{ kubernetes.loadBalancer.clusterDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/role-mappings/clients/{{ clientids.json | json_query(query) | first }}"
+    url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/role-mappings/clients/{{ clientids.json | json_query(query) | first }}"
     validate_certs: false
     headers:
       Authorization: "bearer {{ bearertoken.json.access_token }}"

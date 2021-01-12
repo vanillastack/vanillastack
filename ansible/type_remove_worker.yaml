@@ -1,0 +1,4 @@
+#kubectl drain node --ignore-daemonsets --delete-local-data
+#kubectl delete node node
+#
+#kubeadm reset # on node if reachabl

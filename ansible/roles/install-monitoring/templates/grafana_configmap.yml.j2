@@ -13,8 +13,8 @@ metadata:
 data:
   grafana.ini: |
     [server]
-    domain = grafana.{{ kubernetes.loadBalancer.clusterDomain }}
-    root_url = https://grafana.{{ kubernetes.loadBalancer.clusterDomain }}
+    domain = grafana.{{ clusterTLDomain }}
+    root_url = https://grafana.{{ clusterTLDomain }}
     [analytics]
     check_for_updates = true
     [grafana_net]
@@ -26,7 +26,7 @@ data:
     logs = /var/log/grafana
     plugins = /var/lib/grafana/plugins
     provisioning = /etc/grafana/provisioning
-{% if keycloak.enabled %}
+{% if vanillaservices.keycloak_enabled %}
     [auth]
     oauth_auto_login = true
     disable_login_form = true
@@ -34,15 +34,15 @@ data:
     enabled = false
     [auth.generic_oauth]
     name: "Vanillastack Single Sign On"
-    signout_redirect_url = https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/{{ kubernetes.loadBalancer.clusterDomain }}/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Fgrafana.{{ kubernetes.loadBalancer.clusterDomain }}/login/generic_oauth
+    signout_redirect_url = https://keycloak.{{ clusterTLDomain }}/auth/realms/{{ clusterTLDomain }}/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Fgrafana.{{ clusterTLDomain }}/login/generic_oauth
     role_attribute_path = "contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || contains(roles[*], 'viewer') && 'Viewer'"
-    enabled = {{ keycloak.enabled }}
-    client_id = grafana.{{ kubernetes.loadBalancer.clusterDomain | default('localdomain') }}
+    enabled = {{ vanillaservices.keycloak_enabled }}
+    client_id = grafana.{{ clusterTLDomain | default('localdomain') }}
     client_secret = "{{ grafana_client_secret }}"
-    auth_url = https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/{{ kubernetes.loadBalancer.clusterDomain }}/protocol/openid-connect/auth
-    token_url = https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/{{ kubernetes.loadBalancer.clusterDomain }}/protocol/openid-connect/token
-    api_url = https://keycloak.{{ kubernetes.loadBalancer.clusterDomain }}/auth/realms/{{ kubernetes.loadBalancer.clusterDomain }}/protocol/openid-connect/userinfo
-    allowed_domains = {{ kubernetes.loadBalancer.clusterDomain }} vanillastack
+    auth_url = https://keycloak.{{ clusterTLDomain }}/auth/realms/{{ clusterTLDomain }}/protocol/openid-connect/auth
+    token_url = https://keycloak.{{ clusterTLDomain }}/auth/realms/{{ clusterTLDomain }}/protocol/openid-connect/token
+    api_url = https://keycloak.{{ clusterTLDomain }}/auth/realms/{{ clusterTLDomain }}/protocol/openid-connect/userinfo
+    allowed_domains = {{ clusterTLDomain }} vanillastack
     allow_sign_up = true
     tls_skip_verify_insecure = true
     tls_client_cert =

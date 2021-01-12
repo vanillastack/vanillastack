@@ -1,5 +1,5 @@
 ---
-{% if openstack.release == "stein" and commercial.enabled != true  %}
+{% if openstack.release == "stein" and commercial_enabled != true  %}
 images:
   tags:
     ceph_bootstrap: 'docker.io/openstackhelm/ceph-daemon:ubuntu_bionic-20200521'
@@ -12,7 +12,7 @@ images:
     ks_service: 'docker.io/openstackhelm/heat:stein-ubuntu_bionic'
     ks_user: 'docker.io/openstackhelm/heat:stein-ubuntu_bionic'
 {% endif %}
-{% if openstack.release == "stein" and commercial.enabled %}
+{% if openstack.release == "stein" and commercial_enabled %}
 images:
   tags:
     ceph_bootstrap: '{{commercial.registry.url}}/vanillastack/ceph-daemon:ubuntu_bionic-20200521'
@@ -25,7 +25,7 @@ images:
     ks_user: '{{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic'
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "train" and commercial.enabled != true  %}
+{% if openstack.release == "train" and commercial_enabled != true  %}
 images:
   tags:
     ceph_bootstrap: 'docker.io/openstackhelm/ceph-daemon:ubuntu_bionic-20200521'
@@ -38,7 +38,7 @@ images:
     ks_service: 'docker.io/openstackhelm/heat:train-ubuntu_bionic'
     ks_user: 'docker.io/openstackhelm/heat:train-ubuntu_bionic'
 {% endif %}
-{% if openstack.release == "stein" and commercial.enabled %}
+{% if openstack.release == "stein" and commercial_enabled %}
 images:
   tags:
     ceph_bootstrap: '{{commercial.registry.url}}/vanillastack/ceph-daemon:ubuntu_bionic-20200521'
@@ -51,7 +51,7 @@ images:
     ks_user: '{{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic'
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+{% if openstack.release == "ussuri" and commercial_enabled != true  %}
 images:
   tags:
     ceph_bootstrap: 'docker.io/openstackhelm/ceph-daemon:ubuntu_bionic-20200521'
@@ -64,7 +64,7 @@ images:
     ks_service: 'docker.io/openstackhelm/heat:ussuri-ubuntu_bionic'
     ks_user: 'docker.io/openstackhelm/heat:ussuri-ubuntu_bionic'
 {% endif %}
-{% if openstack.release == "ussuri" and commercial.enabled %}
+{% if openstack.release == "ussuri" and commercial_enabled %}
 images:
   tags:
     ceph_bootstrap: '{{commercial.registry.url}}/vanillastack/ceph-daemon:ubuntu_bionic-20200521'
@@ -131,13 +131,13 @@ endpoints:
         tls:
           key: dummy
           crt: dummy
-{% if tls.issuerName == "letsencrypt-staging" %}
+{% if LE_issuer_name == "letsencrypt-staging" %}
           ca: |
 {{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% elif tls.issuerName == "letsencrypt-prod" %}
+{% elif LE_issuer_name == "letsencrypt-prod" %}
           ca: |
 {{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
-{% elif tls.issuerName == "certmanager-selfsigned" %}
+{% elif LE_issuer_name == "certmanager-selfsigned" %}
           ca: |
 {{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
@@ -155,7 +155,7 @@ endpoints:
       swift:
         secretName: swift-tls
         issuerRef:
-          name: openstack-{{tls.issuerName}}
+          name: openstack-{{LE_issuer_name}}
           kind: Issuer
 {% endif %}
   identity:
@@ -199,7 +199,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.useCertManager %}
-        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
+        cert-manager.io/issuer: "openstack-{{LE_issuer_name}}"
 {% endif %}
 manifests:
   secret_ingress_tls: true

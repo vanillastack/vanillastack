@@ -1,6 +1,6 @@
 ---
 installCRDs: true
-{% if commercial.enabled %}
+{% if commercial_enabled %}
 image:
   repository: {{commercial.registry.url}}/vanillastack/cert-manager-controller
 webhook:

@@ -10,12 +10,12 @@ spec:
     matchLabels:
       app: vanillastack-sso
   client:
-    clientId: "admin.{{kubernetes.loadBalancer.clusterDomain}}"
-    name: "admin.{{kubernetes.loadBalancer.clusterDomain}}"
+    clientId: "admin.{{clusterTLDomain}}"
+    name: "admin.{{clusterTLDomain}}"
     secret: vanillamanager-client-secret
     clientAuthenticatorType: client-secret
     protocol: openid-connect
     enabled: true
     redirectUris: 
-      - "https://admin.{{kubernetes.loadBalancer.clusterDomain}}"
-    rootUrl: "https://admin.{{kubernetes.loadBalancer.clusterDomain}}" 
+      - "https://admin.{{clusterTLDomain}}"
+    rootUrl: "https://admin.{{clusterTLDomain}}" 

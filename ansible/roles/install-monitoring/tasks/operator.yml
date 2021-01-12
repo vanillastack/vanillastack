@@ -8,8 +8,8 @@
 - name: Create prometheus user apache
   htpasswd:
     path: "/tmp/prometheus_auth"
-    name: "{{ prometheus.admin_user }}"
-    password: "{{ prometheus.admin_password }}"
+    name: "{{ monitoring.admin_user }}"
+    password: "{{ monitoring.admin_password }}"
     mode: 0640
 
 - name: Slurp auth file prometheus
