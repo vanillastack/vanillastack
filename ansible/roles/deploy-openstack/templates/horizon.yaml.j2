@@ -1,16 +1,16 @@
 ---
-{% if openstack.release == "stein" and commercial.enabled != true  %}
+{% if openstack.release == "stein" and commercial_enabled != true  %}
 images:
   tags:
-    horizon: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
-    horizon_db_sync: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon: {{repo.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon_db_sync: {{repo.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
     db_init: docker.io/openstackhelm/heat:stein-ubuntu_bionic
     db_drop: docker.io/openstackhelm/heat:stein-ubuntu_bionic
     test: docker.io/openstackhelm/osh-selenium:latest-ubuntu_bionic
     dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "stein" and commercial.enabled %}
+{% if openstack.release == "stein" and commercial_enabled %}
 images:
   tags:
     horizon: {{commercial.registry.url}}/vanillastack/horizon:ubuntu-bionic-20200903
@@ -21,18 +21,18 @@ images:
     dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "train" and commercial.enabled != true  %}
+{% if openstack.release == "train" and commercial_enabled != true  %}
 images:
   tags:
-    horizon: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
-    horizon_db_sync: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon: {{repo.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon_db_sync: {{repo.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
     db_init: docker.io/openstackhelm/heat:train-ubuntu_bionic
     db_drop: docker.io/openstackhelm/heat:train-ubuntu_bionic
     test: docker.io/openstackhelm/osh-selenium:latest-ubuntu_bionic
     dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "train" and commercial.enabled %}
+{% if openstack.release == "train" and commercial_enabled %}
 images:
   tags:
     horizon: {{commercial.registry.url}}/vanillastack/horizon:ubuntu-bionic-20200903
@@ -43,24 +43,35 @@ images:
     dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" and commercial.enabled != true  %}
+{% if openstack.release == "ussuri" and commercial_enabled != true  %}
 images:
   tags:
-    horizon: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
-    horizon_db_sync: {{global.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon: {{repo.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
+    horizon_db_sync: {{repo.registry}}/vanillastack/horizon:ubuntu-bionic-20200903
     db_init: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
     db_drop: docker.io/openstackhelm/heat:ussuri-ubuntu_bionic
     test: docker.io/openstackhelm/osh-selenium:latest-ubuntu_bionic
     dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" and commercial.enabled %}
+{% if openstack.release == "ussuri" and commercial_enabled %}
 images:
   tags:
     horizon: {{commercial.registry.url}}/vanillastack/horizon:ubuntu-bionic-20200903
     horizon_db_sync: {{commercial.registry.url}}/vanillastack/horizon:ubuntu-bionic-20200903
     db_init: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
     db_drop: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
+    test: {{commercial.registry.url}}/vanillastack/osh-selenium:latest-ubuntu_bionic
+    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+{% endif %}
+{% if openstack.release == "victoria" and commercial.enabled %}
+images:
+  tags:
+    horizon: {{commercial.registry.url}}/vanillastack/ubuntu-source-horizon:victoria_20201215
+    horizon_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-horizon:victoria_20201215
+    db_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    db_drop: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
     test: {{commercial.registry.url}}/vanillastack/osh-selenium:latest-ubuntu_bionic
     dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
     image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
@@ -81,13 +92,13 @@ endpoints:
         tls:
           key: dummy
           crt: dummy
-{% if tls.issuerName == "letsencrypt-staging" %}
+{% if LE_issuer_name == "letsencrypt-staging" %}
           ca: |
 {{tls.staging.rootCACert |b64decode| indent( width=12, indentfirst=True) }}
-{% elif tls.issuerName == "letsencrypt-prod" %}
+{% elif LE_issuer_name == "letsencrypt-prod" %}
           ca: |
 {{tls.prod.rootCACert | b64decode | indent( width=12, indentfirst=True) }}
-{% elif tls.issuerName == "certmanager-selfsigned" %}
+{% elif LE_issuer_name == "certmanager-selfsigned" %}
           ca: |
 {{selfSignedCA | b64decode | indent( width=12, indentfirst=True) }}
 {% endif %}
@@ -105,7 +116,7 @@ endpoints:
       horizon:
         secretName: horizon-tls
         issuerRef:
-          name: openstack-{{tls.issuerName}}
+          name: openstack-{{LE_issuer_name}}
           kind: Issuer
 {% endif %}
   identity:
@@ -148,7 +159,7 @@ network:
 #        nginx.ingress.kubernetes.io/backend-protocol: "https"
 {% endif %}
 {% if openstack.tls.enabled and openstack.tls.useCertManager %}
-        cert-manager.io/issuer: "openstack-{{tls.issuerName}}"
+        cert-manager.io/issuer: "openstack-{{LE_issuer_name}}"
 {% endif %}
 conf:
   horizon:

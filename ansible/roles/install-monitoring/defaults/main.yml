@@ -3,9 +3,10 @@ prometheus:
   enabled: true
   admin_user: admin
   admin_password: prompassword
+  replicas: 1
   ingress:
     enabled: true
-    dns: "prometheus.{{ kubernetes.loadBalancer.clusterDomain }}"
+    dns: "prometheus.{{ clusterTLDomain }}"
   storage:
     classname: "rook-ceph-block"
     size: 30Gi
@@ -38,9 +39,10 @@ alertmanager:
   enabled: true
   admin_user: admin
   admin_password: ampassword
+  replicas: 1
   ingress:
     enabled: true
-    dns: "alertmanager.{{ kubernetes.loadBalancer.clusterDomain }}"
+    dns: "alertmanager.{{ clusterTLDomain }}"
   storage:
     classname: "rook-ceph-block"
     size: 10Gi
@@ -72,4 +74,4 @@ grafana:
   admin_password: grafanapassword
   ingress:
     enabled: true
-    dns: "grafana.{{ kubernetes.loadBalancer.clusterDomain }}"
+    dns: "grafana.{{ clusterTLDomain }}"

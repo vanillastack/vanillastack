@@ -1,8 +1,7 @@
 ---
 openstack:
-  enabled: false
   namespace: openstack
-  publicDomain: "{{ kubernetes.loadBalancer.clusterDomain }}"
+  publicDomain: "{{ clusterTLDomain }}"
   publicProto: "http"
   region: RegionOne
   # releases available:

@@ -6,7 +6,7 @@ efkstack:
     password: secretlysecretpassword
     replicas: 2
     system_user: "{{ ansible_user }}"
-    coreDomain: "kibana.{{ kubernetes.loadBalancer.clusterDomain }}"
+    coreDomain: "kibana.{{ clusterTLDomain }}"
     resources:
       requests:
         cpu: "200m"

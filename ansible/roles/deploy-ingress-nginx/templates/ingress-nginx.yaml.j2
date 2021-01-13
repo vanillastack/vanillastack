@@ -1,7 +1,7 @@
 ---
 controller:
   image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
     repository: {{commercial.registry.url}}/vanillastack/controller
 {% else %}
     repository: k8s.gcr.io/ingress-nginx/controller
@@ -55,7 +55,7 @@ controller:
     patch:
       enabled: true
       image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
         repository: {{commercial.registry.url}}/vanillastack/kube-webhook-certgen
 {% else %}
         repository: docker.io/jettech/kube-webhook-certgen
@@ -74,7 +74,7 @@ defaultBackend:
   ##
   enabled: true
   image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
     repository: {{commercial.registry.url}}/vanillastack/defaultbackend-amd64
 {% else %}
     repository: k8s.gcr.io/defaultbackend-amd64
@@ -84,7 +84,7 @@ defaultBackend:
     # nobody user -> uid 65534
     runAsUser: 65534
 
-{% if cloudfoundry.enabled %}
+{% if vanillaservices.cloudfoundry_enabled %}
 tcp:
   2222: "kubecf/scheduler:2222"
   20000: "kubecf/tcp-router:20000"

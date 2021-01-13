@@ -10,18 +10,18 @@ spec:
     matchLabels:
       app: vanillastack-sso
   client:
-    clientId: "kibana.{{kubernetes.loadBalancer.clusterDomain}}"
-    name: "kibana.{{kubernetes.loadBalancer.clusterDomain}}"
+    clientId: "kibana.{{clusterTLDomain}}"
+    name: "kibana.{{clusterTLDomain}}"
     directAccessGrantsEnabled: true
     secret: "{{ kibana_client_secret }}"
     clientAuthenticatorType: client-secret
     protocol: openid-connect
     enabled: true
     baseUrl: "/oauth/callback"
-    rootUrl: "https://kibana.{{kubernetes.loadBalancer.clusterDomain}}"
+    rootUrl: "https://kibana.{{clusterTLDomain}}"
     redirectUris:
-      - "https://kibana.{{kubernetes.loadBalancer.clusterDomain}}/oauth/callback"
-      - "http://kibana.{{kubernetes.loadBalancer.clusterDomain}}/oauth/callback"
+      - "https://kibana.{{clusterTLDomain}}/oauth/callback"
+      - "http://kibana.{{clusterTLDomain}}/oauth/callback"
     standardFlowEnabled: true
     fullScopeAllowed: false
 

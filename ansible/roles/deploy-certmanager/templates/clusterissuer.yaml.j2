@@ -1,27 +1,27 @@
-{% if tls.issuerName in letscencrypt_issuers %}
+{% if LE_issuer_name in letscencrypt_issuers %}
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
-  name: {{ tls.issuerName }}
+  name: {{ LE_issuer_name }}
 spec:
   acme:
     # The ACME server URL
-{% if tls.issuerName == "letsencrypt-prod" %}
+{% if LE_issuer_name == "letsencrypt-prod" %}
     server: https://acme-v02.api.letsencrypt.org/directory
 {% else %}
     server: https://acme-staging-v02.api.letsencrypt.org/directory
 {% endif %}
     # Email address used for ACME registration
-    email: {{ tls.issuerEmail }}
+    email: {{ LE_issuer_mail }}
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
-      name: {{ tls.issuerName }}
+      name: {{ LE_issuer_name }}
     # Enable the HTTP-01 challenge provider
     solvers:
     - http01:
         ingress:
           class: nginx
-{% elif tls.issuerName in custom_issuers %}
+{% elif LE_issuer_name in custom_issuers %}
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
@@ -42,14 +42,14 @@ spec:
  issuerRef:
    name: selfsigned-issuer
    kind: ClusterIssuer
- commonName: '{% if kubernetes.loadBalancer.clusterDomain is defined %}{{ kubernetes.loadBalancer.clusterDomain }}{% else %}vanillastack.local{% endif %}'
+ commonName: '{% if clusterTLDomain is defined %}{{ clusterTLDomain }}{% else %}vanillastack.local{% endif %}'
  dnsNames:
-   - '{% if kubernetes.loadBalancer.clusterDomain is defined %}{{ kubernetes.loadBalancer.clusterDomain }}{% else %}vanillastack.local{% endif %}'
+   - '{% if clusterTLDomain is defined %}{{ clusterTLDomain }}{% else %}vanillastack.local{% endif %}'
 ---
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
- name: {{ tls.issuerName }}
+ name: {{ LE_issuer_name }}
 spec:
  ca:
    secretName: ca-custom-tls

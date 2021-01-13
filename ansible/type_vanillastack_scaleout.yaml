@@ -1,0 +1,64 @@
+---
+- name: create inventory for scaling
+  hosts: master[0]
+  roles:
+    - role: deploy-kubernetes
+      action: 00_create_new_inventory
+
+- name: Wait for nodes
+  hosts: install_nodes
+  become: false
+  gather_facts: no
+  roles:
+    - role: wait-for-nodes
+
+- name: Secure Servers (Installing Polyverse)
+  hosts: install_nodes
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-polyverse
+      when: polyverse.enabled
+ 
+- name: Configure Servers
+  hosts: install_nodes
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 01_configure_systems
+      when: ansible_distribution != 'Debian'
+    - role: deploy-kubernetes
+      action: 01_configure_systems_debian
+      when: ansible_distribution == 'Debian'
+
+- name: Configure Kube Systems
+  hosts: install_nodes
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes
+      action: 02_configure_cluster
+
+- name: generate secrets
+  hosts: master[0]
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes
+      action: 02-1-generate-certificate
+
+- name: Add worker to KubeCluster
+  hosts: install_nodes
+  become: true
+  gather_facts: no
+  roles:
+    - role: deploy-kubernetes
+      action: 05_add_worker
+
+- name: Label Nodes
+  hosts: master[0]
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes
+      action: 07_label_nodes
+

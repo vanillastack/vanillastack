@@ -10,6 +10,7 @@ variables:
   SEARCH_MAX_DEPTH: 50
 
 stages:
+  - gen_version
   - test
   - build_docker_image_dev
   - build_docker_image_testing
@@ -19,6 +20,17 @@ stages:
   - run_playbook_centos8
   - run_playbook_debian10
 #  - run_playbook_ubuntu_focal
+  - release
+
+gen_version:
+  stage: gen_version
+  interruptible: false
+  script:
+    - echo "VERSION=$(date +'%Y%m')-$CI_COMMIT_SHORT_SHA" > vars.env
+    - cat vars.env
+  artifacts:
+    reports:
+      dotenv: vars.env
 
 build_docker_image_dev:
   only:
@@ -28,7 +40,7 @@ build_docker_image_dev:
   interruptible: true
   script:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
+    - echo "$VERSION" > version
     - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:dev-$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-latest .
     - docker push harbor.cloudical.net/vanillastack/installer:dev-$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:dev-latest
@@ -42,7 +54,7 @@ build_docker_image_testing:
   allow_failure: true
   script:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
+    - echo "VERSION" > version
     - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:testing-$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-latest .
     - docker push harbor.cloudical.net/vanillastack/installer:testing-$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:testing-latest
@@ -52,10 +64,10 @@ build_docker_image_prod:
     refs:
       - master
   stage: build_docker_image_prod
-  interruptible: true
+  interruptible: false
   script:
     - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - export VERSION=$(cat version|tr -d '\n') && echo "${VERSION}.$CI_COMMIT_SHORT_SHA" > version && export VERSION=$(cat version|tr -d '\n')
+    - echo "VERSION" > version
     - docker build -f docker/prod/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$VERSION -t harbor.cloudical.net/vanillastack/installer:latest .
     - docker push harbor.cloudical.net/vanillastack/installer:$VERSION
     - docker push harbor.cloudical.net/vanillastack/installer:latest
@@ -144,6 +156,18 @@ run_playbook_debian10:
 #    - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/global.yaml
 #    - if [ "$COMMUNITY" == true ]; then yq -Yi .commercial.enabled='false' group_vars/all/global.yaml; fi
 #    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+
+release:
+  only:
+    refs:
+      - master
+  stage: release
+  interruptible: false
+  release:
+    tag_name: "$VERSION" 
+    description: "VanillaStack stable release $VERSION"
+  script:
+    - echo "Publish release $VERSION"
 
 include:
   - local: '/live_image/.gitlab-ci.yaml'

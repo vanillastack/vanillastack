@@ -7,7 +7,7 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: {{ tls.issuerName }}
+    cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
     kubernetes.io/tls-acme: "true"
 localAdminPassword: {{ stratos.adminpassword }}
 
@@ -23,13 +23,13 @@ kube:
   external_console_https_port: 8443
   storage_class:
     persistent:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   organization: vanillastack
 {% else %}
   organization: splatform
 {% endif %}
   registry:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
     hostname: {{commercial.registry.url}}
 {% else %}
     hostname: docker.io

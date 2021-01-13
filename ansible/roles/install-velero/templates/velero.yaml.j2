@@ -1,6 +1,6 @@
 ---
 image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
   repository: {{commercial.registry.url}}/vanillastack/velero
 {% else %}
   repository: velero/velero
@@ -101,7 +101,7 @@ schedules:
 
 initContainers:
   - name: velero-plugin-for-aws
-{% if commercial.enabled %}
+{% if commercial_enabled %}
     image: {{commercial.registry.url}}/vanillastack/velero-plugin-for-aws:v1.1.0
 {% else %}
     image: velero/velero-plugin-for-aws:v1.1.0

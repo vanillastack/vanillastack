@@ -207,7 +207,7 @@
       state: present
       regexp: '^global_auth_file =.*'
       line: 'global_auth_file = "/etc/crio/auth.json"'
-    when: commercial.enabled
+    when: commercial_enabled
 
   - name: fix runc runtime path in crio config
     lineinfile:
@@ -392,7 +392,7 @@
       state: present
       regexp: '^global_auth_file =.*'
       line: 'global_auth_file = "/etc/crio/auth.json"'
-    when: commercial.enabled
+    when: commercial_enabled
 
   - name: remove preconfigures crio.conf from dpkg
     file:
@@ -433,14 +433,14 @@
       repo: "{{ item }}"
       state: present
     loop:
-      - "deb {{repo.url}} {{repo.debian.tag}}-pip3 main"
-      - "deb {{repo.url}} {{repo.debian.tag}}-ansible main"
-      - "deb {{repo.url}} {{repo.debian.tag}}-debian-buster-main main"
-      - "deb {{repo.url}} {{repo.debian.tag}}-debian10-crio-1.19 main"
-      - "deb {{repo.url}} {{repo.debian.tag}}-debian10-crio-base main"
-      - "deb {{repo.url}} {{repo.debian.tag}}-helm main"
-      - "deb {{repo.url}} {{repo.debian.tag}}-kubernetes-xenial main"
-      - "deb {{repo.url}} {{repo.debian.tag}}-cloudfoundry main"
+      - "deb {{repo.url}} {{staging_tag}}-pip3 main"
+      - "deb {{repo.url}} {{staging_tag}}-ansible main"
+      - "deb {{repo.url}} {{staging_tag}}-debian-buster-main main"
+      - "deb {{repo.url}} {{staging_tag}}-debian10-crio-1.19 main"
+      - "deb {{repo.url}} {{staging_tag}}-debian10-crio-base main"
+      - "deb {{repo.url}} {{staging_tag}}-helm main"
+      - "deb {{repo.url}} {{staging_tag}}-kubernetes-xenial main"
+      - "deb {{repo.url}} {{staging_tag}}-cloudfoundry main"
     retries: 3
     delay: 1
     register: result
@@ -567,7 +567,7 @@
       state: present
       regexp: '^global_auth_file =.*'
       line: 'global_auth_file = "/etc/crio/auth.json"'
-    when: commercial.enabled
+    when: commercial_enabled
 
   - name: remove preconfigures crio.conf from dpkg
     file:
@@ -667,7 +667,7 @@
       state: present
       regexp: '^global_auth_file =.*'
       line: 'global_auth_file = "/etc/crio/auth.json"'
-    when: commercial.enabled
+    when: commercial_enabled
 
   ### SUSE OpenStack workaround
   - name: create neutron user
@@ -677,7 +677,7 @@
       uid: 42424
       shell: /usr/bin/false
       home: /var/lib/neutron
-    when: openstack.enabled
+    when: vanillaservices.openstack_enabled
 #### SUSE FAMILY END
 
 - name: Set CRI-O seccomp profile path

@@ -32,7 +32,7 @@ defaultRules:
     kubeStateMetrics: true
     network: true
     node: true
-    prometheus: true
+    prometheus: true     
     prometheusOperator: true
     time: true
 
@@ -72,7 +72,7 @@ alertmanager:
     enabled: "{{ alertmanager.ingress.enabled }}"
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      cert-manager.io/cluster-issuer: {{ tls.issuerName }}
+      cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
       kubernetes.io/tls-acme: "true"
       nginx.ingress.kubernetes.io/auth-secret: alertmanager-basic-auth
       nginx.ingress.kubernetes.io/auth-type: basic
@@ -133,10 +133,10 @@ alertmanager:
   alertmanagerSpec:
     podMetadata: {}
     image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
       repository: {{commercial.registry.url}}/vanillastack/alertmanager
 {% else %}
-      repository: quay.io/prometheus/alertmanager
+      repository: quay.io/monitoring.alertmanager
 {% endif %}
       tag: v0.21.0
       sha: ""
@@ -145,7 +145,7 @@ alertmanager:
     configMaps: []
     logFormat: logfmt
     logLevel: info
-    replicas: 1
+    replicas: {{alertmanager.replicas |default(1)}}
     retention: 120h
     storageSpec:
       volumeClaimTemplate:
@@ -192,7 +192,7 @@ grafana:
     enabled: "{{ grafana.ingress.enabled }}"
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      cert-manager.io/cluster-issuer: {{ tls.issuerName }}
+      cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
       kubernetes.io/tls-acme: "true"
     labels: {}
     hosts:
@@ -276,7 +276,7 @@ kubelet:
         targetLabel: metrics_path
 
 kubeControllerManager:
-  enabled: {{ prometheus.kubeControllerManager.enabled }}
+  enabled: {{ monitoring.kubeControllerManager.enabled }}
   endpoints: []
   service:
     port: 10257
@@ -291,7 +291,7 @@ kubeControllerManager:
     relabelings: []
 
 coreDns:
-  enabled: {{ prometheus.coreDns.enabled }}
+  enabled: {{ monitoring.coreDns.enabled }}
   service:
     port: 9153
     targetPort: 9153
@@ -301,7 +301,7 @@ coreDns:
     relabelings: []
 
 kubeDns:
-  enabled: {{ prometheus.kubeDns.enabled }}
+  enabled: {{ monitoring.kubeDns.enabled }}
   service:
     dnsmasq:
       port: 10054
@@ -317,7 +317,7 @@ kubeDns:
     dnsmasqRelabelings: []
 
 kubeEtcd:
-  enabled: {{ prometheus.kubeEtcd.enabled }}
+  enabled: {{ monitoring.kubeEtcd.enabled }}
   endpoints: []
   service:
     port: 2379
@@ -329,13 +329,13 @@ kubeEtcd:
     insecureSkipVerify: true
     serverName: ""
     caFile: ""
-    certFile: /etc/prometheus/secrets/etcd-certs/client.crt
-    keyFile: /etc/prometheus/secrets/etcd-certs/client.key
+    certFile: /etc/prometheus-secrets/etcd-certs/client.crt
+    keyFile: /etc/prometheus-secrets/etcd-certs/client.key
     metricRelabelings: []
     relabelings: []
 
 kubeScheduler:
-  enabled: {{ prometheus.kubeScheduler.enabled }}
+  enabled: {{ monitoring.kubeScheduler.enabled }}
   endpoints: []
   service:
     port: 10259
@@ -350,7 +350,7 @@ kubeScheduler:
     relabelings: []
 
 kubeProxy:
-  enabled: {{ prometheus.kubeProxy.enabled }}
+  enabled: {{ monitoring.kubeProxy.enabled }}
   endpoints: []
 
   service:
@@ -364,7 +364,7 @@ kubeProxy:
     relabelings: []
 
 kubeStateMetrics:
-  enabled: {{ prometheus.kubeStateMetrics.enabled }}
+  enabled: {{ monitoring.kubeStateMetrics.enabled }}
   serviceMonitor:
     interval: ""
     metricRelabelings: []
@@ -402,7 +402,7 @@ prometheusOperator:
   tlsProxy:
     enabled: true
     image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
       repository: {{commercial.registry.url}}/vanillastack/ghostunnel
 {% else %}
       repository: squareup/ghostunnel
@@ -418,7 +418,7 @@ prometheusOperator:
     patch:
       enabled: true
       image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
         repository: {{commercial.registry.url}}/vanillastack/kube-webhook-certgen
 {% else %}
         repository: jettech/kube-webhook-certgen
@@ -473,7 +473,7 @@ prometheusOperator:
     runAsNonRoot: true
     runAsUser: 65534
   image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
     repository: {{commercial.registry.url}}/vanillastack/prometheus-operator
 {% else %}
     repository: quay.io/coreos/prometheus-operator
@@ -482,15 +482,15 @@ prometheusOperator:
     sha: ""
     pullPolicy: IfNotPresent
   configmapReloadImage:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
     repository: {{commercial.registry.url}}/vanillastack/configmap-reload
 {% else %}
     repository: docker.io/jimmidyson/configmap-reload
 {% endif %}
     tag: v0.4.0
     sha: ""
-  prometheusConfigReloaderImage:
-{% if commercial.enabled %}
+  monitoring.onfigReloaderImage:
+{% if commercial_enabled %}
     repository: {{commercial.registry.url}}/vanillastack/prometheus-config-reloader
 {% else %}
     repository: quay.io/coreos/prometheus-config-reloader
@@ -500,7 +500,7 @@ prometheusOperator:
   configReloaderCpu: 100m
   configReloaderMemory: 25Mi
   hyperkubeImage:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
     repository: {{commercial.registry.url}}/vanillastack/hyperkube
 {% else %}
     repository: k8s.gcr.io/hyperkube
@@ -510,7 +510,7 @@ prometheusOperator:
     pullPolicy: IfNotPresent
 
 prometheus:
-  enabled: {{ prometheus.enabled }}
+  enabled: {{ vanillaservices.monitoring_enabled }}
   annotations: {}
   serviceAccount:
     create: true
@@ -552,23 +552,23 @@ prometheus:
     tls: []
 
   ingress:
-    enabled: "{{ prometheus.ingress.enabled }}"
+    enabled: "{{ monitoring.ingress.enabled }}"
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      cert-manager.io/cluster-issuer: {{ tls.issuerName }}
+      cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
       kubernetes.io/tls-acme: "true"
       nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
       nginx.ingress.kubernetes.io/auth-type: basic
       nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
     labels: {}
     hosts:
-      - "{{ prometheus.ingress.dns }}"
+      - "{{ monitoring.ingress.dns }}"
     paths:
       - /
     tls:
     - hosts:
-      - "{{ prometheus.ingress.dns }}"
-      secretName: prometheus-ingress-tls
+      - "{{ monitoring.ingress.dns }}"
+      secretName: monitoring-ingress-tls
 
   ingressPerReplica:
     enabled: false
@@ -594,7 +594,7 @@ prometheus:
     metricRelabelings: []
     relabelings: []
 
-  prometheusSpec:
+  monitoring-pec:
     disableCompaction: false
     apiserverConfig: {}
     scrapeInterval: ""
@@ -602,7 +602,7 @@ prometheus:
     listenLocal: false
     enableAdminAPI: false
     image:
-{% if commercial.enabled %}
+{% if commercial_enabled %}
       repository: {{commercial.registry.url}}/vanillastack/prometheus
 {% else %}
       repository: quay.io/prometheus/prometheus
@@ -614,9 +614,9 @@ prometheus:
     externalLabels: {}
     replicaExternalLabelName: ""
     replicaExternalLabelNameClear: false
-    prometheusExternalLabelName: ""
-    prometheusExternalLabelNameClear: false
-    externalUrl: "https://{{ prometheus.ingress.dns }}"
+    monitoring.xternalLabelName: ""
+    monitoring.xternalLabelNameClear: false
+    externalUrl: "https://{{ monitoring.ingress.dns }}"
     nodeSelector: {}
     secrets:
       - etcd-certs
@@ -635,7 +635,7 @@ prometheus:
     retentionSize: ""
     walCompression: false
     paused: false
-    replicas: 1
+    replicas: {{prometheus.replicas |default(1)}}
     logLevel: info
     logFormat: logfmt
     routePrefix: /
@@ -648,19 +648,19 @@ prometheus:
     remoteWriteDashboards: false
     resources:
       limits:
-        cpu: {{ prometheus.resources.limits.cpu }}
-        memory: {{ prometheus.resources.limits.memory }}
+        cpu: {{ monitoring.resources.limits.cpu }}
+        memory: {{ monitoring.resources.limits.memory }}
       requests:
-        cpu: {{ prometheus.resources.requests.cpu }}
-        memory: {{ prometheus.resources.requests.memory }}
+        cpu: {{ monitoring.resources.requests.cpu }}
+        memory: {{ monitoring.resources.requests.memory }}
     storageSpec:
       volumeClaimTemplate:
         spec:
-          storageClassName: {{ prometheus.storage.classname }}
+          storageClassName: {{ monitoring.storage.classname }}
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: {{ prometheus.storage.size }}
+              storage: {{ monitoring.storage.size }}
 
     volumes: []
     volumeMounts: []

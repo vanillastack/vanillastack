@@ -26,7 +26,7 @@ secretMounts: []
 #    path: /usr/share/kibana/data/kibana.keystore
 #    subPath: kibana.keystore # optional
 
-{% if commercial.enabled %}
+{% if commercial_enabled %}
 image: {{commercial.registry.url}}/vanillastack/kibana-oss
 {% else %}
 image: "docker.elastic.co/kibana/kibana-oss"
@@ -115,10 +115,10 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: {{ tls.issuerName }}
+    cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
     kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.class: nginx
-{% if not keycloak.enabled %}
+{% if not vanillaservices.keycloak_enabled %}
     nginx.ingress.kubernetes.io/auth-secret: kibana-basic-auth
     nginx.ingress.kubernetes.io/auth-type: basic
     nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"

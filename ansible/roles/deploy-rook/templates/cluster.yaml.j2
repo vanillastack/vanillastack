@@ -22,7 +22,7 @@ spec:
     # versions running within the cluster. See tags available at https://hub.docker.com/r/ceph/ceph/tags/.
     # If you want to be more precise, you can always use a timestamp tag such ceph/ceph:v15.2.4-20200630
     # This tag might not contain a new Ceph version, just security fixes from the underlying operating system, which will reduce vulnerabilities
-{% if commercial.enabled %}
+{% if commercial_enabled %}
     image: {{commercial.registry.url}}/vanillastack/ceph:v15.2.5-20200916
 {% else %}
     image: ceph/ceph:v15.2.5-20200916

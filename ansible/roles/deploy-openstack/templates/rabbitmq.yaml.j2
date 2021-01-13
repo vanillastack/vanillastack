@@ -1,5 +1,5 @@
 ---
-{% if commercial.enabled != true %}
+{% if commercial_enabled != true %}
 images:
   tags:
     prometheus_rabbitmq_exporter: docker.io/kbudde/rabbitmq-exporter:v0.21.0
@@ -10,7 +10,7 @@ images:
     scripted_test: docker.io/rabbitmq:3.7.26-management
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if commercial.enabled %}
+{% if commercial_enabled %}
 images:
   tags:
     prometheus_rabbitmq_exporter: {{commercial.registry.url}}/vanillastack/rabbitmq-exporter:v0.21.0

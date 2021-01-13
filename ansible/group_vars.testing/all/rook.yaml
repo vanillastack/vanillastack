@@ -44,7 +44,7 @@ rook:
       domain: s3.test.vanillastack.cloudical.net
       tls:
         enabled: true
-        issuerName: "{{ tls.issuerName }}"
+        issuerName: "{{ LE_issuer_name }}"
     name: cephobjectn1
     failureDomain: host
     replicaLevel: 2

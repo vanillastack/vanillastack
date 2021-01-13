@@ -1,5 +1,5 @@
 ---
-{% if commercial.enabled != true %}
+{% if commercial_enabled != true %}
 images:
   tags:
     mariadb: docker.io/openstackhelm/mariadb:latest-ubuntu_xenial
@@ -14,7 +14,7 @@ images:
     ks_user: docker.io/openstackhelm/heat:stein-ubuntu_bionic
     scripted_test: docker.io/openstackhelm/mariadb:ubuntu_xenial-20191031
 {% endif %}
-{% if commercial.enabled %}
+{% if commercial_enabled %}
 images:
   tags:
     mariadb: {{commercial.registry.url}}/vanillastack/mariadb:latest-ubuntu_xenial

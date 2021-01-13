@@ -10,17 +10,17 @@ spec:
     matchLabels:
       app: vanillastack-sso
   client:
-    clientId: "grafana.{{kubernetes.loadBalancer.clusterDomain}}"
-    name: "grafana.{{kubernetes.loadBalancer.clusterDomain}}"
+    clientId: "grafana.{{clusterTLDomain}}"
+    name: "grafana.{{clusterTLDomain}}"
     directAccessGrantsEnabled: true
     secret: "{{ grafana_client_secret }}"
     clientAuthenticatorType: client-secret
     protocol: openid-connect
     enabled: true
     baseUrl: "/login/generic_oauth"
-    rootUrl: "https://grafana.{{kubernetes.loadBalancer.clusterDomain}}"
+    rootUrl: "https://grafana.{{clusterTLDomain}}"
     redirectUris:
-      - "https://grafana.{{kubernetes.loadBalancer.clusterDomain}}/login/generic_oauth"
+      - "https://grafana.{{clusterTLDomain}}/login/generic_oauth"
     standardFlowEnabled: true
     fullScopeAllowed: false
 

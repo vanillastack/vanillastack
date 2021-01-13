@@ -1,4 +1,10 @@
 ---
+- name: create inventory for scaling
+  hosts: master[0]
+  roles:
+    - role: deploy-kubernetes
+      action: 00_create_new_inventory
+
 - name: Wait for nodes
   hosts: kube_cluster
   become: false
@@ -29,54 +35,61 @@
 - name: Install Keepalived
   hosts: haproxy[0]
   become: true
-  gather_facts: true
+  gather_facts: false
   vars:
     keepalived_MASTER_SLAVE: MASTER
     keepalived_priority: 110
   roles:
     - role: install-haproxy
       action: 01_install_keepalived
-      when: not global.externalLB and global.isHA
+      when: not create_extLB and make_ha
 
 - name: Install Keepalived
   hosts: haproxy[1:]
   become: true
+  gather_facts: false
   roles:
     - role: install-haproxy
       action: 01_install_keepalived
-      when: not global.externalLB and global.isHA
+      when: not create_extLB and make_ha
 
 - name: Install HaProxy
   hosts: haproxy
   become: true
-  gather_facts: true
+  gather_facts: false
   roles:
     - role: install-haproxy
       action: 02_install_haproxy
-      when: not global.externalLB
+      when: not create_extLB
 
 - name: Configure Kube Systems
   hosts: kube_cluster
   become: true
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: deploy-kubernetes
       action: 02_configure_cluster
 
-- name: generate secrets
-  hosts: master[0]
-  gather_facts: yes
-  roles:
-    - role: deploy-kubernetes
-      action: 02-1-generate-certificate
+        #- name: generate secrets
+        #  hosts: master[0]
+        #  gather_facts: yes
+        #  roles:
+        #    - role: deploy-kubernetes
+        #      action: 02-1-generate-certificate
 
 - name: Init KubeCluster
   hosts: master[0]
-  become: true
-  gather_facts: no
+  gather_facts: true
   roles:
     - role: deploy-kubernetes
       action: 03_deploy_kubernetes
+
+- name: generate secrets
+  hosts: master[0]
+  gather_facts: false
+  roles:
+    - role: deploy-kubernetes
+      action: 02-1-generate-certificate
 
 - name: Add Master to KubeCluster
   hosts: master[1:]
@@ -87,7 +100,7 @@
       action: 04_add_nodes
 
 - name: Add worker to KubeCluster
-  hosts: worker
+  hosts: install_nodes
   become: true
   gather_facts: no
   roles:
@@ -102,7 +115,7 @@
     - name: make sure local uuid directory exists
       file:
         state: directory
-        path: "/tmp/ansible/{{ global.uuid }}"
+        path: "/tmp/ansible/{{ cluster_uuid }}"
         recurse: yes
 
 - name: Deploy Networking
@@ -154,7 +167,7 @@
   gather_facts: no
   roles:
     - role: deploy-keycloak
-      when: keycloak.enabled
+      when: vanillaservices.keycloak_enabled
 
 - name: Deploy OpenStack
   hosts: master[0]
@@ -162,85 +175,85 @@
   gather_facts: no
   roles:
     - role: prepare-registry
-      when: openstack.enabled
+      when: vanillaservices.openstack_enabled
     - role: deploy-openstack
-      when: openstack.enabled
+      when: vanillaservices.openstack_enabled
 
 - name: install K8S Dashboard
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
-      when: kubernetes.dashboard.enabled
+      when: vanillaservices.dashboard_enabled
     - role: install-kubedashboard
-      when: kubernetes.dashboard.enabled
+      when: vanillaservices.dashboard_enabled
 
 - name: Deploy cloudfoundry
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
-      when: stratos.enabled
+      when: vanillaservices.stratos_enabled
     - role: install-cloudfoundry
-      when: cloudfoundry.enabled
+      when: vanillaservices.cloudfoundry_enabled
 
 - name: install stratos
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
-      when: stratos.enabled
+      when: vanillaservices.stratos_enabled
     - role: install-stratos
-      when: stratos.enabled
+      when: vanillaservices.stratos_enabled
 
 - name: Deploy efk
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
-      when: efkstack.enabled
+      when: vanillaservices.loggingStack_enabled
     - role: install-efk
       action: init
-      when: efkstack.enabled
+      when: vanillaservices.loggingStack_enabled
     - role: install-efk
       action: es_deploy
-      when: efkstack.enabled
+      when: vanillaservices.loggingStack_enabled
     - role: install-efk
       action: kibana_deploy
-      when: efkstack.enabled
+      when: vanillaservices.loggingStack_enabled
     - role: install-efk
       action: "{{ efkstack.logaggregator.name }}_deploy"
-      when: efkstack.enabled
+      when: vanillaservices.loggingStack_enabled
     - role: install-efk
       action: create-client
-      when: efkstack.enabled and keycloak.enabled
+      when: vanillaservices.loggingStack_enabled and vanillaservices.keycloak_enabled
 
 - name: Deploy Postgres Operator
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
-      when: guacamole.enabled
+      when: vanillaservices.guacamole_enabled
     - role: deploy-postgres-operator
-      when: postgresOperator.enabled
+      when: vanillaservices.pgOperator_enabled
 
 - name: install guacamole
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
-      when: guacamole.enabled
+      when: vanillaservices.guacamole_enabled
     - role: install-guacamole
-      when: guacamole.enabled
+      when: vanillaservices.guacamole_enabled
 
 - name: Deploy Harbor
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
-      when: harbor.enabled
+      when: vanillaservices.harbor_enabled
     - role: deploy-harbor
-      when: harbor.enabled
+      when: vanillaservices.harbor_enabled
 
 - name: Deploy KubeVirt
   hosts: master[0]
@@ -248,10 +261,10 @@
   gather_facts: false
   roles:
     - role: prepare-registry
-      when: kubevirt.enabled
+      when: vanillaservices.kubevirt_enabled
     - role: deploy-kubevirt
       action: operator
-      when: kubevirt.enabled
+      when: vanillaservices.kubevirt_enabled
 
 - name: Deploy KubeVirt CLI
   hosts: master[0]
@@ -260,16 +273,16 @@
   roles:
     - role: deploy-kubevirt
       action: virtctl
-      when: kubevirt.enabled
+      when: vanillaservices.kubevirt_enabled
 
 - name: install moodle
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
-      when: moodle.enabled
+      when: vanillaservices.moodle_enabled
     - role: install-moodle
-      when: moodle.enabled
+      when: vanillaservices.moodle_enabled
 
 - name: install monitoring
   hosts: master[0]
@@ -277,10 +290,10 @@
   roles:
   - role: install-monitoring
     action: operator
-    when: prometheus.enabled
+    when: vanillaservices.monitoring_enabled
   - role: install-monitoring
     action: create-client
-    when: prometheus.enabled and keycloak.enabled
+    when: vanillaservices.monitoring_enabled and vanillaservices.keycloak_enabled
 
 
 - name: install redis cluster
@@ -288,6 +301,6 @@
   gather_facts: false
   roles:
   - role: install-redis-operator
-    when: redis.enabled
+    when: vanillaservices.redis_enabled
   - role: install-redis-cluster
-    when: redis.enabled
+    when: vanillaservices.redis_enabled
