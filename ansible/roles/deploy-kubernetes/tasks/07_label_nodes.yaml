@@ -4,18 +4,18 @@
     kubectl label nodes "{{ item }}" node-role.kubernetes.io/worker=worker \
     openstack-control-plane=enabled openvswitch=enabled linuxbridge=enabled \
     ceph-rgw=enabled openstack-helm-node-class=primary
-  loop: "{{ groups.scaleout_nodes }}"
+  loop: "{{ groups.install_nodes }}"
   ignore_errors: true
 
 - name: label storage nodes
   command: kubectl label nodes "{{ item }}" rook=enabled
-  loop: "{{ groups.scaleout_nodes }}"
+  loop: "{{ groups.install_nodes }}"
   when: item in groups.storage
   ignore_errors: true
 
 - name: label compute node
   command: kubectl label nodes "{{ item }}" openstack-compute-node=enabled
-  loop: "{{ groups.scaleout_nodes }}"
+  loop: "{{ groups.install_nodes }}"
   when: item in groups.compute
   ignore_errors: true
 
