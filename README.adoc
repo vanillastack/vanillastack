@@ -104,9 +104,10 @@ VanillaStack Installer:
 VanillaStack requirements:
 
 * Internet network access
-  ** `https://harbour.vanillastack.io`
+  ** `https://harbor.vanillastack.io`
 
-* Debian 10
+* Debian 10 (prefered)
+* CentOS 8
 
 == Ressources
 
