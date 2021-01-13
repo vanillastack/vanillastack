@@ -168,6 +168,7 @@ release:
     description: "VanillaStack stable release $VERSION"
   script:
     - echo "Publish release $VERSION"
+  image: registry.gitlab.com/gitlab-org/release-cli
 
 include:
   - local: '/live_image/.gitlab-ci.yaml'
