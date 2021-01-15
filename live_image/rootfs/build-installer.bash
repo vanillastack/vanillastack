@@ -2,6 +2,7 @@
 set -e
 
 export VANILLA_REGISTRY_URL=harbor.vanillastack.io/vanillastack/installer
+echo "CI-JobID: $CI_JOB_ID"
 
 _DEBUG="false"
 [[ "$DEBUG" == TRUE ]] && _DEBUG=true
@@ -12,9 +13,9 @@ echo "running branch: $branch"
 
 dockerimage_tag=""
 case "$branch" in
-    master/)     dockerimage_tag=":latest" ;;
-    testing/)    dockerimage_tag=":testing-latest" ;;
-    *)          dockerimage_tag=":dev-latest" ;;
+    master/)     dockerimage_tag=":$VERSION" ;;
+    testing/)    dockerimage_tag=":testing-$VERSION" ;;
+    *)          dockerimage_tag=":latest" ;;
 esac
 
 
