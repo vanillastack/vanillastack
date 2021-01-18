@@ -118,9 +118,7 @@ router.post('/', function (req, res) {
     staging_tag: 'testing', // todo: needs to be clarified
     LE_issuer_name: letsencrypt.issuer,
     LE_issuer_mail: letsencrypt.issuerEmail,
-    loadbalancerIP: `${
-      cluster.useExternalLb ? cluster.externalLbIp : cluster.ip
-    }`,
+    loadbalancerIP: cluster.ip,
     clusterTLDomain: cluster.fqdn,
     reset_environment: false, // todo: not yet implemented
     vanillaservices: {
