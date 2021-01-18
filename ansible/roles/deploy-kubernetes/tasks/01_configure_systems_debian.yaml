@@ -44,7 +44,6 @@
     name:
       - gnupg
       - git
-      - ansible
       - vim
       - lvm2
       - jq
@@ -61,6 +60,7 @@
       - python3-pip
       - python3-kubernetes
       - python3-passlib
+      - fail2ban
     update_cache: yes
   register: result
   until: result is not failed
@@ -212,3 +212,14 @@
     name: "rpcbind"
     state: stopped
     enabled: no
+
+- name: Copy Fail2ban jail.conf
+  template:
+    src: jail.conf.j2 
+    dest: etc/fail2ban/jail.conf
+ 
+- name: Enable Fail2ban
+  systemd:
+    name: "fail2ban"
+    enabled: true
+    state: restarted
