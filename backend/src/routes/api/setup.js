@@ -94,10 +94,24 @@ router.post('/', function (req, res) {
   const basePath = req.app.locals.config.ansibleBasePath;
   // Building
   const extraVars = {
-    commercial_enabled: !!(general.harborUser && general.harborKey),
+    commercial: {
+      enabled: !!(general.harborUser && general.harborKey),
+      username: `${general.harborUser ? general.harborUser : ''}`,
+      key: `${general.harborKey ? general.harborKey : ''}`,
+    },
     make_ha: isHA,
     create_extLB: cluster.useExternalLb,
     cluster_uuid: client.uuid,
+    cluster_pod_cidr: `${
+      cluster.pod_cidr && cluster.pod_cidr.length > 0
+        ? cluster.pod_cidr
+        : '10.0.0.0/8'
+    }`, // "10.0.0.0/8",
+    cluster_service_cidr: `${
+      cluster.service_cidr && cluster.service_cidr.length > 0
+        ? cluster.service_cidr
+        : '10.96.0.0/12'
+    }`, // "10.96.0.0/12",
     repo: {
       registry: cluster.registry_endpoint,
     },
@@ -124,31 +138,28 @@ router.post('/', function (req, res) {
       keycloak_enabled: true, // todo: not yet implemented
       openstack_enabled: general.installOS,
     },
+    vanillastorageprovider: 'rook', //todo: more types yet to come; needs to be implemented in frontend, currently bool for rook is provided
+    polyverse: {
+      enabled: additional.polyverse ? additional.polyverse.enable : false, // (!!(additional.polyverse && additional.polyverse.enabled))
+      key: `${
+        additional.polyverse && additional.polyverse.key
+          ? additional.polyverse.key
+          : ''
+      }`,
+    },
   };
+
   const extraVarsOld = {
+    /*
     certmanager: {
       enabled: additional.certmgr,
     },
     ingress: {
       enabled: additional.nginx,
     },
-    kubernetes: {
-      version: '1.19',
-      crioVersion: '1.18',
-      pod_cidr: `${
-        cluster.pod_cidr && cluster.pod_cidr.length > 0
-          ? cluster.pod_cidr
-          : '10.0.0.0/8'
-      }`, // "10.0.0.0/8",
-      service_cidr: `${
-        cluster.service_cidr && cluster.service_cidr.length > 0
-          ? cluster.service_cidr
-          : '10.96.0.0/12'
-      }`, // "10.96.0.0/12",
-      clusterName: 'kube', // todo: not defined
-    },
+    //default active, not required from frontend */
     cloudfoundry: {
-      coreDomain: cf.fqdn,
+      coreDomain: cf.fqdn, // todo: needs to be discussed with Team-Frontend
       storageclass: 'rook-ceph-block', //  todo: not defined
     },
     stratos: {
@@ -419,11 +430,11 @@ router.post('/', function (req, res) {
       enabled: general.installRook,
       cluster: {
         dashboard: {
-          enabled: rook.dashboard,
+          enabled: rook.dashboard, // is true per default, frontend var is ignored
           ssl: true, // todo: not defined
         },
         monitoring: {
-          enabled: rook.monitoring,
+          enabled: rook.monitoring, // is true per default, frontend var is ignored
         },
         storage: {
           //todo: unclear
@@ -436,21 +447,6 @@ router.post('/', function (req, res) {
         failureDomain: 'host',
         poolName: 'replicapool',
         replicaLevel: rook.replicaLevel,
-      },
-    },
-    polyverse: {
-      enabled: additional.polyverse ? additional.polyverse.enable : false, // (!!(additional.polyverse && additional.polyverse.enabled))
-      key: `${
-        additional.polyverse && additional.polyverse.key
-          ? additional.polyverse.key
-          : ''
-      }`,
-    },
-    commercial: {
-      registry: {
-        url: 'harbor.cloudical.net',
-        username: `${general.harborUser ? general.harborUser : ''}`,
-        key: `${general.harborKey ? general.harborKey : ''}`,
       },
     },
   };
