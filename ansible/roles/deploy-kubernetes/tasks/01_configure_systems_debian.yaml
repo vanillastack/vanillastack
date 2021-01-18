@@ -215,8 +215,8 @@
 
 - name: Copy Fail2ban jail.conf
   template:
-    src=./templates/jail.conf.j2 
-    dest=/etc/fail2ban/jail.conf
+    src: jail.conf.j2 
+    dest: etc/fail2ban/jail.conf
  
 - name: Enable Fail2ban
   systemd:
