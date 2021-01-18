@@ -6,7 +6,8 @@
 require('dotenv').config();
 const config = require('../config/config');
 const app = require('../app');
-const {wss, getClient} = require('../services/websocket');
+const { wss } = require('../services/websocket');
+const { getClient } = require('../services/users');
 const debug = require('debug')('backend:server');
 const http = require('http');
 const url = require('url');
@@ -26,11 +27,11 @@ const server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-let startMsg = `Server Version ${app.locals.config.version} started on port ${port} `
-startMsg += `in ${app.locals.config.mode} Mode `
-startMsg += `and Debug ${app.locals.config.debug ? 'enabled' : 'disabled'}`
+let startMsg = `Server Version ${app.locals.config.version} started on port ${port} `;
+startMsg += `in ${app.locals.config.mode} Mode `;
+startMsg += `and Debug ${app.locals.config.debug ? 'enabled' : 'disabled'}`;
 server.listen(port, () => {
-    console.log(startMsg);
+  console.log(startMsg);
 });
 server.on('error', onError);
 server.on('listening', onListening);
@@ -43,49 +44,47 @@ server.on('upgrade', onUpgrade);
  * @param head
  */
 function onUpgrade(request, socket, head) {
-    const {uuid} = getParams(request.url);
-    authenticate(uuid, (err, client) => {
-        if (err || !client) {
-            const errorIsSend = socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
-            console.log('Sending Error Msg for unauthenticated WS-Request');
-            while (!errorIsSend) {
-            }
-            socket.destroy();
-            console.log('WS-Socket destroyed');
+  const { uuid } = getParams(request.url);
+  authenticate(uuid, (err, client) => {
+    if (err || !client) {
+      const errorIsSend = socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+      console.log('Sending Error Msg for unauthenticated WS-Request');
+      while (!errorIsSend) {}
+      socket.destroy();
+      console.log('WS-Socket destroyed');
 
-            return;
-        }
-        request.uuid = client.uuid;
-        wss.handleUpgrade(request, socket, head, function done(ws) {
-            wss.emit('connection', ws, request, client);
-        });
+      return;
+    }
+    request.uuid = client.uuid;
+    wss.handleUpgrade(request, socket, head, function done(ws) {
+      wss.emit('connection', ws, request, client);
     });
+  });
 }
 
 const authenticate = function (uuid, callback) {
-    // console.log(uuid);
-    callback(false, getClient(uuid));
-    // if (getClient(uuid)) {
-    //     callback(false, getClient(uuid));
-    // } else {
-    //     callback(false, false);
-    // }
-
-}
+  // console.log(uuid);
+  callback(false, getClient(uuid));
+  // if (getClient(uuid)) {
+  //     callback(false, getClient(uuid));
+  // } else {
+  //     callback(false, false);
+  // }
+};
 
 const getParams = (path) => {
-    try {
-        const parsed = url.parse(path);
-        const res = {path: parsed.pathname};
-        // split our query params
-        parsed.query.split("&").forEach((param) => {
-            const [k, v] = param.split("=");
-            res[k] = v;
-        });
-        return res;
-    } catch (err) {
-        return "na";
-    }
+  try {
+    const parsed = url.parse(path);
+    const res = { path: parsed.pathname };
+    // split our query params
+    parsed.query.split('&').forEach((param) => {
+      const [k, v] = param.split('=');
+      res[k] = v;
+    });
+    return res;
+  } catch (err) {
+    return 'na';
+  }
 };
 
 /**
@@ -93,19 +92,19 @@ const getParams = (path) => {
  */
 
 function normalizePort(val) {
-    const port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
 
-    if (port >= 0) {
-        // port number
-        return port;
-    }
+  if (port >= 0) {
+    // port number
+    return port;
+  }
 
-    return false;
+  return false;
 }
 
 /**
@@ -113,27 +112,25 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
 
-    const bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
-    // handle specific listen errors with friendly messages
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges');
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use');
-            process.exit(1);
-            break;
-        default:
-            throw error;
-    }
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
 }
 
 /**
@@ -141,9 +138,7 @@ function onError(error) {
  */
 
 function onListening() {
-    const addr = server.address();
-    const bind = typeof addr === 'string'
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
-    debug('Listening on ' + bind);
+  const addr = server.address();
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+  debug('Listening on ' + bind);
 }

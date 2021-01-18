@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const { getClient } = require('../../services/users');
 const {
-  getClient,
   setup,
   sleep,
   genTransactionId,
@@ -147,15 +147,16 @@ router.post('/', function (req, res) {
     },
   };
 
+  /*
   const extraVarsOld = {
-    /*
+    
     certmanager: {
       enabled: additional.certmgr,
     },
     ingress: {
       enabled: additional.nginx,
     },
-    //default active, not required from frontend */
+    //default active, not required from frontend 
     cloudfoundry: {
       coreDomain: cf.fqdn, // todo: needs to be discussed with Team-Frontend
       storageclass: 'rook-ceph-block', //  todo: not defined
@@ -447,7 +448,10 @@ router.post('/', function (req, res) {
         replicaLevel: rook.replicaLevel,
       },
     },
+    
   };
+  */
+
   // Building Inventory
   const hostsJson = {
     all: {
@@ -551,8 +555,8 @@ router.post('/', function (req, res) {
     });
     res.status(200).json({
       transactionId: transactionId,
-      keyStonePass: extraVars.openstack.keystone.auth.admin.password,
-      stratosPass: extraVars.stratos.adminpassword,
+      // keyStonePass: extraVars.openstack.keystone.auth.admin.password,
+      // stratosPass: extraVars.stratos.adminpassword,
     });
   } else {
     res.status(400).json({

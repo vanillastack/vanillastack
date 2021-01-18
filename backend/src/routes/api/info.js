@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {createClient, getClient, setNewKeyPair} = require('../../services/websocket');
+const {
+  createClient,
+  getClient,
+  setNewKeyPair,
+} = require('../../services/users');
 
 /**
  * Get Info Object
@@ -26,13 +30,13 @@ const {createClient, getClient, setNewKeyPair} = require('../../services/websock
  *                 content: {}
  */
 router.get('/', function (req, res) {
-    const newClient = createClient();
-    res.json({
-        uuid: newClient.uuid,
-        mode: req.app.locals.config.mode,
-        version: req.app.locals.config.version,
-        sshPublicKey: newClient.sshPublicKey
-    });
+  const newClient = createClient();
+  res.json({
+    uuid: newClient.uuid,
+    mode: req.app.locals.config.mode,
+    version: req.app.locals.config.version,
+    sshPublicKey: newClient.sshPublicKey,
+  });
 });
 
 /**
@@ -67,20 +71,20 @@ router.get('/', function (req, res) {
  *
  */
 router.get('/:uuid', function (req, res) {
-    const client = getClient(req.params.uuid);
-    if (!client) {
-        console.log("Not Found");
-        res.status(400).json({
-            message: 'uuid invalid'
-        });
-        return;
-    }
-    res.json({
-        uuid: client.uuid,
-        mode: req.app.locals.config.mode,
-        version: req.app.locals.config.version,
-        sshPublicKey: client.sshPublicKey
+  const client = getClient(req.params.uuid);
+  if (!client) {
+    console.log('Not Found');
+    res.status(400).json({
+      message: 'uuid invalid',
     });
+    return;
+  }
+  res.json({
+    uuid: client.uuid,
+    mode: req.app.locals.config.mode,
+    version: req.app.locals.config.version,
+    sshPublicKey: client.sshPublicKey,
+  });
 });
 
 // todo: client crud operations needs refactoring
@@ -115,21 +119,20 @@ router.get('/:uuid', function (req, res) {
  *                 content: {}
  */
 router.post('/', function (req, res) {
-    const client = setNewKeyPair(req.body.uuid, req.app.locals.config.debug);
-    if (!client) {
-        console.log("Not Found");
-        res.status(400).json({
-            message: 'uuid invalid'
-        });
-        return;
-    }
-    res.json({
-        uuid: client.uuid,
-        mode: req.app.locals.config.mode,
-        version: req.app.locals.config.version,
-        sshPublicKey: client.sshPublicKey
+  const client = setNewKeyPair(req.body.uuid, req.app.locals.config.debug);
+  if (!client) {
+    console.log('Not Found');
+    res.status(400).json({
+      message: 'uuid invalid',
     });
+    return;
+  }
+  res.json({
+    uuid: client.uuid,
+    mode: req.app.locals.config.mode,
+    version: req.app.locals.config.version,
+    sshPublicKey: client.sshPublicKey,
+  });
 });
-
 
 module.exports = router;
