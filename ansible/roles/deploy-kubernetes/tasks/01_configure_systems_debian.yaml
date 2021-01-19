@@ -69,8 +69,8 @@
 
 - name: Upgrade all packages to the latest version
   apt:
-    name: "*"
-    state: latest
+    update_cache: yes
+    upgrade: yes
   register: result
   until: result is not failed
   retries: 10
