@@ -680,6 +680,14 @@
     when: vanillaservices.openstack_enabled
 #### SUSE FAMILY END
 
+- name: configure timesyncd for ntp
+  template:
+    src: timesyncd.conf.j2
+    dest: /etc/systemd/timesyncd.conf
+    mode: 0444
+  notify: restart timesyncd
+  when: ntp.manage_timesyncd
+
 - name: Set CRI-O seccomp profile path
   lineinfile:
     path: /etc/crio/crio.conf

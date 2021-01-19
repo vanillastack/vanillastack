@@ -1,0 +1,8 @@
+---
+ntp:
+  manage_timesyncd: yes
+# we have applied already for a vendor-zone "vanilla.pool.ntp.org" for
+# the use with vanillastack, because no vendor should deliver by
+# default with pool.ntp.org. As soon as we get affirmation this must
+# be changed
+  server: pool.ntp.org
