@@ -73,8 +73,8 @@
   register: result
   until: result.rc == 0
 
-- name: restart kubedns
-  command: kubectl delete po -n kube-system -l k8s-app=kube-dns
+#- name: restart kubedns
+#  command: kubectl delete po -n kube-system -l k8s-app=kube-dns
 
 - name: enable auto completion
   lineinfile:

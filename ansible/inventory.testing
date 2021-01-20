@@ -30,3 +30,4 @@ install_nodes
 master
 # This group needs to be empty, as it is used to scale worker nodes
 [install_nodes]
+[install_master]

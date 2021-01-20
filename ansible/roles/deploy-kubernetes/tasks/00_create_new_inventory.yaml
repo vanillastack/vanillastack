@@ -11,3 +11,9 @@
   when: 'worker.rc != 0 or item not in worker.stdout'
   loop: "{{ groups.worker }}"      
 
+- name: Add all hosts running this playbook to the done group
+  add_host:
+    name: '{{ item }}'
+    group: install_master
+  when: 'worker.rc != 0 or item not in worker.stdout'
+  loop: "{{ groups.master }}"
