@@ -17,8 +17,8 @@ spec:
       containers:
         - name: keycloak-operator
           # Replace this with the built image name
-{% if commercial_enabled %}
-          image: {{commercial.registry.url}}/vanillastack/keycloak-operator:11.0.3
+{% if commercial.enabled %}
+          image: {{repositories.registry_commercial}}/vanillastack/keycloak-operator:11.0.3
 {% else %}
           image: quay.io/keycloak/keycloak-operator:11.0.3
 {% endif %}
@@ -36,19 +36,19 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "keycloak-operator"
-{% if commercial_enabled %}
+{% if commercial.enabled %}
             - name: RELATED_IMAGE_KEYCLOAK
-              value: "{{commercial.registry.url}}/vanillastack/keycloak:9.0.2"
+              value: "{{repositories.registry_commercial}}/vanillastack/keycloak:9.0.2"
 #            - name: RELATED_IMAGE_RHSSO_OPENJ9
-#              value: "{{commercial.registry.url}}/vanillastack/sso74-openshift-rhel8:7.4-1"
+#              value: "{{repositories.registry_commercial}}/vanillastack/sso74-openshift-rhel8:7.4-1"
 #            - name: RELATED_IMAGE_RHSSO_OPENJDK
-#              value: "{{commercial.registry.url}}/vanillastack/sso74-openshift-rhel8:7.4-1"
+#              value: "{{repositories.registry_commercial}}/vanillastack/sso74-openshift-rhel8:7.4-1"
             - name: RELATED_IMAGE_KEYCLOAK_INIT_CONTAINER
-              value: "{{commercial.registry.url}}/vanillastack/keycloak-init-container:master"
+              value: "{{repositories.registry_commercial}}/vanillastack/keycloak-init-container:master"
             - name: RELATED_IMAGE_RHMI_BACKUP_CONTAINER
-              value: "{{commercial.registry.url}}/vanillastack/backup-container:1.0.10"
+              value: "{{repositories.registry_commercial}}/vanillastack/backup-container:1.0.10"
             - name: RELATED_IMAGE_POSTGRESQL
-              value: "{{commercial.registry.url}}/vanillastack/postgresql-10-rhel7:1"
+              value: "{{repositories.registry_commercial}}/vanillastack/postgresql-10-rhel7:1"
 {% else %}
             - name: RELATED_IMAGE_KEYCLOAK
               value: "quay.io/keycloak/keycloak:9.0.2"

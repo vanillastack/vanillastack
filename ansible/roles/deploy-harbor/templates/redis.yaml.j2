@@ -503,8 +503,8 @@ sysctlImage:
   enabled: false
   command: []
   registry: docker.io
-{% if commercial_enabled %}
-  repository: {{commercial.registry.url}}/vanillastack/minideb
+{% if commercial.enabled %}
+  repository: {{repositories.registry_commercial}}/vanillastack/minideb
 {% else %}
   repository: bitnami/minideb
 {% endif %}

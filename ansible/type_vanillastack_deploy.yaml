@@ -150,6 +150,7 @@
   roles:
     - role: prepare-registry
     - role: deploy-rook
+      when: vanillastorageprovider == "rook"
 
 - name: Deploy Cert Manager
   hosts: master[0]

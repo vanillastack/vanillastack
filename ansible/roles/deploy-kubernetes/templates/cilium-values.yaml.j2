@@ -33,8 +33,8 @@ preflight:
 hubble-ui:
   image:
   #   # repository of the docker image
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/hubble-ui
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/hubble-ui
 {% else %}
     repository: quay.io/cilium/hubble-ui
 {% endif %}
@@ -50,8 +50,8 @@ hubble-relay:
   # # Configuration for the Hubble CLI
   image:
   #   # repository of the docker image
-{% if commercial_enabled %}
-    name: {{commercial.registry.url}}/vanillastack
+{% if commercial.enabled %}
+    name: {{repositories.registry_commercial}}/vanillastack
 {% else %}
     name: hubble-relay
 {% endif %}
@@ -92,8 +92,8 @@ hubble-relay:
 # global groups all configuration options that have effect on all sub-charts
 global:
   # registry is the address of the registry and orgnization for all container images
-{% if commercial_enabled %}
-  registry: "{{commercial.registry.url}}/vanillastack"
+{% if commercial.enabled %}
+  registry: "{{repositories.registry_commercial}}/vanillastack"
 {% else %}
   registry: docker.io/cilium
 {% endif %}
@@ -571,8 +571,8 @@ global:
   proxy:
     # Regular expression matching compatible Istio sidecar istio-proxy
     # container image names
-{% if commercial_enabled %}
-    sidecarImageRegex: "{{commercial.registry.url}}/vanillastack/istio_proxy"
+{% if commercial.enabled %}
+    sidecarImageRegex: "{{repositories.registry_commercial}}/vanillastack/istio_proxy"
 {% else %}
     sidecarImageRegex: "cilium/istio_proxy"
 {% endif %}

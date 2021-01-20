@@ -18,8 +18,8 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: rook-ceph-tools
-{% if commercial_enabled %}
-        image: {{commercial.registry.url}}/vanillastack/ceph:v1.4.4
+{% if commercial.enabled %}
+        image: {{repositories.registry_commercial}}/vanillastack/ceph:v1.4.4
 {% else %}
         image: rook/ceph:v1.4.4
 {% endif %}
