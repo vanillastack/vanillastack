@@ -30,6 +30,7 @@ cloudfoundry:
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ clusterTLDomain }}"
 stratos:
+  version: 4.0.1
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ clusterTLDomain }}"
 guacamole:
