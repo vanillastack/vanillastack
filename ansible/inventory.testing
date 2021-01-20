@@ -25,3 +25,4 @@ testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 [haproxy:children]
 master
 [install_nodes]
+[install_master]
