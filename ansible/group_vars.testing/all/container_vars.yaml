@@ -2,7 +2,7 @@
 commercial:
   enabled: true
   username: "testUsername"
-  key: "testKey"
+  key: "REGISTRY_KEY"
 make_ha: true
 create_extLB: false
 cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
