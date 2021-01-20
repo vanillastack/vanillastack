@@ -1,12 +1,12 @@
 global:
-  storageClass: {{harbor.redis.persistence.storageClass}}
+  storageClass: "{{ nextcloud.redis.persistence.storageClass }}"
   redis: {}
 
 fullnameOverride: redis
 
 cluster:
   enabled: true
-  slaveCount: 3
+  slaveCount: 2
 
 networkPolicy:
   ## Specifies whether a NetworkPolicy should be created
@@ -70,7 +70,7 @@ usePassword: true
 ## Defaults to a random 10-character alphanumeric string if not set and usePassword is true
 ## ref: https://github.com/bitnami/bitnami-docker-redis#setting-the-server-password-on-first-run
 ##
-password: "{{harbor.redis.password}}"
+# password: ""
 
 ## Mount secrets as files instead of environment variables
 usePasswordFile: true
@@ -252,10 +252,10 @@ master:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    storageClass: "{{harbor.redis.persistence.storageClass}}"
+    storageClass: "{{ nextcloud.redis.persistence.storageClass }}"
     accessModes:
       - ReadWriteOnce
-    size: {{harbor.redis.persistence.size}}
+    size: "{{ nextcloud.redis.persistence.size }}"
     ## Persistent Volume selectors
     ## https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector
     matchLabels: {}
@@ -415,10 +415,10 @@ slave:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    storageClass: "{{harbor.redis.persistence.storageClass}}"
+    storageClass: "{{ nextcloud.redis.persistence.storageClass }}"
     accessModes:
       - ReadWriteOnce
-    size: {{harbor.redis.persistence.size}}
+    size: "{{ nextcloud.redis.persistence.size }}"
     ## Persistent Volume selectors
     ## https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector
     matchLabels: {}
@@ -504,7 +504,7 @@ sysctlImage:
   command: []
   registry: docker.io
 {% if commercial.enabled %}
-  repository: {{repositories.registry_commercial}}/vanillastack/minideb
+  repository: "{{ repositories.registry_commercial }}/vanillastack/minideb"
 {% else %}
   repository: bitnami/minideb
 {% endif %}
@@ -529,7 +529,7 @@ sysctlImage:
 podSecurityPolicy:
   ## Specifies whether a PodSecurityPolicy should be created
   ##
-  create: true
+  create: false
 
 ## Define a disruption budget
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
@@ -537,5 +537,4 @@ podSecurityPolicy:
 podDisruptionBudget:
   enabled: true
   minAvailable: 1
-  # maxUnavailable: 1
-
+  # maxUnavailable: 

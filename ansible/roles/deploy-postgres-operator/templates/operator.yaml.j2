@@ -1,7 +1,7 @@
 ---
 image:
-{% if commercial_enabled %}
-  registry: {{commercial.registry.url}}
+{% if commercial.enabled %}
+  registry: {{repositories.registry_commercial}}
   repository: vanillastack/postgres-operator
 {% else %}
   registry: registry.opensource.zalan.do
@@ -34,8 +34,8 @@ configGeneral:
   # Select if setup uses endpoints (default), or configmaps to manage leader (DCS=k8s)
   # kubernetes_use_configmaps: false
   # Spilo docker image
-{% if commercial_enabled %}
-  docker_image: {{commercial.registry.url}}/vanillastack/spilo-12:1.6-p3
+{% if commercial.enabled %}
+  docker_image: {{repositories.registry_commercial}}/vanillastack/spilo-12:1.6-p3
 {% else %}
   docker_image: registry.opensource.zalan.do/acid/spilo-12:1.6-p3
 {% endif %}
@@ -281,8 +281,8 @@ configConnectionPooler:
   # db user for pooler to use
   connection_pooler_user: "pooler"
   # docker image
-{% if commercial_enabled %}
-  connection_pooler_image: "{{commercial.registry.url}}/vanillastack/pgbouncer:master-8"
+{% if commercial.enabled %}
+  connection_pooler_image: "{{repositories.registry_commercial}}/vanillastack/pgbouncer:master-8"
 {% else %}
   connection_pooler_image: "registry.opensource.zalan.do/acid/pgbouncer:master-8"
 {% endif %}

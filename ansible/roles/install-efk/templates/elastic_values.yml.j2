@@ -26,8 +26,8 @@ secretMounts: []
 #    secretName: elastic-certificates
 #    path: /usr/share/elasticsearch/config/certs
 #    defaultMode: 0755
-{% if commercial_enabled %}
-image: "{{commercial.registry.url}}/vanillastack/elasticsearch-oss"
+{% if commercial.enabled %}
+image: "{{repositories.registry_commercial}}/vanillastack/elasticsearch-oss"
 {% else %}
 image: "docker.elastic.co/elasticsearch/elasticsearch-oss"
 {% endif %}

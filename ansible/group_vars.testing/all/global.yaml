@@ -1,12 +1,13 @@
 ---
-commercial:
-  registry:
-    url: harbor.cloudical.net
-    username: 'gitlab-testing-stage'
-    key: 'REGISTRY_KEY'
-repo:
-  registry: harbor.vanillastack.io
-  url:  https://repo.vanillastack.cloudical.net
+#commercial:
+#  registry:
+#    url: harbor.cloudical.net
+#    username: 'gitlab-testing-stage'
+#    key: 'REGISTRY_KEY'
+repositories:
+  registry_community: harbor.vanillastack.io
+  registry_commercial: harbor.cloudical.net
+  package_repository:  https://repo.vanillastack.cloudical.net
 ingress:
   namespace: nginx-ingress
   enabled: true
@@ -25,9 +26,11 @@ kubernetes:
   cilium:
     version: v1.8.6
 cloudfoundry:
+  version: 2.4.0
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ clusterTLDomain }}"
 stratos:
+  version: 4.0.1
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ clusterTLDomain }}"
 guacamole:
@@ -269,3 +272,35 @@ keycloak:
   realm:
     name: "{{ clusterTLDomain }}"
     id: "{{ clusterTLDomain }}"
+nextcloud:
+  version: 20.0.4
+  chartVersion: 2.5.0
+  replicas: 1
+  use_hpa: true
+  ingress:
+    enabled: true
+    publicDomain: "{{ nextcloud_instancename }}.{{ clusterTLDomain }}"
+  mail:
+    enabled: false
+    fromAddress: user
+    domain: domain.com
+    smtp:
+      host: domain.com
+      port: 465
+      authtype: LOGIN
+      name: user
+      password: pass
+  nginx:
+    version: 1.19.2-alpine
+  postgresql:
+    name: nextcloud-postgresql
+  collabora:
+    ingress:
+      enabled: true
+      publicDomain: "{{ nextcloud_instancename }}office.{{ clusterTLDomain }}"
+  redis:
+    name: redis-master
+    chartVersion: 10.8.1
+    persistence:
+      storageClass: "rook-ceph-block"
+      size: 8Gi

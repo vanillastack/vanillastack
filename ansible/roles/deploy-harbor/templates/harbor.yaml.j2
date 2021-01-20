@@ -364,8 +364,8 @@ proxy:
 portal:
   image:
     tag: v2.1.1
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/harbor-portal
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/harbor-portal
 {% else %}
     repository: goharbor/harbor-portal
 {% endif %}
@@ -383,8 +383,8 @@ portal:
 core:
   image:
     tag: v2.1.1
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/harbor-core
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/harbor-core
 {% else %}
     repository: goharbor/harbor-core
 {% endif %}
@@ -418,8 +418,8 @@ core:
 jobservice:
   image:
     tag: v2.1.1
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/harbor-jobservice
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/harbor-jobservice
 {% else %}
     repository: goharbor/harbor-jobservice
 {% endif %}
@@ -448,16 +448,16 @@ registry:
   registry:
     image:
       tag: v2.1.1
-{% if commercial_enabled %}
-      repository: {{commercial.registry.url}}/vanillastack/registry-photon
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/registry-photon
 {% else %}
       repository: goharbor/registry-photon
 {% endif %}
   controller:
     image:
       tag: v2.1.1
-{% if commercial_enabled %}
-      repository: {{commercial.registry.url}}/vanillastack/harbor-registryctl
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/harbor-registryctl
 {% else %}
       repository: goharbor/harbor-registryctl
 {% endif %}
@@ -497,8 +497,8 @@ registry:
 chartmuseum:
   image:
     tag: v2.1.1
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/chartmuseum-photon
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/chartmuseum-photon
 {% else %}
     repository: goharbor/chartmuseum-photon
 {% endif %}
@@ -521,8 +521,8 @@ chartmuseum:
 clair:
   image:
     tag: v2.1.1
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/clair-photon
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/clair-photon
 {% else %}
     repository: goharbor/clair-photon
 {% endif %}
@@ -542,8 +542,8 @@ clair:
 trivy:
   image:
     tag: v2.1.1
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/trivy-adapter-photon
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/trivy-adapter-photon
 {% else %}
     repository: goharbor/trivy-adapter-photon
 {% endif %}
@@ -600,8 +600,8 @@ notary:
   server:
     image:
       tag: v2.1.1
-{% if commercial_enabled %}
-      repository: {{commercial.registry.url}}/vanillastack/notary-server-photon
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/notary-server-photon
 {% else %}
       repository: goharbor/notary-server-photon
 {% endif %}
@@ -614,8 +614,8 @@ notary:
   signer:
     image:
       tag: v2.1.1
-{% if commercial_enabled %}
-      repository: {{commercial.registry.url}}/vanillastack/notary-signer-photon
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/notary-signer-photon
 {% else %}
       repository: goharbor/notary-signer-photon
 {% endif %}
@@ -656,8 +656,8 @@ redis:
 
 nginx:
   image:
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/nginx-photon
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/nginx-photon
 {% else %}
     repository: goharbor/nginx-photon
 {% endif %}

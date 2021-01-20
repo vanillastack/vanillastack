@@ -1,6 +1,6 @@
 image:
-{% if commercial_enabled %}
-  repository: {{commercial.registry.url}}/vanillastack/fluentd
+{% if commercial.enabled %}
+  repository: {{repositories.registry_commercial}}/vanillastack/fluentd
 {% else %}
   repository: quay.io/fluentd_elasticsearch/fluentd
 {% endif %}

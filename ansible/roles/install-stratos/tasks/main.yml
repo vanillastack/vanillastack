@@ -2,6 +2,7 @@
 - name: Install stratos
   community.kubernetes.helm:
     chart_ref: vanillastack/console
+    chart_version: "{{ stratos.version }}"
     name: console
     release_namespace: console
     create_namespace: true

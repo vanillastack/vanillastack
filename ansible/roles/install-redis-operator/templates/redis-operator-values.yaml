@@ -1,6 +1,6 @@
 redisOperator:
-{% if commercial_enabled %}
-  imageName: {{commercial.registry.url}}/vanillastack/redis-operator
+{% if commercial.enabled %}
+  imageName: {{repositories.registry_commercial}}/vanillastack/redis-operator
   imageTag: {{ redis.operator.imagetag }} 
 {% else %}
   imageName: quay.io/opstree/redis-operator

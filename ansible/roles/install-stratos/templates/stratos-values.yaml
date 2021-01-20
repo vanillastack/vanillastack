@@ -23,14 +23,14 @@ kube:
   external_console_https_port: 8443
   storage_class:
     persistent:
-{% if commercial_enabled %}
+{% if commercial.enabled %}
   organization: vanillastack
 {% else %}
   organization: splatform
 {% endif %}
   registry:
-{% if commercial_enabled %}
-    hostname: {{commercial.registry.url}}
+{% if commercial.enabled %}
+    hostname: {{repositories.registry_commercial}}
 {% else %}
     hostname: docker.io
 {% endif %}

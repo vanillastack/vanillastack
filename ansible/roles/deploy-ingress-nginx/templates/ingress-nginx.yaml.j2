@@ -1,8 +1,8 @@
 ---
 controller:
   image:
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/controller
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/controller
 {% else %}
     repository: k8s.gcr.io/ingress-nginx/controller
 {% endif %}
@@ -55,8 +55,8 @@ controller:
     patch:
       enabled: true
       image:
-{% if commercial_enabled %}
-        repository: {{commercial.registry.url}}/vanillastack/kube-webhook-certgen
+{% if commercial.enabled %}
+        repository: {{repositories.registry_commercial}}/vanillastack/kube-webhook-certgen
 {% else %}
         repository: docker.io/jettech/kube-webhook-certgen
 {% endif %}
@@ -74,8 +74,8 @@ defaultBackend:
   ##
   enabled: true
   image:
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/defaultbackend-amd64
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/defaultbackend-amd64
 {% else %}
     repository: k8s.gcr.io/defaultbackend-amd64
 {% endif %}

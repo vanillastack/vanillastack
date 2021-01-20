@@ -34,7 +34,7 @@ rook:
   storageClassObject:
     enabled: false
   storageClassFile:
-    enabled: false
+    enabled: true
   toolbox:
     enabled: true
     name: rook-ceph-tools
@@ -50,8 +50,8 @@ rook:
     replicaLevel: 2
     minSize: 1
   filesystem:
-    enabled: false
-    name: cephfsn1
+    enabled: true
+    name: rook-cephfs
     replicaLevel: 2
     failureDomain: host
     minSize: 1

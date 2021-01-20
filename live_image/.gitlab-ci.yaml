@@ -10,8 +10,7 @@ build_liveimage:
   script:
     - export WORKDIR=$(pwd)/$WORKDIR
     - export OUTPUT=$(pwd)/$OUTPUT
-    - cat /proc/mounts
-    - pwd
+    - 'echo "Version: $VERSION"'
     - mkdir -p $WORKDIR
     - mkdir -p $OUTPUT
     - cp -a live_image/rootfs/* $WORKDIR

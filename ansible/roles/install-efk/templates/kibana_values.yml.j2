@@ -26,8 +26,8 @@ secretMounts: []
 #    path: /usr/share/kibana/data/kibana.keystore
 #    subPath: kibana.keystore # optional
 
-{% if commercial_enabled %}
-image: {{commercial.registry.url}}/vanillastack/kibana-oss
+{% if commercial.enabled %}
+image: {{repositories.registry_commercial}}/vanillastack/kibana-oss
 {% else %}
 image: "docker.elastic.co/kibana/kibana-oss"
 {% endif %}
