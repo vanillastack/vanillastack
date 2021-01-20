@@ -51,8 +51,8 @@ envFrom: []
 # Root directory where Filebeat will write data to in order to persist registry data across pod restarts (file position and other metadata).
 hostPathRoot: /var/lib
 hostNetworking: false
-{% if commercial_enabled %}
-image: "{{commercial.registry.url}}/vanillastack/filebeat-oss"
+{% if commercial.enabled %}
+image: "{{repositories.registry_commercial}}/vanillastack/filebeat-oss"
 {% else %}
 image: "docker.elastic.co/beats/filebeat-oss"
 {% endif %}

@@ -14,7 +14,6 @@ spec:
   metadataPool:
     replicated:
       size: {{rook.filesystem.replicaLevel}}
-      requireSafeReplicaSize: false
     parameters:
       min_size: "{{rook.filesystem.minSize}}"
       # Inline compression mode for the data pool
@@ -30,7 +29,6 @@ spec:
         size: {{rook.filesystem.replicaLevel}}
         # Disallow setting pool with replica 1, this could lead to data loss without recovery.
         # Make sure you're *ABSOLUTELY CERTAIN* that is what you want
-        requireSafeReplicaSize: false
         # gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity of a given pool
         # for more info: https://docs.ceph.com/docs/master/rados/operations/placement-groups/#specifying-expected-pool-size
         #targetSizeRatio: .5

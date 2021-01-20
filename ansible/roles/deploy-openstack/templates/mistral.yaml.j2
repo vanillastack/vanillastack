@@ -1,5 +1,5 @@
 ---
-{% if openstack.release == "stein" and commercial_enabled != true  %}
+{% if openstack.release == "stein" and commercial.enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -18,26 +18,26 @@ images:
     mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:stein
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "stein" and commercial_enabled %}
+{% if openstack.release == "stein" and commercial.enabled %}
 images:
   tags:
-    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
-    bootstrap: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
-    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
-    db_init: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
-    mistral_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:stein
-    db_drop: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
-    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
-    ks_user: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
-    ks_service: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
-    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:stein-ubuntu_bionic
-    mistral_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:stein
-    mistral_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:stein
-    mistral_event_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:stein
-    mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:stein
-    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+    test: {{repositories.registry_commercial}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{repositories.registry_commercial}}/vanillastack/heat:stein-ubuntu_bionic
+    dep_check: {{repositories.registry_commercial}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{repositories.registry_commercial}}/vanillastack/heat:stein-ubuntu_bionic
+    mistral_db_sync: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-api:stein
+    db_drop: {{repositories.registry_commercial}}/vanillastack/heat:stein-ubuntu_bionic
+    rabbit_init: {{repositories.registry_commercial}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{repositories.registry_commercial}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_service: {{repositories.registry_commercial}}/vanillastack/heat:stein-ubuntu_bionic
+    ks_endpoints: {{repositories.registry_commercial}}/vanillastack/heat:stein-ubuntu_bionic
+    mistral_api: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-api:stein
+    mistral_engine: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-engine:stein
+    mistral_event_engine: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-engine:stein
+    mistral_executor: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-executor:stein
+    image_repo_sync: {{repositories.registry_commercial}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "train" and commercial_enabled != true  %}
+{% if openstack.release == "train" and commercial.enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -56,26 +56,26 @@ images:
     mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:train
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "train" and commercial_enabled %}
+{% if openstack.release == "train" and commercial.enabled %}
 images:
   tags:
-    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
-    bootstrap: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
-    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
-    db_init: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
-    mistral_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:train
-    db_drop: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
-    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
-    ks_user: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
-    ks_service: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
-    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:train-ubuntu_bionic
-    mistral_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:train
-    mistral_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:train
-    mistral_event_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:train
-    mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:train
-    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+    test: {{repositories.registry_commercial}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{repositories.registry_commercial}}/vanillastack/heat:train-ubuntu_bionic
+    dep_check: {{repositories.registry_commercial}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{repositories.registry_commercial}}/vanillastack/heat:train-ubuntu_bionic
+    mistral_db_sync: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-api:train
+    db_drop: {{repositories.registry_commercial}}/vanillastack/heat:train-ubuntu_bionic
+    rabbit_init: {{repositories.registry_commercial}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{repositories.registry_commercial}}/vanillastack/heat:train-ubuntu_bionic
+    ks_service: {{repositories.registry_commercial}}/vanillastack/heat:train-ubuntu_bionic
+    ks_endpoints: {{repositories.registry_commercial}}/vanillastack/heat:train-ubuntu_bionic
+    mistral_api: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-api:train
+    mistral_engine: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-engine:train
+    mistral_event_engine: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-engine:train
+    mistral_executor: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-executor:train
+    image_repo_sync: {{repositories.registry_commercial}}/vanillastack/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" and commercial_enabled != true  %}
+{% if openstack.release == "ussuri" and commercial.enabled != true  %}
 images:
   tags:
     test: docker.io/xrally/xrally-openstack:2.0.0
@@ -94,43 +94,43 @@ images:
     mistral_executor: docker.io/kolla/ubuntu-source-mistral-executor:ussuri
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if openstack.release == "ussuri" and commercial_enabled %}
+{% if openstack.release == "ussuri" and commercial.enabled %}
 images:
   tags:
-    test: {{commercial.registry.url}}/vanillastack/xrally-openstack:2.0.0
-    bootstrap: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
-    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
-    db_init: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
-    mistral_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:ussuri
-    db_drop: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
-    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
-    ks_user: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
-    ks_service: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
-    ks_endpoints: {{commercial.registry.url}}/vanillastack/heat:ussuri-ubuntu_bionic
-    mistral_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:ussuri
-    mistral_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:ussuri
-    mistral_event_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:ussuri
-    mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:ussuri
-    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+    test: {{repositories.registry_commercial}}/vanillastack/xrally-openstack:2.0.0
+    bootstrap: {{repositories.registry_commercial}}/vanillastack/heat:ussuri-ubuntu_bionic
+    dep_check: {{repositories.registry_commercial}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{repositories.registry_commercial}}/vanillastack/heat:ussuri-ubuntu_bionic
+    mistral_db_sync: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-api:ussuri
+    db_drop: {{repositories.registry_commercial}}/vanillastack/heat:ussuri-ubuntu_bionic
+    rabbit_init: {{repositories.registry_commercial}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{repositories.registry_commercial}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_service: {{repositories.registry_commercial}}/vanillastack/heat:ussuri-ubuntu_bionic
+    ks_endpoints: {{repositories.registry_commercial}}/vanillastack/heat:ussuri-ubuntu_bionic
+    mistral_api: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-api:ussuri
+    mistral_engine: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-engine:ussuri
+    mistral_event_engine: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-engine:ussuri
+    mistral_executor: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-executor:ussuri
+    image_repo_sync: {{repositories.registry_commercial}}/vanillastack/docker:17.07.0
 {% endif %}
 {% if openstack.release == "victoria" and commercial.enabled %}
 images:
   tags:
-    test: {{commercial.registry.url}}/vanillastack/ubuntu-source-rally:victoria_20201215
-    bootstrap: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
-    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
-    db_init: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
-    mistral_db_sync: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-base:victoria_20201215
-    db_drop: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
-    rabbit_init: {{commercial.registry.url}}/vanillastack/rabbitmq:3.7-management
-    ks_user: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
-    ks_service: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
-    ks_endpoints: {{commercial.registry.url}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
-    mistral_api: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-api:victoria_20201215
-    mistral_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-engine:victoria_20201215
-    mistral_event_engine: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-event-engine:victoria_20201215
-    mistral_executor: {{commercial.registry.url}}/vanillastack/ubuntu-source-mistral-executor:victoria_20201215
-    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+    test: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-rally:victoria_20201215
+    bootstrap: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    dep_check: {{repositories.registry_commercial}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    db_init: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    mistral_db_sync: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-base:victoria_20201215
+    db_drop: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    rabbit_init: {{repositories.registry_commercial}}/vanillastack/rabbitmq:3.7-management
+    ks_user: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    ks_service: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    ks_endpoints: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-heat-base:victoria_20201215
+    mistral_api: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-api:victoria_20201215
+    mistral_engine: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-engine:victoria_20201215
+    mistral_event_engine: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-event-engine:victoria_20201215
+    mistral_executor: {{repositories.registry_commercial}}/vanillastack/ubuntu-source-mistral-executor:victoria_20201215
+    image_repo_sync: {{repositories.registry_commercial}}/vanillastack/docker:17.07.0
 {% endif %}
 pod:
   replicas:

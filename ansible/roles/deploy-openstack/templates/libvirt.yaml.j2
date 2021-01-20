@@ -1,5 +1,5 @@
 ---
-{% if commercial_enabled != true %}
+{% if commercial.enabled != true %}
 images:
   tags:
     libvirt: docker.io/openstackhelm/libvirt:latest-ubuntu_bionic
@@ -7,11 +7,11 @@ images:
     dep_check: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
     image_repo_sync: docker.io/docker:17.07.0
 {% endif %}
-{% if commercial_enabled %}
+{% if commercial.enabled %}
 images:
   tags:
-    libvirt: {{commercial.registry.url}}/vanillastack/libvirt:latest-ubuntu_bionic
-    ceph_config_helper: '{{commercial.registry.url}}/vanillastack/ceph-config-helper:ubuntu_bionic-20200217'
-    dep_check: {{commercial.registry.url}}/vanillastack/kubernetes-entrypoint:v1.0.0
-    image_repo_sync: {{commercial.registry.url}}/vanillastack/docker:17.07.0
+    libvirt: {{repositories.registry_commercial}}/vanillastack/libvirt:latest-ubuntu_bionic
+    ceph_config_helper: '{{repositories.registry_commercial}}/vanillastack/ceph-config-helper:ubuntu_bionic-20200217'
+    dep_check: {{repositories.registry_commercial}}/vanillastack/kubernetes-entrypoint:v1.0.0
+    image_repo_sync: {{repositories.registry_commercial}}/vanillastack/docker:17.07.0
 {% endif %}

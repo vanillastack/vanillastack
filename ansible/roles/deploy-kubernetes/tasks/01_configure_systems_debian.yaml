@@ -16,7 +16,7 @@
   apt_key:
     url: "{{ item }}"
   loop:
-    - "{{repo.url}}/public-gpg-key"
+    - "{{repositories.package_repository}}/public-gpg-key"
   retries: 3
   delay: 1
   register: result
@@ -27,13 +27,13 @@
     repo: "{{ item }}"
     state: present
   loop:
-    - "deb {{repo.url}} {{staging_tag}}-pip3 main"
-    - "deb {{repo.url}} {{staging_tag}}-ansible main"
-    - "deb {{repo.url}} {{staging_tag}}-debian-buster-main main"
-    - "deb {{repo.url}} {{staging_tag}}-debian10-crio-1.19 main"
-    - "deb {{repo.url}} {{staging_tag}}-helm main"
-    - "deb {{repo.url}} {{staging_tag}}-kubernetes-xenial main"
-    - "deb {{repo.url}} {{staging_tag}}-cloudfoundry main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-pip3 main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-ansible main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-debian-buster-main main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-1.19 main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main"
   retries: 3
   delay: 1
   register: result
@@ -178,7 +178,7 @@
     state: present
     regexp: '^global_auth_file =.*'
     line: 'global_auth_file = "/etc/crio/auth.json"'
-  when: commercial_enabled
+  when: commercial.enabled
 
 - name: remove preconfigures crio.conf from dpkg
   file:
