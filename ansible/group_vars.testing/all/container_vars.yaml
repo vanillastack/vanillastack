@@ -1,7 +1,7 @@
 ---
 commercial:
   enabled: true
-  username: "testUsername"
+  username: "gitlab-testing-stage"
   key: "REGISTRY_KEY"
 make_ha: true
 create_extLB: false
