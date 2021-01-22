@@ -76,6 +76,14 @@
   retries: 10
   delay: 10
 
+- name: configure timesyncd for ntp
+  template:
+    src: timesyncd.conf.j2
+    dest: /etc/systemd/timesyncd.conf
+    mode: 0444
+  notify: restart timesyncd
+  when: ntp.manage_timesyncd
+
 - name: make sure, domain search is not set
   lineinfile:
     regexp: '^(.*)search(.*)$'
