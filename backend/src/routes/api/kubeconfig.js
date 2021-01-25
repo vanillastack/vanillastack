@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const {getClient, downloadFile, cleanUpPath} = require('../../services/websocket');
+const { downloadFile } = require('../../services/setup');
+const { getClient } = require('../../services/users');
+const { cleanUpPath } = require('../../services/helper');
 
 /**
  * Get KubeConfig to Download
@@ -35,34 +37,34 @@ const {getClient, downloadFile, cleanUpPath} = require('../../services/websocket
  *
  */
 router.get('/:uuid', function (req, res) {
-    const client = getClient(req.params.uuid);
-    const debug = req.app.locals.config.debug;
-    if (!client) {
-        if (debug) {
-            console.log("Client not Found");
-        }
-        res.status(400).json({
-            message: 'uuid invalid'
-        });
-        return;
-    } else if (client.setup == null) {
-        if (debug) {
-            console.log("Client has not run setup yet");
-        }
-        res.status(400).json({
-            message: 'setup has not run yet'
-        });
-        return;
+  const client = getClient(req.params.uuid);
+  const debug = req.app.locals.config.debug;
+  if (!client) {
+    if (debug) {
+      console.log('Client not Found');
     }
-    const filename = 'kubeconfig';
-    const kubeConfigPath = downloadFile(client.uuid, filename, client.setup);
-    res.on('finish', () => {
-        cleanUpPath(debug, null, kubeConfigPath, [filename]);
+    res.status(400).json({
+      message: 'uuid invalid',
     });
-    res.download(path.join(kubeConfigPath, filename));
-    // res.end();
+    return;
+  } else if (client.setup == null) {
+    if (debug) {
+      console.log('Client has not run setup yet');
+    }
+    res.status(400).json({
+      message: 'setup has not run yet',
+    });
+    return;
+  }
+  const filename = 'kubeconfig';
+  const kubeConfigPath = downloadFile(client.uuid, filename, client.setup);
+  res.on('finish', () => {
+    cleanUpPath(debug, null, kubeConfigPath, [filename]);
+  });
+  res.download(path.join(kubeConfigPath, filename));
+  // res.end();
 
-    //cleanUpPath(null, kubeConfigPath, ['kubeconfig']);
+  //cleanUpPath(null, kubeConfigPath, ['kubeconfig']);
 });
 
 module.exports = router;
