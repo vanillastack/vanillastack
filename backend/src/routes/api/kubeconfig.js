@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const { downloadFile, cleanUpPath } = require('../../services/websocket');
+const { downloadFile } = require('../../services/setup');
 const { getClient } = require('../../services/users');
+const { cleanUpPath } = require('../../services/helper');
 
 /**
  * Get KubeConfig to Download

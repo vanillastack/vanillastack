@@ -1,12 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { getClient } = require('../../services/users');
-const {
-  setup,
-  sleep,
-  genTransactionId,
-  randPassword,
-} = require('../../services/websocket');
+const { sleep, genTransactionId } = require('../../services/helper');
+const { setup } = require('../../services/setup');
 
 /**
  * Post Setup

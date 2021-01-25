@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const { getClient } = require('../../services/users');
-const { downloadFile, cleanUpPath } = require('../../services/websocket');
+const { cleanUpPath } = require('../../services/helper');
+const { downloadFile } = require('../../services/setup');
 
 /**
  * Get Current Ansible Config
