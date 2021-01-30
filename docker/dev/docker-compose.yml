@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: secret
+  keycloak:
+    image: jboss/keycloak:latest
+    volumes:
+      - "./../../backend/src/templates/vsmanager_realm.json:/tmp/vsmanager_realm.json"
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: secret
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: "/tmp/vsmanager_realm.json"
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
+    ports:
+      - 8081:8080
+    depends_on:
+      - postgres
+  vsmanager:
+    build:
+      context: "./../.."
+      dockerfile: "./docker/dev/alpine/Dockerfile"
+    ports:
+      - "8080:8080"
+      - "9229:9229"
+    volumes:
+      - ./../../backend/src:/usr/workdir/src"
+    depends_on:
+      - keycloak
+    environment:
+      DEBUG: "true"
+volumes:
+  postgres_data:
+    driver: local
