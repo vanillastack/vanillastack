@@ -78,21 +78,21 @@
 
 - name: enable auto completion
   lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc" 
+    path: "{{ ansible_env.HOME }}/.bashrc"
     line: "source <(kubectl completion bash)"
     state: present
-    
+
 - name: manage access creds
   block:
   - name: copy ssh key to master1
-    copy: 
+    copy:
       src: "{{ ansible_ssh_private_key_file }}"
       dest: /tmp/tempkey.pem
-  
+
   - name: add ssh key as secret
     command: >
       kubectl create secret generic --namespace kube-system management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem
-  
+
   - name: make sure, ssh key is removed
     file:
       path: /tmp/tempkey.pem

@@ -127,7 +127,7 @@
   roles:
     - role: prepare-registry
     - role: deploy-kubernetes
-      action: 06_configure_network
+      action: "06_configure_network_{{cluster_sdn|default('cilium')}}"
 
 - name: Label Nodes
   hosts: master[0]
