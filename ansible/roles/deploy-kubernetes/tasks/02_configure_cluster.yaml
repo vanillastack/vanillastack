@@ -3,7 +3,7 @@
   template:
     src: kubelet-auth.json.j2
     dest: /etc/crio/auth.json
-  when: commercial.enabled
+  when: commercial.enabled and ansible_architecture != "ppc64le"
 
 - name: make sure, registry is not set
   file:
