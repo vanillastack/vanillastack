@@ -121,6 +121,11 @@
         path: "/tmp/ansible/{{ cluster_uuid }}"
         recurse: yes
 
+- name: Gather facts
+  hosts: master,worker
+  become: false
+  gather_facts: yes
+
 - name: Deploy Networking
   hosts: master[0]
   gather_facts: true

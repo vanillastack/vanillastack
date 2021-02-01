@@ -23,8 +23,8 @@
   community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template','calico_ppc64le.yaml.j2')}}"
-  when: 'worker.rc != 0 or item.ansible_architecture is "ppc64le"'
-  loop: "{{ groups.worker }}"
+  when:  hostvars[item].ansible_architecture == "ppc64le"
+  loop: "{{groups.worker}}"
 
 - name: Wait for control-plane pods become ready
   command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s"
