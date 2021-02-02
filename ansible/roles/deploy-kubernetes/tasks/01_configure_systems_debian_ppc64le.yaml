@@ -4,19 +4,37 @@
     msg: This disribution is currently not supported by VanillaStack
   when: ansible_distribution != 'Debian'
 
-- name: Remove old repositories
-  file:
-    path: "{{item}}"
-    state: absent
-  with_items:
-    - "/etc/apt/sources.list.d"
-    - /etc/apt/sources.list
+- name: Preinstall packages
+  apt:
+    name:
+      - gnupg
+      - python3
+
+- name: copy sources.list
+  copy:
+    src: sources.list
+    dest: /etc/apt/sources.list
+
+- name: Add key from keyserver
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ item }}"
+  loop:
+    - 93C4A3FD7BB9C367
+    - 8BECF1637AD8C79D
+  retries: 3
+  delay: 1
+  register: result
+  until: result is success
 
 - name: Add key for cri-o repos
   apt_key:
     url: "{{ item }}"
   loop:
-    - "{{repositories.package_repository}}/public-gpg-key"
+    - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    - "https://baltocdn.com/helm/signing.asc"
+    - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_10/Release.key"
+    - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key"
   retries: 3
   delay: 1
   register: result
@@ -27,13 +45,11 @@
     repo: "{{ item }}"
     state: present
   loop:
-    - "deb {{repositories.package_repository}} {{staging_tag}}-pip3 main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-ansible main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-debian-buster-main main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-1.19 main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main"
+    - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+    - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+    - "deb https://baltocdn.com/helm/stable/debian/ all main"
+    - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_10/ /"
+    - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
   retries: 3
   delay: 1
   register: result
@@ -52,20 +68,25 @@
       - ansible
       - needrestart
       - helm
-      - cf-cli
       - nfs-common
       - iproute2
-      - python3-openshift
-      - python3-pyhelm
       - python3-pip
       - python3-kubernetes
       - python3-passlib
       - fail2ban
+      - python3-jmespath
     update_cache: yes
   register: result
   until: result is not failed
   retries: 10
   delay: 10
+
+- name: install pip modules
+  pip:
+    name:
+      - pyhelm
+      - openshift
+    extra_args: --ignore-installed
 
 - name: Upgrade all packages to the latest version
   apt:
@@ -95,6 +116,60 @@
     name: unattended-upgrades
     state: absent
 
+### build crio
+- name: install build packages
+  apt:
+    name:
+      - btrfs-progs
+      - golang
+      - containerd
+      - runc
+      - containers-common
+      - git
+      - golang-go
+      - libassuan-dev
+      - libdevmapper-dev
+      - libglib2.0-dev
+      - libc6-dev
+      - libgpgme11-dev
+      - libgpg-error-dev
+      - libseccomp-dev
+      - libsystemd-dev
+      - libselinux1-dev
+      - pkg-config
+      - go-md2man
+      - cri-o-runc
+      - libudev-dev
+      - software-properties-common
+      - gcc
+      - make
+      - conmon
+
+- name: clone crio repository
+  git:
+    repo: 'https://github.com/cri-o/cri-o'
+    dest: /tmp/crio
+    version: "release-{{ kubernetes.version }}"
+
+- name: crio make
+  community.general.make:
+    chdir: /tmp/crio
+
+- name: crio make install
+  community.general.make:
+    chdir: /tmp/crio
+    target: install
+
+- name: copy crio systemd file
+  copy:
+    src: crio.service
+    dest: /lib/systemd/system/crio.service
+
+- name: reload systemd
+  systemd:
+    daemon_reload: true
+### end build crio
+
 - name: get latest kube version
   shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
   register: apt_output
@@ -109,7 +184,6 @@
       - "kubelet={{ versions }}"
       - "kubeadm={{ versions }}"
       - "kubectl={{ versions }}"
-      - "cri-o"
       - libgtk2.0-0
     update_cache: yes
   register: result
@@ -118,14 +192,11 @@
   delay: 10
 
 - name: mark packages as hold
-  dpkg_selections:
-    name: "{{ item }}"
-    selection: hold
+  command: "apt-mark hold {{ item }}" 
   with_items:
     - "kubelet"
     - "kubeadm"
     - "kubectl"
-    - "cri-o"
 
 - name: configure crio
   lineinfile:
