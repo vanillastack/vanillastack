@@ -59,15 +59,14 @@ postgresOperator:
       bucketName: nul
     cron: "30 00 * * *"
 redis:
-  namespace: "testing"
-  name: "redis-cluster"
-  global:
-    imagetag: "2.0"
-    password: "Opstree@1235"
-  operator:
-    imagetag: "v0.2"
-  exporter:
-    imagetag: "1.0"    
+  environment: test
+  enabled: true
+  chartVersion: 10.8.1
+  password: "hWSq71XJD7go9rGUHGNzunhbh"
+  persistence:
+    storageClass: "rook-ceph-block"
+    size: 15Gi
+  namespace: "redis"
 harbor:
   chartVersion: 1.5.1
   namespace: harbor
