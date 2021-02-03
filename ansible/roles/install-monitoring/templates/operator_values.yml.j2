@@ -136,7 +136,7 @@ alertmanager:
 {% if commercial.enabled %}
       repository: {{repositories.registry_commercial}}/vanillastack/alertmanager
 {% else %}
-      repository: quay.io/monitoring.alertmanager
+      repository: quay.io/prometheus/alertmanager
 {% endif %}
       tag: v0.21.0
       sha: ""
@@ -476,9 +476,9 @@ prometheusOperator:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-operator
 {% else %}
-    repository: quay.io/coreos/prometheus-operator
+    repository: quay.io/prometheus-operator/prometheus-operator
 {% endif %}
-    tag: v0.44.0
+    tag: v0.45.0
     sha: ""
     pullPolicy: IfNotPresent
   configmapReloadImage:
@@ -493,7 +493,7 @@ prometheusOperator:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-config-reloader
 {% else %}
-    repository: quay.io/coreos/prometheus-config-reloader
+    repository: quay.io/prometheus-operator/prometheus-config-reloader
 {% endif %}
     tag: v0.44.0
     sha: ""
