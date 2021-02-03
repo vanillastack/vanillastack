@@ -49,8 +49,6 @@ curl -fsSL https://download.docker.com/linux/debian/gpg > $WORKDIR/live-build/co
 echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 curl -L 'https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key' | apt-key add -
 
-
-#apt-get update && apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io skopeo
 apt-get update && apt-get install -y --no-install-recommends skopeo
 
 wget https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mcli

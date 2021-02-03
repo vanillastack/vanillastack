@@ -133,8 +133,8 @@ alertmanager:
   alertmanagerSpec:
     podMetadata: {}
     image:
-{% if commercial_enabled %}
-      repository: {{commercial.registry.url}}/vanillastack/alertmanager
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/alertmanager
 {% else %}
       repository: quay.io/monitoring.alertmanager
 {% endif %}
@@ -402,8 +402,8 @@ prometheusOperator:
   tlsProxy:
     enabled: true
     image:
-{% if commercial_enabled %}
-      repository: {{commercial.registry.url}}/vanillastack/ghostunnel
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/ghostunnel
 {% else %}
       repository: squareup/ghostunnel
 {% endif %}
@@ -418,8 +418,8 @@ prometheusOperator:
     patch:
       enabled: true
       image:
-{% if commercial_enabled %}
-        repository: {{commercial.registry.url}}/vanillastack/kube-webhook-certgen
+{% if commercial.enabled %}
+        repository: {{repositories.registry_commercial}}/vanillastack/kube-webhook-certgen
 {% else %}
         repository: jettech/kube-webhook-certgen
 {% endif %}
@@ -473,8 +473,8 @@ prometheusOperator:
     runAsNonRoot: true
     runAsUser: 65534
   image:
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/prometheus-operator
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/prometheus-operator
 {% else %}
     repository: quay.io/coreos/prometheus-operator
 {% endif %}
@@ -482,16 +482,16 @@ prometheusOperator:
     sha: ""
     pullPolicy: IfNotPresent
   configmapReloadImage:
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/configmap-reload
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/configmap-reload
 {% else %}
     repository: docker.io/jimmidyson/configmap-reload
 {% endif %}
     tag: v0.4.0
     sha: ""
   monitoring.onfigReloaderImage:
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/prometheus-config-reloader
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/prometheus-config-reloader
 {% else %}
     repository: quay.io/coreos/prometheus-config-reloader
 {% endif %}
@@ -500,8 +500,8 @@ prometheusOperator:
   configReloaderCpu: 100m
   configReloaderMemory: 25Mi
   hyperkubeImage:
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/hyperkube
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/hyperkube
 {% else %}
     repository: k8s.gcr.io/hyperkube
 {% endif %}
@@ -602,8 +602,8 @@ prometheus:
     listenLocal: false
     enableAdminAPI: false
     image:
-{% if commercial_enabled %}
-      repository: {{commercial.registry.url}}/vanillastack/prometheus
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/prometheus
 {% else %}
       repository: quay.io/prometheus/prometheus
 {% endif %}

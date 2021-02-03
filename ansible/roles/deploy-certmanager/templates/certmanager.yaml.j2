@@ -1,14 +1,14 @@
 ---
 installCRDs: true
-{% if commercial_enabled %}
+{% if commercial.enabled %}
 image:
-  repository: {{commercial.registry.url}}/vanillastack/cert-manager-controller
+  repository: {{repositories.registry_commercial}}/vanillastack/cert-manager-controller
 webhook:
   image:
-    repository: {{commercial.registry.url}}/vanillastack/cert-manager-webhook
+    repository: {{repositories.registry_commercial}}/vanillastack/cert-manager-webhook
 cainjector:
   image:
-    repository: {{commercial.registry.url}}/vanillastack/cert-manager-cainjector
+    repository: {{repositories.registry_commercial}}/vanillastack/cert-manager-cainjector
 {% else %}
 image:
   repository: quay.io/jetstack/cert-manager-controller

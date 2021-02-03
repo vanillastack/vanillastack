@@ -40,8 +40,8 @@ spec:
               key: password
               name: nextcloud-admin
         name: collabora-online
-{% if commercial_enabled %}
-        image: "{{commercial.registry.url}}/vanillastack/code:6.4.3.1"
+{% if commercial.enabled %}
+        image: "{{repositories.registry_commercial}}/vanillastack/code:6.4.3.1"
 {% else %}
         image: "collabora/code:6.4.3.1"
 {% endif %}

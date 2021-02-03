@@ -1,6 +1,6 @@
 image:
-{% if commercial_enabled %}
-  repository: {{commercial.registry.url}}/vanillastack/nextcloud
+{% if commercial.enabled %}
+  repository: {{repositories.registry_commercial}}/vanillastack/nextcloud
 {% else %}
   repository: nextcloud
 {% endif %}
@@ -162,8 +162,8 @@ nextcloud:
 nginx:
   enabled: true
   image:
-{% if commercial_enabled %}
-    repository: {{commercial.registry.url}}/vanillastack/nginx
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/nginx
 {% else %}
     repository: nginx
 {% endif %}

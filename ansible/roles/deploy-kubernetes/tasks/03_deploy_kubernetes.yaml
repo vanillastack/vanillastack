@@ -39,11 +39,11 @@
                  {% if ansible_distribution != 'Debian' %}
                  --skip-phases=addon/kube-proxy \
                  {% endif %}
-                 {% if ansible_os_family == 'Suse' and commercial_enabled != true %}
+                 {% if ansible_os_family == 'Suse' and commercial.enabled != true %}
                  --image-repository k8s.gcr.io --kubernetes-version latest \
                  {% endif %}
-                 {% if commercial_enabled %}
-                 --image-repository {{commercial.registry.url}}/vanillastack --kubernetes-version latest \
+                 {% if commercial.enabled %}
+                 --image-repository {{repositories.registry_commercial}}/vanillastack --kubernetes-version latest \
                  {% endif %}
                  {{ kubernetes.kubeadm_opts }} \
                  {{ kubernetes.init_opts }}

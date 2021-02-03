@@ -9,8 +9,8 @@ extraEnv: []
 image:
   pullPolicy: IfNotPresent
   pullSecrets: []
-{% if commercial_enabled %}
-  repository: {{commercial.registry.url}}/vanillastack/dashboard
+{% if commercial.enabled %}
+  repository: {{repositories.registry_commercial}}/vanillastack/dashboard
 {% else %}
   repository: kubernetesui/dashboard
 {% endif %}

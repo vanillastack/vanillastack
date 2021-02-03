@@ -2,6 +2,7 @@
 set -e
 
 export VANILLA_REGISTRY_URL=harbor.vanillastack.io/vanillastack/installer
+echo "CI-JobID: $CI_JOB_ID"
 
 _DEBUG="false"
 [[ "$DEBUG" == TRUE ]] && _DEBUG=true
@@ -12,9 +13,9 @@ echo "running branch: $branch"
 
 dockerimage_tag=""
 case "$branch" in
-    master/)     dockerimage_tag=":latest" ;;
-    testing/)    dockerimage_tag=":testing-latest" ;;
-    *)          dockerimage_tag=":dev-latest" ;;
+    master/)     dockerimage_tag=":$VERSION" ;;
+    testing/)    dockerimage_tag=":testing-$VERSION" ;;
+    *)          dockerimage_tag=":latest" ;;
 esac
 
 
@@ -35,20 +36,26 @@ fetch_container_image() {
     mkdir -p config/includes.chroot/vanilla | tee -a "$OUTPUT/build.log"
 
     echo "+++ pulling image" | tee -a "$OUTPUT/build.log"
-    skopeo copy "docker://$VANILLA_REGISTRY_URL$dockerimage_tag" "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar:$VANILLA_REGISTRY_URL$dockerimage_tag" | tee -a "$OUTPUT/build.log"
-    skopeo inspect "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar" | grep "Digest" | cut -d \" -f4 -d \" | cut -d : -f 2
+    if skopeo copy "docker://$VANILLA_REGISTRY_URL$dockerimage_tag" "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar:$VANILLA_REGISTRY_URL$dockerimage_tag"
+        then
+            skopeo inspect "docker-archive:config/includes.chroot/vanilla/vanilla-installer.tar" | grep "Digest" | cut -d \" -f4 -d \" | cut -d : -f 2
 
-    echo "+++ image pulled - compressing image" | tee -a "$OUTPUT/build.log"
-    pixz -p 8 -0  config/includes.chroot/vanilla/vanilla-installer.tar config/includes.chroot/vanilla/vanilla-installer.tar.xz  | tee -a "$OUTPUT/build.log"
-    echo "+++ compression finished" | tee -a "$OUTPUT/build.log"
+            echo "+++ image pulled - compressing image" | tee -a "$OUTPUT/build.log"
+            pixz -p 8 -0  config/includes.chroot/vanilla/vanilla-installer.tar config/includes.chroot/vanilla/vanilla-installer.tar.xz  | tee -a "$OUTPUT/build.log"
+            echo "+++ compression finished" | tee -a "$OUTPUT/build.log"
 
-    rm config/includes.chroot/vanilla/vanilla-installer.tar
-    echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
-    echo "${VANILLA_REGISTRY_URL#:}" > config/includes.chroot/vanilla/image
-    echo "+++ export finished" | tee -a "$OUTPUT/build.log"
+            rm config/includes.chroot/vanilla/vanilla-installer.tar
+            echo "${dockerimage_tag#:}" > config/includes.chroot/vanilla/tag
+            echo "${VANILLA_REGISTRY_URL#:}" > config/includes.chroot/vanilla/image
+            echo "+++ export finished" | tee -a "$OUTPUT/build.log"
 
-    pwd  | tee -a "$OUTPUT/build.log"
-    ls -l config/includes.chroot/vanilla  | tee -a "$OUTPUT/build.log"
+            pwd  | tee -a "$OUTPUT/build.log"
+            ls -l config/includes.chroot/vanilla  | tee -a "$OUTPUT/build.log"
+        else
+            echo "+++ Image pull failed +++"
+            exit 9
+        fi
+
 }
 
 #
@@ -90,7 +97,7 @@ cp -a "$WORKDIR/live-build/config" .
 # Preload installer image by starting docker and pulling it
 # (not in Debug-Mode)
 
-[[ "$_DEBUG" == "true" ]] || fetch_container_image
+[[ "$_DEBUG" == "true" ]] || fetch_container_image || exit 9
 
 INSTALLER_IMAGE_HASH="$(cat config/includes.chroot/vanilla/hash || true)"
 template_file config/includes.chroot/var/www/html/index.html

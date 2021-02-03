@@ -45,13 +45,13 @@ data:
   # The default version of CSI supported by Rook will be started. To change the version
   # of the CSI driver to something other than what is officially supported, change
   # these images to the desired release of the CSI driver.
-{% if commercial_enabled %}
-  ROOK_CSI_CEPH_IMAGE: "{{commercial.registry.url}}/vanillastack/cephcsi:v3.1.0"
-  ROOK_CSI_REGISTRAR_IMAGE: "{{commercial.registry.url}}/vanillastack/csi-node-driver-registrar:v1.2.0"
-  ROOK_CSI_RESIZER_IMAGE: "{{commercial.registry.url}}/vanillastack/csi-resizer:v0.4.0"
-  ROOK_CSI_PROVISIONER_IMAGE: "{{commercial.registry.url}}/vanillastack/csi-provisioner:v1.6.0"
-  ROOK_CSI_SNAPSHOTTER_IMAGE: "{{commercial.registry.url}}/vanillastack/csi-snapshotter:v2.1.1"
-  ROOK_CSI_ATTACHER_IMAGE: "{{commercial.registry.url}}/vanillastack/csi-attacher:v2.1.0"
+{% if commercial.enabled %}
+  ROOK_CSI_CEPH_IMAGE: "{{repositories.registry_commercial}}/vanillastack/cephcsi:v3.1.0"
+  ROOK_CSI_REGISTRAR_IMAGE: "{{repositories.registry_commercial}}/vanillastack/csi-node-driver-registrar:v1.2.0"
+  ROOK_CSI_RESIZER_IMAGE: "{{repositories.registry_commercial}}/vanillastack/csi-resizer:v0.4.0"
+  ROOK_CSI_PROVISIONER_IMAGE: "{{repositories.registry_commercial}}/vanillastack/csi-provisioner:v1.6.0"
+  ROOK_CSI_SNAPSHOTTER_IMAGE: "{{repositories.registry_commercial}}/vanillastack/csi-snapshotter:v2.1.1"
+  ROOK_CSI_ATTACHER_IMAGE: "{{repositories.registry_commercial}}/vanillastack/csi-attacher:v2.1.0"
 {% else %}
   ROOK_CSI_CEPH_IMAGE: "quay.io/cephcsi/cephcsi:v3.1.0"
   ROOK_CSI_REGISTRAR_IMAGE: "quay.io/k8scsi/csi-node-driver-registrar:v1.2.0"
@@ -283,10 +283,10 @@ spec:
       serviceAccountName: rook-ceph-system
       containers:
       - name: rook-ceph-operator
-{% if commercial_enabled %}
-        image: {{commercial.registry.url}}/vanillastack/ceph:v1.4.4
+{% if commercial.enabled %}
+        image: {{repositories.registry_commercial}}/vanillastack/ceph:v1.4.4
 {% else %}
-        image: rook/ceph:v1.4.4
+        image: rook/ceph:v1.5.6
 {% endif %}
         args: ["ceph", "operator"]
         volumeMounts:

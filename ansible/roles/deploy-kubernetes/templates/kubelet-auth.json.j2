@@ -1,7 +1,7 @@
 {
 	"auths": {
-		"{{commercial.registry.url}}": {
-			"auth": "{{ ('robot$'+commercial.registry.username+":"+commercial.registry.key)|b64encode }}"
+		"{{repositories.registry_commercial}}": {
+			"auth": "{{ ('robot$'+commercial.username+":"+commercial.key)|b64encode }}"
 		}
 	}
 }

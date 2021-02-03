@@ -1,19 +1,26 @@
 ---
-commercial_enabled: true # commercial.enabled
-make_ha: true # global.isHA
-create_extLB: false # global.externalLB
-cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002" # global.uuid
-## global.registry -> repo.registry
-staging_tag: "testing" # repo.debian.tag
+commercial:
+  enabled: true
+  username: "gitlab-testing-stage"
+  key: "REGISTRY_KEY"
+make_ha: true
+create_extLB: false
+cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
+cluster_pod_cidr: "10.0.0.0/8"
+cluster_serv ice_cidr: "10.96.0.0/12"
+cluster_sdn: calico # cilium | calico
+staging_tag: "testing" 
 # possible issuer: "letsencrypt-staging", "letsencrypt-prod" or "certmanager-selfsigned"
 LE_issuer_name: "letsencrypt-staging" # tls.issuerName
 LE_issuer_mail: "testing@test.vanillastack.cloudical.net" #tls.issuerEmail
 loadbalancerIP: 135.181.48.19 # kubernetes.loadBlanacer.virtualIP
 clusterTLDomain: test.vanillastack.cloudical.net # kubernetes.loadBlanacer.clusterDomain
 reset_environment: false kubernetes.resetCluster
+nextcloud_instancename: "nextcloud"
 vanillaservices:
   dashboard_enabled: true # kubernetes.dashboard.enabled
   cloudfoundry_enabled: true # cloudfoundry.enabled
+  nextcloud_enabled: true    
   stratos_enabled: true # stratos.enabled
   guacamole_enabled: true # guacamole.enabled
   pgOperator_enabled: true # postgresOperator.enabled
@@ -25,4 +32,7 @@ vanillaservices:
   moodle_enabled: false # moodle.enabled
   keycloak_enabled: true # keycloak.enabled
   openstack_enabled: false # openstack.enabled
-# prometheus -> monitoring
+vanillastorageprovider: "rook"
+polyverse:
+  enabled: false
+  key: "testKey"

@@ -3,7 +3,7 @@
   template:
     src: kubelet-auth.json.j2
     dest: /etc/crio/auth.json
-  when: commercial_enabled
+  when: commercial.enabled and ansible_architecture != "ppc64le"
 
 - name: make sure, registry is not set
   file:
@@ -15,22 +15,22 @@
     path: "{{ item }}"
     block: |
       [registries.search]
-      registries = ['docker.io', 'registry.fedoraproject.org', 'registry.access.redhat.com', '{{ repo.registry }}', 'k8s.gcr.io']
+      registries = ['docker.io', 'registry.fedoraproject.org', 'registry.access.redhat.com', '{{ repositories.registry_community }}', 'k8s.gcr.io']
     create: true
   with_items:
     - /etc/containers/registries.conf
-  when: commercial_enabled != true
+  when: commercial.enabled != true
 
 - name: add container repos
   blockinfile:
     path: "{{ item }}"
     block: |
       [registries.search]
-      registries = ['docker.io', 'registry.fedoraproject.org', 'registry.access.redhat.com', '{{ repo.registry }}', '{{ commercial.registry.url }}', 'k8s.gcr.io']
+      registries = ['docker.io', 'registry.fedoraproject.org', 'registry.access.redhat.com', '{{ repositories.registry_community }}', '{{ repositories.registry_commercial }}', 'k8s.gcr.io']
     create: true
   with_items:
     - /etc/containers/registries.conf
-  when: commercial_enabled
+  when: commercial.enabled
 
 - name: remove cni configs
   file:

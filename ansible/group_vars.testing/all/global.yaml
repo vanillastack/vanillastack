@@ -1,12 +1,13 @@
 ---
-commercial:
-  registry:
-    url: harbor.cloudical.net
-    username: 'gitlab-testing-stage'
-    key: 'REGISTRY_KEY'
-repo:
-  registry: harbor.vanillastack.io
-  url:  https://repo.vanillastack.cloudical.net
+#commercial:
+#  registry:
+#    url: harbor.cloudical.net
+#    username: 'gitlab-testing-stage'
+#    key: 'REGISTRY_KEY'
+repositories:
+  registry_community: harbor.vanillastack.io
+  registry_commercial: harbor.cloudical.net
+  package_repository:  https://repo.vanillastack.cloudical.net
 ingress:
   namespace: nginx-ingress
   enabled: true
@@ -25,9 +26,11 @@ kubernetes:
   cilium:
     version: v1.8.6
 cloudfoundry:
+  version: 2.4.0
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ clusterTLDomain }}"
 stratos:
+  version: 4.0.1
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ clusterTLDomain }}"
 guacamole:
@@ -56,15 +59,14 @@ postgresOperator:
       bucketName: nul
     cron: "30 00 * * *"
 redis:
-  namespace: "testing"
-  name: "redis-cluster"
-  global:
-    imagetag: "2.0"
-    password: "Opstree@1235"
-  operator:
-    imagetag: "v0.2"
-  exporter:
-    imagetag: "1.0"    
+  environment: test
+  enabled: true
+  chartVersion: 10.8.1
+  password: "Opstree@1235"
+  persistence:
+    storageClass: "rook-ceph-block"
+    size: 15Gi
+  namespace: "redis"
 harbor:
   chartVersion: 1.5.1
   namespace: harbor

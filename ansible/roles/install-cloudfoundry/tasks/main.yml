@@ -18,6 +18,7 @@
       name: kubecf
       chart_ref: vanillastack/kubecf
       release_namespace: kubecf
+      chart_version: "{{ cloudfoundry.version }}"
       values: "{{ lookup('template', 'kubecf-values.yaml.j2') | from_yaml }}"
     register: kubecf_install
 

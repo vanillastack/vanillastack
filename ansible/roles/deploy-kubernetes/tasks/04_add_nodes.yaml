@@ -3,8 +3,6 @@
   include_vars:
     file: /tmp/cluster_vars.yml
   # when: certificate_key is not defined or certificate_key|length <1
-- debug:
-    var: token
 
 - name: define port, kubelet is listening on
   set_fact:

@@ -6,14 +6,14 @@
       action: 00_create_new_inventory
 
 - name: Wait for nodes
-  hosts: kube_cluster
+  hosts: install_nodes,install_master,master[0]
   become: false
   gather_facts: no
   roles:
     - role: wait-for-nodes
 
 - name: Secure Servers (Installing Polyverse)
-  hosts: kube_cluster
+  hosts: install_nodes,install_master
   become: true
   gather_facts: true
   roles:
@@ -21,7 +21,7 @@
       when: polyverse.enabled
  
 - name: Configure Servers
-  hosts: kube_cluster
+  hosts: install_nodes,install_master
   become: true
   gather_facts: true
   roles:
@@ -29,13 +29,16 @@
       action: 01_configure_systems
       when: ansible_distribution != 'Debian'
     - role: deploy-kubernetes
-      action: 01_configure_systems_debian
-      when: ansible_distribution == 'Debian'
+      action: 01_configure_systems_debian_amd64
+      when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+    - role: deploy-kubernetes
+      action: 01_configure_systems_debian_ppc64le
+      when: ansible_distribution == 'Debian' and ansible_architecture == "ppc64le"
 
 - name: Install Keepalived
   hosts: haproxy[0]
   become: true
-  gather_facts: false
+  gather_facts: true
   vars:
     keepalived_MASTER_SLAVE: MASTER
     keepalived_priority: 110
@@ -47,7 +50,7 @@
 - name: Install Keepalived
   hosts: haproxy[1:]
   become: true
-  gather_facts: false
+  gather_facts: true
   roles:
     - role: install-haproxy
       action: 01_install_keepalived
@@ -56,14 +59,14 @@
 - name: Install HaProxy
   hosts: haproxy
   become: true
-  gather_facts: false
+  gather_facts: true
   roles:
     - role: install-haproxy
       action: 02_install_haproxy
       when: not create_extLB
 
 - name: Configure Kube Systems
-  hosts: kube_cluster
+  hosts: install_nodes,install_master
   become: true
   gather_facts: false
   roles:
@@ -78,7 +81,7 @@
         #      action: 02-1-generate-certificate
 
 - name: Init KubeCluster
-  hosts: master[0]
+  hosts: install_master[0]
   gather_facts: true
   roles:
     - role: deploy-kubernetes
@@ -92,7 +95,7 @@
       action: 02-1-generate-certificate
 
 - name: Add Master to KubeCluster
-  hosts: master[1:]
+  hosts: install_master[1:]
   become: true
   gather_facts: no
   roles:
@@ -118,13 +121,18 @@
         path: "/tmp/ansible/{{ cluster_uuid }}"
         recurse: yes
 
+- name: Gather facts
+  hosts: master,worker
+  become: false
+  gather_facts: yes
+
 - name: Deploy Networking
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
     - role: deploy-kubernetes
-      action: 06_configure_network
+      action: "06_configure_network_{{cluster_sdn|default('cilium')}}"
 
 - name: Label Nodes
   hosts: master[0]
@@ -150,6 +158,7 @@
   roles:
     - role: prepare-registry
     - role: deploy-rook
+      when: vanillastorageprovider == "rook"
 
 - name: Deploy Cert Manager
   hosts: master[0]
