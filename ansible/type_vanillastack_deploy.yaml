@@ -309,7 +309,5 @@
   hosts: master[0]
   gather_facts: false
   roles:
-  - role: install-redis-operator
-    when: vanillaservices.redis_enabled
   - role: install-redis-cluster
     when: vanillaservices.redis_enabled
