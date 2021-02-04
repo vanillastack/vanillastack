@@ -297,19 +297,22 @@
   hosts: master[0]
   gather_facts: true
   roles:
-  - role: install-monitoring
-    action: operator
-    when: vanillaservices.monitoring_enabled
-  - role: install-monitoring
-    action: create-client
-    when: vanillaservices.monitoring_enabled and vanillaservices.keycloak_enabled
+    - role: install-monitoring
+      action: operator
+      when: vanillaservices.monitoring_enabled
+    - role: install-monitoring
+      action: create-client
+      when: vanillaservices.monitoring_enabled and vanillaservices.keycloak_enabled
+    - role: install-redis
+      when: vanillaservices.monitoring_enabled and vanillaservices.keycloak_enabled
 
 
 - name: install redis cluster
   hosts: master[0]
   gather_facts: false
   roles:
-  - role: install-redis-operator
-    when: vanillaservices.redis_enabled
-  - role: install-redis-cluster
-    when: vanillaservices.redis_enabled
+    - role: install-redis-cluster
+      when: vanillaservices.redis_enabled and redis.cluster
+    - role: install-redis
+      when: vanillaservices.redis_enabled and not redis.cluster
+
