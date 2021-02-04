@@ -1,0 +1,15 @@
+---
+- name: install redis cluster
+  hosts: master[0]
+  gather_facts: false
+  roles:
+  - role: install-redis-cluster
+    when: redis.cluster
+
+- name: install redis master-slave
+  hosts: master[0]
+  gather_facts: false
+  roles:
+  - role: install-redis-cluster
+    when: not redis.cluster
+
