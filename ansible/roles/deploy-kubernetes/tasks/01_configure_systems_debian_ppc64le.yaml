@@ -122,7 +122,6 @@
     name:
       - btrfs-progs
       - golang
-      - containerd
       - runc
       - containers-common
       - git

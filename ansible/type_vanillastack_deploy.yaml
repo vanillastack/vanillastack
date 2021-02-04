@@ -311,3 +311,10 @@
   roles:
   - role: install-redis-cluster
     when: vanillaservices.redis_enabled
+
+- name: install nextcloud
+  hosts: master[0]
+  gather_facts: false
+  roles:
+  - role: install-nextcloud
+    when: vanillaservices.nextcloud_enabled
