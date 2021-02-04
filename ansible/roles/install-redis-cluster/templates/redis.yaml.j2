@@ -62,50 +62,24 @@ rbac:
     rules: []
 redis:
   affinity: {}
-  args: []
   busPort: 16379
-  command: []
-  configmap: null
-  customLivenessProbe: {}
-  customReadinessProbe: {}
-  extraEnvVars: []
-  extraEnvVarsCM: null
-  extraEnvVarsSecret: null
-  extraVolumeMounts: []
-  extraVolumes: []
-  hostAliases: []
-  initContainers: []
-  lifecycleHooks: null
   livenessProbe:
     enabled: true
     failureThreshold: 5
-    initialDelaySeconds: 5
-    periodSeconds: 5
+    initialDelaySeconds: 20
+    periodSeconds: 10
     successThreshold: 1
     timeoutSeconds: 5
-  nodeAffinityPreset:
-    key: ""
-    type: ""
-    values: []
-  nodeSelector: {}
-  podAffinityPreset: ""
-  podAnnotations: {}
   podAntiAffinityPreset: soft
   podLabels: {}
   port: 6379
-  priorityClassName: null
   readinessProbe:
     enabled: true
     failureThreshold: 5
-    initialDelaySeconds: 5
-    periodSeconds: 5
+    initialDelaySeconds: 20
+    periodSeconds: 10
     successThreshold: 1
     timeoutSeconds: 1
-  resources: {}
-  schedulerName: null
-  sidecars: []
-  tolerations: []
-  topologySpreadConstraints: []
   useAOFPersistence: "yes"
 service:
   annotations: {}
