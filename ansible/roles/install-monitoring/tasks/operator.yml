@@ -119,6 +119,7 @@
     chart_ref: vanillastack/kube-prometheus-stack
     release_namespace: monitoring
     values: "{{ lookup('template', 'operator_values.yml.j2') | from_yaml }}"
+    chart_version: "{{ monitoring.chartVersion }}"
 
 - name: Clear files
   file:

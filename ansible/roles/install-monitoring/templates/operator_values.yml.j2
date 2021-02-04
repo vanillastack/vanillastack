@@ -1,72 +1,9 @@
-nameOverride: "monitoring"
-
-namespaceOverride: "monitoring"
-
 kubeTargetVersionOverride: "{{ kubernetes.version }}"
-
-fullnameOverride: "prometheus-operator"
-
-commonLabels: {}
-
-defaultRules:
-  create: true
-  rules:
-    alertmanager: true
-    etcd: true
-    general: true
-    k8s: true
-    kubeApiserver: true
-    kubeApiserverAvailability: true
-    kubeApiserverError: true
-    kubeApiserverSlos: true
-    kubelet: true
-    kubePrometheusGeneral: true
-    kubePrometheusNodeAlerting: true
-    kubePrometheusNodeRecording: true
-    kubernetesAbsent: true
-    kubernetesApps: true
-    kubernetesResources: true
-    kubernetesStorage: true
-    kubernetesSystem: true
-    kubeScheduler: true
-    kubeStateMetrics: true
-    network: true
-    node: true
-    prometheus: true     
-    prometheusOperator: true
-    time: true
-
-  runbookUrl: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#
-  appNamespacesTarget: ".*"
-
-  labels: {}
-  annotations: {}
-
-additionalPrometheusRules: []
-
-global:
-  rbac:
-    create: true
-    pspEnabled: true
-    pspAnnotations: {}
-
-  imagePullSecrets: []
-
+fullnameOverride: "prometheus"
 alertmanager:
   enabled: {{ alertmanager.enabled }}
-  apiVersion: v2
-  serviceAccount:
-    create: true
-    name: ""
-    annotations: {}
-  podDisruptionBudget:
-    enabled: false
-    minAvailable: 1
-    maxUnavailable: ""
   config:
     {{alertmanager.config|indent(width=4)}}
-  tplConfig: false
-  templateFiles: {}
 
   ingress:
     enabled: "{{ alertmanager.ingress.enabled }}"
@@ -87,66 +24,15 @@ alertmanager:
     - hosts:
       - "{{ alertmanager.ingress.dns }}"
       secretName: alertmanager-ingress-tls
-  secret:
-    annotations: {}
 
-  ingressPerReplica:
-    enabled: false
-    annotations: {}
-    labels: {}
-    hostPrefix: ""
-    hostDomain: ""
-
-    paths: []
-    tlsSecretName: ""
-    tlsSecretPerReplica:
-      enabled: false
-      prefix: "alertmanager"
-
-  service:
-    annotations: {}
-    labels: {}
-    clusterIP: ""
-
-    port: 9093
-    targetPort: 9093
-    nodePort: 30903
-    externalIPs: []
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    type: ClusterIP
-
-  servicePerReplica:
-    enabled: false
-    annotations: {}
-    port: 9093
-    targetPort: 9093
-    nodePort: 30904
-    loadBalancerSourceRanges: []
-    type: ClusterIP
-
-  serviceMonitor:
-    interval: ""
-    selfMonitor: true
-    metricRelabelings: []
-    relabelings: []
   alertmanagerSpec:
-    podMetadata: {}
+    replicas: {{alertmanager.replicas|default(1)}}
     image:
 {% if commercial.enabled %}
       repository: {{repositories.registry_commercial}}/vanillastack/alertmanager
 {% else %}
       repository: quay.io/monitoring.alertmanager
 {% endif %}
-      tag: v0.21.0
-      sha: ""
-    useExistingSecret: false
-    secrets: []
-    configMaps: []
-    logFormat: logfmt
-    logLevel: info
-    replicas: {{alertmanager.replicas |default(1)}}
-    retention: 120h
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -157,8 +43,6 @@ alertmanager:
               storage: {{ alertmanager.storage.size }}
     externalUrl: "https://{{ alertmanager.ingress.dns }}"
     routePrefix: /
-    paused: false
-    nodeSelector: {}
     resources:
       limits:
         cpu: {{ alertmanager.resources.limits.cpu }}
@@ -166,21 +50,6 @@ alertmanager:
       requests:
         cpu: {{ alertmanager.resources.requests.cpu }}
         memory: {{ alertmanager.resources.requests.memory }}
-    podAntiAffinity: ""
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-    affinity: {}
-    tolerations: []
-    securityContext:
-      runAsGroup: 2000
-      runAsNonRoot: true
-      runAsUser: 1000
-      fsGroup: 2000
-    listenLocal: false
-    containers: []
-    priorityClassName: ""
-    additionalPeers: []
-    portName: "web"
-
 grafana:
   enabled: {{ grafana.enabled }}
   namespaceOverride: "monitoring"
@@ -203,78 +72,6 @@ grafana:
       - "{{ grafana.ingress.dns }}"
       secretName: grafana-ingress-tls
 
-  sidecar:
-    dashboards:
-      enabled: true
-      label: grafana_dashboard
-      annotations: {}
-    datasources:
-      enabled: true
-      defaultDatasourceEnabled: true
-      annotations: {}
-      createPrometheusReplicasDatasources: false
-      label: grafana_datasource
-
-  extraConfigmapMounts: []
-
-  additionalDataSources: []
-
-  service:
-    portName: service
-
-  serviceMonitor:
-    interval: ""
-    selfMonitor: true
-
-    metricRelabelings: []
-    relabelings: []
-
-kubeApiServer:
-  enabled: true
-  tlsConfig:
-    serverName: kubernetes
-    insecureSkipVerify: false
-
-  relabelings: []
-
-  serviceMonitor:
-    interval: ""
-    jobLabel: component
-    selector:
-      matchLabels:
-        component: apiserver
-        provider: kubernetes
-    metricRelabelings: []
-
-kubelet:
-  enabled: true
-  namespace: kube-system
-  serviceMonitor:
-    interval: ""
-    https: true
-    cAdvisor: true
-    probes: true
-    resource: true
-    resourcePath: "/metrics/resource/v1alpha1"
-    cAdvisorMetricRelabelings: []
-    probesMetricRelabelings: []
-    cAdvisorRelabelings:
-      - sourceLabels: [__metrics_path__]
-        targetLabel: metrics_path
-
-    probesRelabelings:
-      - sourceLabels: [__metrics_path__]
-        targetLabel: metrics_path
-
-    resourceRelabelings:
-      - sourceLabels: [__metrics_path__]
-        targetLabel: metrics_path
-
-    metricRelabelings: []
-    relabelings:
-      - sourceLabels: [__metrics_path__]
-        targetLabel: metrics_path
-
 kubeControllerManager:
   enabled: {{ monitoring.kubeControllerManager.enabled }}
   endpoints: []
@@ -282,118 +79,26 @@ kubeControllerManager:
     port: 10257
     targetPort: 10257
 
-  serviceMonitor:
-    interval: ""
-    https: true
-    insecureSkipVerify: true
-    serverName: null
-    metricRelabelings: []
-    relabelings: []
-
 coreDns:
   enabled: {{ monitoring.coreDns.enabled }}
   service:
     port: 9153
     targetPort: 9153
-  serviceMonitor:
-    interval: ""
-    metricRelabelings: []
-    relabelings: []
 
 kubeDns:
   enabled: {{ monitoring.kubeDns.enabled }}
-  service:
-    dnsmasq:
-      port: 10054
-      targetPort: 10054
-    skydns:
-      port: 10055
-      targetPort: 10055
-  serviceMonitor:
-    interval: ""
-    metricRelabelings: []
-    relabelings: []
-    dnsmasqMetricRelabelings: []
-    dnsmasqRelabelings: []
 
 kubeEtcd:
   enabled: {{ monitoring.kubeEtcd.enabled }}
-  endpoints: []
-  service:
-    port: 2379
-    targetPort: 2379
-
-  serviceMonitor:
-    interval: ""
-    scheme: https
-    insecureSkipVerify: true
-    serverName: ""
-    caFile: ""
-    certFile: /etc/prometheus-secrets/etcd-certs/client.crt
-    keyFile: /etc/prometheus-secrets/etcd-certs/client.key
-    metricRelabelings: []
-    relabelings: []
 
 kubeScheduler:
   enabled: {{ monitoring.kubeScheduler.enabled }}
-  endpoints: []
-  service:
-    port: 10259
-    targetPort: 10259
-
-  serviceMonitor:
-    interval: ""
-    https: true
-    insecureSkipVerify: true
-    serverName: null
-    metricRelabelings: []
-    relabelings: []
 
 kubeProxy:
   enabled: {{ monitoring.kubeProxy.enabled }}
-  endpoints: []
-
-  service:
-    port: 10249
-    targetPort: 10249
-
-  serviceMonitor:
-    interval: ""
-    https: false
-    metricRelabelings: []
-    relabelings: []
 
 kubeStateMetrics:
   enabled: {{ monitoring.kubeStateMetrics.enabled }}
-  serviceMonitor:
-    interval: ""
-    metricRelabelings: []
-    relabelings: []
-
-kube-state-metrics:
-  namespaceOverride: ""
-  rbac:
-    create: true
-  podSecurityPolicy:
-    enabled: true
-
-nodeExporter:
-  enabled: true
-  jobLabel: jobLabel
-
-  serviceMonitor:
-    interval: ""
-    scrapeTimeout: ""
-    metricRelabelings: []
-    relabelings: []
-
-prometheus-node-exporter:
-  namespaceOverride: ""
-  podLabels:
-    jobLabel: node-exporter
-  extraArgs:
-    - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
-    - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
 
 prometheusOperator:
   enabled: true
@@ -407,10 +112,6 @@ prometheusOperator:
 {% else %}
       repository: squareup/ghostunnel
 {% endif %}
-      tag: v1.5.2
-      sha: ""
-      pullPolicy: IfNotPresent
-    resources: {}
 
   admissionWebhooks:
     failurePolicy: Fail
@@ -423,133 +124,34 @@ prometheusOperator:
 {% else %}
         repository: jettech/kube-webhook-certgen
 {% endif %}
-        tag: v1.5.0
-        sha: ""
-        pullPolicy: IfNotPresent
-      resources: {}
-      priorityClassName: ""
-      podAnnotations: {}
-      nodeSelector: {}
-      affinity: {}
-      tolerations: []
-  namespaces: {}
-  denyNamespaces: []
-  serviceAccount:
-    create: true
-    name: ""
-  service:
-    annotations: {}
-    labels: {}
-    clusterIP: ""
-    nodePort: 30080
 
-    nodePortTls: 30443
-    additionalPorts: []
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    type: ClusterIP
-    externalIPs: []
-  createCustomResource: true
-  cleanupCustomResource: false
-  podLabels: {}
-  podAnnotations: {}
-  kubeletService:
-    enabled: true
-    namespace: kube-system
-
-  serviceMonitor:
-    interval: ""
-    scrapeTimeout: ""
-    selfMonitor: true
-    metricRelabelings: []
-    relabelings: []
-  hostNetwork: false
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  securityContext:
-    fsGroup: 65534
-    runAsGroup: 65534
-    runAsNonRoot: true
-    runAsUser: 65534
   image:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-operator
 {% else %}
     repository: quay.io/coreos/prometheus-operator
 {% endif %}
-    tag: v0.44.0
-    sha: ""
-    pullPolicy: IfNotPresent
   configmapReloadImage:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/configmap-reload
 {% else %}
     repository: docker.io/jimmidyson/configmap-reload
 {% endif %}
-    tag: v0.4.0
-    sha: ""
   monitoring.onfigReloaderImage:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-config-reloader
 {% else %}
     repository: quay.io/coreos/prometheus-config-reloader
 {% endif %}
-    tag: v0.44.0
-    sha: ""
-  configReloaderCpu: 100m
-  configReloaderMemory: 25Mi
   hyperkubeImage:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/hyperkube
 {% else %}
     repository: k8s.gcr.io/hyperkube
 {% endif %}
-    tag: v1.16.12
-    sha: ""
-    pullPolicy: IfNotPresent
 
 prometheus:
   enabled: {{ vanillaservices.monitoring_enabled }}
-  annotations: {}
-  serviceAccount:
-    create: true
-    name: ""
-  service:
-    annotations: {}
-    labels: {}
-    clusterIP: ""
-    port: 9090
-    targetPort: 9090
-    externalIPs: []
-    nodePort: 30090
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    type: ClusterIP
-
-    sessionAffinity: ""
-
-  servicePerReplica:
-    enabled: false
-    annotations: {}
-    port: 9090
-    targetPort: 9090
-    nodePort: 30091
-    loadBalancerSourceRanges: []
-    type: ClusterIP
-  podDisruptionBudget:
-    enabled: false
-    minAvailable: 1
-    maxUnavailable: ""
-
-  thanosIngress:
-    enabled: false
-    annotations: {}
-    labels: {}
-    servicePort: 10901
-    hosts: []
-    paths: []
-    tls: []
 
   ingress:
     enabled: "{{ monitoring.ingress.enabled }}"
@@ -569,83 +171,15 @@ prometheus:
     - hosts:
       - "{{ monitoring.ingress.dns }}"
       secretName: monitoring-ingress-tls
-
-  ingressPerReplica:
-    enabled: false
-    annotations: {}
-    labels: {}
-    hostPrefix: ""
-    hostDomain: ""
-    paths: []
-    tlsSecretName: ""
-    tlsSecretPerReplica:
-      enabled: false
-      prefix: "prometheus"
-
-  podSecurityPolicy:
-    allowedCapabilities: []
-
-  serviceMonitor:
-    interval: ""
-    selfMonitor: false
-    scheme: ""
-    tlsConfig: {}
-    bearerTokenFile:
-    metricRelabelings: []
-    relabelings: []
-
-  monitoring-pec:
-    disableCompaction: false
-    apiserverConfig: {}
-    scrapeInterval: ""
-    evaluationInterval: ""
-    listenLocal: false
-    enableAdminAPI: false
+  prometheusSpec:
+    replicas: {{monitoring.replicas|default(1)}}
     image:
 {% if commercial.enabled %}
       repository: {{repositories.registry_commercial}}/vanillastack/prometheus
 {% else %}
       repository: quay.io/prometheus/prometheus
 {% endif %}
-      tag: v2.22.1
-      sha: ""
-    tolerations: []
-    alertingEndpoints: []
-    externalLabels: {}
-    replicaExternalLabelName: ""
-    replicaExternalLabelNameClear: false
-    monitoring.xternalLabelName: ""
-    monitoring.xternalLabelNameClear: false
     externalUrl: "https://{{ monitoring.ingress.dns }}"
-    nodeSelector: {}
-    secrets:
-      - etcd-certs
-    configMaps: []
-    query: {}
-    ruleNamespaceSelector: {}
-    ruleSelectorNilUsesHelmValues: true
-    ruleSelector: {}
-    serviceMonitorSelectorNilUsesHelmValues: true
-    serviceMonitorSelector: {}
-    serviceMonitorNamespaceSelector: {}
-    podMonitorSelectorNilUsesHelmValues: true
-    podMonitorSelector: {}
-    podMonitorNamespaceSelector: {}
-    retention: 10d
-    retentionSize: ""
-    walCompression: false
-    paused: false
-    replicas: {{prometheus.replicas |default(1)}}
-    logLevel: info
-    logFormat: logfmt
-    routePrefix: /
-    podMetadata: {}
-    podAntiAffinity: ""
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-    affinity: {}
-    remoteRead: []
-    remoteWrite: []
-    remoteWriteDashboards: false
     resources:
       limits:
         cpu: {{ monitoring.resources.limits.cpu }}
@@ -661,26 +195,3 @@ prometheus:
           resources:
             requests:
               storage: {{ monitoring.storage.size }}
-
-    volumes: []
-    volumeMounts: []
-    additionalScrapeConfigs: []
-    additionalScrapeConfigsSecret: {}
-    additionalPrometheusSecretsAnnotations: {}
-    additionalAlertManagerConfigs: []
-    additionalAlertRelabelConfigs: []
-    securityContext:
-      runAsGroup: 2000
-      runAsNonRoot: true
-      runAsUser: 1000
-      fsGroup: 2000
-
-    priorityClassName: ""
-    thanos: {}
-    containers: []
-    initContainers: []
-    portName: "web"
-
-  additionalServiceMonitors: []
-
-  additionalPodMonitors: []

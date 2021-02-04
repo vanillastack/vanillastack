@@ -198,7 +198,7 @@ externalDatabase:
   ## Use a existing secret
   existingSecret:
     enabled: true
-    secretName: "{{ nextcloud_instancename }}.{{ nextcloud.postgresql.name }}.credentials.postgresql.acid.zalan.do"
+    secretName: "nextcloud.{{ nextcloud.postgresql.name }}.credentials.postgresql.acid.zalan.do"
     usernameKey: username
     passwordKey: password
 

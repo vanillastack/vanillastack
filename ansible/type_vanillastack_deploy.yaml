@@ -315,4 +315,3 @@
       when: vanillaservices.redis_enabled and redis.cluster
     - role: install-redis
       when: vanillaservices.redis_enabled and not redis.cluster
-
