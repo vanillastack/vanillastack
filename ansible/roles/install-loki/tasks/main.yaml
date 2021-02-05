@@ -1,0 +1,14 @@
+---
+- name: Create monitoring namespace
+  k8s:
+    name: "{{loki.namespace}}"
+    kind: Namespace
+    state: present
+
+- name: Install Loki
+  community.kubernetes.helm:
+    name: loki
+    chart_ref: vanillastack/loki-stack
+    release_namespace: "{{loki.namespace}}"
+    values: "{{ lookup('template', 'loki_values.yaml.j2') | from_yaml }}"
+    chart_version: "{{ loki.chartVersion }}"

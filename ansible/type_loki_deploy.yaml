@@ -1,0 +1,9 @@
+---
+- name: install monitoring
+  hosts: master[0]
+  gather_facts: true
+  roles:
+  - role: prepare-registry
+    when: vanillaservices.monitoring_enabled
+  - role: install-loki
+    when: vanillaservices.loki_enabled

@@ -1,0 +1,56 @@
+loki:
+  enabled: true
+  image:
+    repository: grafana/loki
+    tag: 2.1.0
+  ingress:
+    enabled: false
+  persistence:
+    enabled: {{loki.persistence.enabled}}
+    accessModes:
+    - ReadWriteOnce
+    size: {{loki.persistence.size}}
+    storageClassName: {{loki.persistence.storageClass}}
+  replicas: {{loki.replicas}}
+
+  serviceMonitor:
+    enabled: {{loki.monitoring.enabled}}
+
+promtail:
+  enabled: true
+  initContainer:
+    enabled: false
+    image:
+      registry: docker.io
+      repository: busybox
+      tag: 1.33
+  image:
+    registry: docker.io
+    repository: grafana/promtail
+    tag: null
+    pullPolicy: IfNotPresent
+  serviceMonitor:
+    enabled: {{loki.monitoring.enabled}}
+    namespace: null
+    namespaceSelector: {}
+    annotations: {}
+    labels: {}
+    interval: null
+    scrapeTimeout: null
+
+fluent-bit:
+  enabled: false
+
+grafana:
+  enabled: false
+
+prometheus:
+  enabled: false
+
+filebeat:
+  enabled: false
+
+logstash:
+  enabled: false
+
+

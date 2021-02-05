@@ -1,0 +1,119 @@
+adminPassword: "{{ grafana.admin_password }}"
+
+ingress:
+  enabled: "{{ grafana.ingress.enabled }}"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
+    kubernetes.io/tls-acme: "true"
+  labels: {}
+  hosts:
+    - "{{ grafana.ingress.dns }}"
+  path: /
+  tls:
+  - hosts:
+    - "{{ grafana.ingress.dns }}"
+    secretName: grafana-ingress-tls
+
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+{% if vanillaservices.monitoring_enabled %}
+    - name: Prometheus
+      type: prometheus
+      url: "http://prometheus-prometheus.monitoring.svc:9090"
+      isDefault: true
+{% endif %}
+{% if vanillaservices.loki_enabled %}
+    - name: Loki
+      type: loki
+      url: "http://loki.{{loki.namespace}}.svc:3100"
+      isDefault: false
+{% endif %}
+
+plugins:
+{% if vanillaservices.redis_enabled %}
+  - redis-datasource
+{% endif %}
+
+dashboards:
+  default:
+{% if vanillaservices.monitoring_enabled %}
+    prometheus-stats:
+      gnetId: 2
+      revision: 2
+      datasource: Prometheus
+    kubernetes-volumes:
+      gnetId: 11454
+      datasource: Prometheus
+    kubernetes-namespaces:
+      gnetId: 11455
+      datasource: Prometheus
+    kubernetes-deployments:
+      gnetId: 8588
+      datasource: Prometheus
+    kubernetes-cluster:
+      gnetId: 7249
+      datasource: Prometheus
+    kubernetes-kubelet:
+      gnetId: 12123
+      datasource: Prometheus
+    kubernetes-apiserver:
+      gnetId: 12006
+      datasource: Prometheus
+    kubernetes-etcd:
+      gnetId: 3070
+      datasource: Prometheus
+    node-exporter-full:
+      gnetId: 1860
+      datasource: Prometheus
+{% endif %}
+{% if vanillaservices.monitoring_enabled and rook.cluster.monitoring.enabled %}
+    ceph-pools:
+      gnetId: 5342
+      datasource: Prometheus
+    ceph-osd:
+      gnetId: 5336
+      datasource: Prometheus
+    ceph-cluster:
+      gnetId: 2842
+      datasource: Prometheus
+{% endif %}
+
+dashboardProviders: 
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
+
+image:
+  repository: grafana/grafana
+  tag: 7.3.5
+
+testFramework:
+  enabled: true
+  image: "bats/bats"
+  tag: "v1.1.0"
+
+downloadDashboardsImage:
+  repository: curlimages/curl
+  tag: 7.73.0
+
+serviceMonitor:
+  enabled: {{vanillaservices.monitoring_enabled}}
+  path: /metrics
+
+initChownData:
+  enabled: true
+  image:
+    repository: busybox
+    tag: "1.31.1"

@@ -1,0 +1,14 @@
+---
+- name: Create monitoring namespace
+  k8s:
+    name: "{{grafana.namespace}}"
+    kind: Namespace
+    state: present
+
+- name: Install Grafana
+  community.kubernetes.helm:
+    name: grafana
+    chart_ref: vanillastack/grafana
+    release_namespace: "{{grafana.namespace}}"
+    values: "{{ lookup('template', 'grafana_values.yaml.j2') | from_yaml }}"
+    chart_version: "{{ grafana.chartVersion }}"
