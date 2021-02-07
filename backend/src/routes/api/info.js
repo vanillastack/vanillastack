@@ -1,4 +1,5 @@
 const express = require('express');
+// const keycloak = require('../../config/keycloakConfig').getKeycloak();
 const router = express.Router();
 const {
   createClient,
