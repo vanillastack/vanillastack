@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 require('dotenv').config();
-const config = require('../config/config');
+// const config = require('../config/config');
 const app = require('../app');
 const { wss } = require('../services/websocket');
 const { getClient } = require('../services/users');
@@ -14,10 +14,9 @@ const url = require('url');
 /**
  * Get port from environment and store in Express.
  */
-
-const port = normalizePort(process.env.PORT || '3000');
+// app.locals.config = config;
+const port = normalizePort(app.locals.config.localPort);
 app.set('port', port);
-app.locals.config = config;
 /**
  * Create HTTP server.
  */
