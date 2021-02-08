@@ -54,21 +54,84 @@ dashboards:
     kubernetes-deployments:
       gnetId: 8588
       datasource: Prometheus
-    kubernetes-cluster:
-      gnetId: 7249
-      datasource: Prometheus
-    kubernetes-kubelet:
-      gnetId: 12123
-      datasource: Prometheus
-    kubernetes-apiserver:
-      gnetId: 12006
-      datasource: Prometheus
-    kubernetes-etcd:
-      gnetId: 3070
-      datasource: Prometheus
     node-exporter-full:
       gnetId: 1860
       datasource: Prometheus
+    dashboards-apiserver:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/apiserver.json
+    dashboards-cluster-total:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/cluster-total.json
+    dashboards-controller-manager:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/controller-manager.json
+    dashboards-etcd:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/etcd.json
+    dashboards-k8s-coredns:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/k8s-coredns.json
+    dashboards-k8s-resources-cluster:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/k8s-resources-cluster.json
+    dashboards-k8s-resources-namespace:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/k8s-resources-namespace.json
+    dashboards-k8s-resources-node:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/k8s-resources-node.json
+    dashboards-k8s-resources-pod:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/k8s-resources-pod.json
+    dashboards-k8s-resources-workload:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/k8s-resources-workload.json
+    dashboards-k8s-resources-workloads-namespace:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/k8s-resources-workloads-namespace.json
+    dashboards-kubelet:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/kubelet.json
+    dashboards-namespace-by-pod:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/namespace-by-pod.json
+    dashboards-namespace-by-workload:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/namespace-by-workload.json
+    dashboards-node-cluster-rsrc-use:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/node-cluster-rsrc-use.json
+    dashboards-node-rsrc-use:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/node-rsrc-use.json
+    dashboards-nodes:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/nodes.json
+    dashboards-persistentvolumesusage:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/persistentvolumesusage.json
+    dashboards-pod-total:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/pod-total.json
+    dashboards-prometheus-remote-write:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/prometheus-remote-write.json
+    dashboards-prometheus:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/prometheus.json
+    dashboards-proxy:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/proxy.json
+    dashboards-scheduler:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/scheduler.json
+    dashboards-statefulset:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/statefulset.json
+    dashboards-workload-total:
+      datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/workload-total.json
 {% endif %}
 {% if vanillaservices.monitoring_enabled and rook.cluster.monitoring.enabled %}
     ceph-pools:
@@ -80,6 +143,11 @@ dashboards:
     ceph-cluster:
       gnetId: 2842
       datasource: Prometheus
+{% endif %}
+{% if vanillaservices.loki_enabled %}
+    loki:
+      gnetId: 12611
+      datasource: Loki
 {% endif %}
 
 dashboardProviders: 
