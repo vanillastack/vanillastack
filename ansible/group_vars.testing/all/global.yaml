@@ -61,7 +61,7 @@ postgresOperator:
 redis:
   environment: test
   enabled: true
-  chartVersion: 10.8.1
+  chartVersion: 4.3.1
   password: "Opstree@1235"
   persistence:
     storageClass: "rook-ceph-block"
