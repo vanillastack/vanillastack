@@ -149,6 +149,25 @@ dashboards:
       gnetId: 12611
       datasource: Loki
 {% endif %}
+{% if cluster_sdn == "cilium" %}
+    cilium:
+      gnetId: 6658
+      datasource: Prometheus
+    cilium-v1.8-metrics:
+      gnetId: 13540
+      datasource: Prometheus
+    cilium-v1.9-metrics:
+      gnetId: 13541
+      fatasource: Prometheus
+{% endif %}
+{% if cluster_sdn == "calico" %}
+    calico:
+      gnetId: 3244
+      datasource: Prometheus
+    felix:
+      gnetId: 12175
+      datasource: Prometheus
+{% endif %}
 
 dashboardProviders: 
   dashboardproviders.yaml:

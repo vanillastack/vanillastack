@@ -12,3 +12,7 @@
     release_namespace: "{{grafana.namespace}}"
     values: "{{ lookup('template', 'grafana_values.yaml.j2') | from_yaml }}"
     chart_version: "{{ grafana.chartVersion }}"
+
+- name: Deploy Keycloak client
+  include_tasks: create-client.yml
+  when: vanillaservices.keycloak_enabled
