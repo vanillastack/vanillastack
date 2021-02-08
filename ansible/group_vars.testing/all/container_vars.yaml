@@ -32,6 +32,8 @@ vanillaservices:
   moodle_enabled: false # moodle.enabled
   keycloak_enabled: true # keycloak.enabled
   openstack_enabled: false # openstack.enabled
+  loki_enabled: true
+  grafana_enabled: true
 vanillastorageprovider: "rook"
 polyverse:
   enabled: false
