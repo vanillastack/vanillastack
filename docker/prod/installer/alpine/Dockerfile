@@ -39,11 +39,11 @@ RUN apk update && \
     openssh-client musl-dev libffi-dev openssl-dev ca-certificates \
     python3 py3-pip python3-dev \
     gcc make --virtual build-dependencies build-base && \
-    pip3 install cffi && \
-    pip3 install ansible && \
+    # pip3 install cffi && \
+    # pip3 install ansible && \
     pip3 install -r requirements.txt && \
-    npm install && npm audit fix && \
-    rm -rf /var/cache/apk*
+    rm -rf /var/cache/apk*  && \
+    npm install && npm audit fix
 
 ## copy app files
 COPY ./backend/src ./src/
