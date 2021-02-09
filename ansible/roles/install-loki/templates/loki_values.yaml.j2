@@ -1,7 +1,11 @@
 loki:
   enabled: true
   image:
+{% if commercial.enabled %}
+    repository: "{{repositories.registry_commercial}}/vanillastack/loki"
+{% else %}
     repository: grafana/loki
+{% endif %}
     tag: 2.1.0
   ingress:
     enabled: false
@@ -21,12 +25,22 @@ promtail:
   initContainer:
     enabled: false
     image:
+{% if commercial.enabled %}
+      registry: "{{repositories.registry_commercial}}"
+      repository: vanillastack/busybox
+{% else %}
       registry: docker.io
       repository: busybox
+{% endif %}
       tag: 1.33
   image:
+{% if commercial.enabled %}
+    registry: "{{repositories.registry_commercial}}"
+    repository: vanillastack/promtail
+{% else %}
     registry: docker.io
     repository: grafana/promtail
+{% endif %}
     tag: null
     pullPolicy: IfNotPresent
   serviceMonitor:
