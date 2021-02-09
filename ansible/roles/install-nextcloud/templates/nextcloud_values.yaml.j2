@@ -46,7 +46,7 @@ ingress:
         deny all;
       }
   tls:
-    - secretName: {{ nextcloud_instancename }}"-ingress-tls
+    - secretName: "{{ nextcloud_instancename }}-ingress-tls"
       hosts:
         - "{{ nextcloud.ingress.publicDomain }}"
   labels: {}
