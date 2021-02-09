@@ -1,19 +1,3 @@
-FROM node:alpine3.12 AS build
-LABEL maintainer="jeff.chousterman@cloudical.io"
-
-COPY ./frontend/package.json /usr/workdir/
-COPY ./frontend/package-lock.json /usr/workdir/
-COPY ./frontend/vue.config.js /usr/workdir/
-COPY ./frontend/public /usr/workdir/public
-COPY ./frontend/src /usr/workdir/src
-
-WORKDIR /usr/workdir
-RUN npm install && npm audit fix
-
-## Build Vue App
-RUN npm run build
-
-
 FROM node:alpine3.12
 LABEL maintainer="jeff.chousterman@cloudical.io"
 
@@ -23,8 +7,11 @@ ENV IP=localhost
 ENV NODE_ENV=development
 ENV MODE=installer
 ENV DEBUG=false
-ARG ANSIBLEPATH='/tmp/ansible'
-ENV ANSIBLEPATH ${ANSIBLEPATH}
+ENV KEYCLOAK_REALM='vsmanager'
+ENV KEYCLOAK_CLIENT_ID='vsmanager-backend'
+ENV KEYCLOAK_URL='http://keycloak.local:8080/auth'
+ARG ANSIBLE_PATH='/tmp/ansible'
+ENV ANSIBLE_PATH ${ANSIBLE_PATH}
 EXPOSE ${PORT}
 WORKDIR /usr/workdir
 
@@ -36,7 +23,7 @@ COPY ./ansible/requirements.txt ./
 RUN apk update && \
     apk upgrade --available && \
     sync && apk add --update --no-cache \
-    openssh-client musl-dev libffi-dev openssl-dev ca-certificates \
+    openssh-client curl musl-dev libffi-dev openssl-dev ca-certificates \
     python3 py3-pip python3-dev \
     gcc make --virtual build-dependencies build-base && \
     pip3 install cffi && \
@@ -48,8 +35,8 @@ RUN apk update && \
 ## copy app files
 #COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
-COPY --from=build  /usr/workdir/dist ./public
-COPY ./ansible ${ANSIBLEPATH}
+# COPY --from=build  /usr/workdir/dist ./public
+COPY ./ansible ${ANSIBLE_PATH}
 COPY ./version ./
 
 RUN echo -e '\n\

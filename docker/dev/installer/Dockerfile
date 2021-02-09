@@ -8,7 +8,6 @@ COPY ./frontend/public /usr/workdir/public
 COPY ./frontend/src /usr/workdir/src
 
 WORKDIR /usr/workdir
-#RUN rm -rf node_modules && rm -rf dist
 RUN npm install && npm audit fix
 
 ## Build Vue App
@@ -36,19 +35,19 @@ COPY ./ansible/requirements.txt ./
 RUN apk update && \
     apk upgrade --available && \
     sync && apk add --update --no-cache \
-    openssh-client musl-dev libffi-dev openssl-dev ca-certificates \
+    openssh-client curl musl-dev libffi-dev openssl-dev ca-certificates \
     python3 py3-pip python3-dev \
     gcc make --virtual build-dependencies build-base && \
-    pip3 install cffi && \
-    pip3 install ansible && \
+    # pip3 install cffi && \
+    # pip3 install ansible && \
     pip3 install -r requirements.txt && \
-    npm install && npm audit fix && \
-    rm -rf /var/cache/apk*
+    rm -rf /var/cache/apk* && \
+    npm install && npm audit fix
 
 ## copy app files
+#COPY ./backend/vue.config.js ./
 COPY ./backend/src ./src/
-#RUN rm -rf ./public/*
-COPY --from=build  /usr/workdir/dist ./public
+# COPY --from=build  /usr/workdir/dist ./public
 COPY ./ansible ${ANSIBLEPATH}
 COPY ./version ./
 
@@ -63,11 +62,5 @@ RUN echo -e '\n\
     > /usr/workdir/src/templates/dry-run_setup.sh && \
     chmod +x /usr/workdir/src/templates/dry-run_setup.sh
 
-## Install npm Modules
-## Build and prep Frontend
-
-#RUN  rm -rf ./dist/* && npm run build \
-#    && rm -rf ./src/public/* && cp -r ./dist/* ./src/public
-
 ## Run nginx and backend
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dockerdebug"]

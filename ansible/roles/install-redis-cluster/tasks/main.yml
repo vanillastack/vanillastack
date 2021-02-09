@@ -7,4 +7,5 @@
     chart_ref: "vanillastack/redis-cluster"
     chart_version: "{{redis.chartVersion}}"
     values: "{{ lookup('template', 'redis.yaml.j2') | from_yaml }}"
-
+  retries: 3
+  delay: 10

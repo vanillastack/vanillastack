@@ -159,7 +159,7 @@
     definition: "{{ lookup('template', 'grafana_configmap.yml.j2') | from_yaml }}"
 
 - name: restart grafana to get latest configmap
-  command: kubectl delete po -n monitoring -l app.kubernetes.io/name=grafana
+  command: kubectl delete po -n {{grafana.namespace}} -l app.kubernetes.io/name=grafana
 
 - name: get admin password
   k8s_info:

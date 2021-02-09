@@ -51,26 +51,7 @@ alertmanager:
         cpu: {{ alertmanager.resources.requests.cpu }}
         memory: {{ alertmanager.resources.requests.memory }}
 grafana:
-  enabled: {{ grafana.enabled }}
-  namespaceOverride: "monitoring"
-  defaultDashboardsEnabled: true
-
-  adminPassword: "{{ grafana.admin_password }}"
-
-  ingress:
-    enabled: "{{ grafana.ingress.enabled }}"
-    annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
-      kubernetes.io/tls-acme: "true"
-    labels: {}
-    hosts:
-      - "{{ grafana.ingress.dns }}"
-    path: /
-    tls:
-    - hosts:
-      - "{{ grafana.ingress.dns }}"
-      secretName: grafana-ingress-tls
+  enabled: false
 
 kubeControllerManager:
   enabled: {{ monitoring.kubeControllerManager.enabled }}

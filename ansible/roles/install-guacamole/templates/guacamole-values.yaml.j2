@@ -13,7 +13,7 @@ guacamole:
 {% if commercial.enabled %}
     repository: "{{repositories.registry_commercial}}/vanillastack/guacamole"
 {% else %}
-    repository: "vanillastack-guacamole/guacamole"
+    repository: "{{repositories.registry_community}}/vanillastack/guacamole"
 {% endif %}
     tag: "{{ guacamole.imageTag }}"
 guacd:
@@ -21,7 +21,7 @@ guacd:
 {% if commercial.enabled %}
     repository: "{{repositories.registry_commercial}}/vanillastack/guacd"
 {% else %}
-    repository: "vanillastack-guacamole/guacd"
+    repository: "{{repositories.registry_community}}/vanillastack/guacd"
 {% endif %}
     tag: "{{ guacamole.imageTag }}"
 # imagePullSecretslist: []

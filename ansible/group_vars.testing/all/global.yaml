@@ -61,7 +61,7 @@ postgresOperator:
 redis:
   environment: test
   enabled: true
-  chartVersion: 10.8.1
+  chartVersion: 4.3.1
   password: "Opstree@1235"
   persistence:
     storageClass: "rook-ceph-block"
@@ -234,8 +234,11 @@ alertmanager:
     - name: 'null'
 grafana:
   enabled: true
+  namespace: grafana
+  chartVersion: 6.2.1 
   admin_user: admin
   admin_password: grafanapassword
+  replicas: 1
   ingress:
     enabled: true
     dns: "grafana.{{ clusterTLDomain }}"
@@ -304,3 +307,13 @@ nextcloud:
     persistence:
       storageClass: "rook-ceph-block"
       size: 8Gi
+loki:
+  namespace: loki
+  chartVersion: 2.3.1
+  replicas: 1
+  monitoring:
+    enabled: true
+  persistence:
+    enabled: true
+    size: 30Gi
+    storageClass: rook-ceph-block

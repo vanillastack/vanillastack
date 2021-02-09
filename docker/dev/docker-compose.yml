@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      default:
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: secret
+
+  keycloak:
+    image: jboss/keycloak:latest
+    volumes:
+      - "./../../backend/src/templates/vsmanager_realm.json:/tmp/vsmanager_realm.json"
+    networks:
+      default:
+        aliases:
+          - keycloak.local
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: secret
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: "/tmp/vsmanager_realm.json"
+      PROXY_ADDRESS_FORWARDING: "true"
+      # KEYCLOAK_FRONTEND_URL: "http://localhost:8080"
+      KEYCLOAK_LOGLEVEL: DEBUG
+      ROOT_LOGLEVEL: INFO
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
+    ports:
+      - 8081:8080
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: "./../.."
+      dockerfile: "./docker/dev/manager/frontend/Dockerfile"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+      - keycloak
+    networks:
+      default:
+    environment:
+      BACKEND_URL: "http://backend"
+      BACKEND_PORT: 8080
+      KEYCLOAK_URL: "http://keycloak.local:8080"
+      PORT: 8080
+
+  backend:
+    build:
+      context: "./../.."
+      dockerfile: "./docker/dev/manager/backend/Dockerfile"
+    ports:
+      - "9229:9229"
+    volumes:
+      - "./../../backend/src:/usr/workdir/src"
+    networks:
+      default:
+    depends_on:
+      - keycloak
+    environment:
+      DEBUG: "true"
+      MODE: "manager"
+      KEYCLOAK_REALM: "vsmanager"
+      KEYCLOAK_CLIENT_ID: "vsmanager-backend"
+      KEYCLOAK_URL: "http://keycloak.local:8080/auth"
+      EXTERNAL_IP: "http://localhost"
+      EXTERNAL_PORT: "8080"
+
+volumes:
+  postgres_data:
+    driver: local
+networks:
+  default:

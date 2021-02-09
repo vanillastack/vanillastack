@@ -20,6 +20,7 @@ It offers a cloudstack installation of the following OpenSource projects:
 * Prometheus
 * Promtail
 * Grafana
+* Loki
 * all including Monitoring, Metrics and alerting preconfigured.
 * ... and more
 

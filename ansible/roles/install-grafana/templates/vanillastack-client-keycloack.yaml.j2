@@ -10,17 +10,17 @@ spec:
     matchLabels:
       app: vanillastack-sso
   client:
-    clientId: "grafana.{{clusterTLDomain}}"
-    name: "grafana.{{clusterTLDomain}}"
+    clientId: "{{grafana.ingress.dns}}"
+    name: "{{grafana.ingress.dns}}"
     directAccessGrantsEnabled: true
     secret: "{{ grafana_client_secret }}"
     clientAuthenticatorType: client-secret
     protocol: openid-connect
     enabled: true
     baseUrl: "/login/generic_oauth"
-    rootUrl: "https://grafana.{{clusterTLDomain}}"
+    rootUrl: "https://{{grafana.ingress.dns}}"
     redirectUris:
-      - "https://grafana.{{clusterTLDomain}}/login/generic_oauth"
+      - "https://{{grafana.ingress.dns}}/login/generic_oauth"
     standardFlowEnabled: true
     fullScopeAllowed: false
 
