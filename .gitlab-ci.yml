@@ -12,10 +12,6 @@ variables:
 stages:
   - gen_version
   - test
-  - build_docker_image_dev
-  - build_docker_image_testing
-  - build_docker_image_prod
-  - build_liveimage
   #  - run_playbook_fedora32
   - run_playbook_centos8
   - run_playbook_debian10
@@ -31,46 +27,6 @@ gen_version:
   artifacts:
     reports:
       dotenv: vars.env
-
-build_docker_image_dev:
-  only:
-    refs:
-      - backend_testing
-  stage: build_docker_image_dev
-  interruptible: true
-  script:
-    - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - echo "$VERSION" > version
-    - docker build -f docker/prod/installer/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:dev-$VERSION -t harbor.cloudical.net/vanillastack/installer:dev-latest .
-    - docker push harbor.cloudical.net/vanillastack/installer:dev-$VERSION
-    - docker push harbor.cloudical.net/vanillastack/installer:dev-latest
-
-build_docker_image_testing:
-  only:
-    refs:
-      - testing
-  stage: build_docker_image_testing
-  interruptible: true
-  allow_failure: true
-  script:
-    - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - echo "VERSION" > version
-    - docker build -f docker/prod/installer/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:testing-$VERSION -t harbor.cloudical.net/vanillastack/installer:testing-latest .
-    - docker push harbor.cloudical.net/vanillastack/installer:testing-$VERSION
-    - docker push harbor.cloudical.net/vanillastack/installer:testing-latest
-
-build_docker_image_prod:
-  only:
-    refs:
-      - master
-  stage: build_docker_image_prod
-  interruptible: false
-  script:
-    - docker login -u 'robot$build-backend-gitlab.cloudical.net' -p "$HARBOR_ROBOT_KEY_BUILD_BACKEND" harbor.cloudical.net/vanillastack
-    - echo "VERSION" > version
-    - docker build -f docker/prod/installer/alpine/Dockerfile -t harbor.cloudical.net/vanillastack/installer:$VERSION -t harbor.cloudical.net/vanillastack/installer:latest .
-    - docker push harbor.cloudical.net/vanillastack/installer:$VERSION
-    - docker push harbor.cloudical.net/vanillastack/installer:latest
 
 run_playbook_centos8:
   only:
@@ -171,6 +127,5 @@ release:
   image: registry.gitlab.com/gitlab-org/release-cli
 
 include:
-  - local: "/live_image/.gitlab-ci.yaml"
   - template: Security/SAST.gitlab-ci.yml
 #  - template: Security/Secret-Detection.gitlab-ci.yml
