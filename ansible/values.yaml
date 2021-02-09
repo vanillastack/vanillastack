@@ -1,0 +1,16 @@
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 4G
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    kubernetes.io/tls-acme: "true"
+    hosts: kubecost.test.vanillastack.cloudical.net
+    tls:
+      - secretName: kubecost-ingress-tls
+      hosts:
+        - "kubecost.test.vanillastack.cloudical.net"
+global:
+  prometheus:
+    enabled: true
+networkCosts:
+  enabled: true
