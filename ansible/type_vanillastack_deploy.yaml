@@ -301,14 +301,6 @@
     action: operator
     when: vanillaservices.monitoring_enabled
 
-
-- name: install redis cluster
-  hosts: master[0]
-  gather_facts: false
-  roles:
-  - role: install-redis-cluster
-    when: vanillaservices.redis_enabled
-
 - name: install nextcloud
   hosts: master[0]
   gather_facts: false
@@ -330,4 +322,9 @@
   - role: install-loki
     when: vanillaservices.loki_enabled
 
-
+- name: install redis cluster
+  hosts: master[0]
+  gather_facts: false
+  roles:
+  - role: install-redis-cluster
+    when: vanillaservices.redis_enabled
