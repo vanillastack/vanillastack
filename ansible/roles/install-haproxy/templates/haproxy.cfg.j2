@@ -47,9 +47,9 @@ defaults
         maxconn 2000
 
         # Timeouts
-        timeout connect 5000
-        timeout client  50000
-        timeout server 50000
+        timeout connect 20m
+        timeout client  4h
+        timeout server 4h
 
 listen stats 
         bind *:1936
