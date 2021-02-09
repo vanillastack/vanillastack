@@ -100,9 +100,33 @@ nextcloud:
     smtp.config.php: true
   # Extra config files created in /var/www/html/config/
   configs:
+{% if vanillaservices.keycloak_enabled %}
+    keycloak.config.php: |-
+      <?php
+      $CONFIG = array(
+        'oidc_login_client_id' => '{{ nextcloud.ingress.publicDomain }}', // Client ID: Step 1
+        'oidc_login_client_secret' => '{{ nextcloud_client_secret }}', // Client Secret: Got to Clients -> Client -> Credentials
+        'oidc_login_disable_registration' => false,
+        'oidc_login_provider_url' => 'https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}',
+        'oidc_login_logout_url' => 'https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2F{{ nextcloud.ingress.publicDomain }}%2F',
+        'oidc_login_auto_redirect' => true,
+        'oidc_login_redir_fallback' => true,
+        'oidc_login_default_quota' => '20000000000',
+        'oidc_login_button_text' => 'Log in with Keycloak (OIDC)',
+        'oidc_login_attributes' => array(
+            'id' => 'preferred_username',
+            'name' => 'name',
+            'mail' => 'email',
+            'quota' => 'ownCloudQuota',
+            'home' => 'homeDirectory',
+           // 'groups' => 'ownCloudGroups',
+        ),
+      );
+{% endif %}
     redis.config.php: |-
       <?php
       $CONFIG = array(
+        'overwriteprotocol' => 'https',
         'memcache.distributed' => '\OC\Memcache\Redis',
         'memcache.locking' => '\OC\Memcache\Redis',
         'redis' => array(

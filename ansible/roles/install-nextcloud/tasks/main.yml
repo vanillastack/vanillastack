@@ -4,6 +4,9 @@
     nextcloud_collabora_domain: "{{ nextcloud.ingress.publicDomain | replace('.', '\\\\.') }}"
     nextcloud_password: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
+- include_tasks: "create-client.yml"
+  when: vanillaservices.keycloak_enabled
+
 - name: Deploy Redis
   community.kubernetes.helm:
     name: redis
