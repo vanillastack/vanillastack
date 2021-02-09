@@ -183,16 +183,28 @@ dashboardProviders:
         path: /var/lib/grafana/dashboards/default
 
 image:
+{% if commercial.enabled %}
+  repository: "{{repositories.registry_commercial}}/vanillastack/grafana"
+{% else %}
   repository: grafana/grafana
+{% endif %}
   tag: 7.3.5
 
 testFramework:
   enabled: true
-  image: "bats/bats"
+{% if commercial.enabled %}
+  image: "{{repositories.registry_commercial}}/vanillastack/bats"
+{% else %}
+  image: bats/bats
+{% endif %}
   tag: "v1.1.0"
 
 downloadDashboardsImage:
+{% if commercial.enabled %}
+  repository: "{{repositories.registry_commercial}}/vanillastack/curl"
+{% else %}
   repository: curlimages/curl
+{% endif %}
   tag: 7.73.0
 
 serviceMonitor:
@@ -202,5 +214,9 @@ serviceMonitor:
 initChownData:
   enabled: true
   image:
+{% if commercial.enabled %}
+    repository: "{{repositories.registry_commercial}}/vanillastack/busybox"
+{% else %}
     repository: busybox
+{% endif %}
     tag: "1.31.1"
