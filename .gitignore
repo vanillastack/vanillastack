@@ -197,5 +197,5 @@ backend/public/*
 frontend/dist/*
 
 # Exclude submodules
-ansible/collections/ansible_collections/community/general/*
-ansible/collections/ansible_collections/community/kubernetes/*
+collections/ansible_collections/community/general/*
+collections/ansible_collections/community/kubernetes/*
