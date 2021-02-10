@@ -1,0 +1,13 @@
+---
+- name: remove old installation files
+  file:
+    path: "/tmp/{{ item }}"
+    state: absent
+  with_items:
+    - cluster_vars.yml
+    - ansible
+- name: remove kubeconfig
+  file:
+    path: ".kube"
+    state: absent
+

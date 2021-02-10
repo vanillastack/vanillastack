@@ -1,2 +1,0 @@
-#!/bin/bash
-/usr/sbin/plymouth-set-default-theme vanilla
