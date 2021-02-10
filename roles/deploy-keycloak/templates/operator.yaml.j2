@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+piVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak-operator
@@ -18,9 +18,9 @@ spec:
         - name: keycloak-operator
           # Replace this with the built image name
 {% if commercial.enabled %}
-          image: {{repositories.registry_commercial}}/vanillastack/keycloak-operator:11.0.3
+          image: {{repositories.registry_commercial}}/vanillastack/keycloak-operator:12.0.2
 {% else %}
-          image: quay.io/keycloak/keycloak-operator:11.0.3
+          image: quay.io/keycloak/keycloak-operator:12.0.2
 {% endif %}
           command:
           - keycloak-operator
@@ -38,26 +38,26 @@ spec:
               value: "keycloak-operator"
 {% if commercial.enabled %}
             - name: RELATED_IMAGE_KEYCLOAK
-              value: "{{repositories.registry_commercial}}/vanillastack/keycloak:9.0.2"
+              value: "{{repositories.registry_commercial}}/vanillastack/keycloak:12.0.2"
 #            - name: RELATED_IMAGE_RHSSO_OPENJ9
 #              value: "{{repositories.registry_commercial}}/vanillastack/sso74-openshift-rhel8:7.4-1"
 #            - name: RELATED_IMAGE_RHSSO_OPENJDK
 #              value: "{{repositories.registry_commercial}}/vanillastack/sso74-openshift-rhel8:7.4-1"
             - name: RELATED_IMAGE_KEYCLOAK_INIT_CONTAINER
-              value: "{{repositories.registry_commercial}}/vanillastack/keycloak-init-container:master"
+              value: "{{repositories.registry_commercial}}/vanillastack/keycloak-init-container:12.0.2"
             - name: RELATED_IMAGE_RHMI_BACKUP_CONTAINER
               value: "{{repositories.registry_commercial}}/vanillastack/backup-container:1.0.10"
             - name: RELATED_IMAGE_POSTGRESQL
               value: "{{repositories.registry_commercial}}/vanillastack/postgresql-10-rhel7:1"
 {% else %}
             - name: RELATED_IMAGE_KEYCLOAK
-              value: "quay.io/keycloak/keycloak:9.0.2"
+              value: "quay.io/keycloak/keycloak:12.0.2"
 #            - name: RELATED_IMAGE_RHSSO_OPENJ9
 #              value: "registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4-1"
 #            - name: RELATED_IMAGE_RHSSO_OPENJDK
 #              value: "registry.redhat.io/rh-sso-7/sso74-openshift-rhel8:7.4-1"
             - name: RELATED_IMAGE_KEYCLOAK_INIT_CONTAINER
-              value: "quay.io/keycloak/keycloak-init-container:master"
+              value: "quay.io/keycloak/keycloak-init-container:12.0.2"
             - name: RELATED_IMAGE_RHMI_BACKUP_CONTAINER
               value: "quay.io/integreatly/backup-container:1.0.10"
             - name: RELATED_IMAGE_POSTGRESQL

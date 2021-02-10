@@ -6,8 +6,10 @@
   roles:
     - role: reset-cluster
       action: reset-kubernetes
+      when: reset_environment
     - role: reset-cluster
       action: remove-local-files
+      when: reset_environment
         
 - name: reset osds
   hosts: storage
@@ -16,6 +18,7 @@
   roles:
     - role: reset-cluster
       action: reset-ceph
+      when: reset_environment
 
 - name: remove stored files
   hosts: localhost
@@ -25,3 +28,4 @@
   roles:
     - role: reset-cluster
       action: remove-local-files
+      when: reset_environment

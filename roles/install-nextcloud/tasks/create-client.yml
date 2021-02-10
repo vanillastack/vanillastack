@@ -98,19 +98,19 @@
       #            "protocol": "openid-connect",
       #            "protocolMapper": "oidc-usermodel-client-role-mapper"
       #          }'
-      #- name: get grafana secret if not defined
-      #  block:
-      #    - name: get grafana client secret
-      #      k8s_info:
-      #        api_version: keycloak.org/v1alpha1
-      #        kind: KeycloakClient
-      #        namespace: "{{ keycloak.namespace }}"
-      #        name: grafana-client
-      #      register: clientsecret
-      #    
-      #    - set_fact:
-      #        grafana_client_secret: "{{ clientsecret.resources[0].spec.client.secret }}"
-      #  when: grafana_client_secret is undefined or grafana_client_secret|length<1
+- name: get nextcloud secret if not defined
+  block:
+    - name: get nextcloud client secret
+      k8s_info:
+        api_version: keycloak.org/v1alpha1
+        kind: KeycloakClient
+        namespace: "{{ keycloak.namespace }}"
+        name: nextcloud-client
+      register: clientsecret
+    
+    - set_fact:
+        nextcloud_client_secret: "{{ clientsecret.resources[0].spec.client.secret }}"
+  when: nextcloud_client_secret is undefined or nextcloud_client_secret|length<1
       #
       #- name: get admin user id
       #  uri:

@@ -170,6 +170,15 @@
     - role: deploy-certmanager
       when: certmanager.enabled
 
+- name: Deploy Postgres Operator
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: prepare-registry
+      when: vanillaservices.pgOperator_enabled
+    - role: deploy-postgres-operator
+      when: vanillaservices.pgOperator_enabled
+
 - name: Deploy Keycloak
   hosts: master[0]
   become: false
@@ -236,15 +245,6 @@
     - role: install-efk
       action: create-client
       when: vanillaservices.loggingStack_enabled and vanillaservices.keycloak_enabled
-
-- name: Deploy Postgres Operator
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.guacamole_enabled
-    - role: deploy-postgres-operator
-      when: vanillaservices.pgOperator_enabled
 
 - name: install guacamole
   hosts: master[0]

@@ -76,7 +76,7 @@
 - name: wait for pods to come up
   retries: 120
   delay: 10
-  shell: kubectl get pods -o json -n "{{keycloak.namespace}}" --field-selector=status.phase!=Succeeded
+  shell: kubectl get pods -o json -n "{{ keycloak.namespace }}" --field-selector=status.phase!=Succeeded
   register: kubectl_get_pods
   until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
 

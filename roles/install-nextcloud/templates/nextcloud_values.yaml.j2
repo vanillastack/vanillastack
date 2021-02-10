@@ -104,11 +104,11 @@ nextcloud:
     keycloak.config.php: |-
       <?php
       $CONFIG = array(
-        'oidc_login_client_id' => '{{ nextcloud.ingress.publicDomain }}', // Client ID: Step 1
-        'oidc_login_client_secret' => '{{ nextcloud_client_secret }}', // Client Secret: Got to Clients -> Client -> Credentials
+        'oidc_login_client_id' => '{{ nextcloud.ingress.publicDomain }}',
+        'oidc_login_client_secret' => '{{ nextcloud_client_secret }}',
         'oidc_login_disable_registration' => false,
-        'oidc_login_provider_url' => 'https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}',
-        'oidc_login_logout_url' => 'https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2F{{ nextcloud.ingress.publicDomain }}%2F',
+        'oidc_login_provider_url' => 'https://{{ keycloak.ingress.publicDomain }}/auth/admin/realms/{{ keycloak.realm.name }}',
+        'oidc_login_logout_url' => 'https://{{ keycloak.ingress.publicDomain }}/auth/admin/realms/{{ keycloak.realm.name }}/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2F{{ nextcloud.ingress.publicDomain }}%2F',
         'oidc_login_auto_redirect' => true,
         'oidc_login_redir_fallback' => true,
         'oidc_login_default_quota' => '20000000000',
@@ -119,7 +119,6 @@ nextcloud:
             'mail' => 'email',
             'quota' => 'ownCloudQuota',
             'home' => 'homeDirectory',
-           // 'groups' => 'ownCloudGroups',
         ),
       );
 {% endif %}
@@ -149,6 +148,8 @@ nextcloud:
   ##
   ## Extra environment variables
   extraEnv:
+    - name: TRUSTED_PROXIES
+      value: "{{ cluster_pod_cidr }}"
     - name: REDIS_HOST_PASSWORD
       valueFrom:
         secretKeyRef:
@@ -357,22 +358,22 @@ resources: {}
 ##
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 10
-  periodSeconds: 10
+  initialDelaySeconds: 30
+  periodSeconds: 20
   timeoutSeconds: 5
-  failureThreshold: 3
+  failureThreshold: 10
   successThreshold: 1
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 10
-  periodSeconds: 10
+  initialDelaySeconds: 30
+  periodSeconds: 20
   timeoutSeconds: 5
-  failureThreshold: 3
+  failureThreshold: 10
   successThreshold: 1
 startupProbe:
   enabled: false
   initialDelaySeconds: 30
-  periodSeconds: 10
+  periodSeconds: 20
   timeoutSeconds: 5
   failureThreshold: 30
   successThreshold: 1
