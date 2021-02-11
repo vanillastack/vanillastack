@@ -30,7 +30,8 @@ cloudfoundry:
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ clusterTLDomain }}"
 stratos:
-  version: 4.0.1
+  version: 4.4.0
+  tag:  4.4.0-bc65c315c
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ clusterTLDomain }}"
 guacamole:
@@ -60,6 +61,7 @@ postgresOperator:
     cron: "30 00 * * *"
 redis:
   environment: test
+  cluster: true
   enabled: true
   chartVersion: 4.3.1
   password: "Opstree@1235"
@@ -233,15 +235,26 @@ alertmanager:
     receivers:
     - name: 'null'
 grafana:
-  enabled: true
   namespace: grafana
   chartVersion: 6.2.1 
+  replicas: 1
+  enabled: true
   admin_user: admin
   admin_password: grafanapassword
   replicas: 1
   ingress:
     enabled: true
     dns: "grafana.{{ clusterTLDomain }}"
+loki:
+  namespace: loki
+  chartVersion: 2.3.1
+  replicas: 1
+  monitoring:
+    enabled: true
+  persistence:
+    enabled: true
+	  size: 30Gi
+	  storageClass: rook-ceph-block
 kubevirt:
   namespace: kubevirt
   version: v0.33.0
@@ -307,13 +320,3 @@ nextcloud:
     persistence:
       storageClass: "rook-ceph-block"
       size: 8Gi
-loki:
-  namespace: loki
-  chartVersion: 2.3.1
-  replicas: 1
-  monitoring:
-    enabled: true
-  persistence:
-    enabled: true
-    size: 30Gi
-    storageClass: rook-ceph-block
