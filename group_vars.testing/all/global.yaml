@@ -253,8 +253,8 @@ loki:
     enabled: true
   persistence:
     enabled: true
-	  size: 30Gi
-	  storageClass: rook-ceph-block
+    size: 30Gi
+    storageClass: rook-ceph-block
 kubevirt:
   namespace: kubevirt
   version: v0.33.0
