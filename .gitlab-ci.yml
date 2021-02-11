@@ -10,21 +10,10 @@ variables:
   SEARCH_MAX_DEPTH: 50
 
 stages:
-  - gen_version
   - test
   - run_playbook_centos8
   - run_playbook_debian10
   - release
-
-gen_version:
-  stage: gen_version
-  interruptible: false
-  script:
-    - echo "VERSION=$(date +'%Y%m')-$CI_COMMIT_SHORT_SHA" > vars.env
-    - cat vars.env
-  artifacts:
-    reports:
-      dotenv: vars.env
 
 run_playbook_centos8:
   only:
@@ -61,17 +50,16 @@ run_playbook_debian10:
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
 release:
-  only:
-    refs:
-      - master
+  image: node:12-buster-slim
   stage: release
-  interruptible: false
-  release:
-    tag_name: "$VERSION"
-    description: "VanillaStack stable release $VERSION"
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
+    - npm install -g semantic-release @semantic-release/gitlab
   script:
-    - echo "Publish release $VERSION"
-  image: registry.gitlab.com/gitlab-org/release-cli
+    - find .
+    - semantic-release
+  only:
+    - master
 
 include:
   - template: Security/SAST.gitlab-ci.yml
