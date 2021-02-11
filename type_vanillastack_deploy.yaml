@@ -187,16 +187,6 @@
     - role: deploy-keycloak
       when: vanillaservices.keycloak_enabled
 
-- name: Deploy OpenStack
-  hosts: master[0]
-  become: false
-  gather_facts: no
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.openstack_enabled
-    - role: deploy-openstack
-      when: vanillaservices.openstack_enabled
-
 - name: install K8S Dashboard
   hosts: master[0]
   gather_facts: true
