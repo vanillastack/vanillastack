@@ -20,6 +20,7 @@
   community.kubernetes.k8s:
     state: present
     template: "postgresql.yaml.j2"
+    wait: true
 
 - name: store nextcloud admin password
   community.kubernetes.k8s:
