@@ -1,0 +1,12 @@
+{
+  "name": "vanillastack",
+  "release": {
+    "branches": ["master"],
+    "plugins": [
+      ["@semantic-release/gitlab", {
+        "gitlabUrl": "https://gitlab.cloudical.net",
+        "assets": [{"path": "*"}]
+      }]
+    ]
+  }
+}
