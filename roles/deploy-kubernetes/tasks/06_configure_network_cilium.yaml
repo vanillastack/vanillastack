@@ -1,0 +1,101 @@
+---
+- name: refresh repo
+  command: helm repo update
+
+- name: wait for etcd to be ready
+  command: kubectl wait --namespace=kube-system --for=condition=ready pods etcd-{{ item }} --timeout=10s
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
+  loop: "{{ groups.master }}"
+
+- name: sleep 10 seconds
+  pause:
+    seconds: 10
+- name:  Deploy latest version of Cilium
+  block:
+    - set_fact:
+        template_version: "cilium-values"
+      when: ansible_os_family == 'Suse' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Ubuntu'
+    - set_fact: 
+        template_version: "cilium-values-debian"
+      when: ansible_distribution == 'Debian'
+    - name: deploy cilium chart
+      community.kubernetes.helm:
+        name: cilium
+        chart_version: 1.8.5
+        chart_ref: vanillastack/cilium
+        release_namespace: kube-system
+        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
+        create_namespace: true
+        wait: true
+  rescue:
+    - name: remove cilium
+      community.kubernetes.helm:
+        name: cilium
+        release_namespace: kube-system
+        state: absent
+        wait: true
+    - name: deploy cilium
+      community.kubernetes.helm:
+        name: cilium
+        chart_version: 1.8.5
+        chart_ref: vanillastack/cilium
+        release_namespace: kube-system
+        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
+        create_namespace: true
+        wait: true
+
+          #- set_fact:
+          #    configuration: "{{ hostvars[inventory_hostname] }}"
+          #
+          #- name: save vars to kubeconfig
+          #  k8s:
+          #    state: present
+          #    definition:
+          #      apiVersion: v1
+          #      kind: ConfigMap
+          #      metadata:
+          #        name: cluster-config
+          #        namespace: kube-system
+          #      data:
+          #        clusterConfig: |
+          #          "{{ configuration | to_json }}"
+
+### To get running config, execute 
+### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq
+          
+- name: Wait for control-plane pods become ready
+  command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s"
+  retries: 180
+  delay: 10
+  register: result
+  until: result.rc == 0
+
+#- name: restart kubedns
+#  command: kubectl delete po -n kube-system -l k8s-app=kube-dns
+
+- name: enable auto completion
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: "source <(kubectl completion bash)"
+    state: present
+
+- name: manage access creds
+  block:
+  - name: copy ssh key to master1
+    copy:
+      src: "{{ ansible_ssh_private_key_file }}"
+      dest: /tmp/tempkey.pem
+
+  - name: add ssh key as secret
+    command: >
+      kubectl create secret generic --namespace kube-system management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem
+
+  - name: make sure, ssh key is removed
+    file:
+      path: /tmp/tempkey.pem
+      state: absent
+  when: ansible_ssh_private_key_file is defined and ansible_ssh_private_key_file|length>0
+

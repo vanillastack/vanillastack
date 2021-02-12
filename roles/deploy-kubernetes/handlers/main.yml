@@ -1,0 +1,7 @@
+---
+# handlers file for deploy-kubernetes
+
+- name: restart timesyncd
+  systemd:
+    name: systemd-timesyncd
+    state: restarted

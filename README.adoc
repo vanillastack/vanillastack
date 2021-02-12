@@ -13,13 +13,13 @@ It offers a cloudstack installation of the following OpenSource projects:
 
 * Kubernetes
 * Ceph via Rook
-* OpenStack
 * Cloudfoundry
 * Guacamole
 * Kubevirt
 * Prometheus
 * Promtail
 * Grafana
+* Loki
 * all including Monitoring, Metrics and alerting preconfigured.
 * ... and more
 
@@ -134,6 +134,7 @@ Please read and apply the following rules to contribute to this project:
       *** What is the role doing?
       *** What is required for usage?
     ** Make usefull commits
+      *** Use semantic tags to control releases. for more informatins see linnk:https://github.com/semantic-release/semantic-release/blob/master/README.md#how-does-it-work
       *** Use Tags: ADD / NEW / FIX / CHG in front of your commits
       *** Use Comment tag for deeper information at bigger changes
   ** No hardcoding

@@ -1,7 +1,0 @@
----
-- name: install monitoring
-  hosts: master[0]
-  gather_facts: true
-  roles:
-  - role: install-monitoring
-    action: operator

@@ -1,0 +1,25 @@
+---
+- name: install monitoring
+  hosts: master[0]
+  gather_facts: true
+  roles:
+  - role: prepare-registry
+    when: vanillaservices.monitoring_enabled
+  - role: install-monitoring
+    action: operator
+    when: vanillaservices.monitoring_enabled
+
+- name: install Grafana
+  hosts: master[0]
+  gather_facts: false
+  roles:
+  - role: install-grafana
+    when: vanillaservices.grafana_enabled
+
+- name: install Loki
+  hosts: master[0]
+  gather_facts: false
+  roles:
+  - role: install-loki
+    when: vanillaservices.loki_enabled
+

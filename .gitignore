@@ -1,5 +1,6 @@
 group_vars
 hosts
+inventory
 *.retry
 *.log
 *[_.]local[_.]*
@@ -196,5 +197,5 @@ backend/public/*
 frontend/dist/*
 
 # Exclude submodules
-ansible/collections/ansible_collections/community/general/*
-ansible/collections/ansible_collections/community/kubernetes/*
+collections/ansible_collections/community/general/*
+collections/ansible_collections/community/kubernetes/*

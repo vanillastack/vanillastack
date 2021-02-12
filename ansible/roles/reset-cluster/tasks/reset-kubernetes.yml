@@ -1,7 +1,0 @@
----
-# tasks file for reset-kubernetes
-- name: Reset  the cluster if set
-  command: kubeadm reset --force
-  when: reset_environment==true
-  ignore_errors: true
-
