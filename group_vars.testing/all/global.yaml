@@ -1,9 +1,4 @@
 ---
-#commercial:
-#  registry:
-#    url: harbor.cloudical.net
-#    username: 'gitlab-testing-stage'
-#    key: 'REGISTRY_KEY'
 repositories:
   registry_community: harbor.vanillastack.io
   registry_commercial: harbor.cloudical.net
