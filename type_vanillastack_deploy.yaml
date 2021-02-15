@@ -196,24 +196,6 @@
     - role: install-kubedashboard
       when: vanillaservices.dashboard_enabled
 
-- name: Deploy cloudfoundry
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.stratos_enabled
-    - role: install-cloudfoundry
-      when: vanillaservices.cloudfoundry_enabled
-
-- name: install stratos
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.stratos_enabled
-    - role: install-stratos
-      when: vanillaservices.stratos_enabled
-
 - name: Deploy efk
   hosts: master[0]
   gather_facts: true
@@ -236,15 +218,6 @@
       action: create-client
       when: vanillaservices.loggingStack_enabled and vanillaservices.keycloak_enabled
 
-- name: install guacamole
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.guacamole_enabled
-    - role: install-guacamole
-      when: vanillaservices.guacamole_enabled
-
 - name: Deploy Harbor
   hosts: master[0]
   gather_facts: true
@@ -254,35 +227,6 @@
     - role: deploy-harbor
       when: vanillaservices.harbor_enabled
 
-- name: Deploy KubeVirt
-  hosts: master[0]
-  become: false
-  gather_facts: false
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.kubevirt_enabled
-    - role: deploy-kubevirt
-      action: operator
-      when: vanillaservices.kubevirt_enabled
-
-- name: Deploy KubeVirt CLI
-  hosts: master[0]
-  become: true
-  gather_facts: false
-  roles:
-    - role: deploy-kubevirt
-      action: virtctl
-      when: vanillaservices.kubevirt_enabled
-
-- name: install moodle
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.moodle_enabled
-    - role: install-moodle
-      when: vanillaservices.moodle_enabled
-
 - name: install monitoring
   hosts: master[0]
   gather_facts: true
@@ -290,13 +234,6 @@
   - role: install-monitoring
     action: operator
     when: vanillaservices.monitoring_enabled
-
-- name: install nextcloud
-  hosts: master[0]
-  gather_facts: false
-  roles:
-  - role: install-nextcloud
-    when: vanillaservices.nextcloud_enabled
 
 - name: install Grafana
   hosts: master[0]
@@ -310,13 +247,5 @@
   gather_facts: false
   roles:
   - role: install-loki
-    when: vanillaservices.loki_enabled
+    when: 'vanillaservices.loki_enabled| default(false)'
 
-- name: install redis cluster
-  hosts: master[0]
-  gather_facts: false
-  roles:
-  - role: install-redis-cluster
-    when: vanillaservices.redis_enabled and redis.cluster
-  - role: install-redis
-    when: vanillaservices.redis_enabled and not redis.cluster
