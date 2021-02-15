@@ -1,7 +1,7 @@
 = VanillaStack
 image:https://gitlab.cloudical.net/vanillastack/vanillastack/badges/testing/pipeline.svg[link="https://gitlab.cloudical.net/vanillastack/vanillastack/-/commits/testing",title="pipeline status"]
 
-image:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg][link="https://github.com/semantic-release/semantic-release",title="Semantic release"]
+image:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg[link="https://github.com/semantic-release/semantic-release",title="Semantic release"]
 
 There are multiple Vendor-Stacks out there, that promise to deliver an installation without hazzles, full integration and total flexibility - only to vendor lock you to the tools, frameworks and interfaces of a product.
 
