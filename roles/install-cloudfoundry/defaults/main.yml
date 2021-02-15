@@ -1,7 +1,7 @@
 ---
 # defaults file for install_cloudfoundry
 cloudfoundry:
-  enabled: true
+  enabled: false
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ clusterTLDomain }}"
 
