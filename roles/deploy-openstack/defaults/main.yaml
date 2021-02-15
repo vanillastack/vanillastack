@@ -1,5 +1,6 @@
 ---
 openstack:
+  enabled: false
   namespace: openstack
   publicDomain: "{{ clusterTLDomain }}"
   publicProto: "http"

@@ -1,5 +1,5 @@
 efkstack:
-  enabled: true
+  enabled: false
   imageTag: "7.9.1"
   kibana:
     user: kibana_test

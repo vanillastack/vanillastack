@@ -1,6 +1,6 @@
 ---
 prometheus:
-  enabled: true
+  enabled: false
   admin_user: admin
   admin_password: prompassword
   replicas: 1
