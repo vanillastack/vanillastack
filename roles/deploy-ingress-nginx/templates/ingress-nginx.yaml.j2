@@ -17,6 +17,7 @@ controller:
     nodePorts:
       http: {{ ingress_http_port | default(30080) }}
       https: {{ ingress_https_port | default(30443) }}
+  config: {{ingress.config|default("{}")}}
 
   replicaCount: 3
   minAvailable: 1
