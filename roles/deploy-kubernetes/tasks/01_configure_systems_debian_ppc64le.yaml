@@ -301,3 +301,15 @@
     name: "fail2ban"
     enabled: true
     state: restarted
+
+- name: Set nofile soft limit
+  community.general.pam_limits:
+    limit_type: soft
+    limit_item: nofile
+    value: 1048576
+
+- name: Set nofile hard limit
+  community.general.pam_limits:
+    limit_type: hard
+    limit_item: nofile
+    value: 1048576
