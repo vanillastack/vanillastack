@@ -116,7 +116,7 @@ VanillaStack requirements:
 * Check out our link:https://www.youtube.com/playlist?list=PLJcz3tF8m0MS7DbVXzutPpJW-Vc_-9d_N[Youtube Channel]
 * The development documentation is stored at: [docs.vanillastack.io]
 * Discussions are happening on our link:https://discourse.vanillastack.io/[Discourse] Channels
-* live discussions are possible at: link:https://rocketchat.vanillastack.io 
+* live discussions are possible at: link:https://rocketchat.vanillastack.io[Rocket.Chat] 
 * Bugs, Suggestions, Feature Requests are reported in our link:gitlab.cloudical.net/vanillastack/vanillastack/-/issues[Vanillastack-Gitlab]
 
 == Contribution
