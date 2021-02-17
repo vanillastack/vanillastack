@@ -307,9 +307,11 @@
     limit_type: soft
     limit_item: nofile
     value: 1048576
+    domain: '*'
 
 - name: Set nofile hard limit
   community.general.pam_limits:
     limit_type: hard
     limit_item: nofile
     value: 1048576
+    domain: '*'
