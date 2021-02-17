@@ -1,11 +1,21 @@
 system_domain: "{{ cloudfoundry.coreDomain }}"
 
+install_stacks: [sle15]
+
 kube:
   storage_class: {{ cloudfoundry.storageclass }}
+
+multi_az: false
 
 high_availability: false
 
 features:
+  memory_limits:
+    enabled: true
+    default_request_minimum: 32
+    default_request_in_percent: 25
+  routing_api:
+    enabled: false
   ingress:
     enabled: true
     annotations:
@@ -16,5 +26,4 @@ features:
   eirini:
     enabled: true
 
-install_stacks: [sle15]
 

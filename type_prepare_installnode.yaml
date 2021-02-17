@@ -1,6 +1,10 @@
+---
 - name: install galaxy collection
   hosts: localhost
   connection: local
   tasks:
   - command: ansible-galaxy collection install community.kubernetes
   - command: ansible-galaxy collection install community.general
+  - name: install pip dependencies
+    pip:
+      requirements: requirements.txt

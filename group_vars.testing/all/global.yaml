@@ -21,7 +21,7 @@ kubernetes:
   cilium:
     version: v1.8.6
 cloudfoundry:
-  version: 2.4.0
+  version: 2.7.12
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ clusterTLDomain }}"
 stratos:

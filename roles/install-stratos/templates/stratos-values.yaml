@@ -1,28 +1,69 @@
-# Tag for images - do not edit
-consoleVersion: 4.0.1-aaac31f4e
-ingress:
-  ## If true, Ingress will be created
-  host: "{{ stratos.coreDomain }}"
-  enabled: "{{ ingress.enabled }}"
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
-    kubernetes.io/tls-acme: "true"
-localAdminPassword: {{ stratos.adminpassword }}
+autoCleanup: false
 
-images:
-  console: stratos-console
-  proxy: stratos-jetstream
-  mariadb: stratos-mariadb
-  configInit: stratos-config-init
+console:
+  apiKeysEnabled: admin_only
+  artifactHubEnabled: true
+  autoRegisterCF: "https://api.{{ cloudfoundry.coreDomain }}"
+  backendLogLevel: info
+  cookieDomain: null
+  deploymentAnnotations: {}
+  deploymentExtraLabels: {}
+  jobAnnotations: {}
+  jobExtraLabels: {}
+  kubeDashboardImage: null
+  localAdminPassword: {{ stratos.adminpassword }}
+  nodeSelector: {}
+  podAnnotations: {}
+  podExtraLabels: {}
+  replicaCount: 1
+  reportsVolumeDisabled: false
+  reportsVolumeSize: 10Gi
+  service:
+    annotations: {}
+    externalIPs: []
+    externalName: null
+    extraLabels: {}
+    http:
+      enabled: true
+      servicePort: 80
+    ingress:
+      ## If true, Ingress will be created
+      enabled: {{ ingress.enabled }}
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+        cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
+        kubernetes.io/tls-acme: "true"
+      extraLabels: {}
+    loadBalancerSourceRanges: []
+    servicePort: 443
+    type: ClusterIP
+  sessionStoreSecret: null
+  sslCiphers: null
+  sslProtocols: null
+  ssoLogin: false
+  ssoOptions: null
+  statefulSetAnnotations: {}
+  statefulSetExtraLabels: {}
+  techPreview: false
+  templatesConfigMapName: null
+  tlsSecretName: null
+  ui:
+    listAllowLoadMaxed: false
+    listMaxSize: null
+  userInviteSubject: null
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    storageClass: 
+
+
+consoleVersion: 4.4.0-bc65c315c
 
 kube:
   # Whether RBAC is enabled in the Kubernetes cluster
   auth: "rbac"
-  external_console_https_port: 8443
-  storage_class:
-    persistent:
 {% if commercial.enabled %}
   organization: vanillastack
 {% else %}
