@@ -23,8 +23,39 @@
   shell: "kubectl get po -n stratos -l app=uaaclient |grep uaaclient|cut -d' ' -f1"
   register: uaapod
 
-- name: set target
+- name: check if client is already created
+  k8s_info:
+    api_version: keycloak.org/v1alpha1
+    kind: KeycloakClient
+    namespace: stratos
+    name: stratos-client
+  register: clientsecret
+
+- name: create stratosclient
+  block:
+    - name: create stratossecret password
+      set_fact:
+        stratos_client_secret: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+    - name: Deploy Stratos client
+      community.kubernetes.k8s:
+        definition: "{{ lookup('template', 'keycloak-client.yaml.j2') | from_yaml }}"
+        state: present
+        wait: true
+    - pause:
+        seconds: 30
+  when: clientsecret.resources|length<1
+
+- name: get client secret
+  shell: kubectl get keycloakclient -n {{keycloak.namespace}} stratos-client -o jsonpath='{.spec.client.secret}'
+  register: stratos_client_secret
+
+- name: register Stratos client
   shell: "kubectl exec -ti {{uaapod.stdout}} -n stratos -- /registerclient.sh '{{uaactoken.stdout}}' '{{stratos.coreDomain}}' '{{stratos.clientSecret}}' 'uaa.{{ clusterTLDomain }}'"
+  ignore_errors: true
+
+- name: create Keycloak oauth2 provider
+  shell: "kubectl exec -ti {{uaapod.stdout}} -n stratos -- /createprovider_keycloak_oauth2.sh vs-keycloak Keycloak https://{{keycloak.ingress.publicDomain}} {{keycloak.realm.id}} {{stratos.coreDomain}} {{stratos_client_secret.stdout}} {{uaactoken.stdout}}"
   ignore_errors: true
 
 - name: Install stratos
