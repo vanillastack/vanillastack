@@ -1,0 +1,416 @@
+---
+kube:
+  auth: "rbac"
+  external_ips: []
+
+  # Whether HostPath volume mounts are available
+  hostpath_available: false
+
+  limits:
+    nproc:
+      hard: ""
+      soft: ""
+  organization: "cap"
+  psp:
+    default: ~
+  registry:
+    hostname: "registry.suse.com"
+    username: ""
+    password: ""
+
+  # Increment this counter to rotate all generated secrets
+  secrets_generation_counter: 1
+
+  storage_class:
+    persistent: "rook-ceph-block"
+    shared: "shared"
+config:
+  # Flag to activate high-availability mode
+  HA: false
+
+  # Flag to verify instance counts against HA minimums
+  HA_strict: true
+
+  # Global memory configuration
+  memory:
+    # Flag to activate memory requests
+    requests: false
+
+    # Flag to activate memory limits
+    limits: false
+
+  # Global CPU configuration
+  cpu:
+    # Flag to activate cpu requests
+    requests: false
+
+    # Flag to activate cpu limits
+    limits: false
+
+  # Flag to specify whether to add Istio related annotations and labels
+  use_istio: false
+
+bosh:
+  instance_groups: []
+services:
+  loadbalanced: false
+secrets:
+  # Administrator password for an external database server; this is required to
+  # create the necessary databases. Only used if DB_EXTERNAL_HOST is set.
+  #
+  # This value is immutable and must not be changed once set.
+  DB_EXTERNAL_PASSWORD: ~
+
+  # A PEM-encoded TLS certificate for the Galera server.
+  # This value uses a generated default.
+  # This certificate uses the name "galera_server_certificate".
+  GALERA_SERVER_CERT: ~
+
+  # A PEM-encoded TLS key for the Galera server.
+  GALERA_SERVER_CERT_KEY: ~
+
+  # PEM-encoded CA certificate used to sign the TLS certificate used by all
+  # components to secure their communications.
+  # This value uses a generated default.
+  INTERNAL_CA_CERT: ~
+
+  # PEM-encoded CA key.
+  INTERNAL_CA_CERT_KEY: ~
+
+  # PEM-encoded JWT certificate.
+  # This value uses a generated default.
+  JWT_SIGNING_CERT: ~
+
+  # PEM-encoded JWT signing key.
+  JWT_SIGNING_CERT_KEY: ~
+
+  # Password used for the monit API.
+  # This value uses a generated default.
+  MONIT_PASSWORD: ~
+
+  # The password for the MySQL server admin user.
+  # This value uses a generated default.
+  MYSQL_ADMIN_PASSWORD: ~
+
+  # The password for the cluster logger health user.
+  # This value uses a generated default.
+  MYSQL_CLUSTER_HEALTH_PASSWORD: ~
+
+  # Password used to authenticate to the MySQL Galera healthcheck endpoint.
+  # This value uses a generated default.
+  MYSQL_GALERA_HEALTHCHECK_ENDPOINT_PASSWORD: ~
+
+  # The password for Basic Auth used to secure the MySQL proxy API.
+  # This value uses a generated default.
+  MYSQL_PROXY_ADMIN_PASSWORD: ~
+
+  # A PEM-encoded TLS certificate for the MySQL server.
+  MYSQL_SERVER_CERT: ~
+
+  # A PEM-encoded TLS key for the MySQL server.
+  MYSQL_SERVER_CERT_KEY: ~
+
+  # PEM-encoded certificate
+  # This value uses a generated default.
+  # This certificate uses the name "saml-serviceprovider-cert".
+  SAML_SERVICEPROVIDER_CERT: ~
+
+  # PEM-encoded key.
+  SAML_SERVICEPROVIDER_CERT_KEY: ~
+
+  # The password for access to the UAA database.
+  # This value uses a generated default.
+  UAADB_PASSWORD: ~
+
+  # The password of the admin client - a client named admin with uaa.admin as an
+  # authority.
+  UAA_ADMIN_CLIENT_SECRET: woefhiouwfhigbwihnounsi
+
+  # The server's ssl certificate. The default is a self-signed certificate and
+  # should always be replaced for production deployments.
+  # This value uses a generated default.
+  # This certificate uses the role name "uaa" and the additional names
+  UAA_SERVER_CERT: ~
+
+  # The server's ssl private key. Only passphrase-less keys are supported.
+  UAA_SERVER_CERT_KEY: ~
+
+env:
+  # Expiration for generated certificates (in days)
+  CERT_EXPIRATION: "10950"
+
+  # Database driver to use for the external database server used to manage the
+  # UAA-internal database. Only used if DB_EXTERNAL_HOST is set. Currently only
+  # `mysql` is valid.
+  DB_EXTERNAL_DRIVER: "mysql"
+
+  # Hostname for an external database server to use for the UAA-internal
+  # database If not set, the internal database is used.
+  DB_EXTERNAL_HOST: ~
+
+  # Port for an external database server to use for the UAA-internal database.
+  # Only used if DB_EXTERNAL_HOST is set.
+  DB_EXTERNAL_PORT: "3306"
+
+  # TLS configuration for the external database server to use for the
+  # UAA-internal database. Only used if DB_EXTERNAL_HOST is set. Valid values
+  # depend on which database driver is in use.
+  DB_EXTERNAL_SSL_MODE: ~
+
+  # Administrator user name for an external database server; this is required to
+  # create the necessary databases. Only used if DB_EXTERNAL_HOST is set.
+  DB_EXTERNAL_USER: ~
+
+  # A suffix that has to be appended to every user name for the external
+  # database; usually '@host'. Only used if DB_EXTERNAL_HOST is set.
+  DB_EXTERNAL_USER_HOST_SUFFIX: ""
+
+  # Base domain name of the UAA endpoint; `uaa.${DOMAIN}` must be correctly
+  # configured to point to this UAA instance.
+  DOMAIN: "{{ clusterTLDomain }}"
+
+  KUBERNETES_CLUSTER_DOMAIN: ~
+
+  # The cluster's log level: off, fatal, error, warn, info, debug, debug1,
+  # debug2.
+  LOG_LEVEL: "info"
+
+  # The log destination to talk to. This has to point to a syslog server.
+  SCF_LOG_HOST: ~
+
+  # The port used by rsyslog to talk to the log destination. It defaults to 514,
+  # the standard port of syslog.
+  SCF_LOG_PORT: "514"
+
+  # The protocol used by rsyslog to talk to the log destination. The allowed
+  # values are tcp, and udp. The default is tcp.
+  SCF_LOG_PROTOCOL: "tcp"
+
+  # If true, authenticate against the SMTP server using AUTH command. See
+  # https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
+  SMTP_AUTH: "false"
+
+  # SMTP from address, for password reset emails etc.
+  SMTP_FROM_ADDRESS: ~
+
+  # SMTP server host address, for password reset emails etc.
+  SMTP_HOST: ~
+
+  # SMTP server password, for password reset emails etc.
+  SMTP_PASSWORD: ~
+
+  # SMTP server port, for password reset emails etc.
+  SMTP_PORT: "25"
+
+  # If true, send STARTTLS command before logging in to SMTP server. See
+  # https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
+  SMTP_STARTTLS: "false"
+
+  # SMTP server username, for password reset emails etc.
+  SMTP_USER: ~
+
+  # Use TLS connection for UAA database.
+  # Valid options are:
+  # enabled (use TLS with full certificate validation),
+  # enabled_skip_hostname_validation (use TLS but skip validation of common and
+  # alt names in the host certificate),
+  # enabled_skip_all_validation (use TLS but do not validate anything about the
+  # host certificate),
+  # disabled (do not use TLS)
+  UAADB_TLS: "enabled"
+
+  # The TCP port to report as the public port for the UAA server (root zone).
+  UAA_PUBLIC_PORT: "2793"
+
+# The sizing section contains configuration to change each individual instance
+# group. Due to limitations on the allowable names, any dashes ("-") in the
+# instance group names are replaced with underscores ("_").
+sizing:
+  # The configgin-helper instance group contains the following jobs:
+  #
+  # - global-properties: Dummy BOSH job used to host global parameters that are
+  #   required to configure SCF
+  #
+  # - configgin-helper: Copy configgin service account token to secret
+  configgin_helper:
+    # Node affinity rules can be specified here
+    affinity: {}
+
+    # The configgin_helper instance group can scale between 1 and 65535
+    # instances.
+    # For high availability it needs at least 2 instances.
+    count: ~
+
+    # Unit [millicore]
+    cpu:
+      request: 1000
+      limit: ~
+
+    # Unit [MiB]
+    memory:
+      request: 64
+      limit: ~
+
+  # The mysql instance group contains the following jobs:
+  #
+  # - global-uaa-properties: Dummy BOSH job used to host global parameters that
+  #   are required to configure SCF / fissile
+  #
+  # - patch-properties: Dummy BOSH job used to host parameters that are used in
+  #   SCF patches for upstream bugs
+  #
+  # Also: pxc-mysql, galera-agent, gra-log-purger, cluster-health-logger,
+  # bootstrap, mysql, and bpm
+  mysql:
+    # Node affinity rules can be specified here
+    affinity: {}
+
+    # The mysql instance group is enabled by the mysql feature.
+    # It can scale between 1 and 7 instances.
+    # The instance count must be an odd number (not divisible by 2).
+    # For high availability it needs at least 3 instances.
+    count: ~
+
+    # Unit [millicore]
+    cpu:
+      request: 2000
+      limit: ~
+
+    disk_sizes:
+      mysql_data: 20
+
+    # Unit [MiB]
+    memory:
+      request: 2500
+      limit: ~
+
+  # The mysql-proxy instance group contains the following jobs:
+  #
+  # - global-uaa-properties: Dummy BOSH job used to host global parameters that
+  #   are required to configure SCF / fissile
+  #
+  # - switchboard-leader: Job to host the active/passive probe for mysql
+  #   switchboard and leader election
+  #
+  # Also: bpm and proxy
+  mysql_proxy:
+    # Node affinity rules can be specified here
+    affinity: {}
+
+    # The mysql_proxy instance group is enabled by the mysql feature.
+    # It can scale between 1 and 5 instances.
+    # For high availability it needs at least 2 instances.
+    count: ~
+
+    # Unit [millicore]
+    cpu:
+      request: 2000
+      limit: ~
+
+    # Unit [MiB]
+    memory:
+      request: 2500
+      limit: ~
+
+  # The post-deployment-setup instance group contains the following jobs:
+  #
+  # - global-uaa-properties: Dummy BOSH job used to host global parameters that
+  #   are required to configure SCF / fissile
+  #
+  # - database-seeder: When using an external database server, seed it with the
+  #   necessary databases.
+  post_deployment_setup:
+    # Node affinity rules can be specified here
+    affinity: {}
+
+    # The post_deployment_setup instance group cannot be scaled.
+    count: ~
+
+    # Unit [millicore]
+    cpu:
+      request: 1000
+      limit: ~
+
+    # Unit [MiB]
+    memory:
+      request: 256
+      limit: ~
+
+  # The secret-generation instance group contains the following jobs:
+  #
+  # - generate-secrets: This job will generate the secrets for the cluster
+  secret_generation:
+    # Node affinity rules can be specified here
+    affinity: {}
+
+    # The secret_generation instance group cannot be scaled.
+    count: ~
+
+    # Unit [millicore]
+    cpu:
+      request: 1000
+      limit: ~
+
+    # Unit [MiB]
+    memory:
+      request: 256
+      limit: ~
+
+  # The uaa instance group contains the following jobs:
+  #
+  # - global-uaa-properties: Dummy BOSH job used to host global parameters that
+  #   are required to configure SCF / fissile
+  #
+  # - uaa: The UAA is the identity management service for Cloud Foundry. It's
+  #   primary role is as an OAuth2 provider, issuing tokens for client
+  #   applications to use when they act on behalf of Cloud Foundry users. It can
+  #   also authenticate users with their Cloud Foundry credentials, and can act
+  #   as an SSO service using those credentials (or others). It has endpoints
+  #   for managing user accounts and for registering OAuth2 clients, as well as
+  #   various other management functions.
+  #
+  # - wait-for-database: This is a pre-start job to delay starting the rest of
+  #   the role until a database connection is ready. Currently it only checks
+  #   that a response can be obtained from the server, and not that it responds
+  #   intelligently.
+  #
+  #
+  # Also: bpm
+  uaa:
+    # Node affinity rules can be specified here
+    affinity: {}
+
+    # The uaa instance group can scale between 1 and 65535 instances.
+    # For high availability it needs at least 2 instances.
+    count: ~
+
+    # Unit [millicore]
+    cpu:
+      request: 2000
+      limit: ~
+
+    # Unit [MiB]
+    memory:
+      request: 2100
+      limit: ~
+
+enable:
+  # The mysql feature enables these instance groups: mysql and mysql_proxy
+  mysql: true
+ingress:
+  # ingress.annotations allows specifying custom ingress annotations that gets
+  # merged to the default annotations.
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
+    kubernetes.io/tls-acme: "true"
+
+  # ingress.enabled enables ingress support - working ingress controller
+  # necessary.
+  enabled: true
+
+  # ingress.tls.crt and ingress.tls.key, when specified, are used by the TLS
+  # secret for the Ingress resource.
+  tls: {}
+

@@ -29,6 +29,9 @@ stratos:
   tag:  4.4.0-bc65c315c
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ clusterTLDomain }}"
+  uaa:
+    version: 2.20.3
+  clientSecret: i226PDDij0B5eA1mNGlkBPYNQ
 guacamole:
   imageTag: 202009100849
   namespace: guacamole
