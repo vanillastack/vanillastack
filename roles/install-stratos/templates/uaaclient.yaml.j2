@@ -18,9 +18,9 @@ spec:
       containers:
       - name: rook-ceph-tools
 {% if commercial.enabled %}
-        image: {{repositories.registry_commercial}}/vanillastack/uaaclient:v1.5
+        image: {{repositories.registry_commercial}}/vanillastack/uaaclient:v1.8
 {% else %}
-        image: {{repositories.registry_community}}/vanillastack/uaaclient:v1.5
+        image: {{repositories.registry_community}}/vanillastack/uaaclient:v1.8
 {% endif %}
         imagePullPolicy: IfNotPresent
         command: ["/bin/sleep"]
