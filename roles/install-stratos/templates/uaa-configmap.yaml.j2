@@ -38,17 +38,19 @@ data:
           authorized-grant-types: client_credentials
           authorities: clients.read,clients.write,clients.secret,uaa.admin,scim.read,scim.write,password.write
         {{stratos.coreDomain}}:
-          id: {{stratos.coreDomain}}
-          override: true
-          secret: {{ stratos_client_secret.stdout }}
-          authorized-grant-types: authorization_code,refresh_token
-          authorities: uaa.none
-          scope: network.admin,network.write,cloud_controller.read,cloud_controller.write,openid,password.write,cloud_controller.admin,scim.read,scim.write,doppler.firehose,uaa.user,routing.router_groups.read,routing.router_groups.write,cloud_controller.admin_read_only,cloud_controller.global_auditor,perm.admin,clients.read
+          authorized-grant-types: authorization_code
           redirect-uri: https://{{stratos.coreDomain}}/pp/v1/auth/sso_login_callback
-          autoapprove: true
+          autoapprove: true # Bypass users approval
+          access-token-validity: 600
+          authorities: uaa.none
+          override: true
+          refresh-token-validity: 2592000
+          scope: network.admin,network.write,cloud_controller.read,cloud_controller.write,openid,password.write,cloud_controller.admin,scim.read,scim.write,doppler.firehose,uaa.user,routing.router_groups.read,routing.router_groups.write,cloud_controller.admin_read_only,cloud_controller.global_auditor,perm.admin,clients.read
           show-on-homepage: true
+          app-launch-url: https://{{stratos.coreDomain}}
+          app-icon: iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAD1BMVEWZttQvMDEoKisqKywAAAApvvoVAAAAGElEQVQYlWNgYUQBLAxMDCiAeXgLoHsfAD03AHOyfqy1AAAAAElFTkSuQmCC
     zones:
-      internal:
+      uaa:
         hostnames:
         - localhost
         - {{clusterTLDomain}}
