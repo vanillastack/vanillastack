@@ -1,0 +1,22 @@
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  name: stratos-postgresql
+  namespace: {{stratos.namespace}}
+spec:
+  teamId: "stratos"
+  volume:
+    size: {{stratos.postgres.size}}
+  numberOfInstances: {{stratos.postgres.replicas}}
+  users:
+    postgres:
+    - superuser
+    - createdb
+  databases:
+    postgres: postgres
+  postgresql:
+    version: "{{stratos.postgres.version}}"
+    parameters:
+      max_connections: "{{stratos.postgres.maxConnections}}"
+  enableLogicalBackup: {{stratos.postgres.backup.enabled}}
+  logicalBackupSchedule: {{stratos.postgres.backup.cronjob}}

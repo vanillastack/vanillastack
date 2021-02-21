@@ -1,33 +1,35 @@
 ---
-- name: Install UAA
-  community.kubernetes.helm:
-    chart_ref: vanillastack/uaa
-    chart_version: "{{ stratos.uaa.version }}"
-    name: uaa
-    release_namespace: stratos
-    create_namespace: true
-    values: "{{ lookup('template', 'uaa-values.yaml.j2') | from_yaml }}"
-    wait: true
-
-- name: Deploy UAA client
+- name: Create Stratos namespace
   community.kubernetes.k8s:
+    name: "{{stratos.namespace}}"
+    api_version: v1
+    kind: Namespace
     state: present
-    definition: "{{ lookup('template','uaaclient.yaml.j2')}}"
-    wait: yes
 
-- name: get admin token
-  shell: echo "$(kubectl get secret -n stratos -o jsonpath="{.data.uaa-admin-client-secret}" secrets)"|base64 -d
-  register: uaactoken
+- name: Deploy PostgreSQL
+  k8s:
+    state: present
+    definition: "{{ lookup('template','postgres.yaml.j2')}}"
+  when: stratos.uaa.database == "postgresql"
+    
+- name: "wait until postgres pod is ready"
+  shell: 'kubectl get postgresql -n {{ stratos.namespace }}|grep "{{stratos.namespace}}-postgres"|grep "Running"'
+  register: postgresReady
+  until: postgresReady.rc == 0
+  retries: 60
+  delay: 10
+  when: stratos.uaa.database == "postgresql"
 
-- name: get uaaclient pod
-  shell: "kubectl get po -n stratos -l app=uaaclient |grep uaaclient|cut -d' ' -f1"
-  register: uaapod
+- name: "register postgres application password"
+  shell: echo "$(kubectl get secret -n {{ stratos.namespace }} -o json postgres.{{stratos.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
+  register: postgrespassword
+  when: stratos.uaa.database == "postgresql"
 
 - name: check if client is already created
   k8s_info:
     api_version: keycloak.org/v1alpha1
     kind: KeycloakClient
-    namespace: stratos
+    namespace: "{{keycloak.namespace}}"
     name: stratos-client
   register: clientsecret
 
@@ -50,17 +52,36 @@
   shell: kubectl get keycloakclient -n {{keycloak.namespace}} stratos-client -o jsonpath='{.spec.client.secret}'
   register: stratos_client_secret
 
-- name: register Stratos client
-  shell: "kubectl exec -ti {{uaapod.stdout}} -n stratos -- /registerclient.sh '{{uaactoken.stdout}}' '{{stratos.coreDomain}}' '{{stratos.clientSecret}}' 'uaa.{{ clusterTLDomain }}'"
-  ignore_errors: true
+- name: Deploy UAA
+  k8s:
+    state: present
+    definition: "{{ lookup('template','{{item}}')}}"
+  with_items:
+    - uaa-secret-db.yaml.j2
+  when: stratos.uaa.database == "postgresql"
 
-#- name: create Keycloak oauth2 provider
-#  shell: "kubectl exec -ti {{uaapod.stdout}} -n stratos -- /createprovider_keycloak_oauth2.sh vs-keycloak Keycloak https://{{keycloak.ingress.publicDomain}} {{keycloak.realm.id}} {{stratos.coreDomain}} {{stratos_client_secret.stdout}} {{uaactoken.stdout}}"
-#  ignore_errors: true
+- name: Deploy UAA
+  k8s:
+    state: present
+    definition: "{{ lookup('template','{{item}}')}}"
+  with_items:
+    - uaa-configmap.yaml.j2
+    - uaa-ingress.yaml.j2
+    - uaa-sa.yaml.j2
+    - uaa-secret-admin.yaml.j2
+    - uaa-secret-cacerts.yaml.j2
+    - uaa-secret-encryption.yaml.j2
+    - uaa-secret-jwt.yaml.j2
+    - uaa-secret-saml.yaml.j2
+    - uaa-svc.yaml.j2
+    - uaa-deployment.yaml.j2
 
-- name: create Keycloak oidc provider
-  shell: "kubectl exec -ti {{uaapod.stdout}} -n stratos -- /createprovider_keycloak_oidc.sh vs-keycloak Keycloak https://{{keycloak.ingress.publicDomain}} {{keycloak.realm.id}} {{stratos.coreDomain}} {{stratos_client_secret.stdout}} {{uaactoken.stdout}}"
-  ignore_errors: true
+- name: "wait until UAA pod is ready"
+  shell: 'kubectl get po -n {{ stratos.namespace }}|grep "uaa-"|grep "Running"'
+  register: postgresReady
+  until: postgresReady.rc == 0
+  retries: 60
+  delay: 10
 
 - name: Install stratos
   community.kubernetes.helm:
