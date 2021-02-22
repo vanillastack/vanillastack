@@ -11,7 +11,6 @@ stratos:
     encryptionKey: xry5RPkqPABkdoW22mcLLpvsY
     adminKey: K0Wk7VVyKQBMvEyihFZ2Zt9E5
     database: hsqldb
-  clientSecret: i226PDDij0B5eA1mNGlkBPYNQ
   postgres:
     size: "20Gi"
     replicas: 2

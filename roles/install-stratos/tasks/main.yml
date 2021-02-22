@@ -80,7 +80,7 @@
   shell: 'kubectl get po -n {{ stratos.namespace }}|grep "uaa-"|grep "Running"'
   register: postgresReady
   until: postgresReady.rc == 0
-  retries: 60
+  retries: 120
   delay: 10
 
 - name: Install stratos

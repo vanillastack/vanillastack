@@ -47,6 +47,6 @@ console:
 uaa:
   endpoint: https://uaa.{{ clusterTLDomain }}
   consoleClient: {{stratos.coreDomain}}
-  consoleClientSecret: {{stratos.clientSecret}}
+  consoleClientSecret: {{stratos_client_secret.stdout}}
   uaa.skipSSLValidation: true
   uaa.consoleAdminIdentifier: cloud_controller.admin
