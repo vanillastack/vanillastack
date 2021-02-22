@@ -6,25 +6,6 @@
     kind: Namespace
     state: present
 
-- name: Deploy PostgreSQL
-  k8s:
-    state: present
-    definition: "{{ lookup('template','postgres.yaml.j2')}}"
-  when: stratos.uaa.database == "postgresql"
-    
-- name: "wait until postgres pod is ready"
-  shell: 'kubectl get postgresql -n {{ stratos.namespace }}|grep "{{stratos.namespace}}-postgres"|grep "Running"'
-  register: postgresReady
-  until: postgresReady.rc == 0
-  retries: 60
-  delay: 10
-  when: stratos.uaa.database == "postgresql"
-
-- name: "register postgres application password"
-  shell: echo "$(kubectl get secret -n {{ stratos.namespace }} -o json postgres.{{stratos.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
-  register: postgrespassword
-  when: stratos.uaa.database == "postgresql"
-
 - name: check if client is already created
   k8s_info:
     api_version: keycloak.org/v1alpha1
@@ -51,14 +32,6 @@
 - name: get client secret
   shell: kubectl get keycloakclient -n {{keycloak.namespace}} stratos-client -o jsonpath='{.spec.client.secret}'
   register: stratos_client_secret
-
-- name: Deploy UAA
-  k8s:
-    state: present
-    definition: "{{ lookup('template','{{item}}')}}"
-  with_items:
-    - uaa-secret-db.yaml.j2
-  when: stratos.uaa.database == "postgresql"
 
 - name: Deploy UAA
   k8s:
