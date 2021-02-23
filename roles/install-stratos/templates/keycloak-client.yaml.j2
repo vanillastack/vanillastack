@@ -24,3 +24,16 @@ spec:
       - 'https://uaa.{{ clusterTLDomain }}/*'
     standardFlowEnabled: true
     fullScopeAllowed: false
+    protocolMappers:
+      - config:
+          full.path: "false"
+          id.token.claim: "true"
+          access.token.claim: "true"
+          claim.name: "groups"
+          userinfo.token.claim: "true"
+        consentRequired: false
+        consentText: "Groups Mapper"
+        id: stratos-client-groupmapper
+        name: "Groups Mapper"
+        protocol: openid-connect
+        protocolMapper: "oidc-group-membership-mapper"

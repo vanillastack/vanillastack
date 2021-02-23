@@ -48,6 +48,7 @@
     - uaa-secret-saml.yaml.j2
     - uaa-svc.yaml.j2
     - uaa-deployment.yaml.j2
+    - uaaclient.yaml.j2
 
 - name: "wait until UAA pod is ready"
   shell: 'kubectl get po -n {{ stratos.namespace }}|grep "uaa-"|grep "Running"'
@@ -55,6 +56,10 @@
   until: postgresReady.rc == 0
   retries: 120
   delay: 10
+
+- name: wait delay for UAA
+  pause:
+    seconds: 90 
 
 - name: Install stratos
   community.kubernetes.helm:
@@ -64,3 +69,10 @@
     release_namespace: stratos
     values: "{{ lookup('template', 'stratos-values.yaml.j2') | from_yaml }}"
     wait: true
+
+- name: get UAAclient pod
+  shell: "kubectl get po -n {{stratos.namespace}} -l app=uaaclient|grep uaaclient|cut -d' ' -f1"
+  register: uaaclient
+
+- name: Map Keycloak group to UAA group
+  shell: "kubectl exec -ti -n {{stratos.namespace}} {{uaaclient.stdout}} -- /map_keycloak_group.sh {{stratos.uaa.adminKey}} https://uaa.{{clusterTLDomain}} cloud_controller.admin admin"
