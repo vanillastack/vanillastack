@@ -1,10 +1,78 @@
 ---
+- name: Create Stratos namespace
+  community.kubernetes.k8s:
+    name: "{{stratos.namespace}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: check if client is already created
+  k8s_info:
+    api_version: keycloak.org/v1alpha1
+    kind: KeycloakClient
+    namespace: "{{keycloak.namespace}}"
+    name: stratos-client
+  register: clientsecret
+
+- name: create stratosclient
+  block:
+    - name: create stratossecret password
+      set_fact:
+        stratos_client_secret: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+    - name: Deploy Stratos client
+      community.kubernetes.k8s:
+        definition: "{{ lookup('template', 'keycloak-client.yaml.j2') | from_yaml }}"
+        state: present
+        wait: true
+    - pause:
+        seconds: 30
+  when: clientsecret.resources|length<1
+
+- name: get client secret
+  shell: kubectl get keycloakclient -n {{keycloak.namespace}} stratos-client -o jsonpath='{.spec.client.secret}'
+  register: stratos_client_secret
+
+- name: Deploy UAA
+  k8s:
+    state: present
+    definition: "{{ lookup('template','{{item}}')}}"
+  with_items:
+    - uaa-configmap.yaml.j2
+    - uaa-ingress.yaml.j2
+    - uaa-sa.yaml.j2
+    - uaa-secret-admin.yaml.j2
+    - uaa-secret-cacerts.yaml.j2
+    - uaa-secret-encryption.yaml.j2
+    - uaa-secret-jwt.yaml.j2
+    - uaa-secret-saml.yaml.j2
+    - uaa-svc.yaml.j2
+    - uaa-deployment.yaml.j2
+    - uaaclient.yaml.j2
+
+- name: "wait until UAA pod is ready"
+  shell: 'kubectl get po -n {{ stratos.namespace }}|grep "uaa-"|grep "Running"'
+  register: postgresReady
+  until: postgresReady.rc == 0
+  retries: 120
+  delay: 10
+
+- name: wait delay for UAA
+  pause:
+    seconds: 90 
+
 - name: Install stratos
   community.kubernetes.helm:
     chart_ref: vanillastack/console
     chart_version: "{{ stratos.version }}"
     name: console
-    release_namespace: console
-    create_namespace: true
-    values: "{{ lookup('template', 'stratos-values.yaml') | from_yaml }}"
+    release_namespace: stratos
+    values: "{{ lookup('template', 'stratos-values.yaml.j2') | from_yaml }}"
     wait: true
+
+- name: get UAAclient pod
+  shell: "kubectl get po -n {{stratos.namespace}} -l app=uaaclient|grep uaaclient|cut -d' ' -f1"
+  register: uaaclient
+
+- name: Map Keycloak group to UAA group
+  shell: "kubectl exec -ti -n {{stratos.namespace}} {{uaaclient.stdout}} -- /map_keycloak_group.sh {{stratos.uaa.adminKey}} https://uaa.{{clusterTLDomain}} cloud_controller.admin admin"

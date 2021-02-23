@@ -1,0 +1,39 @@
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: stratos-client
+  labels:
+    app: vanillastack-sso
+  namespace: {{keycloak.namespace}}
+spec:
+  realmSelector:
+    matchLabels:
+      app: vanillastack-sso
+  client:
+    clientId: "{{stratos.coreDomain}}"
+    name: "{{stratos.coreDomain}}"
+    directAccessGrantsEnabled: true
+    secret: "{{ stratos_client_secret }}"
+    clientAuthenticatorType: client-secret
+    protocol: openid-connect
+    enabled: true
+    baseUrl: "/login/generic_oauth"
+    rootUrl: "https://{{stratos.coreDomain}}"
+    redirectUris:
+      - 'https://{{stratos.coreDomain}}/*'
+      - 'https://uaa.{{ clusterTLDomain }}/*'
+    standardFlowEnabled: true
+    fullScopeAllowed: false
+    protocolMappers:
+      - config:
+          full.path: "false"
+          id.token.claim: "true"
+          access.token.claim: "true"
+          claim.name: "groups"
+          userinfo.token.claim: "true"
+        consentRequired: false
+        consentText: "Groups Mapper"
+        id: stratos-client-groupmapper
+        name: "Groups Mapper"
+        protocol: openid-connect
+        protocolMapper: "oidc-group-membership-mapper"
