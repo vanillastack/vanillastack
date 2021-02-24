@@ -168,5 +168,3 @@
     name: credential-admin-keycloak
   register: usercred
     
-- debug: 
-    msg: "admin password for grafana:  {{ usercred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
