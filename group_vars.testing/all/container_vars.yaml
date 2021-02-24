@@ -19,7 +19,7 @@ reset_environment: false
 nextcloud_instancename: "nextcloud"
 vanillaservices:
   dashboard_enabled: true
-  cloudfoundry_enabled: true
+  cloudfoundry_enabled: false
   nextcloud_enabled: true    
   stratos_enabled: true
   guacamole_enabled: true

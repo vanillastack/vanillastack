@@ -1,0 +1,7 @@
+---
+- name: install stratos
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: install-stratos
+      when: vanillaservices.stratos_enabled

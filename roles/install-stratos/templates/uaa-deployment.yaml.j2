@@ -1,0 +1,224 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uaa
+  namespace: {{stratos.namespace}}
+  labels:
+    app.kubernetes.io/name: uaa
+    app.kubernetes.io/instance: uaa-standalone
+    app.kubernetes.io/version: 74.12.0
+    app.kubernetes.io/component: authorization_server
+    app.kubernetes.io/part-of: uaa
+    app.kubernetes.io/managed-by: kubectl
+spec:
+  selector:
+    matchLabels:
+      app: uaa-deployment
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9102"
+        prometheus.io/path: /metrics
+      labels:
+        app: uaa-deployment
+        app.kubernetes.io/name: uaa
+        app.kubernetes.io/instance: uaa-standalone
+        app.kubernetes.io/version: 74.12.0
+        app.kubernetes.io/component: authorization_server
+        app.kubernetes.io/part-of: uaa
+        app.kubernetes.io/managed-by: kubectl
+      namespace: stratos
+    spec:
+      serviceAccountName: uaa
+      initContainers:
+      - name: build-uaa-truststore
+        image: cloudfoundry/uaa@sha256:7fd48f08134e279a4fe2b8a200ecfdca8cda847175df38f1293e9818d7dd53cc
+        command:
+        - sh
+        - -c
+        - |
+          find_keytool_or_fail_fast() {
+            local has_keytool
+            ls "${JAVA_HOME}"/bin/keytool
+            has_keytool=$?
+
+            if [ ${has_keytool} -ne 0 ]; then
+              exit ${has_keytool}
+            fi
+          }
+
+          import_cert() {
+            local pemfile="${1}"
+            local alias="${2}"
+
+            echo "Adding ${pemfile} to truststore"
+
+            # Have to use cat instead of -file
+            # because keytool won't understand all of the filenames!
+            cat "${pemfile}" | "${JAVA_HOME}"/bin/keytool \
+              -noprompt \
+              -import \
+              -trustcacerts \
+              -alias "${alias}" \
+              -keystore "${TRUSTSTORE_FILE}" \
+              -storepass "${TRUSTSTORE_PASSWORD}"
+          }
+
+          get_alias() {
+            local pemfile="${1}"
+            basename "${pemfile}" .pem
+          }
+
+          add_ca_certs() {
+            local has_ca_certs
+            ls ${SECRETS_DIR}/ca_certs/*.pem
+            has_ca_certs=$?
+
+            if [ ${has_ca_certs} -eq 0 ]; then
+              for cert in ${SECRETS_DIR}/ca_certs/*.pem; do
+                import_cert "${cert}" "$(get_alias $cert)"
+              done
+            fi
+          }
+
+          add_system_certs() {
+            for cert in $OS_CERTS_DIR/*.pem; do
+              import_cert "${cert}" "$(get_alias $cert)"
+            done
+          }
+
+          main() {
+            find_keytool_or_fail_fast
+            add_ca_certs
+            add_system_certs
+          }
+
+          main
+        env:
+        - name: SECRETS_DIR
+          value: /etc/secrets
+        - name: TRUSTSTORE_FILE
+          value: /etc/truststore/uaa.pkcs12.truststore
+        - name: TRUSTSTORE_PASSWORD
+          value: changeit
+        - name: JAVA_HOME
+          value: /layers/paketo-buildpacks_bellsoft-liberica/jre
+        - name: OS_CERTS_DIR
+          value: /etc/ssl/certs
+        volumeMounts:
+        - name: ca-certs-files
+          mountPath: /etc/secrets/ca_certs
+          readOnly: true
+        - name: truststore-file
+          mountPath: /etc/truststore
+      containers:
+      - name: uaa
+        image: cloudfoundry/uaa@sha256:7fd48f08134e279a4fe2b8a200ecfdca8cda847175df38f1293e9818d7dd53cc
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 50m
+          limits:
+            memory: 2000Mi
+            cpu: 500m
+        ports:
+        - name: http-uaa
+          containerPort: 8080
+          protocol: TCP
+        env:
+        - name: BPL_TOMCAT_ACCESS_LOGGING
+          value: "y"
+        - name: JAVA_OPTS
+          value: -Dspring_profiles=hsqldb -Djava.security.egd=file:/dev/./urandom -Dlogging.config=/etc/config/log4j2.properties -Dlog4j.configurationFile=/etc/config/log4j2.properties -DCLOUDFOUNDRY_CONFIG_PATH=/etc/config -DSECRETS_DIR=/etc/secrets -Djavax.net.ssl.trustStore=/etc/truststore/uaa.pkcs12.truststore -Djavax.net.ssl.trustStoreType=PKCS12 -Djavax.net.ssl.trustStorePassword=changeit -Dstatsd.enabled=true -Dservlet.session-store=database
+        volumeMounts:
+        - name: uaa-config
+          mountPath: /etc/config
+        - name: smtp-credentials-file
+          mountPath: /etc/secrets/smtp_credentials.yml
+          subPath: smtp_credentials.yml
+          readOnly: true
+        - name: database-credentials-file
+          mountPath: /etc/secrets/database_credentials.yml
+          subPath: database_credentials.yml
+          readOnly: true
+        - name: admin-client-credentials-file
+          mountPath: /etc/secrets/admin_client_credentials.yml
+          subPath: admin_client_credentials.yml
+          readOnly: true
+        - name: jwt-policy-signing-keys-file
+          mountPath: /etc/secrets/jwt_policy_signing_keys.yml
+          subPath: jwt_policy_signing_keys.yml
+          readOnly: true
+        - name: truststore-file
+          mountPath: /etc/truststore
+          readOnly: true
+        - name: saml-keys-file
+          mountPath: /etc/secrets/saml_keys.yml
+          subPath: saml_keys.yml
+          readOnly: true
+        - name: encryption-keys-file
+          mountPath: /etc/secrets/encryption_keys.yml
+          subPath: encryption_keys.yml
+          readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http-uaa
+          failureThreshold: 25
+          initialDelaySeconds: 60
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http-uaa
+      - name: statsd-exporter
+        image: cloudfoundry/statsd_exporter:v0.15.0@sha256:10a64dc4ad0a3e3fe88372f0481dea5c02595c38d168617836a99a649d3ac407
+        imagePullPolicy: Always
+        args:
+        - --statsd.listen-udp=:8125
+        ports:
+        - name: metrics-uaa
+          containerPort: 9102
+          protocol: TCP
+        resources:
+          requests:
+            memory: 10Mi
+            cpu: 10m
+          limits:
+            memory: 100Mi
+            cpu: 100m
+      volumes:
+      - name: uaa-config
+        configMap:
+          name: uaa-config
+      - name: smtp-credentials-file
+        secret:
+          optional: true
+          secretName: uaa-smtp-credentials
+      - name: database-credentials-file
+        secret:
+          optional: true
+          secretName: uaa-database-credentials
+      - name: admin-client-credentials-file
+        secret:
+          secretName: uaa-admin-client-credentials
+      - name: jwt-policy-signing-keys-file
+        secret:
+          secretName: uaa-jwt-policy-signing-keys
+      - name: ca-certs-files
+        secret:
+          optional: true
+          secretName: uaa-ca-certs
+      - name: truststore-file
+        emptyDir: {}
+      - name: saml-keys-file
+        secret:
+          optional: false
+          secretName: uaa-saml-keys
+      - name: encryption-keys-file
+        secret:
+          optional: false
+          secretName: encryption-keys
+
