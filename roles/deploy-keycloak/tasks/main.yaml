@@ -156,22 +156,22 @@
       set_fact:
         admin_vanilla_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
-    - name: store admin password in cluster
-      k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Secret
-          type: Opaque
-          metadata:
-            labels:
-              app: keycloak
-              keycloak: vanillastack-keycloak
-            name: credential-admin-keycloak
-            namespace: "{{ keycloak.namespace }}"
-          data:
-            ADMIN_PASSWORD: "{{ admin_vanilla_pass | b64encode}}"
-            ADMIN_USERNAME: "{{ 'admin' | b64encode}}"
+#    - name: store admin password in cluster
+#      k8s:
+#        state: present
+#        definition:
+#          apiVersion: v1
+#          kind: Secret
+#          type: Opaque
+#          metadata:
+#            labels:
+#              app: keycloak
+#              keycloak: vanillastack-keycloak
+#            name: credential-admin-keycloak
+#            namespace: "{{ keycloak.namespace }}"
+#          data:
+#            ADMIN_PASSWORD: "{{ admin_vanilla_pass | b64encode}}"
+#            ADMIN_USERNAME: "{{ 'admin' | b64encode}}"
 
     - name: set vanilla admin user password
       uri:
@@ -209,4 +209,16 @@
         body_format: json
         status_code: 204
         body: '{"groups":["admin"]}'
+
+    - name: set vanilla admin user password
+      uri:
+        url: "https://keycloak.{{ clusterTLDomain }}/auth/admin/realms/{{ clusterTLDomain }}/users/{{ userids.json | json_query(\"[?username=='admin'].id\") | first }}/reset-password"
+        validate_certs: false
+        headers:
+          Authorization: "bearer {{ bearertoken.json.access_token }}"
+          Content-Type: application/json
+        method: PUT
+        body_format: json
+        status_code: 204
+        body: '{"type":"password","value":"changeme","temporary":true}'
   when: admincred.resources|length<1
