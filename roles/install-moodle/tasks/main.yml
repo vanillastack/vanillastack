@@ -17,6 +17,7 @@
     chart_ref: bitnami/mariadb
     release_namespace: "{{ moodle.namespace }}"
     values: "{{ lookup('template', 'mariadb_values.yml.j2') | from_yaml }}"
+    chart_version: "{{ moodle.version }}"
 
 - name: register mariadb application password
   shell: kubectl get secret -n moodle -o json mariadb-moodle|jq -r '.data["mariadb-password"]'

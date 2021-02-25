@@ -7,3 +7,4 @@
     create_namespace: true
     wait: true
     values: "{{ lookup('template', 'ingress-nginx.yaml.j2') | from_yaml }}"
+    chart_version: "{{ ingress.chartVersion }}"

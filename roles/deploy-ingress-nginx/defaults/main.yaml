@@ -1,2 +1,3 @@
 ingress:
   config: {}
+  chartVersion: 3.7.1
