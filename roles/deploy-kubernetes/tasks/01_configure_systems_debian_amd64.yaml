@@ -36,7 +36,7 @@
     - "deb {{repositories.package_repository}} {{staging_tag}}-pip3 main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-ansible main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-debian-buster-main main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-1.19 main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-{{kubernetes.crioVersion}} main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main"

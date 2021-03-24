@@ -560,7 +560,7 @@ global:
 
   ipam:
     operator:
-      clusterPoolIPv4PodCIDR: "{{ kubernetes.pod_cidr }}"
+      clusterPoolIPv4PodCIDR: "{{ cluster_pod_cidr }}"
       clusterPoolIPv4MaskSize: 24
       clusterPoolIPv6PodCIDR: "fd00::/104"
       clusterPoolIPv6MaskSize: 120
