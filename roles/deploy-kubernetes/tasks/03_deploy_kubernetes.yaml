@@ -27,7 +27,7 @@
 - name: Init Cluster
   become: true
   command: > 
-    kubeadm init --service-cidr {{ kubernetes.service_cidr }} \
+    kubeadm init --service-cidr {{ cluster_service_cidr }} \
                  --token {{ token }} --node-name {{ inventory_hostname_short }} \
                  {% if make_ha %}
                  --control-plane-endpoint api.{{ clusterTLDomain }}:6443 \
