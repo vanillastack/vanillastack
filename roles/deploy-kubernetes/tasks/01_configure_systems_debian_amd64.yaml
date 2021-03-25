@@ -250,3 +250,9 @@
     limit_item: nofile
     value: 1048576
     domain: '*'
+
+- name: set hosts if kubeapi is not dns resolvable
+  lineinfile:
+    path: /etc/hosts
+    state: present
+    line: "{{ loadbalancerIP }}   api.{{ clusterTLDomain }}"
