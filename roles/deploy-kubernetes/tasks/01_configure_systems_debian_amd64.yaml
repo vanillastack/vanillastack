@@ -110,6 +110,19 @@
   set_fact:
     versions: "{{ apt_output.stdout }}"
 
+- name: workaround to get correct libcompversion
+  block:
+    - name: add backportsrepository
+      lineinfile:
+        path: /etc/apt/sources.list
+        regexp: '^(.*)buster-backports(.*)$'
+        line: 'deb http://deb.debian.org/debian buster-backports main'
+        create: true
+    - apt:
+        update_cache: yes
+    - name: install libseccomp
+      command: apt-get -y -t buster-backports install libseccomp2
+
 - name: Install packages
   apt:
     pkg:
@@ -117,6 +130,7 @@
       - "kubeadm={{ versions }}"
       - "kubectl={{ versions }}"
       - "cri-o"
+      - "cri-o-runc"
       - libgtk2.0-0
     update_cache: yes
   register: result
@@ -131,6 +145,7 @@
     - "kubeadm"
     - "kubectl"
     - "cri-o"
+    - "cri-o-runc"
 
 - name: configure crio
   lineinfile:
@@ -139,19 +154,11 @@
     line: 'conmon = "/usr/bin/conmon"'
     backrefs: yes
 
-## Bug needs to be tracked
-- name: remove seccomp from crio
-  lineinfile:
-    path: /etc/crio/crio.conf
-    regexp: '^(.*)seccomp_profile =(.*)$'
-    line: 'seccomp_profile = ""'
-    backrefs: yes
-
 - name: fix runc runtime path in crio config
   lineinfile:
     path: /etc/crio/crio.conf
-    regexp: '^  runtime_path =(.*)$'
-    line: '  runtime_path = "/usr/sbin/runc"'
+    regexp: '^runtime_path =(.*)$'
+    line: 'runtime_path = "/usr/lib/cri-o-runc/sbin/runc"'
     backrefs: yes
 
 - name: configure kubelet
@@ -183,7 +190,7 @@
     path: /etc/crio/crio.conf
     state: present
     regexp: '^seccomp_profile =.*'
-    line: 'seccomp_profile = ""'
+    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 
 - name: Set CRI-O global auth
   lineinfile:
