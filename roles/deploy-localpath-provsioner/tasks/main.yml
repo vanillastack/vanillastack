@@ -1,0 +1,26 @@
+---
+- name: Create namespace
+  community.kubernetes.k8s:
+    name: local-path-storage
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Create service account
+  community.kubernetes.k8s:
+    name: local-path-provisioner-service-account
+    api_version: v1
+    kind: ServiceAccount
+    state: present
+    namespace: local-path-storage
+
+- name: Deploy storageprovder
+  community.kubernetes.k8s:
+    state: present
+    definition: "{{ lookup('template', item ~ '.yaml.j2') | from_yaml }}"
+  loop:
+    - clusterrole
+    - clusterrolebinding
+    - configmap
+    - deployment
+    - storageclass

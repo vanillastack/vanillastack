@@ -153,6 +153,14 @@
     - role: deploy-rook
       when: vanillastorageprovider == "rook"
 
+- name: Deploy localprovisioner
+  hosts: master[0]
+  become: false
+  gather_facts: false
+  roles:
+    - role: deploy-localpath-provsioner
+      when: localprovisioner.enabled
+
 - name: Deploy Cert Manager
   hosts: master[0]
   become: false
