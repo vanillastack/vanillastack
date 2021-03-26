@@ -8,6 +8,7 @@
     release_namespace: kube-system
     create_namespace: true
     values: "{{ lookup('template', 'dashboard-values.yaml') | from_yaml }}"
+    chart_version: "{{ kubernetes.dashboard.version }}"
     wait: true
 
 - name: create rolebinding for dashboard

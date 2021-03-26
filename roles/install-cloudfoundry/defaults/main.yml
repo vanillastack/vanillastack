@@ -1,7 +1,10 @@
 ---
 # defaults file for install_cloudfoundry
 cloudfoundry:
+  version: 2.4.0
   enabled: false
   storageclass: rook-ceph-block
   coreDomain: "cf.{{ clusterTLDomain }}"
+  operator:
+    version: 5.2.0+0.g22cafc90
 

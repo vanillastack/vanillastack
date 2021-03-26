@@ -50,6 +50,7 @@
   community.kubernetes.helm:
     name: guacamole
     chart_ref: vanillastack/guacamole
+    chart_version: "{{ guacamole.version }}"
     release_namespace: guacamole
     create_namespace: true
     wait: true
