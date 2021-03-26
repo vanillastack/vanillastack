@@ -9,7 +9,7 @@ cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 cluster_pod_cidr: "10.0.0.0/8"
 cluster_service_cidr: "10.96.0.0/12"
 cluster_sdn: cilium # cilium | calico
-staging_tag: "testing" 
+staging_tag: "20210326" 
 # possible issuer: "letsencrypt-staging", "letsencrypt-prod" or "certmanager-selfsigned"
 LE_issuer_name: "letsencrypt-staging"
 LE_issuer_mail: "testing@test.vanillastack.cloudical.net"
@@ -17,6 +17,10 @@ loadbalancerIP: 135.181.48.19
 clusterTLDomain: test.vanillastack.cloudical.net
 reset_environment: false
 nextcloud_instancename: "nextcloud"
+localprovisioner:
+  enabled: true
+  name: local-path
+  localPath: /srv/
 vanillaservices:
   dashboard_enabled: true
   cloudfoundry_enabled: false
