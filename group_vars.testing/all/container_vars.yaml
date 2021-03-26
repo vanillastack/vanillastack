@@ -18,7 +18,7 @@ clusterTLDomain: test.vanillastack.cloudical.net
 reset_environment: false
 nextcloud_instancename: "nextcloud"
 localprovisioner:
-  enabled: true
+  enabled: false
   name: local-path
   localPath: /srv/
 vanillaservices:
