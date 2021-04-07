@@ -1,5 +1,6 @@
 affinity: {}
 annotations: {}
+fullnameOverride: 'kubernetes-dashboard'
 containerSecurityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
@@ -14,7 +15,7 @@ image:
 {% else %}
   repository: kubernetesui/dashboard
 {% endif %}
-  tag: v2.0.3
+  tag: v2.2.0
 ingress:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
@@ -45,8 +46,12 @@ metricsScraper:
     runAsUser: 1001
   enabled: false
   image:
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/metrics-scraper
+{% else %}
     repository: kubernetesui/metrics-scraper
-    tag: v1.0.4
+{% endif %}
+    tag: v1.0.6
   resources: {}
 networkPolicy:
   enabled: false
@@ -58,7 +63,7 @@ podDisruptionBudget:
   maxUnavailable: null
   minAvailable: null
 podLabels: {}
-protocolHttp: false
+protocolHttp: true
 rbac:
   clusterReadOnlyRole: false
   clusterRoleMetrics: true
