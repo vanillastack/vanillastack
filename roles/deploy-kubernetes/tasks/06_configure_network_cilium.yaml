@@ -24,7 +24,7 @@
     - name: deploy cilium chart
       community.kubernetes.helm:
         name: cilium
-        chart_version: 1.8.5
+        chart_version: 1.9.5
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
         values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
@@ -40,7 +40,7 @@
     - name: deploy cilium
       community.kubernetes.helm:
         name: cilium
-        chart_version: 1.8.5
+        chart_version: 1.9.5
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
         values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
