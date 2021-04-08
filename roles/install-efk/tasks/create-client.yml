@@ -167,13 +167,6 @@
 - name: restart grafana to get latest configmap
   command: kubectl delete po -n monitoring -l app=kibana
 
-- name: get admin password
-  k8s_info:
-    kind: Secret
-    namespace: "{{ keycloak.namespace }}"
-    name: credential-admin-keycloak
-  register: usercred
-
 - name: patch kibanadeployment
   command: >
     kubectl patch deploy -n kube-logging kibana --patch '{"spec": {"template": {"spec": {"containers": [{"name": "kibana","ports": null}]}}}}'
@@ -184,8 +177,3 @@
 - name: apply kibana patch
   command: >
     kubectl patch deploy -n kube-logging kibana --patch "{{ lookup('template', 'kibana-patch.yml.j2') }}"
-
-
-- debug: 
-    msg: "admin password for kibana:  {{ usercred.resources[0].data.ADMIN_PASSWORD | b64decode }}"
-

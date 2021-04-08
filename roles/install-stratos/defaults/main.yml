@@ -1,6 +1,11 @@
 ---
 # defaults file for install-stratos
 stratos:
-  enabled: false
+  version: 4.4.0
+  tag:  4.4.0-bc65c315c
+  namespace: stratos
   adminpassword: 4JOA4l8DK7Sr
   coreDomain: "stratos.{{ clusterTLDomain }}"
+  uaa:
+    encryptionKey: xry5RPkqPABkdoW22mcLLpvsY
+    adminKey: K0Wk7VVyKQBMvEyihFZ2Zt9E5

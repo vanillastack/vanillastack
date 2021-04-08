@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uaaclient
+  namespace: {{stratos.namespace}}
+  labels:
+    app: uaaclient
+spec:
+  selector:
+    matchLabels:
+      app: uaaclient
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: uaaclient
+      namespace: {{stratos.namespace}}
+    spec:
+      containers:
+      - name: uaaclient
+        image: harbor.vanillastack.io/vanillastack/uaaclient:v1.9
+        command:
+          - /bin/sleep
+          - infinity
