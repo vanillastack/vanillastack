@@ -5,6 +5,7 @@
   tasks:
   - command: ansible-galaxy collection install community.kubernetes
   - command: ansible-galaxy collection install community.general
+  - command: pwd
   - name: install pip dependencies
     pip:
-      requirements: "{{ project_path }}/requirements.txt"
+      requirements: "{{ lookup('env', 'PWD') }}/requirements.txt"
