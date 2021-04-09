@@ -240,7 +240,6 @@ grafana:
   enabled: true
   admin_user: admin
   admin_password: grafanapassword
-  replicas: 1
   ingress:
     enabled: true
     dns: "grafana.{{ clusterTLDomain }}"

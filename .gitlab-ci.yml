@@ -29,6 +29,7 @@ run_playbook_centos8:
     - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
     - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/container_vars.yaml
     - if [ "$COMMUNITY" == true ]; then yq -Yi .commercial.enabled='false' group_vars/all/container_vars.yaml; fi
+    - ls -lisa
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_prepare_installnode.yaml
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
