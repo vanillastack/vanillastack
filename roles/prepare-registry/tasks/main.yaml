@@ -22,8 +22,14 @@
     repo_url: https://{{ repositories.registry_commercial }}/chartrepo/vanillastack
     repo_username: "robot${{commercial.username}}"
     repo_password: "{{commercial.key}}"
+    binary_path: /usr/local/bin/helm
   when: commercial.enabled
   ignore_errors: yes
+  
 
 - name: update repo
   command: "helm repo update"
+  environment:
+    PATH: '/usr/local/bin'
+
+
