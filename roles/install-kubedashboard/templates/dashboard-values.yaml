@@ -63,7 +63,7 @@ podDisruptionBudget:
   maxUnavailable: null
   minAvailable: null
 podLabels: {}
-protocolHttp: true
+protocolHttp: false
 rbac:
   clusterReadOnlyRole: false
   clusterRoleMetrics: true
