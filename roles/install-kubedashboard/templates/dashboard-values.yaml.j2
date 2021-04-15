@@ -65,7 +65,7 @@ podDisruptionBudget:
 podLabels: {}
 protocolHttp: false
 rbac:
-  clusterReadOnlyRole: true
+  clusterReadOnlyRole: false
   clusterRoleMetrics: true
   create: true
 replicaCount: 1
@@ -88,5 +88,3 @@ serviceAccount:
   create: true
   name: null
 tolerations: []
-
-
