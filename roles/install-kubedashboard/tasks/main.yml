@@ -5,32 +5,14 @@
   community.kubernetes.helm:
     chart_ref: vanillastack/kubernetes-dashboard
     name: kubernetes-dashboard
-    release_namespace: kube-system
+    release_namespace: kube-dashboard
     create_namespace: true
-    values: "{{ lookup('template', 'dashboard-values.yaml') | from_yaml }}"
+    values: "{{ lookup('template', 'dashboard-values.yaml.j2') | from_yaml }}"
     wait: true
 
-- name: create rolebinding for dashboard
-  k8s:
-    state: present
-    definition:
-      apiVersion: rbac.authorization.k8s.io/v1
-      kind: ClusterRoleBinding
-      metadata:
-        name: dashboard-admin-sa
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: ClusterRole
-        name: cluster-admin
-      subjects:
-      - kind: ServiceAccount
-        name: kubernetes-dashboard
-        namespace: kube-system
-
 - name: Print accesstoken
-  shell: "kubectl get secrets -n kube-system $(kubectl get secrets -n kube-system | awk '/kubernetes-dashboard-token/ {print $1;exit}') -o jsonpath='{.data.token}'"
+  shell: "kubectl get secrets -n kube-dashboard $(kubectl get secrets -n kube-dashboard | awk '/kubernetes-dashboard-token/ {print $1;exit}') -o jsonpath='{.data.token}'"
   register: dashboardtoken
-
 
 - debug:
     msg: "{{ dashboardtoken.stdout | b64decode }}"
