@@ -56,7 +56,7 @@ hubble-relay:
     name: hubble-relay
 {% endif %}
   #   # tag is the container image tag to use
-    tag: v1.8.3
+    tag: "{{ kubernetes.cilium.version }}"
   #   # pullPolicy is the container image pull policy
   #   pullPolicy: IfNotPresent
   #
@@ -99,7 +99,7 @@ global:
 {% endif %}
 
   # tag is the container image tag to use
-  tag: {{kubernetes.cilium.version}}
+  tag: {{ kubernetes.cilium.version }}
 
   # pullPolicy is the container image pull policy
   pullPolicy: IfNotPresent

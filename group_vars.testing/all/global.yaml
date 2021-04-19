@@ -17,7 +17,7 @@ kubernetes:
   kubeadm_opts: ""
   kubeadmin_config: /etc/kubernetes/admin.conf
   cilium:
-    version: v1.8.8
+    version: v1.9.5
 cloudfoundry:
   version: 2.7.12
   storageclass: rook-ceph-block

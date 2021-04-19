@@ -53,7 +53,7 @@ clustermesh:
 {% else %}
       repository: quay.io/cilium/clustermesh-apiserver
 {% endif %}
-      tag: v1.9.5
+      tag:  {{ kubernetes.cilium.version }}
       useDigest: false
     nodeSelector: {}
     podAnnotations: {}
@@ -197,7 +197,7 @@ hubble:
 {% else %}
       repository: quay.io/cilium/hubble-relay
 {% endif %}
-      tag: v1.9.5
+      tag: {{ kubernetes.cilium.version }}
       useDigest: false
     listenHost: ""
     listenPort: "4245"
@@ -292,7 +292,7 @@ image:
 {% else %}
   repository: quay.io/cilium/cilium
 {% endif %}
-  tag: v1.9.5
+  tag: {{ kubernetes.cilium.version }}
   useDigest: false
 imagePullSecrets: null
 installIptablesRules: true
@@ -388,7 +388,7 @@ operator:
     repository: quay.io/cilium/operator
 {% endif %}
     suffix: ""
-    tag: v1.9.5
+    tag: {{ kubernetes.cilium.version }}
     useDigest: false
   nodeSelector: {}
   podAnnotations: {}
@@ -432,7 +432,7 @@ preflight:
     digest: sha256:6c829237d4e00080b48e08d453bd87e816a16d7867236446bd9df407ecda0a38
     pullPolicy: IfNotPresent
     repository: quay.io/cilium/cilium
-    tag: v1.9.5
+    tag: {{ kubernetes.cilium.version }}
     useDigest: false
   nodeSelector: {}
   podAnnotations: {}
