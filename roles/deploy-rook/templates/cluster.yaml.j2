@@ -23,9 +23,9 @@ spec:
     # If you want to be more precise, you can always use a timestamp tag such ceph/ceph:v15.2.4-20200630
     # This tag might not contain a new Ceph version, just security fixes from the underlying operating system, which will reduce vulnerabilities
 {% if commercial.enabled %}
-    image: {{repositories.registry_commercial}}/vanillastack/ceph:v15.2.5-20200916
+    image: {{repositories.registry_commercial}}/vanillastack/ceph:v15.2.10-20210318
 {% else %}
-    image: ceph/ceph:v15.2.5-20200916
+    image: ceph/ceph:v15.2.10-20210318
 {% endif %}
     # Whether to allow unsupported versions of Ceph. Currently `nautilus` and `octopus` are supported.
     # Future versions such as `pacific` would require this to be set to `true`.
@@ -156,19 +156,36 @@ spec:
 #   mgr:
   resources:
 # The requests and limits set here, allow the mgr pod to use half of one CPU core and 1 gigabyte of memory
-#    mgr:
+    mgr:
+      limits:
+        memory: "1024Mi"
+      requests:
+        memory: "512Mi"
+    mon:
+      limits:
+        memory: "2048Mi"
+      requests:
+        memory: "1024Mi"
+    osd:
+      limits:
+        memory: "4096Mi"
+      requests:
+        memory: "2048Mi"
+    prepareosd:
+      limits:
+        memory: "4096Mi"
+      requests:
+        memory: "512Mi"
+    crashcollector:
+      limits:
+        memory: "128Mi"
+      requests:
+        memory: "64Mi"
+#    cleanup:
 #      limits:
-#        cpu: "500m"
 #        memory: "1024Mi"
 #      requests:
-#        cpu: "500m"
 #        memory: "1024Mi"
-# The above example requests/limits can also be added to the mon and osd components
-#    mon:
-#    osd:
-#    prepareosd:
-#    crashcollector:
-#    cleanup:
   # The option to automatically remove OSDs that are out and are safe to destroy.
   removeOSDsIfOutAndSafeToRemove: false
 #  priorityClassNames:

@@ -6,8 +6,8 @@ controller:
 {% else %}
     repository: k8s.gcr.io/ingress-nginx/controller
 {% endif %}
-    tag: "v0.40.2"
-    digest: sha256:46ba23c3fbaafd9e5bd01ea85b2f921d9f2217be082580edc22e6c704a83f02f
+    tag: "v0.44.0"
+    digest: sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a
     pullPolicy: IfNotPresent
     # www-data -> uid 101
     runAsUser: 101
@@ -61,7 +61,7 @@ controller:
 {% else %}
         repository: docker.io/jettech/kube-webhook-certgen
 {% endif %}
-        tag: v1.3.0
+        tag: v1.5.1
         pullPolicy: IfNotPresent
       ## Provide a priority class name to the webhook patching job
       ##

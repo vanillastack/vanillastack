@@ -12,10 +12,3 @@
   loop: "{{ groups.install_nodes }}"
   when: item in groups.storage
   ignore_errors: true
-
-- name: label compute node
-  command: kubectl label nodes "{{ item }}" openstack-compute-node=enabled
-  loop: "{{ groups.install_nodes }}"
-  when: item in groups.compute
-  ignore_errors: true
-

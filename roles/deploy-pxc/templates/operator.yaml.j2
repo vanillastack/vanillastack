@@ -10,12 +10,12 @@ image:
 {% else %}
   repository: percona/percona-xtradb-cluster-operator
 {% endif %}
-  tag: 1.6.0
+  tag: 1.7.0
   pullPolicy: IfNotPresent
 
 # set if you want to specify a namespace to watch
 # defaults to `.Release.namespace` if left blank
-# watchNamespace:
+watchNamespace: ""
 
 # set if you want to use a different operator name
 # defaults to `percona-xtradb-cluster-operator`

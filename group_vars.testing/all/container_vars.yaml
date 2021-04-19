@@ -17,6 +17,10 @@ loadbalancerIP: 135.181.48.19
 clusterTLDomain: test.vanillastack.cloudical.net
 reset_environment: false
 nextcloud_instancename: "nextcloud"
+localprovisioner:
+  enabled: false
+  name: local-path
+  localPath: /srv/
 vanillaservices:
   dashboard_enabled: true
   cloudfoundry_enabled: false
