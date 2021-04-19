@@ -82,10 +82,10 @@ kubeEtcd:
     insecureSkipVerify: false
     serverName: localhost
     # TODO This requires the following command to be run on the first master:
-    # kubectl -n monitoring create secret generic etcd-client-cert --from-file=/etc/kubernetes/pki/etcd/ca.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.key
-    caFile: /etc/prometheus/secrets/etcd-client-cert/ca.crt
-    certFile: /etc/prometheus/secrets/etcd-client-cert/healthcheck-client.crt
-    keyFile: /etc/prometheus/secrets/etcd-client-cert/healthcheck-client.key
+    # kubectl -n monitoring create secret generic etcd-certs --from-file=/etc/kubernetes/pki/etcd/ca.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.key
+    caFile: /etc/prometheus/secrets/etcd-certs/ca.crt
+    certFile: /etc/prometheus/secrets/etcd-certs/healthcheck-client.crt
+    keyFile: /etc/prometheus/secrets/etcd-certs/healthcheck-client.key
 
 kubeScheduler:
   enabled: {{ monitoring.kubeScheduler.enabled }}
@@ -194,7 +194,7 @@ prometheus:
         cpu: {{ monitoring.resources.requests.cpu }}
         memory: {{ monitoring.resources.requests.memory }}
     secrets:
-      - 'etcd-client-cert'
+      - 'etcd-certs'
     storageSpec:
       volumeClaimTemplate:
         spec:
