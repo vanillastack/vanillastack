@@ -312,6 +312,8 @@ ipv6:
 ipvlan:
   enabled: false
 k8s: {}
+k8sServiceHost: api.{{ clusterTLDomain }}
+k8sServicePort: 6443
 keepDeprecatedLabels: false
 keepDeprecatedProbes: false
 kubeProxyReplacement: strict
