@@ -1,0 +1,9 @@
+---
+- name: Deploy Percona Cluster Operator
+  community.kubernetes.helm:
+    name: pxc-operator
+    chart_ref: "vanillastack/{{perconaOperator.chartName}}"
+    release_namespace: "{{perconaOperator.namespace}}"
+    chart_version: "{{perconaOperator.chartVersion}}"
+    create_namespace: yes
+    values: "{{ lookup('template', 'operator.yaml.j2') | from_yaml }}"

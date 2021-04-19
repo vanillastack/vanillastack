@@ -10,16 +10,14 @@ kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
   clusterName: kube
-  version: "1.19"
-  crioVersion: "1.19"
-  helm_version: "v3.3.1"
-  pod_cidr: "172.16.0.0/12"
-  service_cidr: "172.31.0.0/16"
+  version: "1.20"
+  crioVersion: "1.20"
+  helm_version: "v3.5.3"
   init_opts: ""
   kubeadm_opts: ""
   kubeadmin_config: /etc/kubernetes/admin.conf
   cilium:
-    version: v1.8.6
+    version: v1.9.5
 cloudfoundry:
   version: 2.7.12
   storageclass: rook-ceph-block

@@ -27,7 +27,7 @@
 - name: Init Cluster
   become: true
   command: > 
-    kubeadm init --service-cidr {{ kubernetes.service_cidr }} \
+    kubeadm init --service-cidr {{ cluster_service_cidr }} \
                  --token {{ token }} --node-name {{ inventory_hostname_short }} \
                  {% if make_ha %}
                  --control-plane-endpoint api.{{ clusterTLDomain }}:6443 \
@@ -78,7 +78,7 @@
     configuration: "{{ hostvars[inventory_hostname] }}"
 
 - name: save vars to kubeconfig
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition:
       apiVersion: v1
@@ -89,5 +89,4 @@
       data:
         clusterConfig: |
           "{{ configuration | to_json }}"
-
 

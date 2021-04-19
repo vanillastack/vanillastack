@@ -5,3 +5,8 @@
   gather_facts: no
   roles:
     - role: deploy-pxc
+      action: namespacewide
+      when: perconaOperator.mode is "perNamespace"
+    - role: deploy-pxc
+      action: clusterwide
+      when: perconaOperator.mode is "perCluster"

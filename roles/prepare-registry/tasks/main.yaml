@@ -24,6 +24,9 @@
     repo_password: "{{commercial.key}}"
   when: commercial.enabled
   ignore_errors: yes
+  
 
 - name: update repo
   command: "helm repo update"
+
+

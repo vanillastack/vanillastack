@@ -1,0 +1,8 @@
+---
+- name: create folder for config
+  hosts: master[0]
+  gather_facts: false
+  become: false
+  roles:
+    - role: deploy-localpath-provsioner
+
