@@ -12,17 +12,20 @@
 - name: Install neccessary packages
   package:
     name:
+      - ansible
+      - curl
       - gnupg
       - git
-      - ansible
-      - vim
-      - lvm2
       - jq
-      - curl
+      - lvm2
+      - vim
       - python3-passlib
-      - tar
       - python3-pip
       - python3-kubernetes
+      - python3-openshift
+      - python3-pyyaml
+      - python3-wheel
+      - tar
   register: result
   until: result is not failed
   retries: 10
@@ -74,14 +77,7 @@
   - name: install pip modules
     pip:
       name:
-        - wheel
-      extra_args: --ignore-installed
-
-  - name: install pip modules
-    pip:
-      name:
         - pyhelm
-        - openshift
       extra_args: --ignore-installed
 
   - name: Add cf repo      
@@ -134,8 +130,6 @@
   - name: Install packages
     package:
       name:
-        - python3-pip
-        - python3-kubernetes
         - cf7-cli
         - "kubelet-{{ versions }}"
         - "kubeadm-{{ versions }}"
@@ -216,469 +210,294 @@
       line: '  runtime_path = "/usr/sbin/runc"'
       backrefs: yes
 #### REDHAT FAMILY END
-
-#### UBUNTU
-- name: configure Debian Systems
-  when: ansible_distribution == 'Ubuntu'
-  block:
-  - name: make sure, unattended upgrades is removed
-    package:
-      name: unattended-upgrades
-      state: absent
-      
-  - name: Add key from keyserver
-    apt_key:
-      keyserver: keyserver.ubuntu.com
-      id: "{{ item }}"
-    loop:
-      - 93C4A3FD7BB9C367
-      - 8BECF1637AD8C79D
-    retries: 3
-    delay: 1
-    register: result
-    until: result is success
-  
-  - name: Add key for cri-o repos
-    apt_key:
-      url: "{{ item }}"
-    loop:
-      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_10/Release.key"
-      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key"
-      - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-      - "https://baltocdn.com/helm/signing.asc"
-      - "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
-    retries: 3
-    delay: 1
-    register: result
-    until: result is success
-  
-  - name: Add repositories
-    apt_repository:
-      repo: "{{ item }}"
-      state: present
-    loop:
-      - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
-      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_10/ /"
-      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
-      - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-      - "deb https://baltocdn.com/helm/stable/debian/ all main"
-      - "deb https://packages.cloudfoundry.org/debian stable main"
-    retries: 3
-    delay: 1
-    register: result
-    until: result is success
-  
-  - name: install pip modules
-    pip:
-      name:
-        - pyhelm
-        - openshift
-      extra_args: --ignore-installed
-
-  - name: Install packages
-    apt:
-      pkg:
-        - ansible
-        - needrestart
-        - helm
-        - cf-cli
-        - vim
-        - python3-pip
-        - python3-kubernetes
-        - nfs-common
-      update_cache: yes
-    retries: 3
-    delay: 1
-    register: result
-    until: result is success
-
-  - name: Upgrade all packages to the latest version
-    apt:
-      name: "*"
-      state: latest
-    register: result
-    until: result is not failed
-    retries: 10
-    delay: 10
-
-  - name: get latest kube version
-    shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
-    register: apt_output
-  
-  - name: get kubeversion
-    set_fact:
-      versions: "{{ apt_output.stdout }}"
-  
-  - name: Install packages
-    apt:
-      pkg:
-        - "kubelet={{ versions }}"
-        - "kubeadm={{ versions }}"
-        - "kubectl={{ versions }}"
-        - "cri-o"
-        - libgtk2.0-0
-      update_cache: yes
-    register: result
-    until: result is not failed
-    retries: 10
-    delay: 10
-  
-  - name: mark packages as hold
-    dpkg_selections:
-      name: "{{ item }}"
-      selection: hold
-    with_items:
-      - "kubelet"
-      - "kubeadm"
-      - "kubectl"
-      - "cri-o"
-  
-  - name: configure crio
-    lineinfile:
-      path: /etc/crio/crio.conf
-      regexp: '^(.*)conmon =(.*)$'
-      line: 'conmon = "/usr/bin/conmon"'
-      backrefs: yes
-  
-  ## Bug needs to be tracked
-  - name: remove seccomp from crio
-    lineinfile:
-      path: /etc/crio/crio.conf
-      regexp: '^(.*)seccomp_profile =(.*)$'
-      line: 'seccomp_profile = ""'
-      backrefs: yes
-  
-  - name: fix runc runtime path in crio config
-    lineinfile:
-      path: /etc/crio/crio.conf
-      regexp: '^  runtime_path =(.*)$'
-      line: '  runtime_path = "/usr/sbin/runc"'
-      backrefs: yes
-  
-  - name: configure kubelet
-    lineinfile:
-      path: /etc/default/kubelet
-      regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
-      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
-      create: true
-
-  - name: Set CRI-O cgroups driver
-    lineinfile:
-      path: /etc/crio/crio.conf
-      state: present
-      regexp: '^cgroup_manager =.*'
-      line: 'cgroup_manager = "systemd"'
-  
-  - name: Set CRI-O default_ulimits
-    blockinfile:
-      path: /etc/crio/crio.conf
-      marker: "# {mark} ANSIBLE MANAGED BLOCK"
-      block: |
-        default_ulimits = [
-            "nofile=16384:24576",
-            "nproc=8192:8192"
-        ]
-  
-  - name: Set CRI-O seccomp profile path
-    lineinfile:
-      path: /etc/crio/crio.conf
-      state: present
-      regexp: '^seccomp_profile =.*'
-      line: 'seccomp_profile = ""'
-
-  - name: Set CRI-O global auth
-    lineinfile:
-      path: /etc/crio/crio.conf
-      state: present
-      regexp: '^global_auth_file =.*'
-      line: 'global_auth_file = "/etc/crio/auth.json"'
-    when: commercial.enabled
-
-  - name: remove preconfigures crio.conf from dpkg
-    file:
-      path: /etc/crio/crio.conf.d/01-crio-runc.conf
-      state: absent
-
-#### UBUNTU END
-
-#### DEBIAN FAMILY
-- name: configure Debian Systems
-  when: ansible_distribution == 'Debian'
-  block:
-  - name: make sure, unattended upgrades is removed
-    package:
-      name: unattended-upgrades
-      state: absent
-
-  - name: Remove old repositories
-    file:
-      path: "{{item}}"
-      state: absent
-    with_items:
-      - "/etc/apt/sources.list.d"
-      - /etc/apt/sources.list
-      
-  - name: Add key for cri-o repos
-    apt_key:
-      url: "{{ item }}"
-    loop:
-      - "{{repositories.package_repository}}/public-gpg-key"
-    retries: 3
-    delay: 1
-    register: result
-    until: result is success
-  
-  - name: Add repositories
-    apt_repository:
-      repo: "{{ item }}"
-      state: present
-    loop:
-      - "deb {{repositories.package_repository}} {{staging_tag}}-pip3 main"
-      - "deb {{repositories.package_repository}} {{staging_tag}}-ansible main"
-      - "deb {{repositories.package_repository}} {{staging_tag}}-debian-buster-main main"
-      - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-1.19 main"
-      - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-base main"
-      - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
-      - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
-      - "deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main"
-    retries: 3
-    delay: 1
-    register: result
-    until: result is success
-  
-  - name: Install packages
-    apt:
-      pkg:
-        - ansible
-        - needrestart
-        - helm
-        - cf-cli
-        - vim
-        - python3-pip
-        - python3-kubernetes
-        - nfs-common
-        - iproute2
-        - python3-openshift
-        - python3-pyhelm
-      update_cache: yes
-    retries: 3
-    delay: 1
-    register: result
-    until: result is success
-    when: ansible_distribution == 'Debian'
-
-  - name: Upgrade all packages to the latest version
-    apt:
-      name: "*"
-      state: latest
-    register: result
-    until: result is not failed
-    retries: 10
-    delay: 10
-
-  - name: get latest kube version
-    shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
-    register: apt_output
-  
-  - name: get kubeversion
-    set_fact:
-      versions: "{{ apt_output.stdout }}"
-  
-  - name: Install packages
-    apt:
-      pkg:
-        - "kubelet={{ versions }}"
-        - "kubeadm={{ versions }}"
-        - "kubectl={{ versions }}"
-        - "cri-o"
-        - libgtk2.0-0
-      update_cache: yes
-    register: result
-    until: result is not failed
-    retries: 10
-    delay: 10
-  
-  - name: mark packages as hold
-    dpkg_selections:
-      name: "{{ item }}"
-      selection: hold
-    with_items:
-      - "kubelet"
-      - "kubeadm"
-      - "kubectl"
-      - "cri-o"
-  
-  - name: configure crio
-    lineinfile:
-      path: /etc/crio/crio.conf
-      regexp: '^(.*)conmon =(.*)$'
-      line: 'conmon = "/usr/bin/conmon"'
-      backrefs: yes
-  
-  ## Bug needs to be tracked
-  - name: remove seccomp from crio
-    lineinfile:
-      path: /etc/crio/crio.conf
-      regexp: '^(.*)seccomp_profile =(.*)$'
-      line: 'seccomp_profile = ""'
-      backrefs: yes
-  
-  - name: fix runc runtime path in crio config
-    lineinfile:
-      path: /etc/crio/crio.conf
-      regexp: '^  runtime_path =(.*)$'
-      line: '  runtime_path = "/usr/sbin/runc"'
-      backrefs: yes
-  
-  - name: configure kubelet
-    lineinfile:
-      path: /etc/default/kubelet
-      regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
-      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
-      create: true
-
-  - name: Set CRI-O cgroups driver
-    lineinfile:
-      path: /etc/crio/crio.conf
-      state: present
-      regexp: '^cgroup_manager =.*'
-      line: 'cgroup_manager = "systemd"'
-  
-  - name: Set CRI-O default_ulimits
-    blockinfile:
-      path: /etc/crio/crio.conf
-      marker: "# {mark} ANSIBLE MANAGED BLOCK"
-      block: |
-        default_ulimits = [
-            "nofile=16384:24576",
-            "nproc=8192:8192"
-        ]
-  
-  - name: Set CRI-O seccomp profile path
-    lineinfile:
-      path: /etc/crio/crio.conf
-      state: present
-      regexp: '^seccomp_profile =.*'
-      line: 'seccomp_profile = ""'
-
-  - name: Set CRI-O global auth
-    lineinfile:
-      path: /etc/crio/crio.conf
-      state: present
-      regexp: '^global_auth_file =.*'
-      line: 'global_auth_file = "/etc/crio/auth.json"'
-    when: commercial.enabled
-
-  - name: remove preconfigures crio.conf from dpkg
-    file:
-      path: /etc/crio/crio.conf.d/01-crio-runc.conf
-      state: absent
-
-#### DEBIAN FAMILY END
-
-#### SUSE FAMILY
-- name: configure SUSE Systems
-  when: ansible_os_family == 'Suse'
-  block:
-  - name: Add Kubic repository
-    community.general.zypper_repository:
-      name: kubic 
-      repo: 'http://download.opensuse.org/repositories/devel:/kubic/openSUSE_Tumbleweed/'
-      auto_import_keys: yes
-      state: present
-
-  - name: Add Tumbleweed repository
-    community.general.zypper_repository:
-      name: tumbleweed
-      repo: 'http://download.opensuse.org/tumbleweed/repo/oss/'
-      auto_import_keys: yes
-      state: present
-
-  - name: install pip modules
-    pip:
-      name:
-        - pyhelm
-        - openshift
-      extra_args: --ignore-installed
-
-  - name: Install packages
-    community.general.zypper:
-      name:
-        - ansible
-        - vim
-        - helm
-        - cf-cli
-        - kubernetes1.19-kubeadm
-        - kubernetes1.19-client
-        - kubernetes1.19-kubelet
-        - cri-o
-        - cri-tools
-      state: present
-
-  - name: mark packages as hold
-    shell: "zypper addlock {{ item }}"
-    with_items:
-      - "kubernetes1.19-kubeadm"
-      - "kubernetes1.19-client"
-      - "kubernetes1.19-kubelet"
-      - "cri-o"
-
-  - name: configure crio
-    lineinfile:
-      path: /etc/crio/crio.conf.d/00-default.conf
-      regexp: '^(.*)conmon =(.*)$'
-      line: 'conmon = "/usr/bin/conmon"'
-      backrefs: yes
-
-  - name: configure kubelet
-    lineinfile:
-      path: /etc/sysconfig/kubelet
-      regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
-      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
-      create: true
-
-  - name: Set CRI-O cgroups driver
-    lineinfile:
-      path: /etc/crio/crio.conf.d/00-default.conf
-      state: present
-      regexp: '^cgroup_manager =.*'
-      line: 'cgroup_manager = "systemd"'
-  
-  - name: Set CRI-O default_ulimits
-    blockinfile:
-      path: /etc/crio/crio.conf.d/00-default.conf
-      marker: "# {mark} ANSIBLE MANAGED BLOCK"
-      block: |
-        default_ulimits = [
-            "nofile=16384:24576",
-            "nproc=8192:8192"
-        ]
-  
+#
+##### UBUNTU
+#- name: configure Debian Systems
+#  when: ansible_distribution == 'Ubuntu'
+#  block:
+#  - name: make sure, unattended upgrades is removed
+#    package:
+#      name: unattended-upgrades
+#      state: absent
+#      
+#  - name: Add key from keyserver
+#    apt_key:
+#      keyserver: keyserver.ubuntu.com
+#      id: "{{ item }}"
+#    loop:
+#      - 93C4A3FD7BB9C367
+#      - 8BECF1637AD8C79D
+#    retries: 3
+#    delay: 1
+#    register: result
+#    until: result is success
+#  
+#  - name: Add key for cri-o repos
+#    apt_key:
+#      url: "{{ item }}"
+#    loop:
+#      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_10/Release.key"
+#      - "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key"
+#      - "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+#      - "https://baltocdn.com/helm/signing.asc"
+#      - "https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key"
+#    retries: 3
+#    delay: 1
+#    register: result
+#    until: result is success
+#  
+#  - name: Add repositories
+#    apt_repository:
+#      repo: "{{ item }}"
+#      state: present
+#    loop:
+#      - "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+#      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.19/Debian_10/ /"
+#      - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /"
+#      - "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+#      - "deb https://baltocdn.com/helm/stable/debian/ all main"
+#      - "deb https://packages.cloudfoundry.org/debian stable main"
+#    retries: 3
+#    delay: 1
+#    register: result
+#    until: result is success
+#  
+#  - name: install pip modules
+#    pip:
+#      name:
+#        - pyhelm
+#        - openshift
+#      extra_args: --ignore-installed
+#
+#  - name: Install packages
+#    apt:
+#      pkg:
+#        - ansible
+#        - needrestart
+#        - helm
+#        - cf-cli
+#        - vim
+#        - python3-pip
+#        - python3-kubernetes
+#        - nfs-common
+#      update_cache: yes
+#    retries: 3
+#    delay: 1
+#    register: result
+#    until: result is success
+#
+#  - name: Upgrade all packages to the latest version
+#    apt:
+#      name: "*"
+#      state: latest
+#    register: result
+#    until: result is not failed
+#    retries: 10
+#    delay: 10
+#
+#  - name: get latest kube version
+#    shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+#    register: apt_output
+#  
+#  - name: get kubeversion
+#    set_fact:
+#      versions: "{{ apt_output.stdout }}"
+#  
+#  - name: Install packages
+#    apt:
+#      pkg:
+#        - "kubelet={{ versions }}"
+#        - "kubeadm={{ versions }}"
+#        - "kubectl={{ versions }}"
+#        - "cri-o"
+#        - libgtk2.0-0
+#      update_cache: yes
+#    register: result
+#    until: result is not failed
+#    retries: 10
+#    delay: 10
+#  
+#  - name: mark packages as hold
+#    dpkg_selections:
+#      name: "{{ item }}"
+#      selection: hold
+#    with_items:
+#      - "kubelet"
+#      - "kubeadm"
+#      - "kubectl"
+#      - "cri-o"
+#  
+#  - name: configure crio
+#    lineinfile:
+#      path: /etc/crio/crio.conf
+#      regexp: '^(.*)conmon =(.*)$'
+#      line: 'conmon = "/usr/bin/conmon"'
+#      backrefs: yes
+#  
+#  ## Bug needs to be tracked
+#  - name: remove seccomp from crio
+#    lineinfile:
+#      path: /etc/crio/crio.conf
+#      regexp: '^(.*)seccomp_profile =(.*)$'
+#      line: 'seccomp_profile = ""'
+#      backrefs: yes
+#  
+#  - name: fix runc runtime path in crio config
+#    lineinfile:
+#      path: /etc/crio/crio.conf
+#      regexp: '^  runtime_path =(.*)$'
+#      line: '  runtime_path = "/usr/sbin/runc"'
+#      backrefs: yes
+#  
+#  - name: configure kubelet
+#    lineinfile:
+#      path: /etc/default/kubelet
+#      regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
+#      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
+#      create: true
+#
+#  - name: Set CRI-O cgroups driver
+#    lineinfile:
+#      path: /etc/crio/crio.conf
+#      state: present
+#      regexp: '^cgroup_manager =.*'
+#      line: 'cgroup_manager = "systemd"'
+#  
+#  - name: Set CRI-O default_ulimits
+#    blockinfile:
+#      path: /etc/crio/crio.conf
+#      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+#      block: |
+#        default_ulimits = [
+#            "nofile=16384:24576",
+#            "nproc=8192:8192"
+#        ]
+#  
 #  - name: Set CRI-O seccomp profile path
+#    lineinfile:
+#      path: /etc/crio/crio.conf
+#      state: present
+#      regexp: '^seccomp_profile =.*'
+#      line: 'seccomp_profile = ""'
+#
+#  - name: Set CRI-O global auth
+#    lineinfile:
+#      path: /etc/crio/crio.conf
+#      state: present
+#      regexp: '^global_auth_file =.*'
+#      line: 'global_auth_file = "/etc/crio/auth.json"'
+#    when: commercial.enabled
+#
+#  - name: remove preconfigures crio.conf from dpkg
+#    file:
+#      path: /etc/crio/crio.conf.d/01-crio-runc.conf
+#      state: absent
+#
+##### UBUNTU END
+
+##### SUSE FAMILY
+#- name: configure SUSE Systems
+#  when: ansible_os_family == 'Suse'
+#  block:
+#  - name: Add Kubic repository
+#    community.general.zypper_repository:
+#      name: kubic 
+#      repo: 'http://download.opensuse.org/repositories/devel:/kubic/openSUSE_Tumbleweed/'
+#      auto_import_keys: yes
+#      state: present
+#
+#  - name: Add Tumbleweed repository
+#    community.general.zypper_repository:
+#      name: tumbleweed
+#      repo: 'http://download.opensuse.org/tumbleweed/repo/oss/'
+#      auto_import_keys: yes
+#      state: present
+#
+#  - name: install pip modules
+#    pip:
+#      name:
+#        - pyhelm
+#        - openshift
+#      extra_args: --ignore-installed
+#
+#  - name: Install packages
+#    community.general.zypper:
+#      name:
+#        - ansible
+#        - vim
+#        - helm
+#        - cf-cli
+#        - kubernetes1.19-kubeadm
+#        - kubernetes1.19-client
+#        - kubernetes1.19-kubelet
+#        - cri-o
+#        - cri-tools
+#      state: present
+#
+#  - name: mark packages as hold
+#    shell: "zypper addlock {{ item }}"
+#    with_items:
+#      - "kubernetes1.19-kubeadm"
+#      - "kubernetes1.19-client"
+#      - "kubernetes1.19-kubelet"
+#      - "cri-o"
+#
+#  - name: configure crio
+#    lineinfile:
+#      path: /etc/crio/crio.conf.d/00-default.conf
+#      regexp: '^(.*)conmon =(.*)$'
+#      line: 'conmon = "/usr/bin/conmon"'
+#      backrefs: yes
+#
+#  - name: configure kubelet
+#    lineinfile:
+#      path: /etc/sysconfig/kubelet
+#      regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
+#      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
+#      create: true
+#
+#  - name: Set CRI-O cgroups driver
 #    lineinfile:
 #      path: /etc/crio/crio.conf.d/00-default.conf
 #      state: present
-#      regexp: '^seccomp_profile =.*'
-#      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
-
-  - name: Set CRI-O global auth
-    lineinfile:
-      path: /etc/crio/crio.conf.d/00-default.conf
-      state: present
-      regexp: '^global_auth_file =.*'
-      line: 'global_auth_file = "/etc/crio/auth.json"'
-    when: commercial.enabled
-
-  ### SUSE OpenStack workaround
-  - name: create neutron user
-    user:
-      name: neutron
-      comment: "needed for OpenStack"
-      uid: 42424
-      shell: /usr/bin/false
-      home: /var/lib/neutron
-    when: vanillaservices.openstack_enabled
-#### SUSE FAMILY END
+#      regexp: '^cgroup_manager =.*'
+#      line: 'cgroup_manager = "systemd"'
+#  
+#  - name: Set CRI-O default_ulimits
+#    blockinfile:
+#      path: /etc/crio/crio.conf.d/00-default.conf
+#      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+#      block: |
+#        default_ulimits = [
+#            "nofile=16384:24576",
+#            "nproc=8192:8192"
+#        ]
+#  
+##  - name: Set CRI-O seccomp profile path
+##    lineinfile:
+##      path: /etc/crio/crio.conf.d/00-default.conf
+##      state: present
+##      regexp: '^seccomp_profile =.*'
+##      line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+#
+#  - name: Set CRI-O global auth
+#    lineinfile:
+#      path: /etc/crio/crio.conf.d/00-default.conf
+#      state: present
+#      regexp: '^global_auth_file =.*'
+#      line: 'global_auth_file = "/etc/crio/auth.json"'
+#    when: commercial.enabled
+#
+#  ### SUSE OpenStack workaround
+#  - name: create neutron user
+#    user:
+#      name: neutron
+#      comment: "needed for OpenStack"
+#      uid: 42424
+#      shell: /usr/bin/false
+#      home: /var/lib/neutron
+#    when: vanillaservices.openstack_enabled
+##### SUSE FAMILY END
 
 - name: configure timesyncd for ntp
   template:
