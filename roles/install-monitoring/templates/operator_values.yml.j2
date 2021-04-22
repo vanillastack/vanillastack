@@ -59,6 +59,11 @@ kubeControllerManager:
   service:
     port: 10257
     targetPort: 10257
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+    serverName: 127.0.0.1
 
 coreDns:
   enabled: {{ monitoring.coreDns.enabled }}
@@ -71,9 +76,29 @@ kubeDns:
 
 kubeEtcd:
   enabled: {{ monitoring.kubeEtcd.enabled }}
+  serviceMonitor:
+    enabled: true
+    scheme: https
+    insecureSkipVerify: false
+    serverName: localhost
+    # TODO This requires the following command to be run on the first master:
+    # kubectl -n monitoring create secret generic etcd-certs --from-file=/etc/kubernetes/pki/etcd/ca.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.crt --from-file=/etc/kubernetes/pki/etcd/healthcheck-client.key
+    caFile: /etc/prometheus/secrets/etcd-certs/ca.crt
+    certFile: /etc/prometheus/secrets/etcd-certs/healthcheck-client.crt
+    keyFile: /etc/prometheus/secrets/etcd-certs/healthcheck-client.key
 
 kubeScheduler:
   enabled: {{ monitoring.kubeScheduler.enabled }}
+  service:
+    port: 10259
+    targetPort: 10259
+    selector:
+      component: kube-scheduler
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+    serverName: 127.0.0.1
 
 kubeProxy:
   enabled: {{ monitoring.kubeProxy.enabled }}
@@ -168,6 +193,8 @@ prometheus:
       requests:
         cpu: {{ monitoring.resources.requests.cpu }}
         memory: {{ monitoring.resources.requests.memory }}
+    secrets:
+      - 'etcd-certs'
     storageSpec:
       volumeClaimTemplate:
         spec:

@@ -4,3 +4,18 @@
   command: kubeadm reset --force
   ignore_errors: true
 
+- name: remove Packages
+  package:
+    name:
+      - "kubelet"
+      - "kubeadm"
+      - "kubectl"
+      - "cri-o"
+      - "runc"
+      - "cri-o-runc"
+    state: absent
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+

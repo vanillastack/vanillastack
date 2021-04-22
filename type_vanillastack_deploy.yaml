@@ -73,13 +73,6 @@
     - role: deploy-kubernetes
       action: 02_configure_cluster
 
-        #- name: generate secrets
-        #  hosts: master[0]
-        #  gather_facts: yes
-        #  roles:
-        #    - role: deploy-kubernetes
-        #      action: 02-1-generate-certificate
-
 - name: Init KubeCluster
   hosts: install_master[0]
   gather_facts: true
@@ -159,6 +152,14 @@
     - role: prepare-registry
     - role: deploy-rook
       when: vanillastorageprovider == "rook"
+
+- name: Deploy localprovisioner
+  hosts: master[0]
+  become: false
+  gather_facts: false
+  roles:
+    - role: deploy-localpath-provsioner
+      when: localprovisioner.enabled
 
 - name: Deploy Cert Manager
   hosts: master[0]
@@ -254,4 +255,4 @@
   gather_facts: true
   roles:
     - role: install-stratos
-      when: vanillaservices.stratos_enabled
+      when: 'vanillaservices.stratos_enabled| default(false)'

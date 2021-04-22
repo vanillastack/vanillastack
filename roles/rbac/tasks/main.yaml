@@ -1,0 +1,48 @@
+---
+- name: create namespaces
+  k8s:
+    name: "{{item}}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  with_items: 
+    - "{{rbac.namespaces}}"
+
+- name: create user
+  include_tasks: create_user.yaml
+  with_items:
+    - "{{rbac.users}}"
+
+- name: copy kubeconfigs
+  ansible.builtin.fetch:
+    src: "kubeconfigs/kubeconfig_{{item}}"
+    dest: "/tmp/kubeconfigs-{{clusterTLDomain}}/kubeconfig_{{item}}"
+  with_items:
+    - "{{rbac.users}}"
+
+- name: create global ClusterRole
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'global-clusterrole.yaml.j2') | from_yaml }}"
+
+- name: create ClusterRole ClusterRoleBinding
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'global-clusterrolebinding-clusterroles.yaml.j2') | from_yaml }}"
+
+- name: create global ClusterRoleBinding
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'global-clusterrolebinding.yaml.j2') | from_yaml }}"
+
+- name: create ClusterRole
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'clusterrole.yaml.j2') | from_yaml }}"
+
+- name: create namespace rolebindings
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'namespace-rolebinding.yaml.j2') | from_yaml }}"
+  with_items:
+    - "{{rbac.namespaces}}"

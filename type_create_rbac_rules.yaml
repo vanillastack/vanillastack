@@ -1,0 +1,6 @@
+---
+- hosts: master[0]
+  gather_facts: false
+  become: false
+  roles:
+    - rbac
