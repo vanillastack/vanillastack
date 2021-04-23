@@ -38,13 +38,8 @@
                  --ignore-preflight-errors=Port-6443 \
                  {% if ansible_distribution != 'Debian' %}
                  --skip-phases=addon/kube-proxy \
-                 {% endif %}
-                 {% if ansible_os_family == 'Suse' and commercial.enabled != true %}
-                 --image-repository k8s.gcr.io --kubernetes-version latest \
-                 {% endif %}
-                 {% if commercial.enabled %}
+                 {% endif %}                 
                  --image-repository {{repositories.registry_commercial}}/vanillastack --kubernetes-version latest \
-                 {% endif %}
                  {{ kubernetes.kubeadm_opts }} \
                  {{ kubernetes.init_opts }}
   register: init_cluster

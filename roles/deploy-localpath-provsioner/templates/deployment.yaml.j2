@@ -17,11 +17,7 @@ spec:
       serviceAccountName: local-path-provisioner-service-account
       containers:
       - name: local-path-provisioner
-{% if commercial.enabled %}
         image: {{ repositories.registry_commercial }}/vanillastack/local-path-provisioner:v0.0.18
-{% else %}
-        image: rancher/local-path-provisioner:v0.0.18
-{% endif %}
         imagePullPolicy: IfNotPresent
         command:
         - local-path-provisioner
