@@ -1,6 +1,6 @@
 ---
 commercial:
-  enabled: true
+  enabled: false
   username: "gitlab-testing-stage"
   key: "REGISTRY_KEY"
 make_ha: true

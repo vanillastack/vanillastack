@@ -1,6 +1,5 @@
 ---
 installCRDs: true
-{% if commercial.enabled %}
 image:
   repository: {{repositories.registry_commercial}}/vanillastack/cert-manager-controller
 webhook:
@@ -9,13 +8,3 @@ webhook:
 cainjector:
   image:
     repository: {{repositories.registry_commercial}}/vanillastack/cert-manager-cainjector
-{% else %}
-image:
-  repository: quay.io/jetstack/cert-manager-controller
-webhook:
-  image:
-    repository: quay.io/jetstack/cert-manager-webhook
-cainjector:
-  image:
-    repository: quay.io/jetstack/cert-manager-cainjector
-{% endif %}
