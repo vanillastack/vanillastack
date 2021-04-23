@@ -74,10 +74,20 @@
   retries: 10
   delay: 10
 
+- name: Upgrade OS
+  apt:
+    update_cache: yes
+    upgrade: dist
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+
 - name: Upgrade all packages to the latest version
   apt:
     update_cache: yes
-    upgrade: yes
+    name: '*'
+    state: latest
   register: result
   until: result is not failed
   retries: 10
@@ -191,14 +201,6 @@
     state: present
     regexp: '^seccomp_profile =.*'
     line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
-
-- name: Set CRI-O global auth
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: '^global_auth_file =.*'
-    line: 'global_auth_file = "/etc/crio/auth.json"'
-  when: commercial.enabled
 
 - name: remove preconfigures crio.conf from dpkg
   file:
