@@ -36,7 +36,7 @@
     - "deb {{repositories.package_repository}} {{staging_tag}}-pip3 main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-ansible main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-debian-buster-main main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-1.19 main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-{{kubernetes.crioVersion}} main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main"
@@ -74,10 +74,20 @@
   retries: 10
   delay: 10
 
+- name: Upgrade OS
+  apt:
+    update_cache: yes
+    upgrade: dist
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+
 - name: Upgrade all packages to the latest version
   apt:
     update_cache: yes
-    upgrade: yes
+    name: '*'
+    state: latest
   register: result
   until: result is not failed
   retries: 10
@@ -110,6 +120,19 @@
   set_fact:
     versions: "{{ apt_output.stdout }}"
 
+- name: workaround to get correct libcompversion
+  block:
+    - name: add backportsrepository
+      lineinfile:
+        path: /etc/apt/sources.list
+        regexp: '^(.*)buster-backports(.*)$'
+        line: 'deb http://deb.debian.org/debian buster-backports main'
+        create: true
+    - apt:
+        update_cache: yes
+    - name: install libseccomp
+      command: apt-get -y -t buster-backports install libseccomp2
+
 - name: Install packages
   apt:
     pkg:
@@ -117,6 +140,7 @@
       - "kubeadm={{ versions }}"
       - "kubectl={{ versions }}"
       - "cri-o"
+      - "cri-o-runc"
       - libgtk2.0-0
     update_cache: yes
   register: result
@@ -131,6 +155,7 @@
     - "kubeadm"
     - "kubectl"
     - "cri-o"
+    - "cri-o-runc"
 
 - name: configure crio
   lineinfile:
@@ -139,19 +164,11 @@
     line: 'conmon = "/usr/bin/conmon"'
     backrefs: yes
 
-## Bug needs to be tracked
-- name: remove seccomp from crio
-  lineinfile:
-    path: /etc/crio/crio.conf
-    regexp: '^(.*)seccomp_profile =(.*)$'
-    line: 'seccomp_profile = ""'
-    backrefs: yes
-
 - name: fix runc runtime path in crio config
   lineinfile:
     path: /etc/crio/crio.conf
-    regexp: '^  runtime_path =(.*)$'
-    line: '  runtime_path = "/usr/sbin/runc"'
+    regexp: '^runtime_path =(.*)$'
+    line: 'runtime_path = "/usr/lib/cri-o-runc/sbin/runc"'
     backrefs: yes
 
 - name: configure kubelet
@@ -183,15 +200,7 @@
     path: /etc/crio/crio.conf
     state: present
     regexp: '^seccomp_profile =.*'
-    line: 'seccomp_profile = ""'
-
-- name: Set CRI-O global auth
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: '^global_auth_file =.*'
-    line: 'global_auth_file = "/etc/crio/auth.json"'
-  when: commercial.enabled
+    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 
 - name: remove preconfigures crio.conf from dpkg
   file:
@@ -250,3 +259,9 @@
     limit_item: nofile
     value: 1048576
     domain: '*'
+
+- name: set hosts if kubeapi is not dns resolvable
+  lineinfile:
+    path: /etc/hosts
+    state: present
+    line: "{{ loadbalancerIP }}   api.{{ clusterTLDomain }}"

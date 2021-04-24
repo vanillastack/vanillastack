@@ -44,12 +44,3 @@
     values: "{{ lookup('template', 'nextcloud_values.yaml.j2') | from_yaml }}"
     wait: true
 
-- name: create file
-  template:
-    src: "collabora.yaml.j2"
-    dest: "/tmp/collabroa.yaml"
-
-- name: Install collabora
-  community.kubernetes.k8s:
-    state: present
-    template: "collabora.yaml.j2"

@@ -69,12 +69,9 @@
     state: present
     wait: true
 
-- name: startup delay
-  pause:
-    seconds: 30
 
 - name: wait for pods to come up
-  retries: 120
+  retries: 150
   delay: 10
   shell: kubectl get pods -o json -n "{{ keycloak.namespace }}" --field-selector=status.phase!=Succeeded
   register: kubectl_get_pods
@@ -85,6 +82,10 @@
     definition: "{{ lookup('template', 'vanillastack-keycloak-ingress.yaml.j2') | from_yaml }}"
     state: present
     wait: true
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
   when: keycloak.ingress.enabled
 
 - name: Deploy VanillaStack Realm
@@ -97,22 +98,19 @@
   pause:
     seconds: 10
 
-# OLD
-#- name: Deploy VanillaStore Client
-#  community.kubernetes.k8s:
-#    definition: "{{ lookup('template', 'vanillastack-client-vanillamanager.yaml.j2') | from_yaml }}"
-#    state: present
-#
-#- name: startup delay
-#  pause:
-#    seconds: 10
-
 - name: check if realmadminpassword is already created
   k8s_info:
     kind: Secret
     namespace: "{{ keycloak.namespace }}"
     name: credential-admin-keycloak
   register: admincred
+
+- name: wait for vanilla creds
+  command: "kubectl get secrets -n keycloak credential-vanillastack-keycloak"
+  until: result is success
+  retries: 5
+  delay: 5
+  register: result
 
 - name: create realmadmincredentials
   block:
@@ -122,7 +120,6 @@
         namespace: "{{ keycloak.namespace }}"
         name: credential-vanillastack-keycloak
       register: keycloakcred
-    
     - name: generate bearertoken
       uri:
         url: "https://keycloak.{{ clusterTLDomain }}/auth/realms/master/protocol/openid-connect/token"

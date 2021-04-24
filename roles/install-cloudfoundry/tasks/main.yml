@@ -4,7 +4,7 @@
   - name: Deploy latest version of CloudFoundry
     community.kubernetes.helm:
       name: cf-operator
-      chart_ref: vanillastack/cf-operator
+      chart_ref: vanillastack/quarks
       release_namespace: cf-operator
       chart_version: "{{ cloudfoundry.operator.version }}"
       values: 
@@ -23,8 +23,23 @@
       values: "{{ lookup('template', 'kubecf-values.yaml.j2') | from_yaml }}"
     register: kubecf_install
 
+- name: Patch nginx 
+  command: >
+    helm upgrade -n {{ ingress.namespace }} nginx-ingress vanillastack/ingress-nginx \
+    --reuse-values \
+    --set "tcp.2222=kubecf/scheduler:2222" \
+    --set "tcp.20000=kubecf/tcp-router:20000" \
+    --set "tcp.20001=kubecf/tcp-router:20001" \
+    --set "tcp.20002=kubecf/tcp-router:20002" \
+    --set "tcp.20003=kubecf/tcp-router:20003" \
+    --set "tcp.20004=kubecf/tcp-router:20004" \
+    --set "tcp.20005=kubecf/tcp-router:20005" \
+    --set "tcp.20006=kubecf/tcp-router:20006" \
+    --set "tcp.20007=kubecf/tcp-router:20007" \
+    --set "tcp.20008=kubecf/tcp-router:20008"
+
 - name: wait for db to come up
-  command: kubectl wait --namespace=kubecf --for=condition=ready pods -l app=database --timeout=10s
+  command: kubectl wait --namespace=kubecf --for=condition=ready pods -l quarks.cloudfoundry.org/quarks-statefulset-name=database --timeout=10s
   retries: 180
   delay: 10
   register: result

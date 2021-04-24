@@ -4,4 +4,5 @@
   gather_facts: true
   roles:
     - role: install-stratos
-      when: vanillaservices.stratos_enabled
+
+

@@ -7,10 +7,18 @@
     device_list: "{{ setup_res | json_query('ansible_facts.ansible_devices') | to_json |  from_json }}"
 
 - name: whipe disks on storage nodes
-  command: "wipefs -fa /dev/{{ item.key }}" 
-  loop: "{{ q('dict', device_list) }}"
-  when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-  notify: reboot_all_nodes
+  block:
+  - name: destroy inforamtion 
+    command: "wipefs -fa /dev/{{ item.key }}" 
+    loop: "{{ q('dict', device_list) }}"
+    when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+    notify: reboot_all_nodes
+  - name: discard content of sectors
+    command: "blkdiscard /dev/{{ item.key }}"  
+    loop: "{{ q('dict', device_list) }}"
+    when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+    ignore_errors: true
+    notify: reboot_all_nodes
 
 - name: make sure, rook folder is absent
   file: 

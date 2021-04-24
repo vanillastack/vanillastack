@@ -4,3 +4,24 @@
   command: kubeadm reset --force
   ignore_errors: true
 
+- name: remove Packages
+  apt:
+    pkg:
+      - "kubelet"
+      - "kubeadm"
+      - "kubectl"
+      - "cri-o"
+      - "runc"
+      - "cri-o-runc"
+    state: absent
+    autoremove: true
+    force: true
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+
+- name: make sure, kubefiles are deleted
+  file:
+    state: absent
+    path: /etc/kubernetes
