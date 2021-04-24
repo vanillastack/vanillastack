@@ -105,6 +105,13 @@
     name: credential-admin-keycloak
   register: admincred
 
+- name: wait for vanilla creds
+  command: "kubectl get secrets -n keycloak credential-vanillastack-keycloak"
+  until: result is success
+  retries: 5
+  delay: 5
+  register: result
+
 - name: create realmadmincredentials
   block:
     - name: get masteradmin password
@@ -113,7 +120,6 @@
         namespace: "{{ keycloak.namespace }}"
         name: credential-vanillastack-keycloak
       register: keycloakcred
-    
     - name: generate bearertoken
       uri:
         url: "https://keycloak.{{ clusterTLDomain }}/auth/realms/master/protocol/openid-connect/token"
