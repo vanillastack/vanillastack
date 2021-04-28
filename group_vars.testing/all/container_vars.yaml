@@ -9,7 +9,7 @@ cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 cluster_pod_cidr: "10.0.0.0/8"
 cluster_service_cidr: "10.96.0.0/12"
 cluster_sdn: cilium # cilium | calico
-staging_tag: "20210104" 
+staging_tag: "testing" 
 # possible issuer: "letsencrypt-staging", "letsencrypt-prod" or "certmanager-selfsigned"
 LE_issuer_name: "letsencrypt-staging"
 LE_issuer_mail: "testing@test.vanillastack.cloudical.net"
