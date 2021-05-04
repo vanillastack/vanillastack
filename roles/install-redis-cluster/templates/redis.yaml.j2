@@ -14,31 +14,21 @@ global:
 image:
   pullPolicy: IfNotPresent
   pullSecrets: null
-{% if commercial.enabled %}
   registry: {{repositories.registry_commercial}}
   repository: vanillastack/redis-cluster
-{% else %}
-  registry: docker.io
-  repository: bitnami/redis-cluster
-{% endif %}
   tag: 6.2-debian-10
 metrics:
   enabled: true
   image:
     pullPolicy: IfNotPresent
     pullSecrets: null
-{% if commercial.enabled %}
     registry: {{repositories.registry_commercial}}
     repository: vanillastack/redis-exporter
-{% else %}
-    registry: docker.io
-    repository: bitnami/redis-exporter
-{% endif %}
     tag: 1.18.0-debian-10-r10
   podAnnotations:
     prometheus.io/port: "9121"
     prometheus.io/scrape: "true"
-password: "{{ redis.password }}"
+password: {{ redis.password }}
 persistence:
   accessModes:
   - ReadWriteOnce

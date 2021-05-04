@@ -46,11 +46,7 @@ metricsScraper:
     runAsUser: 1001
   enabled: false
   image:
-{% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/metrics-scraper
-{% else %}
-    repository: kubernetesui/metrics-scraper
-{% endif %}
     tag: v1.0.6
   resources: {}
 networkPolicy:
@@ -72,7 +68,7 @@ replicaCount: 1
 resources:
   limits:
     cpu: 2
-    memory: 200Mi
+    memory: 500Mi
   requests:
     cpu: 100m
     memory: 200Mi
