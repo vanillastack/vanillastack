@@ -18,6 +18,13 @@
         release_namespace: kube-dashboard
         state: absent
         wait: true
+    - name: delete namespace
+      community.kubernetes.k8s:
+        name: kube-dashboard
+        api_version: v1
+        kind: Namespace
+        state: absent
+        wait: true
     - name: wait for cluster
       pause: 
         seconds: 30

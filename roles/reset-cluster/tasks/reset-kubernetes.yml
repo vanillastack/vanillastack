@@ -7,6 +7,8 @@
 - name: remove Packages
   apt:
     pkg:
+      - "haproxy"
+      - "keepalived"
       - "kubelet"
       - "kubeadm"
       - "kubectl"

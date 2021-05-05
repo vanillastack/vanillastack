@@ -5,11 +5,7 @@
 replicaCount: 1
 
 image:
-{% if commercial.enabled %}
   repository: {{repositories.registry_commercial}}/vanillastack/percona-xtradb-cluster-operator
-{% else %}
-  repository: percona/percona-xtradb-cluster-operator
-{% endif %}
   tag: 1.7.0
   pullPolicy: IfNotPresent
 
