@@ -8,6 +8,7 @@
         chart_ref: vanillastack/kubernetes-dashboard
         name: kubernetes-dashboard
         release_namespace: kube-dashboard
+        update_repo_cache: true
         create_namespace: true
         values: "{{ lookup('template', 'dashboard-values.yaml.j2') | from_yaml }}"
         wait: true
