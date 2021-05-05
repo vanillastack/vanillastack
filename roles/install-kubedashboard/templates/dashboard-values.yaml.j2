@@ -44,7 +44,7 @@ metricsScraper:
     readOnlyRootFilesystem: true
     runAsGroup: 2001
     runAsUser: 1001
-  enabled: false
+  enabled: true
   image:
     repository: {{repositories.registry_commercial}}/vanillastack/metrics-scraper
     tag: v1.0.6
@@ -61,17 +61,17 @@ podDisruptionBudget:
 podLabels: {}
 protocolHttp: false
 rbac:
-  clusterReadOnlyRole: false
+  clusterReadOnlyRole: true
   clusterRoleMetrics: true
   create: true
 replicaCount: 1
 resources:
   limits:
     cpu: 2
-    memory: 500Mi
+    memory: 1024Mi
   requests:
-    cpu: 100m
-    memory: 200Mi
+    cpu: 200m
+    memory: 512Mi
 service:
   annotations: {}
   clusterServiceLabel:

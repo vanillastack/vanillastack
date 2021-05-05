@@ -12,19 +12,19 @@
         values: "{{ lookup('template', 'dashboard-values.yaml.j2') | from_yaml }}"
         wait: true
   rescue:
-    - name: remove Kube Dashboard
-      community.kubernetes.helm:
-        name: kubernetes-dashboard
-        release_namespace: kube-dashboard
-        state: absent
-        wait: true
-    - name: delete namespace
-      community.kubernetes.k8s:
-        name: kube-dashboard
-        api_version: v1
-        kind: Namespace
-        state: absent
-        wait: true
+    #- name: remove Kube Dashboard
+    #  community.kubernetes.helm:
+    #    name: kubernetes-dashboard
+    #    release_namespace: kube-dashboard
+    #    state: absent
+    #    wait: true
+    #- name: delete namespace
+    #  community.kubernetes.k8s:
+    #    name: kube-dashboard
+    #    api_version: v1
+    #    kind: Namespace
+    #    state: absent
+    #    wait: true
     - name: wait for cluster
       pause: 
         seconds: 30
