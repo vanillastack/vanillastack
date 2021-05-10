@@ -101,8 +101,8 @@
   command: >
     kubectl create secret generic etcd-certs -n monitoring
     --from-literal=ca.crt="{{ etcd_ca_crt_slurp.content | b64decode }}"
-    --from-literal=client.crt="{{ etcd_server_crt_slurp.content | b64decode }}"
-    --from-literal=client.key="{{ etcd_server_key_slurp.content | b64decode }}"
+    --from-literal=healthcheck-client.crt="{{ etcd_server_crt_slurp.content | b64decode }}"
+    --from-literal=healthcheck-client.key="{{ etcd_server_key_slurp.content | b64decode }}"
   when:
     - etcd_secret.resources|length == 0
     - etcd_server_crt_result.stat.exists
