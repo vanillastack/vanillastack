@@ -51,5 +51,7 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'serviceaccounts.yaml.j2') | from_yaml }}"
-  with_items:
+  loop:
     - "{{rbac.serviceAccounts}}"
+  loop_control:
+    loop_var: sa
