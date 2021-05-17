@@ -46,3 +46,10 @@
     definition: "{{ lookup('template', 'namespace-rolebinding.yaml.j2') | from_yaml }}"
   with_items:
     - "{{rbac.namespaces}}"
+
+- name: create serviceaccounts
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'serviceaccounts.yaml.j2') | from_yaml }}"
+  with_items:
+    - "{{rbac.serviceAccounts}}"
