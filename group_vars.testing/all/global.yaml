@@ -167,6 +167,7 @@ monitoring:
   admin_password: prompassword
   replicas: 2
   chartVersion: 13.4.1
+  retention: 360h
   ingress:
     enabled: true
     dns: "prometheus.{{ clusterTLDomain }}"

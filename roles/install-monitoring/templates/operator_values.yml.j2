@@ -185,6 +185,8 @@ prometheus:
 {% else %}
       repository: quay.io/prometheus/prometheus
 {% endif %}
+    # Retention of 15d
+    retention: {{ monitoring.retention }}
     externalUrl: "https://{{ monitoring.ingress.dns }}"
     resources:
       limits:
