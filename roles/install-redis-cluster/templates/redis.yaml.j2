@@ -36,7 +36,7 @@ metrics:
 {% raw %}
     rules:
       - alert: RedisDown
-        expr: redis_up{service="{{ template "common.names.fullname" . }}-metrics"} == 0
+        expr: 'redis_up{service="{{ template "common.names.fullname" . }}-metrics"} == 0'
         for: 2m
         labels:
           severity: error

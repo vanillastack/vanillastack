@@ -12,5 +12,5 @@
 
 - name: Deploy Redis ServiceMonitor
   community.kubernetes.k8s:
-    definition: "{{ lookup('template', 'redis-servicemonitor.yaml.yaml.j2') | from_yaml }}"
+    definition: "{{ lookup('template', 'redis-servicemonitor.yaml.j2') | from_yaml }}"
     state: present
