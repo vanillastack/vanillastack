@@ -28,11 +28,6 @@ metrics:
   podAnnotations:
     prometheus.io/port: "9121"
     prometheus.io/scrape: "true"
-  prometheusRule:
-    enabled: true
-    additionalLabels:
-      app: kube-prometheus-stack
-      release: prometheus-operator
 password: "{{ redis.password }}"
 persistence:
   accessModes:
