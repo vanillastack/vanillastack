@@ -33,7 +33,7 @@ metrics:
     additionalLabels:
       app: kube-prometheus-stack
       release: prometheus-operator
-    {% raw %}
+{% raw %}
     rules:
       - alert: RedisDown
         expr: redis_up{service="{{ template "common.names.fullname" . }}-metrics"} == 0
@@ -43,8 +43,9 @@ metrics:
         annotations:
           summary: 'Redis(TM) instance {{ "{{ $instance }}" }} down'
           description: 'Redis(TM) instance {{ "{{ $instance }}" }} is down.'
-    {% endraw %}
-password: {{ redis.password }}
+{% endraw %}
+
+password: "{{ redis.password }}"
 persistence:
   accessModes:
   - ReadWriteOnce
