@@ -10,13 +10,13 @@ spec:
   groups:
   - name: redis
     rules:
-{% raw %}
       - alert: RedisDown
-        expr: 'redis_up{service="{{ template "common.names.fullname" . }}-metrics"} == 0'
+        expr: 'redis_up{service="redis-{{ redis.environment | default('testing') }}-metrics"} == 0'
         for: 2m
         labels:
           severity: error
         annotations:
+{% raw %}
           summary: 'Redis(TM) instance {{ "{{ $instance }}" }} down'
           description: 'Redis(TM) instance {{ "{{ $instance }}" }} is down.'
 {% endraw %}
