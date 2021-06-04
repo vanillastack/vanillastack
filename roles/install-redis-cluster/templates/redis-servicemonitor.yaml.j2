@@ -2,6 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: "redis-{{ redis.environment | default('testing') }}"
+  namespace: "{{ redis.namespace }}"
   labels:
     release: prometheus-operator
 spec:
