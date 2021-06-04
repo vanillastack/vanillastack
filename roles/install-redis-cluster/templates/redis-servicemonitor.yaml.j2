@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: "redis-{{ redis.environment | default('testing') }}"
+  labels:
+    release: prometheus-operator
+spec:
+  endpoints:
+  - port: metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: "redis-cluster"
+      app.kubernetes.io/component: "metrics"
