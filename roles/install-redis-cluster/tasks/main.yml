@@ -17,5 +17,5 @@
 
 - name: Deploy Redis PrometheusRule
   community.kubernetes.k8s:
-    definition: "{{ lookup('template', 'redis-prometheusrule.yaml.j2') | from_yaml }}"
+    definition: "{{ lookup('template', 'redis-prometheusrules.yaml.j2') | from_yaml }}"
     state: present
