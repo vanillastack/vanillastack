@@ -41,8 +41,8 @@ metrics:
         labels:
           severity: error
         annotations:
-          summary: "Redis(TM) instance {{ "{{ $instance }}" }} down"
-          description: "Redis(TM) instance {{ "{{ $instance }}" }} is down."
+          summary: 'Redis(TM) instance {{ "{{ $instance }}" }} down'
+          description: 'Redis(TM) instance {{ "{{ $instance }}" }} is down.'
     {% endraw %}
 password: {{ redis.password }}
 persistence:
