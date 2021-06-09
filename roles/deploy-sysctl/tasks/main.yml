@@ -1,0 +1,33 @@
+---
+- name: Check if sysctl.d directory exists
+  stat:
+    path: "{{ sysctld_dir }}"
+  register: s
+
+- name: Set sysctl_file to sysctl.conf depending if sysctl.d dir exists
+  set_fact:
+    sysctl_file: "/etc/sysctl.conf"
+  when: not s.stat.exists or not s.stat.isdir
+
+- name: Get current sysctl vars
+  shell: "{{ sysctl_bin }} -a"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: sysctl_all_vars
+  # Don't spam verbose log with this output
+  no_log: true
+
+- name: Set sysctl vars and write to file
+  command: "{{ sysctl_bin }} -wq {{ item.key }}={{ item.value|string|quote }}"
+  ignore_errors: "{{ sysctl_ignore_errors|default(true) }}"
+  with_dict: "{{ sysctl }}"
+  when: item.key ~ " = " ~ item.value not in sysctl_all_vars.stdout
+
+- name: Set sysctl vars in autoload file
+  template:
+    src: "sysctl.conf.j2"
+    dest: "{{ sysctl_file }}"
+    owner: root
+    group: root
+    mode: 0644

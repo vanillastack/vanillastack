@@ -1,0 +1,7 @@
+---
+- name: set sysctl properties
+  hosts: kube_cluster
+  gather_facts: true
+  become: true
+  roles:
+    - role: deploy-sysctl
