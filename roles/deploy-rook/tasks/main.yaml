@@ -12,6 +12,7 @@
     - { name: storageClassRBD, wait: false, delay: 0}
     - { name: storageClassObject, wait: false, delay: 0}
     - { name: storageClassFile, wait: false, delay: 0}
+    - { name: dashboardIngress, wait: false, delay: 0}
 
 - name: Deploy Rook monitoring
   when: rook.cluster.monitoring.enabled

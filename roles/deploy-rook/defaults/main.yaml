@@ -27,6 +27,11 @@ rook:
     dashboard:
       enabled: false
       ssl: true
+      ingress:
+        domain: ""
+        tls:
+          enabled: true
+          issuerName: "{{ LE_issuer_name }}"
     monitoring:
       enabled: false
     storage:
