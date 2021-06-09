@@ -33,6 +33,7 @@ rook:
       useAllNodes: true
       useAllDevices: true
   dashboard:
+    enabled: false
     ingress:
       domain: ""
       tls:
