@@ -1,6 +1,10 @@
 ---
 - name: set sysctl properties
-  hosts: kube_cluster
+  hosts:
+    - master
+    - worker
+    - storage
+    - compute
   gather_facts: true
   become: true
   roles:
