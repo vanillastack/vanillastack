@@ -1,6 +1,8 @@
 rook:
   enabled: true
   namespace: rook-ceph
+  crds:
+    enabled: true
   common:
     enabled: true
   operator:
@@ -8,17 +10,8 @@ rook:
     csiEnableCephFS: true
     csiEnableRBD: true
     csiEnableGRPC: true
-    image: rook/ceph:v1.4.4
-    csiImages:
-      cephCsi: "quay.io/cephcsi/cephcsi:v3.1.0"
-      registrar: "quay.io/k8scsi/csi-node-driver-registrar:v1.2.0"
-      resizer: "quay.io/k8scsi/csi-resizer:v0.4.0"
-      provisioner: "quay.io/k8scsi/csi-provisioner:v1.6.0"
-      snapshotter: "quay.io/k8scsi/csi-snapshotter:v2.1.1"
-      attacher: "quay.io/k8scsi/csi-attacher:v2.1.0"
   cluster:
     enabled: true
-    image: ceph/ceph:v15.2.5-20200916
     name: rook-ceph
     dataHostDir: /var/lib/rook
     mon:
@@ -53,7 +46,6 @@ rook:
   toolbox:
     enabled: true
     name: rook-ceph-tools
-    image: rook/ceph:v1.4.4
   objectStorage:
     enabled: false
     ingress:

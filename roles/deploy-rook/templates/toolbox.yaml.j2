@@ -19,9 +19,9 @@ spec:
       containers:
       - name: rook-ceph-tools
 {% if commercial.enabled %}
-        image: {{repositories.registry_commercial}}/vanillastack/ceph:v1.4.9
+        image: {{repositories.registry_commercial}}/vanillastack/ceph:v1.5.12
 {% else %}
-        image: rook/ceph:v1.4.9
+        image: rook/ceph:v1.5.12
 {% endif %}
         command: ["/tini"]
         args: ["-g", "--", "/usr/local/bin/toolbox.sh"]
