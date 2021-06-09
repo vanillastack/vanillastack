@@ -27,16 +27,17 @@ rook:
     dashboard:
       enabled: false
       ssl: true
-      ingress:
-        domain: ""
-        tls:
-          enabled: true
-          issuerName: "{{ LE_issuer_name }}"
     monitoring:
       enabled: false
     storage:
       useAllNodes: true
       useAllDevices: true
+  dashboard:
+    ingress:
+      domain: ""
+      tls:
+        enabled: true
+        issuerName: "{{ LE_issuer_name }}"
   storageClassRBD:
     enabled: true
     name: rook-ceph-block

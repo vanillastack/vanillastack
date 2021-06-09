@@ -4,8 +4,8 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: certmanager-selfsigned
-{% if rook.cluster.dashboard.ingress.tls %}
-    cert-manager.io/cluster-issuer: "{{rook.cluster.dashboard.ingress.issuerName}}"
+{% if rook.dashboard.ingress.tls %}
+    cert-manager.io/cluster-issuer: "{{rook.dashboard.ingress.issuerName}}"
     kubernetes.io/tls-acme: "true"
 {% endif %}
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
@@ -15,7 +15,7 @@ metadata:
   namespace: rook-ceph
 spec:
   rules:
-  - host: {{rook.cluster.dashboard.ingress.domain}}
+  - host: {{rook.dashboard.ingress.domain}}
     http:
       paths:
       - backend:
@@ -27,5 +27,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - {{rook.cluster.dashboard.ingress.domain}}
+    - {{rook.dashboard.ingress.domain}}
     secretName: tls-dashboard-endpoint
