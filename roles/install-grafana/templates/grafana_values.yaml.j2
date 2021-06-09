@@ -55,8 +55,8 @@ dashboards:
       gnetId: 8588
       datasource: Prometheus
     node-exporter-full:
-      gnetId: 1860
       datasource: Prometheus
+      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/node-exporter-full.json
     dashboards-apiserver:
       datasource: Prometheus
       url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/apiserver.json
@@ -114,9 +114,6 @@ dashboards:
     dashboards-pod-total:
       datasource: Prometheus
       url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/pod-total.json
-    dashboards-prometheus-remote-write:
-      datasource: Prometheus
-      url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/prometheus-remote-write.json
     dashboards-prometheus:
       datasource: Prometheus
       url: {{repositories.package_repository}}/vanillastack/grafana/dashboards/prometheus.json
