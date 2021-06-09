@@ -9,8 +9,8 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     #nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8"
-{% if rook.objectStorage.ingress.tls %}
-    cert-manager.io/cluster-issuer: "{{rook.objectStorage.ingress.issuerName}}"
+{% if rook.objectStorage.ingress.tls.enabled|default(false) %}
+    cert-manager.io/cluster-issuer: "{{rook.objectStorage.ingress.tls.issuerName}}"
     kubernetes.io/tls-acme: "true"
 {% endif %}
   labels:
