@@ -219,11 +219,11 @@ spec:
 #        memory: "1024Mi"
   # The option to automatically remove OSDs that are out and are safe to destroy.
   removeOSDsIfOutAndSafeToRemove: false
-#  priorityClassNames:
-#    all: rook-ceph-default-priority-class
-#    mon: rook-ceph-mon-priority-class
-#    osd: rook-ceph-osd-priority-class
-#    mgr: rook-ceph-mgr-priority-class
+  priorityClassNames:
+    all: system-cluster-critical
+    mon: system-cluster-critical
+    osd: system-cluster-critical
+    mgr: system-cluster-critical
   storage: # cluster level storage configuration and selection
     useAllNodes: {{rook.cluster.storage.useAllNodes}}
     useAllDevices: {{rook.cluster.storage.useAllDevices}}
