@@ -7,7 +7,7 @@
     name: kubernetes-dashboard
     release_namespace: kube-dashboard
     create_namespace: true
-    values: "{{ lookup('template', 'dashboard-values.yaml') | from_yaml }}"
+    values: "{{ lookup('template', 'dashboard-values.yaml.j2') | from_yaml }}"
     chart_version: "{{ kubernetes.dashboard.version }}"
     wait: true
 
