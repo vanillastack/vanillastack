@@ -6,6 +6,7 @@ repositories:
 ingress:
   namespace: nginx-ingress
   enabled: true
+  chartVersion: "3.25.0"
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"

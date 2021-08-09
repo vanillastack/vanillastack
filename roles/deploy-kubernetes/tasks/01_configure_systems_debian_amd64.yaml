@@ -71,8 +71,12 @@
     update_cache: yes
   register: result
   until: result is not failed
-  retries: 10
+  retries: 3 #10
   delay: 10
+
+- name: Work around for python3-chardet_4.0.0_all.deb
+  apt:
+    deb: http://ftp.de.debian.org/debian/pool/main/c/chardet/python3-chardet_4.0.0-1_all.deb
 
 - name: Upgrade OS
   apt:
@@ -80,7 +84,7 @@
     upgrade: dist
   register: result
   until: result is not failed
-  retries: 10
+  retries: 3 #10
   delay: 10
 
 - name: Upgrade all packages to the latest version

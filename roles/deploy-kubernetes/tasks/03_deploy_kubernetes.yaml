@@ -4,7 +4,7 @@
   register: generated_token
 
 - name: create certificate key
-  command: "kubeadm alpha certs certificate-key"
+  command: "kubeadm certs certificate-key"
   register: generated_certificate_key
 
 - name: save certificate key
@@ -30,7 +30,7 @@
     kubeadm init --service-cidr {{ cluster_service_cidr }} \
                  --token {{ token }} --node-name {{ inventory_hostname_short }} \
                  {% if make_ha %}
-                 --control-plane-endpoint api.{{ clusterTLDomain }}:6443 \
+                 --control-plane-endpoint {{ clusterTLDomain }}:6443 \
                  {% endif %}
                  --upload-certs \
                  --apiserver-bind-port {{ apiport }} \
