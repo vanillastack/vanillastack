@@ -18,7 +18,7 @@
     - "/etc/apt/sources.list.d"
     - /etc/apt/sources.list
 
-- name: Add key for cri-o repos
+- name: Add key for Cloudical repos
   apt_key:
     url: "{{ item }}"
   loop:
@@ -40,6 +40,8 @@
     - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main"
+    - "deb http://security.debian.org/debian-security buster/updates main"
+    - "deb-src http://security.debian.org/debian-security buster/updates main"
   retries: 3
   delay: 1
   register: result
@@ -74,13 +76,14 @@
   retries: 3 #10
   delay: 10
 
-- name: Work around for python3-chardet_4.0.0_all.deb
-  apt:
-    deb: http://ftp.de.debian.org/debian/pool/main/c/chardet/python3-chardet_4.0.0-1_all.deb
+- name: Workaround for conflict of python3-chardet_4.0.0 and 3.0.4-3 on /usr/bin/chardetect
+  shell: rm -rf /usr/bin/chardetect
 
 - name: Upgrade OS
   apt:
     update_cache: yes
+    autoclean: yes
+    autoremove: yes
     upgrade: dist
   register: result
   until: result is not failed
