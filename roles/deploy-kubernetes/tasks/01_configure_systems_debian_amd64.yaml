@@ -76,8 +76,6 @@
   retries: 3 #10
   delay: 10
 
-- name: Workaround for conflict of python3-chardet_4.0.0 and 3.0.4-3 on /usr/bin/chardetect
-  shell: rm -rf /usr/bin/chardetect
 
 - name: Upgrade OS
   apt:
