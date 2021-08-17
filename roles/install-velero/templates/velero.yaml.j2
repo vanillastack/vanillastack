@@ -42,14 +42,17 @@ configuration:
       publicUrl: "{{velero.aws.publicURL}}"
       s3Url: "{{velero.aws.s3URL}}"
   volumeSnapshotLocation:
-    name: default-snap
-    provider: aws
-    bucket: {{velero.aws.snapshotBucketName}}
-    config:
-      region: {{velero.aws.region}}
-      s3ForcePathStyle: true
-      publicUrl: "{{velero.aws.publicURL}}"
-      s3Url: "{{velero.aws.s3URL}}"
+    name:
+    provider:
+    config: {}
+    #name: default-snap
+    #provider: aws
+    #bucket: {{velero.aws.snapshotBucketName}}
+    #config:
+    #  region: {{velero.aws.region}}
+    #  s3ForcePathStyle: true
+    #  publicUrl: "{{velero.aws.publicURL}}"
+    #  s3Url: "{{velero.aws.s3URL}}"
 {% endif %}
 
 credentials:
@@ -67,7 +70,7 @@ credentials:
 deployRestic: true
 restic:
   podVolumePath: /var/lib/kubelet/pods
-  privileged: false
+  privileged: true
   # Pod priority class name to use for the Restic daemonset. Optional.
   priorityClassName: ""
   # Resource requests/limits to specify for the Restic daemonset deployment. Optional.
