@@ -27,25 +27,27 @@ configuration:
     bucket: kubernetes-pv
     config:
       region: minio
-      s3ForcePathStyle: "true"
+      s3ForcePathStyle: true
       publicUrl: "http://minio:9000"
       s3Url: "http://minio:9000"
 {% elif velero.backend == "aws" %}
   provider: aws
   backupStorageLocation:
     name: default
+    provider: aws
     bucket: {{velero.aws.bucketName}}
     config:
       region: {{velero.aws.region}}
-      s3ForcePathStyle: "true"
+      s3ForcePathStyle: true
       publicUrl: "{{velero.aws.publicURL}}"
       s3Url: "{{velero.aws.s3URL}}"
   volumeSnapshotLocation:
     name: default-snap
+    provider: aws
     bucket: {{velero.aws.snapshotBucketName}}
     config:
       region: {{velero.aws.region}}
-      s3ForcePathStyle: "true"
+      s3ForcePathStyle: true
       publicUrl: "{{velero.aws.publicURL}}"
       s3Url: "{{velero.aws.s3URL}}"
 {% endif %}
