@@ -9,13 +9,15 @@ image:
 
 installCRDs: true
 
+backupsEnabled: true
+
 snapshotsEnabled: false
 
 configuration:
 {% if velero.backend == "minio" %}
   provider: aws
   backupStorageLocation:
-    name: default
+    name:
     bucket: velero
     config:
       region: minio
@@ -33,8 +35,8 @@ configuration:
 {% elif velero.backend == "aws" %}
   provider: aws
   backupStorageLocation:
-    name: default
-    provider: aws
+    name:
+    provider:
     bucket: {{velero.aws.bucketName}}
     config:
       region: {{velero.aws.region}}
@@ -54,6 +56,7 @@ configuration:
     #  publicUrl: "{{velero.aws.publicURL}}"
     #  s3Url: "{{velero.aws.s3URL}}"
 {% endif %}
+  defaultVolumesToRestic: false
 
 credentials:
   useSecret: true
@@ -67,7 +70,9 @@ credentials:
       aws_access_key_id = {{velero.aws.accessKey}}
       aws_secret_access_key = {{velero.aws.secretKey}}
 {% endif %}
+
 deployRestic: true
+
 restic:
   podVolumePath: /var/lib/kubelet/pods
   privileged: true
