@@ -56,6 +56,7 @@ configuration:
     #  publicUrl: "{{velero.aws.publicURL}}"
     #  s3Url: "{{velero.aws.s3URL}}"
 {% endif %}
+  resticTimeout: 6h
   defaultVolumesToRestic: true
 
 credentials:
