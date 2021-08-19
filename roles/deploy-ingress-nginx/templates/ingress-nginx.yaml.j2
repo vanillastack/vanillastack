@@ -97,7 +97,8 @@ controller:
 
     serviceMonitor:
       enabled: true
-      additionalLabels: {}
+      additionalLabels:
+        release: prometheus-operator
       namespace: ""
       namespaceSelector: {}
       # Default: scrape .Release.Namespace only
