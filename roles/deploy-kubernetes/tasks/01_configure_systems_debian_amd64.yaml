@@ -28,7 +28,7 @@
   register: result
   until: result is success
 
-- name: Add repositories
+- name: Add Cloudical repositories
   apt_repository:
     repo: "{{ item }}"
     state: present
@@ -40,8 +40,6 @@
     - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main"
-    - "deb http://security.debian.org/debian-security buster/updates main"
-    - "deb-src http://security.debian.org/debian-security buster/updates main"
   retries: 3
   delay: 1
   register: result
@@ -73,7 +71,7 @@
     update_cache: yes
   register: result
   until: result is not failed
-  retries: 3 #10
+  retries: 10
   delay: 10
 
 
@@ -85,7 +83,7 @@
     upgrade: dist
   register: result
   until: result is not failed
-  retries: 3 #10
+  retries: 10
   delay: 10
 
 - name: Upgrade all packages to the latest version
