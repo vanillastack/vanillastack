@@ -53,6 +53,8 @@ expose:
   clusterIP:
     # The name of ClusterIP service
     name: harbor
+    # Annotations on the ClusterIP service
+    annotations: {}
     ports:
       # The service port Harbor listens on when serving with HTTP
       httpPort: 80
@@ -168,14 +170,6 @@ internalTLS:
     crt: ""
     # Content of chartmuseum's TLS key file, only available when `certSource` is "manual"
     key: ""
-  # clair related cert configuration
-  clair:
-    # secret name for clair's tls certs
-    secretName: ""
-    # Content of clair's TLS key file, only available when `certSource` is "manual"
-    crt: ""
-    # Content of clair's TLS key file, only available when `certSource` is "manual"
-    key: ""
   # trivy related cert configuration
   trivy:
     # secret name for trivy's tls certs
@@ -256,7 +250,7 @@ persistence:
 #    # Refer to
 #    # https://github.com/docker/distribution/blob/master/docs/configuration.md#redirect
 #    # for the detail.
-#    disableredirect: true
+#    disableredirect: false
 #    # Specify the "caBundleSecretName" if the storage service uses a self-signed certificate.
 #    # The secret must contain keys named "ca.crt" which will be injected into the trust store
 #    # of registry's and chartmuseum's containers.
@@ -266,7 +260,7 @@ persistence:
 #    # "oss" and fill the information needed in the corresponding section. The type
 #    # must be "filesystem" if you want to use persistent volumes for registry
 #    # and chartmuseum
-#    type: s3
+#    type: filesystem
 #    filesystem:
 #      rootdirectory: /storage
 #      #maxthreads: 100
@@ -294,6 +288,9 @@ persistence:
 #      chunksize: "5242880"
 #      #rootdirectory: /s3/object/name/prefix
 #      #storageclass: STANDARD
+#      #multipartcopychunksize: "33554432"
+#      #multipartcopymaxconcurrency: 100
+#      #multipartcopythresholdsize: "33554432"
 #    swift:
 #      authurl: https://storage.myprovider.com/v3/auth
 #      username: username
@@ -362,7 +359,6 @@ proxy:
   components:
     - core
     - jobservice
-    - clair
     - trivy
 
 # The custom ca bundle secret, the secret must contain key named "ca.crt"
@@ -384,7 +380,7 @@ nginx:
 {% else %}
     repository: goharbor/nginx-photon
 {% endif %}
-    tag: v2.1.2
+    tag: v2.3.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   replicas: 1
@@ -397,6 +393,8 @@ nginx:
   affinity: {}
   ## Additional deployment annotations
   podAnnotations: {}
+  ## The priority class to run the pod as
+  priorityClassName:
 
 portal:
   image:
@@ -405,9 +403,11 @@ portal:
 {% else %}
     repository: goharbor/harbor-portal
 {% endif %}
-    tag: v2.1.2
+    tag: v.2.3.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
+  # mount the service account token
+  automountServiceAccountToken: false
   replicas: {{harbor.portal.replicas}}
   # resources:
   #  requests:
@@ -418,6 +418,8 @@ portal:
   affinity: {}
   ## Additional deployment annotations
   podAnnotations: {}
+  ## The priority class to run the pod as
+  priorityClassName:
 
 core:
   image:
@@ -426,10 +428,15 @@ core:
 {% else %}
     repository: goharbor/harbor-core
 {% endif %}
-    tag: v2.1.2
+    tag: v.2.3.1
+  # set the service account to be used, default if left empty
+  serviceAccountName: ""
+  # mount the service account token
+  automountServiceAccountToken: false
   replicas: {{harbor.core.replicas}}
   ## Startup probe values
   startupProbe:
+    enabled: true
     initialDelaySeconds: 240
   # resources:
   #  requests:
@@ -453,6 +460,8 @@ core:
   secretName: ""
   # The XSRF key. Will be generated automatically if it isn't specified
   xsrfKey: ""
+  ## The priority class to run the pod as
+  priorityClassName:
 
 jobservice:
   image:
@@ -461,11 +470,13 @@ jobservice:
 {% else %}
     repository: goharbor/harbor-jobservice
 {% endif %}
-    tag: v2.1.2
+    tag: v.2.3.1
   replicas: {{harbor.jobservice.replicas}}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
-  maxJobWorkers: 15
+  # mount the service account token
+  automountServiceAccountToken: false
+  maxJobWorkers: 15 # 10 in 1.7.1
   # The logger for jobs: "file", "database" or "stdout"
   jobLogger: file
   # resources:
@@ -482,10 +493,14 @@ jobservice:
   # If a secret key is not specified, Helm will generate one.
   # Must be a string of 16 chars.
   secret: ""
+  ## The priority class to run the pod as
+  priorityClassName:
 
 registry:
   # set the service account to be used, default if left empty
   serviceAccountName: ""
+  # mount the service account token
+  automountServiceAccountToken: false
   registry:
     image:
 {% if commercial.enabled %}
@@ -493,7 +508,7 @@ registry:
 {% else %}
       repository: goharbor/registry-photon
 {% endif %}
-      tag: v2.1.2
+      tag: v.2.3.1
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -505,7 +520,7 @@ registry:
 {% else %}
       repository: goharbor/harbor-registryctl
 {% endif %}
-      tag: v2.1.2
+      tag: v.2.3.1
 
     # resources:
     #  requests:
@@ -517,6 +532,8 @@ registry:
   affinity: {}
   ## Additional deployment annotations
   podAnnotations: {}
+  ## The priority class to run the pod as
+  priorityClassName:
   # Secret is used to secure the upload state from client
   # and registry storage backend.
   # See: https://github.com/docker/distribution/blob/master/docs/configuration.md#http
@@ -548,6 +565,8 @@ chartmuseum:
   enabled: {{harbor.chartmuseum.enabled}}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
+  # mount the service account token
+  automountServiceAccountToken: false
   # Harbor defaults ChartMuseum to returning relative urls, if you want using absolute url you should enable it by change the following value to 'true'
   absoluteUrl: false
   image:
@@ -556,7 +575,7 @@ chartmuseum:
 {% else %}
     repository: goharbor/chartmuseum-photon
 {% endif %}
-    tag: v2.1.2
+    tag: v.2.3.1
   replicas: {{harbor.chartmuseum.replicas}}
   # resources:
   #  requests:
@@ -567,44 +586,8 @@ chartmuseum:
   affinity: {}
   ## Additional deployment annotations
   podAnnotations: {}
-
-clair:
-  enabled: {{harbor.clair.enabled}}
-  # set the service account to be used, default if left empty
-  serviceAccountName: ""
-  clair:
-    image:
-{% if commercial.enabled %}
-      repository: {{repositories.registry_commercial}}/vanillastack/clair-photon
-{% else %}
-      repository: goharbor/clair-photon
-{% endif %}
-      tag: v2.1.2
-    # resources:
-    #  requests:
-    #    memory: 256Mi
-    #    cpu: 100m
-  adapter:
-    image:
-{% if commercial.enabled %}
-      repository: {{repositories.registry_commercial}}/vanillastack/clair-adapter-photon
-{% else %}
-      repository: goharbor/clair-adapter-photon
-{% endif %}
-      tag: v2.1.2
-    # resources:
-    #  requests:
-    #    memory: 256Mi
-    #    cpu: 100m
-  replicas: {{harbor.clair.replicas}}
-  # The interval of clair updaters, the unit is hour, set to 0 to
-  # disable the updaters
-  updatersInterval: 12
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  ## Additional deployment annotations
-  podAnnotations: {}
+  ## The priority class to run the pod as
+  priorityClassName:
 
 trivy:
   # enabled the flag to enable Trivy scanner
@@ -617,9 +600,11 @@ trivy:
     repository: goharbor/trivy-adapter-photon
 {% endif %}
     # tag the tag for Trivy adapter image
-    tag: v2.1.2
+    tag: v.2.3.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
+  # mount the service account token
+  automountServiceAccountToken: false
   # replicas the number of Pod replicas
   replicas: {{harbor.trivy.replicas}}
   # debugMode the flag to enable Trivy debug mode with more verbose scanning log
@@ -668,45 +653,60 @@ trivy:
   affinity: {}
   ## Additional deployment annotations
   podAnnotations: {}
+  ## The priority class to run the pod as
+  priorityClassName:
 
 notary:
   enabled: {{harbor.notary.enabled}}
   server:
     # set the service account to be used, default if left empty
     serviceAccountName: ""
+    # mount the service account token
+    automountServiceAccountToken: false
     image:
 {% if commercial.enabled %}
       repository: {{repositories.registry_commercial}}/vanillastack/notary-server-photon
 {% else %}
       repository: goharbor/notary-server-photon
 {% endif %}
-      tag: v2.1.2
+      tag: v.2.3.1
     # set the service account to be used, default if left empty
     replicas: {{harbor.notary.replicas}}
     # resources:
     #  requests:
     #    memory: 256Mi
     #    cpu: 100m
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    ## Additional deployment annotations
+    podAnnotations: {}
+    ## The priority class to run the pod as
+    priorityClassName:
   signer:
     # set the service account to be used, default if left empty
     serviceAccountName: ""
+    # mount the service account token
+    automountServiceAccountToken: false
     image:
 {% if commercial.enabled %}
       repository: {{repositories.registry_commercial}}/vanillastack/notary-signer-photon
 {% else %}
       repository: goharbor/notary-signer-photon
 {% endif %}
-      tag: v2.1.2
+      tag: v.2.3.1
     replicas: {{harbor.notary.replicas}}
     # resources:
     #  requests:
     #    memory: 256Mi
     #    cpu: 100m
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  ## Additional deployment annotations
-  podAnnotations: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    ## Additional deployment annotations
+    podAnnotations: {}
+    ## The priority class to run the pod as
+    priorityClassName:
   # Fill the name of a kubernetes secret if you want to use your own
   # TLS certificate authority, certificate and private key for notary
   # communications.
@@ -722,11 +722,17 @@ database:
   internal:
     # set the service account to be used, default if left empty
     serviceAccountName: ""
+    # mount the service account token
+    automountServiceAccountToken: false
     image:
       repository: goharbor/harbor-db
-      tag: v2.1.2
+      tag: v.2.3.1
     # The initial superuser password for internal database
     password: "changeit"
+    # The size limit for Shared memory, pgSQL use it for shared_buffer
+    # More details see:
+    # https://github.com/goharbor/harbor/issues/15034
+    shmSizeLimit: 512Mi
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -734,6 +740,19 @@ database:
     nodeSelector: {}
     tolerations: []
     affinity: {}
+    ## The priority class to run the pod as
+    priorityClassName:
+    initContainer:
+      migrator: {}
+      # resources:
+      #  requests:
+      #    memory: 128Mi
+      #    cpu: 100m
+      permissions: {}
+      # resources:
+      #  requests:
+      #    memory: 128Mi
+      #    cpu: 100m
   external:
     host: "harbor-postgresql.{{harbor.namespace}}.svc"
     port: "5432"
@@ -753,11 +772,11 @@ database:
     sslmode: "require"
   # The maximum number of connections in the idle connection pool.
   # If it <=0, no idle connections are retained.
-  maxIdleConns: 50
+  maxIdleConns: 50 #100 in 1.7.1
   # The maximum number of open connections to the database.
   # If it <= 0, then there is no limit on the number of open connections.
   # Note: the default number of connections is 1024 for postgre of harbor.
-  maxOpenConns: 350
+  maxOpenConns: 350 #900 in 1.7.1
   ## Additional deployment annotations
   podAnnotations: {}
 
@@ -768,9 +787,11 @@ redis:
   internal:
     # set the service account to be used, default if left empty
     serviceAccountName: ""
+    # mount the service account token
+    automountServiceAccountToken: false
     image:
       repository: goharbor/redis-photon
-      tag: v2.1.2
+      tag: v.2.3.1
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -778,6 +799,8 @@ redis:
     nodeSelector: {}
     tolerations: []
     affinity: {}
+    ## The priority class to run the pod as
+    priorityClassName:
   external:
     # support redis, redis+sentinel
     # addr for redis: <host_redis>:<port_redis>
@@ -796,3 +819,61 @@ redis:
     password: "{{harbor.redis.password}}"
   ## Additional deployment annotations
   podAnnotations: {}
+
+exporter:
+    replicas: 1
+  # resources:
+  #  requests:
+  #    memory: 256Mi
+  #    cpu: 100m
+    podAnnotations: {}
+    serviceAccountName: ""
+    # mount the service account token
+    automountServiceAccountToken: false
+    image:
+      repository: goharbor/harbor-exporter
+      tag: v2.3.1
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    cacheDuration: 23
+    cacheCleanInterval: 14400
+    ## The priority class to run the pod as
+    priorityClassName:
+
+metrics:
+  enabled: false
+  core:
+    path: /metrics
+    port: 8001
+  registry:
+    path: /metrics
+    port: 8001
+  jobservice:
+    path: /metrics
+    port: 8001
+  exporter:
+    path: /metrics
+    port: 8001
+  ## Create prometheus serviceMonitor to scrape harbor metrics.
+  ## This requires the monitoring.coreos.com/v1 CRD. Please see
+  ## https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md
+  ##
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    # Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval: ""
+    # Metric relabel configs to apply to samples before ingestion.
+    metricRelabelings: []
+      # - action: keep
+      #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
+      #   sourceLabels: [__name__]
+    # Relabel configs to apply to samples before ingestion.
+    relabelings: []
+      # - sourceLabels: [__meta_kubernetes_pod_node_name]
+      #   separator: ;
+      #   regex: ^(.*)$
+      #   targetLabel: nodename
+      #   replacement: $1
+      #   action: replace
