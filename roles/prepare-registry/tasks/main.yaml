@@ -13,8 +13,6 @@
   community.kubernetes.helm_repository:
     name: vanillastack
     repo_url: https://{{ repositories.registry_commercial }}/chartrepo/vanillastack
-#    repo_username: "robot${{commercial.username}}"
-#    repo_password: "{{commercial.key}}"
   ignore_errors: yes
   
 
