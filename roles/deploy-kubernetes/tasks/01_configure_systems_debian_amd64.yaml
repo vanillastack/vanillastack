@@ -18,7 +18,7 @@
     - "/etc/apt/sources.list.d"
     - /etc/apt/sources.list
 
-- name: Add key for cri-o repos
+- name: Add key for Cloudical repos
   apt_key:
     url: "{{ item }}"
   loop:
@@ -28,7 +28,7 @@
   register: result
   until: result is success
 
-- name: Add repositories
+- name: Add Cloudical repositories
   apt_repository:
     repo: "{{ item }}"
     state: present
@@ -74,9 +74,12 @@
   retries: 10
   delay: 10
 
+
 - name: Upgrade OS
   apt:
     update_cache: yes
+    autoclean: yes
+    autoremove: yes
     upgrade: dist
   register: result
   until: result is not failed
