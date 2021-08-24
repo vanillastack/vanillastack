@@ -403,7 +403,7 @@ portal:
 {% else %}
     repository: goharbor/harbor-portal
 {% endif %}
-    tag: v.2.3.1
+    tag: v2.3.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -428,7 +428,7 @@ core:
 {% else %}
     repository: goharbor/harbor-core
 {% endif %}
-    tag: v.2.3.1
+    tag: v2.3.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -470,7 +470,7 @@ jobservice:
 {% else %}
     repository: goharbor/harbor-jobservice
 {% endif %}
-    tag: v.2.3.1
+    tag: v2.3.1
   replicas: {{harbor.jobservice.replicas}}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
@@ -508,7 +508,7 @@ registry:
 {% else %}
       repository: goharbor/registry-photon
 {% endif %}
-      tag: v.2.3.1
+      tag: v2.3.1
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -520,7 +520,7 @@ registry:
 {% else %}
       repository: goharbor/harbor-registryctl
 {% endif %}
-      tag: v.2.3.1
+      tag: v2.3.1
 
     # resources:
     #  requests:
@@ -575,7 +575,7 @@ chartmuseum:
 {% else %}
     repository: goharbor/chartmuseum-photon
 {% endif %}
-    tag: v.2.3.1
+    tag: v2.3.1
   replicas: {{harbor.chartmuseum.replicas}}
   # resources:
   #  requests:
@@ -600,7 +600,7 @@ trivy:
     repository: goharbor/trivy-adapter-photon
 {% endif %}
     # tag the tag for Trivy adapter image
-    tag: v.2.3.1
+    tag: v2.3.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -669,7 +669,7 @@ notary:
 {% else %}
       repository: goharbor/notary-server-photon
 {% endif %}
-      tag: v.2.3.1
+      tag: v2.3.1
     # set the service account to be used, default if left empty
     replicas: {{harbor.notary.replicas}}
     # resources:
@@ -694,7 +694,7 @@ notary:
 {% else %}
       repository: goharbor/notary-signer-photon
 {% endif %}
-      tag: v.2.3.1
+      tag: v2.3.1
     replicas: {{harbor.notary.replicas}}
     # resources:
     #  requests:
@@ -726,7 +726,7 @@ database:
     automountServiceAccountToken: false
     image:
       repository: goharbor/harbor-db
-      tag: v.2.3.1
+      tag: v2.3.1
     # The initial superuser password for internal database
     password: "changeit"
     # The size limit for Shared memory, pgSQL use it for shared_buffer
@@ -791,7 +791,7 @@ redis:
     automountServiceAccountToken: false
     image:
       repository: goharbor/redis-photon
-      tag: v.2.3.1
+      tag: v2.3.1
     # resources:
     #  requests:
     #    memory: 256Mi
