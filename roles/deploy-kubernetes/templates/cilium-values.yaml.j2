@@ -82,7 +82,7 @@ rollOutCiliumPods: false
 # -- Agent container image.
 image:
 {% if commercial.enabled %}
-  repository: {{repositories.registry_commercial}}/cilium
+  repository: {{repositories.registry_commercial}}/vanillstack/cilium
 {% else %}
   repository: quay.io/cilium/cilium
 {% endif %}
@@ -542,7 +542,7 @@ hostServices:
 certgen:
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/certgen
+    repository: {{repositories.registry_commercial}}/vanillstack/certgen
 {% else %}
     repository: quay.io/cilium/certgen
 {% endif %}
@@ -656,7 +656,7 @@ hubble:
     # -- Hubble-relay container image.
     image:
 {% if commercial.enabled %}
-      repository: {{repositories.registry_commercial}}/hubble-relay
+      repository: {{repositories.registry_commercial}}/vanillstack/hubble-relay
 {% else %}
       repository: quay.io/cilium/hubble-relay
 {% endif %}
@@ -747,7 +747,7 @@ hubble:
       # -- Hubble-ui backend image.
       image:
 {% if commercial.enabled %}
-        repository: {{repositories.registry_commercial}}/hubble-ui-backend
+        repository: {{repositories.registry_commercial}}/vanillstack/hubble-ui-backend
 {% else %}
         repository: quay.io/cilium/hubble-ui-backend
 {% endif %}
@@ -768,7 +768,7 @@ hubble:
       # -- Hubble-ui frontend image.
       image:
 {% if commercial.enabled %}
-        repository: {{repositories.registry_commercial}}/hubble-ui
+        repository: {{repositories.registry_commercial}}/vanillstack/hubble-ui
 {% else %}
         repository: quay.io/cilium/hubble-ui
 {% endif %}
@@ -789,7 +789,7 @@ hubble:
       # -- Hubble-ui ingress proxy image.
       image:
 {% if commercial.enabled %}
-        repository: {{repositories.registry_commercial}}/envoy
+        repository: {{repositories.registry_commercial}}/vanillstack/envoy
 {% else %}
         repository: docker.io/envoyproxy/envoy
 {% endif %}
@@ -1135,7 +1135,7 @@ etcd:
   # -- cilium-etcd-operator image.
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/cilium-etcd-operator
+    repository: {{repositories.registry_commercial}}/vanillstack/cilium-etcd-operator
 {% else %}
     repository: quay.io/cilium/cilium-etcd-operator
 {% endif %}
@@ -1241,7 +1241,7 @@ operator:
   # -- cilium-operator image.
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/operator
+    repository: {{repositories.registry_commercial}}/vanillstack/operator
 {% else %}
     repository: quay.io/cilium/operator
 {% endif %}
@@ -1386,7 +1386,7 @@ nodeinit:
   # -- node-init image.
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/startup-script
+    repository: {{repositories.registry_commercial}}/vanillstack/startup-script
 {% else %}
     repository: quay.io/cilium/startup-script
 {% endif %}
@@ -1473,7 +1473,7 @@ preflight:
   # -- Cilium pre-flight image.
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/cilium
+    repository: {{repositories.registry_commercial}}/vanillstack/cilium
 {% else %}
     repository: quay.io/cilium/cilium
 {% endif %}
@@ -1589,7 +1589,7 @@ clustermesh:
     # -- Clustermesh API server image.
     image:
 {% if commercial.enabled %}
-      repository: {{repositories.registry_commercial}}/clustermesh-apiserver
+      repository: {{repositories.registry_commercial}}/vanillstack/clustermesh-apiserver
 {% else %}
       repository: quay.io/cilium/clustermesh-apiserver
 {% endif %}
@@ -1603,7 +1603,7 @@ clustermesh:
       # -- Clustermesh API server etcd image.
       image:
 {% if commercial.enabled %}
-        repository: {{repositories.registry_commercial}}/etcd
+        repository: {{repositories.registry_commercial}}/vanillstack/etcd
 {% else %}
         repository: quay.io/coreos/etcd
 {% endif %}
