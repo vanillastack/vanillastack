@@ -267,4 +267,4 @@
   lineinfile:
     path: /etc/hosts
     state: present
-    line: "{{ loadbalancerIP }}   api.{{ clusterTLDomain }}"
+    line: "{{ loadbalancerIP }}  {{ clusterTLDomain }}"
