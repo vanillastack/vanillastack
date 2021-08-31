@@ -28,7 +28,7 @@
   register: result
   until: result is success
 
-- name: Add Cloudical repositories
+- name: Add Cloudical Repositories
   apt_repository:
     repo: "{{ item }}"
     state: present
@@ -68,7 +68,9 @@
       - python3-passlib
       - fail2ban
       - python3-jmespath
+    autoclean: yes
     update_cache: yes
+    autoremove: yes
   register: result
   until: result is not failed
   retries: 10
@@ -77,8 +79,8 @@
 
 - name: Upgrade OS
   apt:
-    update_cache: yes
     autoclean: yes
+    update_cache: yes
     autoremove: yes
     upgrade: dist
   register: result
@@ -88,7 +90,9 @@
 
 - name: Upgrade all packages to the latest version
   apt:
+    autoclean: yes
     update_cache: yes
+    autoremove: yes
     name: '*'
     state: latest
   register: result
@@ -133,8 +137,11 @@
         create: true
     - apt:
         update_cache: yes
+        autoclean: yes
+        autoremove: yes
     - name: install libseccomp
       command: apt-get -y -t buster-backports install libseccomp2
+      warn: false
 
 - name: Install packages
   apt:
@@ -146,6 +153,8 @@
       - "cri-o-runc"
       - libgtk2.0-0
     update_cache: yes
+    autoclean: yes
+    autoremove: yes
   register: result
   until: result is not failed
   retries: 10
@@ -267,4 +276,4 @@
   lineinfile:
     path: /etc/hosts
     state: present
-    line: "{{ loadbalancerIP }}  {{ clusterTLDomain }}"
+    line: "{{ loadbalancerIP }} {{ clusterTLDomain }}"
