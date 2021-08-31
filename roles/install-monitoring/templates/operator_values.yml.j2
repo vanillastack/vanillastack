@@ -147,7 +147,7 @@ prometheusOperator:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-config-reloader
 {% else %}
-    repository: quay.io/coreos/prometheus-config-reloader
+    repository: quay.io/prometheus-operator/prometheus-config-reloader
 {% endif %}
   hyperkubeImage:
 {% if commercial.enabled %}

@@ -198,19 +198,19 @@
           "nproc=8192:8192"
       ]
 
-- name: Set CRI-O seccomp profile path
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: '^seccomp_profile =.*'
-    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+#- name: Set CRI-O seccomp profile path
+#  lineinfile:
+#    path: /etc/crio/crio.conf
+#    state: present
+#    regexp: '^seccomp_profile =.*'
+#    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 
 - name: remove preconfigures crio.conf from dpkg
   file:
     path: /etc/crio/crio.conf.d/01-crio-runc.conf
     state: absent
 
-- name: Set CRI-O seccomp profile path
+- name: Set CRI-O PIDs limit
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
