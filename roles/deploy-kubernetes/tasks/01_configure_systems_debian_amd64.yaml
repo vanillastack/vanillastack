@@ -141,7 +141,8 @@
         autoremove: yes
     - name: install libseccomp
       command: apt-get -y -t buster-backports install libseccomp2
-      warn: false
+      args:
+        warn: false
 
 - name: Install packages
   apt:
