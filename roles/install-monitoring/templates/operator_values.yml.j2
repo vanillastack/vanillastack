@@ -206,5 +206,5 @@ prometheus:
 
 {% if monitoring.additionalRules is defined %}
 additionalPrometheusRulesMap:
-  {{monitoring.additionalRules|indent(width=2)}}
+  {{monitoring.additionalRules|to_nice_yaml(indent=2)}}
 {% endif %}
