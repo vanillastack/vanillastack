@@ -206,7 +206,7 @@ prometheus:
             requests:
               storage: {{ monitoring.storage.size }}
 
-{% if monitoring.additionalRules %%}
+{% if monitoring.additionalRules is defined %}
 additionalPrometheusRulesMap:
   {{monitoring.additionalRules|indent(width=2)}}
 {% endif %}
