@@ -203,3 +203,8 @@ prometheus:
           resources:
             requests:
               storage: {{ monitoring.storage.size }}
+
+{% if monitoring.additionalRules %%}
+additionalPrometheusRulesMap:
+  {{monitoring.additionalRules|indent(width=2)}}
+{% endif %}

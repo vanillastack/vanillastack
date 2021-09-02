@@ -200,6 +200,7 @@ monitoring:
     enabled: true
   kubeStateMetrics:
     enabled: true
+  additionalRules: {}
 alertmanager:
   enabled: true
   admin_user: admin
