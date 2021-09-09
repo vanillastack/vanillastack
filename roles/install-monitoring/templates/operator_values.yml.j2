@@ -136,10 +136,12 @@ prometheusOperator:
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-operator
 {% else %}
     repository: quay.io/repository/prometheus-operator/prometheus-operator
+    tag: v0.46.0
 {% endif %}
   configmapReloadImage:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/configmap-reload
+    tag: v0.46.0
 {% else %}
     repository: docker.io/jimmidyson/configmap-reload
 {% endif %}
