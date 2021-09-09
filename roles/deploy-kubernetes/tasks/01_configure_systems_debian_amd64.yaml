@@ -190,7 +190,7 @@
     regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
     create: true
-
+    
 - name: Set CRI-O cgroups driver
   lineinfile:
     path: /etc/crio/crio.conf

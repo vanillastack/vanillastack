@@ -1,9 +1,7 @@
 ---
 commercial:
-  enabled: false
-  username: "gitlab-testing-stage"
-  key: "REGISTRY_KEY"
-make_ha: true
+  enabled: true
+make_ha: false
 create_extLB: false
 cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 cluster_pod_cidr: "10.0.0.0/8"
@@ -24,19 +22,19 @@ localprovisioner:
 vanillaservices:
   dashboard_enabled: true
   cloudfoundry_enabled: false
-  nextcloud_enabled: true    
-  stratos_enabled: true
-  guacamole_enabled: true
+  nextcloud_enabled: false    
+  stratos_enabled: false
+  guacamole_enabled: false
   pgOperator_enabled: true
-  redis_enabled: true
-  harbor_enabled: true
-  loggingStack_enabled: true
+  redis_enabled: false
+  harbor_enabled: false
+  loggingStack_enabled: false
   monitoring_enabled: true
-  kubevirt_enabled: true
+  kubevirt_enabled: false
   moodle_enabled: false
-  keycloak_enabled: true
+  keycloak_enabled: false
   openstack_enabled: false
-  loki_enabled: true
+  loki_enabled: false
   grafana_enabled: true
 vanillastorageprovider: "rook"
 polyverse:
