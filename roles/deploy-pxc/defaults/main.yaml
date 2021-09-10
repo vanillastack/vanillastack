@@ -2,5 +2,5 @@ perconaOperator:
   mode: "perNamespace"
   enabled: true
   chartName: "pxc-operator"
-  chartVersion: "0.1.11"
+  chartVersion: "0.1.12"
   namespace: "pxc-operator"

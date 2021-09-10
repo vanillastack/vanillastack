@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: {{repositories.registry_commercial}}/vanillastack/percona-xtradb-cluster-operator
-  tag: 1.7.0
+  tag: 1.8.0
   pullPolicy: IfNotPresent
 
 # set if you want to specify a namespace to watch
@@ -28,7 +28,7 @@ fullnameOverride: ""
 resources:
   limits:
     cpu: 100m
-    memory: 128Mi
+    memory: 256Mi
   requests:
     cpu: 100m
     memory: 128Mi
