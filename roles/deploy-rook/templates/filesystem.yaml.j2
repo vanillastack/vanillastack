@@ -80,12 +80,12 @@ spec:
     labels:
     #  key: value
     resources:
-    # The requests and limits set here, allow the filesystem MDS Pod(s) to use half of one CPU core and 1 gigabyte of memory
+    # The requests and limits set here, allow the filesystem MDS Pod(s) to use 1.25 CPU cores and 3-4 gigabyte of memory
       limits:
-        cpu: "750m"
+        cpu: "1250m"
         memory: "4096Mi"
       requests:
-        cpu: "150m"
+        cpu: "200m"
         memory: "3072Mi"
     priorityClassName: system-cluster-critical
   mirroring:
