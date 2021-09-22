@@ -1232,42 +1232,7 @@ metrics:
     additionalLabels:
       app: kube-prometheus-stack
       release: prometheus-operator
-    {% raw %}
     ## @param metrics.prometheusRule.rules Custom Prometheus rules
-    ## e.g:
-    ## rules:
-    ##   - alert: RedisDown
-    ##     expr: redis_up{service="{{ template "common.names.fullname" . }}-metrics"} == 0
-    ##     for: 2m
-    ##     labels:
-    ##       severity: error
-    ##     annotations:
-    ##       summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} down
-    ##       description: Redis&trade; instance {{ "{{ $labels.instance }}" }} is down
-    ##    - alert: RedisMemoryHigh
-    ##      expr: >
-    ##        redis_memory_used_bytes{service="{{ template "common.names.fullname" . }}-metrics"} * 100
-    ##        /
-    ##        redis_memory_max_bytes{service="{{ template "common.names.fullname" . }}-metrics"}
-    ##        > 90
-    ##      for: 2m
-    ##      labels:
-    ##        severity: error
-    ##      annotations:
-    ##        summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} is using too much memory
-    ##        description: |
-    ##          Redis&trade; instance {{ "{{ $labels.instance }}" }} is using {{ "{{ $value }}" }}% of its available memory.
-    ##    - alert: RedisKeyEviction
-    ##      expr: |
-    ##        increase(redis_evicted_keys_total{service="{{ template "common.names.fullname" . }}-metrics"}[5m]) > 0
-    ##      for: 1s
-    ##      labels:
-    ##        severity: error
-    ##      annotations:
-    ##        summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} has evicted keys
-    ##        description: |
-    ##          Redis&trade; instance {{ "{{ $labels.instance }}" }} has evicted {{ "{{ $value }}" }} keys in the last 5 minutes.
-    ##
     rules:
       - alert: RedisDisconnectedSlaves
         expr: count without (instance, job) (redis_connected_slaves) - sum without (instance, job) (redis_connected_slaves) - 1 > 1
@@ -1275,56 +1240,73 @@ metrics:
         labels:
           severity: critical
         annotations:
+{% raw %}
           summary: Redis disconnected slaves (instance {{ $labels.instance }})
           description: "Redis not replicating for all slaves. Consider reviewing the redis replication status.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+{% endraw %}
       - alert: RedisReplicationBroken
         expr: delta(redis_connected_slaves[1m]) < 0
         for: 0m
         labels:
           severity: critical
         annotations:
+{% raw %}
           summary: Redis replication broken (instance {{ $labels.instance }})
           description: "Redis instance lost a slave\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+{% endraw %}
       - alert: RedisClusterFlapping
         expr: changes(redis_connected_slaves[1m]) > 1
         for: 2m
         labels:
           severity: critical
         annotations:
+{% raw %}
           summary: Redis cluster flapping (instance {{ $labels.instance }})
           description: "Changes have been detected in Redis replica connection. This can occur when replica nodes lose connection to the master and reconnect (a.k.a flapping).\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+{% endraw %}
       - alert: RedisDown
+{% raw %}
         expr: redis_up{service="{{ template "common.names.fullname" . }}-metrics"} == 0
+{% endraw %}
         for: 2m
         labels:
           severity: error
         annotations:
+{% raw %}
           summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} down
           description: Redis&trade; instance {{ "{{ $labels.instance }}" }} is down
+{% endraw %}
        - alert: RedisMemoryHigh
+{% raw %}
          expr: >
            redis_memory_used_bytes{service="{{ template "common.names.fullname" . }}-metrics"} * 100
            /
            redis_memory_max_bytes{service="{{ template "common.names.fullname" . }}-metrics"}
            > 90
+{% endraw %}
          for: 2m
          labels:
            severity: error
          annotations:
+{% raw %}
            summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} is using too much memory
            description: |
              Redis&trade; instance {{ "{{ $labels.instance }}" }} is using {{ "{{ $value }}" }}% of its available memory.
+{% endraw %}
        - alert: RedisKeyEviction
+{% raw %}
          expr: |
            increase(redis_evicted_keys_total{service="{{ template "common.names.fullname" . }}-metrics"}[5m]) > 0
+{% endraw %}
          for: 1s
          labels:
            severity: error
          annotations:
+{% raw %}
            summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} has evicted keys
            description: |
              Redis&trade; instance {{ "{{ $labels.instance }}" }} has evicted {{ "{{ $value }}" }} keys in the last 5 minutes.
-    {% endraw %}
+{% endraw %}
 
 ## @section Init Container Parameters
 ##
