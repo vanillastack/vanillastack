@@ -441,7 +441,7 @@ master:
 replica:
   ## @param replica.replicaCount Number of Redis&trade; replicas to deploy
   ##
-  replicaCount: 3
+  replicaCount: {{ redis.replicaCount }}
   ## @param replica.configuration Configuration for Redis&trade; replicas nodes
   ## ref: https://redis.io/topics/config
   ##
