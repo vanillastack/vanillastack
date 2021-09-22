@@ -1,5 +1,8 @@
 ---
-- name: Deploy Redis
+- name: refresh helm repo
+  command: helm repo update
+
+- name: Deploy Redis Sentinel
   community.kubernetes.helm:
     name: redis-cluster
     release_namespace: "{{redis.namespace}}"

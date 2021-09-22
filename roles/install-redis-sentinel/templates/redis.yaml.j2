@@ -1242,7 +1242,7 @@ metrics:
         annotations:
 {% raw %}
           summary: Redis disconnected slaves (instance {{ $labels.instance }})
-          description: "Redis not replicating for all slaves. Consider reviewing the redis replication status.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          description: "Redis not replicating for all slaves. Consider reviewing the redis replication status.\n  VALUE = {{ "{{ $value }}" }}"
 {% endraw %}
       - alert: RedisReplicationBroken
         expr: delta(redis_connected_slaves[1m]) < 0
@@ -1252,7 +1252,7 @@ metrics:
         annotations:
 {% raw %}
           summary: Redis replication broken (instance {{ $labels.instance }})
-          description: "Redis instance lost a slave\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          description: "Redis instance lost a slave\n  VALUE = {{ "{{ $value }}" }}"
 {% endraw %}
       - alert: RedisClusterFlapping
         expr: changes(redis_connected_slaves[1m]) > 1
@@ -1262,7 +1262,7 @@ metrics:
         annotations:
 {% raw %}
           summary: Redis cluster flapping (instance {{ $labels.instance }})
-          description: "Changes have been detected in Redis replica connection. This can occur when replica nodes lose connection to the master and reconnect (a.k.a flapping).\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          description: "Changes have been detected in Redis replica connection. This can occur when replica nodes lose connection to the master and reconnect (a.k.a flapping).\n  VALUE = {{ "{{ $value }}" }}"
 {% endraw %}
       - alert: RedisDown
 {% raw %}
