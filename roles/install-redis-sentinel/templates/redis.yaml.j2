@@ -1232,6 +1232,7 @@ metrics:
     additionalLabels:
       app: kube-prometheus-stack
       release: prometheus-operator
+    {% raw %}
     ## @param metrics.prometheusRule.rules Custom Prometheus rules
     ## e.g:
     ## rules:
@@ -1323,6 +1324,7 @@ metrics:
            summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} has evicted keys
            description: |
              Redis&trade; instance {{ "{{ $labels.instance }}" }} has evicted {{ "{{ $value }}" }} keys in the last 5 minutes.
+    {% endraw %}
 
 ## @section Init Container Parameters
 ##
