@@ -74,8 +74,8 @@ diagnosticMode:
 ##
 image:
   registry: "{{repositories.registry_commercial}}"
-  repository: bitnami/redis
-  tag: 6.2.5-debian-10-r34
+  repository: vanillastack/redis
+  tag: 6.2.5-debian-10-r60
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -778,8 +778,8 @@ sentinel:
   ##
   image:
     registry: "{{repositories.registry_commercial}}"
-    repository: bitnami/redis-sentinel
-    tag: 6.2.5-debian-10-r34
+    repository: vanillastack/redis-sentinel
+    tag: 6.2.5-debian-10-r60
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -1107,7 +1107,7 @@ metrics:
   ##
   image:
     registry: "{{repositories.registry_commercial}}"
-    repository: bitnami/redis-exporter
+    repository: vanillastack/redis-exporter
     tag: 1.26.0-debian-10-r5
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
@@ -1240,73 +1240,50 @@ metrics:
         labels:
           severity: critical
         annotations:
-{% raw %}
-          summary: Redis disconnected slaves (instance {{ $labels.instance }})
-          description: "Redis not replicating for all slaves. Consider reviewing the redis replication status.\n  VALUE = {{ "{{ $value }}" }}"
-{% endraw %}
+          summary: Redis disconnected slaves (instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %})
+          description: "Redis not replicating for all slaves. Consider reviewing the redis replication status."
       - alert: RedisReplicationBroken
         expr: delta(redis_connected_slaves[1m]) < 0
         for: 0m
         labels:
           severity: critical
         annotations:
-{% raw %}
-          summary: Redis replication broken (instance {{ $labels.instance }})
-          description: "Redis instance lost a slave\n  VALUE = {{ "{{ $value }}" }}"
-{% endraw %}
+          summary: Redis replication broken (instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %})
+          description: "Redis instance lost a slave"
       - alert: RedisClusterFlapping
         expr: changes(redis_connected_slaves[1m]) > 1
         for: 2m
         labels:
           severity: critical
         annotations:
-{% raw %}
-          summary: Redis cluster flapping (instance {{ $labels.instance }})
-          description: "Changes have been detected in Redis replica connection. This can occur when replica nodes lose connection to the master and reconnect (a.k.a flapping).\n  VALUE = {{ "{{ $value }}" }}"
-{% endraw %}
+          summary: Redis cluster flapping (instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %})
+          description: "Changes have been detected in Redis replica connection. This can occur when replica nodes lose connection to the master and reconnect (a.k.a flapping)."
       - alert: RedisDown
-{% raw %}
-        expr: redis_up{service="{{ template "common.names.fullname" . }}-metrics"} == 0
-{% endraw %}
+        expr: redis_up{service="{% raw %}{{ template "common.names.fullname" . }}{% endraw %}-metrics"} == 0
         for: 2m
         labels:
           severity: error
         annotations:
-{% raw %}
-          summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} down
-          description: Redis&trade; instance {{ "{{ $labels.instance }}" }} is down
-{% endraw %}
-       - alert: RedisMemoryHigh
-{% raw %}
-         expr: >
-           redis_memory_used_bytes{service="{{ template "common.names.fullname" . }}-metrics"} * 100
-           /
-           redis_memory_max_bytes{service="{{ template "common.names.fullname" . }}-metrics"}
-           > 90
-{% endraw %}
-         for: 2m
-         labels:
-           severity: error
-         annotations:
-{% raw %}
-           summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} is using too much memory
-           description: |
-             Redis&trade; instance {{ "{{ $labels.instance }}" }} is using {{ "{{ $value }}" }}% of its available memory.
-{% endraw %}
-       - alert: RedisKeyEviction
-{% raw %}
-         expr: |
-           increase(redis_evicted_keys_total{service="{{ template "common.names.fullname" . }}-metrics"}[5m]) > 0
-{% endraw %}
-         for: 1s
-         labels:
-           severity: error
-         annotations:
-{% raw %}
-           summary: Redis&trade; instance {{ "{{ $labels.instance }}" }} has evicted keys
-           description: |
-             Redis&trade; instance {{ "{{ $labels.instance }}" }} has evicted {{ "{{ $value }}" }} keys in the last 5 minutes.
-{% endraw %}
+          summary: Redis&trade; instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %} down
+          description: Redis&trade; instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %} is down
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes{service="{% raw %}{{ template "common.names.fullname" . }}{% endraw %}-metrics"} * 100 / redis_memory_max_bytes{service="{% raw %}{{ template "common.names.fullname" . }}{% endraw %}-metrics"} > 90
+        for: 2m
+        labels:
+          severity: error
+        annotations:
+          summary: Redis&trade; instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %} is using too much memory
+          description: |
+            Redis&trade; instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %} is using {% raw %}{{ "{{ $value }}" }}{% endraw %}% of its available memory.
+      - alert: RedisKeyEviction
+        expr: increase(redis_evicted_keys_total{service="{% raw %}{{ template "common.names.fullname" . }}{% endraw %}-metrics"}[5m]) > 0
+        for: 1s
+        labels:
+          severity: error
+        annotations:
+          summary: Redis&trade; instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %} has evicted keys
+          description: |
+            Redis&trade; instance {% raw %}{{ "{{ $labels.instance }}" }}{% endraw %} has evicted {% raw %}{{ "{{ $value }}" }}{% endraw %} keys in the last 5 minutes.
 
 ## @section Init Container Parameters
 ##
@@ -1329,7 +1306,7 @@ volumePermissions:
   ##
   image:
     registry: "{{repositories.registry_commercial}}"
-    repository: bitnami/bitnami-shell
+    repository: vanillastack/bitnami-shell
     tag: 10-debian-10-r174
     pullPolicy: Always
     ## Optionally specify an array of imagePullSecrets.
@@ -1375,7 +1352,7 @@ sysctl:
   ##
   image:
     registry: "{{repositories.registry_commercial}}"
-    repository: bitnami/bitnami-shell
+    repository: vanillastack/bitnami-shell
     tag: 10-debian-10-r174
     pullPolicy: Always
     ## Optionally specify an array of imagePullSecrets.
