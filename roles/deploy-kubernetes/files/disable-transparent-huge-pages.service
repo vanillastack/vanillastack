@@ -1,0 +1,16 @@
+[Unit]
+Description=Disable Transparent Huge Pages (THP)
+DefaultDependencies=no
+After=sysinit.target local-fs.target
+Before=kubelet.service
+
+ConditionPathExists=/sys/kernel/mm/transparent_hugepage/enabled
+ConditionPathExists=/sys/kernel/mm/transparent_hugepage/defrag
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo never | tee /sys/kernel/mm/transparent_hugepage/enabled > /dev/null'
+ExecStart=/bin/sh -c 'echo never | tee /sys/kernel/mm/transparent_hugepage/defrag > /dev/null'
+
+[Install]
+WantedBy=basic.target
