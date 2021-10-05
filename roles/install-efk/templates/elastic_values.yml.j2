@@ -242,7 +242,7 @@ lifecycle:
           # Add a template to adjust number of shards/replicas
           TEMPLATE_NAME=enable_replica
           INDEX_PATTERN="*"
-          SHARD_COUNT=2
+          SHARD_COUNT=1
           REPLICA_COUNT=2
           ES_URL=http://localhost:9200
           while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do sleep 1; done
