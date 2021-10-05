@@ -135,6 +135,7 @@
 
 - set_fact:
     roleid: "{{ roleids.json | json_query(\"[?name=='admin'].id\") | first }}"
+
 - name: map user to role
   #ignore_errors: true
   uri:
