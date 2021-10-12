@@ -63,3 +63,10 @@ rook:
     replicaLevel: 2
     minSize: 1
     failureDomain: host
+    resources:
+      limits:
+        cpu: "1250m"
+        memory: "4352Mi"
+      requests:
+        cpu: "400m"
+        memory: "3328Mi"

@@ -80,13 +80,7 @@ spec:
     labels:
     #  key: value
     resources:
-    # The requests and limits set here, allow the filesystem MDS Pod(s) to use 1.25 CPU cores and 3-4 gigabyte of memory
-      limits:
-        cpu: "1250m"
-        memory: "4352Mi"
-      requests:
-        cpu: "400m"
-        memory: "3328Mi"
+      {{ rook.filesystem.resources | to_nice_yaml(indent=8) }}
     priorityClassName: system-cluster-critical
   mirroring:
     enabled: false
