@@ -80,7 +80,10 @@ spec:
     labels:
     #  key: value
     resources:
-      {{ rook.filesystem.resources | to_nice_yaml(indent=8) }}
+      requests:
+        {{ rook.filesystem.resources.requests | to_nice_yaml(indent=8) }}
+      limits:
+        {{ rook.filesystem.resources.limits | to_nice_yaml(indent=8) }}
     priorityClassName: system-cluster-critical
   mirroring:
     enabled: false
