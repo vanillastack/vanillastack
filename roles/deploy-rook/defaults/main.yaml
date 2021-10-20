@@ -25,6 +25,7 @@ rook:
     storage:
       useAllNodes: true
       useAllDevices: true
+    resources: {}
   dashboard:
     enabled: false
     ingress:

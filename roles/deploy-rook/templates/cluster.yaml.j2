@@ -182,33 +182,7 @@ spec:
 # If no mgr annotations are set, prometheus scrape annotations will be set by default.
 #   mgr:
   resources:
-# The requests and limits set here, allow the mgr pod to use half of one CPU core and 1 gigabyte of memory
-    mgr:
-      limits:
-        memory: "1024Mi"
-      requests:
-        memory: "768Mi"
-# The above example requests/limits can also be added to the mon and osd components
-    mon:
-      limits:
-        memory: "2048Mi"
-      requests:
-        memory: "1536Mi"
-    osd:
-      limits:
-        memory: "4096Mi"
-      requests:
-        memory: "3072Mi"
-    prepareosd:
-      limits:
-        memory: "4096Mi"
-      requests:
-        memory: "512Mi"
-    crashcollector:
-      limits:
-        memory: "128Mi"
-      requests:
-        memory: "64Mi"
+    {{ rook.cluster.resources  | to_nice_yaml(indent=2) | trim | indent(4) }}
 #    logcollector:
 #    cleanup:
 #      limits:
