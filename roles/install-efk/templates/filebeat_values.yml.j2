@@ -3,6 +3,7 @@
 # such as filebeat.yml
 filebeatConfig:
   filebeat.yml: |
+    logging.level: warning
     filebeat.inputs:
     - type: container
       paths:
