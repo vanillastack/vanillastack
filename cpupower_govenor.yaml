@@ -1,5 +1,5 @@
 ---
-- name: cpupower govenor service
+- name: cpupower governor service
   hosts: all
   become: true
   roles:

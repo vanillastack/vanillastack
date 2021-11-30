@@ -3,7 +3,7 @@
   systemd:
     daemon_reload: yes
 
-- name: restart cpupower govenor service
+- name: restart cpupower governor service
   systemd:
-    name: cpupower-govenor
+    name: cpupower-governor
     state: restarted
