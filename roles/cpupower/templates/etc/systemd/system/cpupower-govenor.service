@@ -1,0 +1,12 @@
+[Unit]
+Description=Set CPU govenor using cpupower
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/cpupower \
+    frequency-set \
+    --related \
+    --govenor {{ cpupower_govenor }}
+
+[Install]
+WantedBy=basic.target

@@ -1,0 +1,21 @@
+---
+- name: Install cpupower
+  package:
+    name: 'linux-cpupower'
+    state: present
+
+- name: Create cpupower set govenor service
+  template:
+    src: etc/systemd/system/cpupower-govenor.service
+    dest: /etc/systemd/system/cpupower-govenor.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - systemd reload
+    - restart cpupower govenor service
+
+- name: Enable cpupower govenor service
+  systemd:
+    name: cpupower-govenor
+    enabled: yes

@@ -1,0 +1,6 @@
+---
+- name: cpupower govenor service
+  hosts: all
+  become: true
+  roles:
+    - role: cpupower
