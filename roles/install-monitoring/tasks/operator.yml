@@ -128,3 +128,4 @@
   loop:
     - /tmp/prometheus_auth
     - /tmp/alertmanager_auth
+    - /tmp/operator.yml
