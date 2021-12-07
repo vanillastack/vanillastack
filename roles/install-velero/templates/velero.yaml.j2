@@ -20,11 +20,11 @@ snapshotsEnabled: false
 
 resources:
   requests:
-    cpu: "500m"
-    memory: "2Gi"
+    cpu: "{{ velero.resources.requests.cpu }}"
+    memory: "{{ velero.resources.requests.memory }}"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "{{ velero.resources.limits.cpu }}"
+    memory: "{{ velero.resources.limits.memory }}"
 
 configuration:
 {% if velero.backend == "minio" %}
