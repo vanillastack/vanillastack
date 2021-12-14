@@ -18,6 +18,14 @@ backupsEnabled: true
 
 snapshotsEnabled: false
 
+resources:
+  requests:
+    cpu: "{{ velero.resources.requests.cpu }}"
+    memory: "{{ velero.resources.requests.memory }}"
+  limits:
+    cpu: "{{ velero.resources.limits.cpu }}"
+    memory: "{{ velero.resources.limits.memory }}"
+
 configuration:
 {% if velero.backend == "minio" %}
   provider: aws
@@ -85,7 +93,13 @@ restic:
   # Pod priority class name to use for the Restic daemonset. Optional.
   priorityClassName: ""
   # Resource requests/limits to specify for the Restic daemonset deployment. Optional.
-  resources: {}
+  resources:
+    requests:
+      cpu: "{{ velero.restic.resources.requests.cpu }}"
+      memory: "{{ velero.restic.resources.requests.memory }}"
+    limits:
+      cpu: "{{ velero.restic.resources.limits.cpu }}"
+      memory: "{{ velero.restic.resources.limits.memory }}"
   # Tolerations to use for the Restic daemonset. Optional.
   tolerations: []
 
