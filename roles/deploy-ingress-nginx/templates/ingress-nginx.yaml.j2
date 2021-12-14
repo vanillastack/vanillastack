@@ -19,7 +19,7 @@ controller:
       https: {{ ingress_https_port | default(30443) }}
   config: {{ingress.config|default("{}")}}
 
-  replicaCount: 3
+  replicaCount: {{ingress.replicas|default(3)|string}}
   minAvailable: 1
   resources:
     limits:
