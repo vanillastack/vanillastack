@@ -39,7 +39,7 @@
                  {% if ansible_distribution != 'Debian' %}
                  --skip-phases=addon/kube-proxy \
                  {% endif %}                 
-                 --image-repository {{repositories.registry_commercial}}/vanillastack --kubernetes-version latest \
+                 --image-repository {{repositories.registry_commercial}}/vanillastack --kubernetes-version v1.20.10 \
                  {{ kubernetes.kubeadm_opts }} \
                  {{ kubernetes.init_opts }}
   register: init_cluster

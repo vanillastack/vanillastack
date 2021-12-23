@@ -32,5 +32,5 @@
     release_namespace: kube-logging
     values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
     create_namespace: true
-    chart_version: "{{ kibana.version }}"
+    chart_version: "{{ efkstack.imageTag }}"
     wait: true
