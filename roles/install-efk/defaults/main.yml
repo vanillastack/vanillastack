@@ -1,7 +1,9 @@
 efkstack:
   enabled: false
-  imageTag: "7.9.1"
+  filebeat:
+    imageTag: "7.16.2"
   kibana:
+    imageTag: "7.10.2"
     user: kibana_test
     password: secretlysecretpassword
     replicas: 2
@@ -15,6 +17,7 @@ efkstack:
         cpu: "1000m"
         memory: "2Gi"
   es:
+    imageTag: "7.10.2"
     replicas: 3
     storage:
       class_name: "rook-ceph-block"
