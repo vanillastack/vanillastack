@@ -8,17 +8,27 @@
 
 - name: whipe disks on storage nodes
   block:
-  - name: destroy inforamtion 
+  - name: Zap the disk to a fresh, usable state
+    command: "sgdisk --zap-all /dev/{{ item.key }}"
+    loop: "{{ q('dict', device_list) }}"
+    when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+    notify: reboot_all_nodes
+  - name: destroy information 
     command: "wipefs -fa /dev/{{ item.key }}" 
     loop: "{{ q('dict', device_list) }}"
     when: "'ceph' in item | json_query('*.holders[]') | join(',')"
     notify: reboot_all_nodes
-  - name: discard content of sectors
-    command: "blkdiscard /dev/{{ item.key }}"  
+  - name: Clean hdds with dd
+    command: "dd if=/dev/zero of=/dev/{{ item.key }} bs=1M count=100 oflag=direct,dsync"
     loop: "{{ q('dict', device_list) }}"
     when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-    ignore_errors: true
     notify: reboot_all_nodes
+ # - name: discard content of sectors
+ #   command: "blkdiscard /dev/{{ item.key }}"  
+ #   loop: "{{ q('dict', device_list) }}"
+ #   when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+ #   ignore_errors: true
+ #   notify: reboot_all_nodes
 
 - name: make sure, rook folder is absent
   file: 

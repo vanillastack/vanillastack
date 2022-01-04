@@ -41,7 +41,7 @@ promtail:
     registry: docker.io
     repository: grafana/promtail
 {% endif %}
-    tag: null
+    tag: latest
     pullPolicy: IfNotPresent
   serviceMonitor:
     enabled: {{loki.monitoring.enabled}}
