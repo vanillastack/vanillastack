@@ -62,7 +62,7 @@
     seconds: 90 
 
 - name: Install stratos
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     chart_ref: vanillastack/console
     chart_version: "{{ stratos.version }}"
     name: console

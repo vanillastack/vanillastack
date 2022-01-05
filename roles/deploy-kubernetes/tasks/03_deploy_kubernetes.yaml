@@ -57,7 +57,7 @@
   become: true
   copy:
     src: "{{ kubernetes.kubeadmin_config }}"
-    dest: ".kube/config"
+    dest: "{{ansible_env.HOME}}/.kube/config"
     owner: "{{ ansible_env.USER }}"
     mode: 0600
     remote_src: true
