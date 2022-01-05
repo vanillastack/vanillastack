@@ -47,7 +47,7 @@
     msg: "{{ postgrespassword.stdout }}"
 
 - name: install guacamole
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: guacamole
     chart_ref: vanillastack/guacamole
     chart_version: "{{ guacamole.version }}"

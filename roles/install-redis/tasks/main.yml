@@ -1,6 +1,6 @@
 ---
 - name: Deploy Redis
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: redis
     release_namespace: "{{redis.namespace}}"
     create_namespace: yes

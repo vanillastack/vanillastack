@@ -2,7 +2,7 @@
 - name: helm installation kubecf
   block:
   - name: Deploy latest version of CloudFoundry
-    kubernetes.core.helm:
+    community.kubernetes.helm:
       name: cf-operator
       chart_ref: vanillastack/quarks
       release_namespace: cf-operator
@@ -15,7 +15,7 @@
       wait: true
 
   - name: install Kubecf
-    kubernetes.core.helm:
+    community.kubernetes.helm:
       name: kubecf
       chart_ref: vanillastack/kubecf
       release_namespace: kubecf

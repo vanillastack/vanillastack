@@ -1,6 +1,6 @@
 ---
 - name: Install elasticsearch
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: elasticsearch
     chart_ref: vanillastack/elasticsearch
     release_namespace: kube-logging

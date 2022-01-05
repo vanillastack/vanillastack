@@ -8,7 +8,7 @@
   when: vanillaservices.keycloak_enabled
 
 - name: Deploy Redis
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: redis
     release_namespace: "{{ nextcloud_instancename }}"
     create_namespace: yes
@@ -36,7 +36,7 @@
         username: "{{ 'admin' | b64encode }}"
   
 - name: Install nextcloud
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: "{{ nextcloud_instancename }}"
     chart_version: "{{ nextcloud.chartVersion}}"
     chart_ref: vanillastack/nextcloud

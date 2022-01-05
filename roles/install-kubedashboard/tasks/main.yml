@@ -2,7 +2,7 @@
 # tasks file for install-kubedashboard
 #
 - name: Install Kube Dashboard
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     chart_ref: vanillastack/kubernetes-dashboard
     name: kubernetes-dashboard
     release_namespace: kube-dashboard

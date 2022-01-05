@@ -1,6 +1,6 @@
 ---
 - name: Helm add bitnami repository
-  kubernetes.core.helm_repository:
+  community.kubernetes.helm_repository:
     name: bitnami
     repo_url: https://charts.bitnami.com/bitnami
 
@@ -12,7 +12,7 @@
     state: present
 
 - name: Install mariadb
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: mariadb-moodle
     chart_ref: bitnami/mariadb
     release_namespace: "{{ moodle.namespace }}"
@@ -24,7 +24,7 @@
   register: mariadbpassword
 
 - name: Install moodle
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: moodle
     chart_ref: bitnami/moodle
     release_namespace: "{{ moodle.namespace }}"

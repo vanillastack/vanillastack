@@ -1,6 +1,6 @@
 ---
 - name: Deploy Percona Cluster Operator
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: pxc-operator
     chart_ref: "vanillastack/{{perconaOperator.chartName}}"
     release_namespace: "{{perconaOperator.namespace}}"

@@ -114,7 +114,7 @@
     dest: /tmp/operator.yml
 
 - name: Install prometheus-operator
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: prometheus-operator
     chart_ref: vanillastack/kube-prometheus-stack
     release_namespace: monitoring

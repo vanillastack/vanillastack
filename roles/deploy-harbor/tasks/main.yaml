@@ -26,7 +26,7 @@
   command: helm repo update
 
 - name: Deploy Redis
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: redis
     release_namespace: "{{harbor.namespace}}"
     create_namespace: yes
@@ -46,7 +46,7 @@
   register: postgrespassword
 
 - name: Deploy Harbor
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: harbor
     release_namespace: "{{harbor.namespace}}"
     create_namespace: yes

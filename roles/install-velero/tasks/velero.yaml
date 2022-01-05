@@ -19,7 +19,7 @@
   when: velero.minio.enabled
 
 - name: deploy minio
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     chart_ref: vanillastack/minio
     name: minio
     release_namespace: "{{ velero.namespace }}"
@@ -31,7 +31,7 @@
   when: velero.minio.enabled
 
 - name: deploy velero helm
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     chart_ref: vanillastack/velero
     name: velero
     release_namespace: "{{ velero.namespace }}"

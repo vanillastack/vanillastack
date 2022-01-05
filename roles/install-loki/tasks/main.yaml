@@ -6,7 +6,7 @@
     state: present
 
 - name: Install Loki
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     name: loki
     chart_ref: vanillastack/loki-stack
     release_namespace: "{{loki.namespace}}"

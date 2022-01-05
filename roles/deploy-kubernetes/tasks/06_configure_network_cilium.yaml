@@ -22,32 +22,30 @@
         template_version: "cilium-values-debian"
       when: ansible_distribution == 'Debian'
     - name: deploy cilium chart
-      kubernetes.core.helm:
+      community.kubernetes.helm:
         name: cilium
         chart_version: "{{ kubernetes.cilium.version }}"
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
         values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
-        #create_namespace: true
+        create_namespace: true
         wait: true
-        wait_timeout: "1m"
   rescue:
     - name: remove cilium
-      kubernetes.core.helm:
+      community.kubernetes.helm:
         name: cilium
         release_namespace: kube-system
         state: absent
         wait: true
     - name: deploy cilium
-      kubernetes.core.helm:
+      community.kubernetes.helm:
         name: cilium
         chart_version: "{{ kubernetes.cilium.version }}"
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
         values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
-        #create_namespace: true
+        create_namespace: true
         wait: true
-        wait_timeout: "1m"
 
           #- set_fact:
           #    configuration: "{{ hostvars[inventory_hostname] }}"

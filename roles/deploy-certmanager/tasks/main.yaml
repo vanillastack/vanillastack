@@ -1,6 +1,6 @@
 ---
 - name: Install CertManager
-  kubernetes.core.helm:
+  community.kubernetes.helm:
     chart_ref: vanillastack/cert-manager
     name: cert-manager
     release_namespace: "{{ certmanager.namespace }}"

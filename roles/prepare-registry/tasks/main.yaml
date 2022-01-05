@@ -10,7 +10,7 @@
 #  when: commercial.enabled
 
 - name: install Vanillastack Helm repository - commercial
-  kubernetes.core.helm_repository:
+  community.kubernetes.helm_repository:
     name: vanillastack
     repo_url: https://{{ repositories.registry_commercial }}/chartrepo/vanillastack
   ignore_errors: yes
