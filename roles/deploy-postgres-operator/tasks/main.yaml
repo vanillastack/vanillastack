@@ -1,6 +1,6 @@
 ---
 - name: Deploy Postgres-Operator
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: postgres-operator
     chart_ref: "vanillastack/{{postgresOperator.chartName}}"
     release_namespace: "{{postgresOperator.namespace}}"

@@ -1,6 +1,6 @@
 ---
 - name: Install filebeat
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: filebeat
     chart_ref: vanillastack/filebeat
     release_namespace: kube-logging
