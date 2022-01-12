@@ -6,6 +6,7 @@
       name: cf-operator
       chart_ref: vanillastack/quarks
       release_namespace: cf-operator
+      chart_version: "{{ cloudfoundry.operator.version }}"
       values: 
         global:
           singleNamespace:

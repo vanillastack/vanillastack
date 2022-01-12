@@ -1,14 +1,16 @@
 ---
 repositories:
-  registry_community: harbor.vanillastack.io
+  registry_community: harbor.cloudical.net
   registry_commercial: harbor.cloudical.net
   package_repository:  https://repo.vanillastack.cloudical.net
 ingress:
   namespace: nginx-ingress
   enabled: true
+  chartVersion: "3.25.0"
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
+    chartVersion: "4.0.3"
   clusterName: kube
   version: "1.20"
   crioVersion: "1.20"

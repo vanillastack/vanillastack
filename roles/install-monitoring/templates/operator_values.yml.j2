@@ -135,11 +135,13 @@ prometheusOperator:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-operator
 {% else %}
-    repository: quay.io/coreos/prometheus-operator
+    repository: quay.io/repository/prometheus-operator/prometheus-operator
+    tag: v0.46.0
 {% endif %}
   configmapReloadImage:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/configmap-reload
+    tag: v0.46.0
 {% else %}
     repository: docker.io/jimmidyson/configmap-reload
 {% endif %}
@@ -147,7 +149,7 @@ prometheusOperator:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-config-reloader
 {% else %}
-    repository: quay.io/coreos/prometheus-config-reloader
+    repository: quay.io/prometheus-operator/prometheus-config-reloader
 {% endif %}
   hyperkubeImage:
 {% if commercial.enabled %}

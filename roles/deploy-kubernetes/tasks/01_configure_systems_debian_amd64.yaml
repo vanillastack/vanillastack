@@ -18,7 +18,7 @@
     - "/etc/apt/sources.list.d"
     - /etc/apt/sources.list
 
-- name: Add key for cri-o repos
+- name: Add key for Cloudical repos
   apt_key:
     url: "{{ item }}"
   loop:
@@ -28,7 +28,7 @@
   register: result
   until: result is success
 
-- name: Add repositories
+- name: Add Cloudical Repositories
   apt_repository:
     repo: "{{ item }}"
     state: present
@@ -68,7 +68,21 @@
       - python3-passlib
       - fail2ban
       - python3-jmespath
+    autoclean: yes
     update_cache: yes
+    autoremove: yes
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+
+
+- name: Upgrade OS
+  apt:
+    autoclean: yes
+    update_cache: yes
+    autoremove: yes
+    upgrade: dist
   register: result
   until: result is not failed
   retries: 10
@@ -76,8 +90,11 @@
 
 - name: Upgrade all packages to the latest version
   apt:
+    autoclean: yes
     update_cache: yes
-    upgrade: yes
+    autoremove: yes
+    name: '*'
+    state: latest
   register: result
   until: result is not failed
   retries: 10
@@ -120,8 +137,12 @@
         create: true
     - apt:
         update_cache: yes
+        autoclean: yes
+        autoremove: yes
     - name: install libseccomp
       command: apt-get -y -t buster-backports install libseccomp2
+      args:
+        warn: false
 
 - name: save kubeversion
   lineinfile:
@@ -148,6 +169,8 @@
       - "cri-o-runc"
       - libgtk2.0-0
     update_cache: yes
+    autoclean: yes
+    autoremove: yes
   register: result
   until: result is not failed
   retries: 10
@@ -182,7 +205,7 @@
     regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
     create: true
-
+    
 - name: Set CRI-O cgroups driver
   lineinfile:
     path: /etc/crio/crio.conf
@@ -200,27 +223,19 @@
           "nproc=8192:8192"
       ]
 
-- name: Set CRI-O seccomp profile path
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: '^seccomp_profile =.*'
-    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
-
-- name: Set CRI-O global auth
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: '^global_auth_file =.*'
-    line: 'global_auth_file = "/etc/crio/auth.json"'
-  when: commercial.enabled
+#- name: Set CRI-O seccomp profile path
+#  lineinfile:
+#    path: /etc/crio/crio.conf
+#    state: present
+#    regexp: '^seccomp_profile =.*'
+#    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 
 - name: remove preconfigures crio.conf from dpkg
   file:
     path: /etc/crio/crio.conf.d/01-crio-runc.conf
     state: absent
 
-- name: Set CRI-O seccomp profile path
+- name: Set CRI-O PIDs limit
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
@@ -277,4 +292,4 @@
   lineinfile:
     path: /etc/hosts
     state: present
-    line: "{{ loadbalancerIP }}   api.{{ clusterTLDomain }}"
+    line: "{{ loadbalancerIP }} {{ clusterTLDomain }}"

@@ -6,7 +6,7 @@
     release_namespace: "{{ certmanager.namespace }}"
     create_namespace: true
     values: "{{ lookup('template', 'certmanager.yaml.j2') | from_yaml }}"
-    chart_version: "{{certmanager.chartVersion}}"
+    chart_version: "{{ certmanager.chartVersion }}"
     wait: true
 
 - name: Copy ClusterIssuer definiton

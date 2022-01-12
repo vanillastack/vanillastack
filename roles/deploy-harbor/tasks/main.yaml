@@ -31,7 +31,7 @@
     release_namespace: "{{harbor.namespace}}"
     create_namespace: yes
     chart_ref: "vanillastack/redis"
-    chart_version: "{{harbor.redis.chartVersion}}"
+    chart_version: "{{ harbor.redis.chartVersion }}"
     values: "{{ lookup('template', 'redis.yaml.j2') | from_yaml }}"
 
 - name: "wait until postgres pod is ready"
@@ -51,7 +51,7 @@
     release_namespace: "{{harbor.namespace}}"
     create_namespace: yes
     chart_ref: "vanillastack/harbor"
-    chart_version: "{{harbor.chartVersion}}"
+    chart_version: "{{ harbor.chartVersion }}"
     values: "{{ lookup('template', 'harbor.yaml.j2') | from_yaml }}"
 
 - name: wait for pods to come up

@@ -1,2 +1,5 @@
 ---
 # defaults file for install-kubedashboard
+kubernetes:
+  dashboard:
+    version: 2.7.1

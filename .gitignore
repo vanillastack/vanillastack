@@ -1,6 +1,10 @@
 group_vars
 hosts
 inventory
+inventory-smc1
+inventory-smc2
+inventory-hac1
+inventory-hac2
 *.retry
 *.log
 *[_.]local[_.]*
