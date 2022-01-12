@@ -1,0 +1,11 @@
+---
+- name: set sysctl properties
+  hosts:
+    - master
+    - worker
+    - storage
+    - compute
+  gather_facts: true
+  become: true
+  roles:
+    - role: deploy-sysctl

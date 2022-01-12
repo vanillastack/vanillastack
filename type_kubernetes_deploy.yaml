@@ -5,21 +5,21 @@
     - role: deploy-kubernetes
       action: 00_create_new_inventory
 
-- name: Wait for nodes
-  hosts: install_nodes,install_master,master[0]
-  become: false
-  gather_facts: no
-  roles:
-    - role: wait-for-nodes
-
-- name: Secure Servers (Installing Polyverse)
-  hosts: install_nodes,install_master
-  become: true
-  gather_facts: true
-  roles:
-    - role: deploy-polyverse
-      when: polyverse.enabled
- 
+#- name: Wait for nodes
+#  hosts: install_nodes,install_master,master[0]
+#  become: false
+#  gather_facts: no
+#  roles:
+#    - role: wait-for-nodes
+#
+#- name: Secure Servers (Installing Polyverse)
+#  hosts: install_nodes,install_master
+#  become: true
+#  gather_facts: true
+#  roles:
+#    - role: deploy-polyverse
+#      when: polyverse.enabled
+# 
 - name: Configure Servers
   hosts: install_nodes,install_master
   become: true
@@ -31,39 +31,39 @@
     - role: deploy-kubernetes
       action: 01_configure_systems_debian_amd64
       when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
-    - role: deploy-kubernetes
-      action: 01_configure_systems_debian_ppc64le
-      when: ansible_distribution == 'Debian' and ansible_architecture == "ppc64le"
-
-- name: Install Keepalived
-  hosts: haproxy[0]
-  become: true
-  gather_facts: true
-  vars:
-    keepalived_MASTER_SLAVE: MASTER
-    keepalived_priority: 110
-  roles:
-    - role: install-haproxy
-      action: 01_install_keepalived
-      when: not create_extLB and make_ha
-
-- name: Install Keepalived
-  hosts: haproxy[1:]
-  become: true
-  gather_facts: true
-  roles:
-    - role: install-haproxy
-      action: 01_install_keepalived
-      when: not create_extLB and make_ha
-
-- name: Install HaProxy
-  hosts: haproxy
-  become: true
-  gather_facts: true
-  roles:
-    - role: install-haproxy
-      action: 02_install_haproxy
-      when: not create_extLB
+#    - role: deploy-kubernetes
+#      action: 01_configure_systems_debian_ppc64le
+#      when: ansible_distribution == 'Debian' and ansible_architecture == "ppc64le"
+#
+#- name: Install Keepalived
+#  hosts: haproxy[0]
+#  become: true
+#  gather_facts: true
+#  vars:
+#    keepalived_MASTER_SLAVE: MASTER
+#    keepalived_priority: 110
+#  roles:
+#    - role: install-haproxy
+#      action: 01_install_keepalived
+#      when: not create_extLB and make_ha
+#
+#- name: Install Keepalived
+#  hosts: haproxy[1:]
+#  become: true
+#  gather_facts: true
+#  roles:
+#    - role: install-haproxy
+#      action: 01_install_keepalived
+#      when: not create_extLB and make_ha
+#
+#- name: Install HaProxy
+#  hosts: haproxy
+#  become: true
+#  gather_facts: true
+#  roles:
+#    - role: install-haproxy
+#      action: 02_install_haproxy
+#      when: not create_extLB
 
 - name: Configure Kube Systems
   hosts: install_nodes,install_master

@@ -1,15 +1,42 @@
 ---
 # tasks file for install-kubedashboard
 #
-- name: Install Kube Dashboard
-  community.kubernetes.helm:
-    chart_ref: vanillastack/kubernetes-dashboard
-    name: kubernetes-dashboard
-    release_namespace: kube-dashboard
-    create_namespace: true
-    values: "{{ lookup('template', 'dashboard-values.yaml.j2') | from_yaml }}"
-    chart_version: "{{ kubernetes.dashboard.chartVersion }}"
-    wait: true
+- name: Deploy kubedashboard chart
+  block:
+    - name: Install Kube Dashboard
+      community.kubernetes.helm:
+        chart_ref: vanillastack/kubernetes-dashboard
+        name: kubernetes-dashboard
+        release_namespace: kube-dashboard
+        update_repo_cache: true
+        create_namespace: true
+        values: "{{ lookup('template', 'dashboard-values.yaml.j2') | from_yaml }}"
+        wait: true
+  rescue:
+    #- name: remove Kube Dashboard
+    #  community.kubernetes.helm:
+    #    name: kubernetes-dashboard
+    #    release_namespace: kube-dashboard
+    #    state: absent
+    #    wait: true
+    #- name: delete namespace
+    #  community.kubernetes.k8s:
+    #    name: kube-dashboard
+    #    api_version: v1
+    #    kind: Namespace
+    #    state: absent
+    #    wait: true
+    - name: wait for cluster
+      pause: 
+        seconds: 30
+    - name: Install Kube Dashboard
+      community.kubernetes.helm:
+        chart_ref: vanillastack/kubernetes-dashboard
+        name: kubernetes-dashboard
+        release_namespace: kube-dashboard
+        create_namespace: true
+        values: "{{ lookup('template', 'dashboard-values.yaml.j2') | from_yaml }}"
+        wait: true
 
 - name: Print accesstoken
   shell: "kubectl get secrets -n kube-dashboard $(kubectl get secrets -n kube-dashboard | awk '/kubernetes-dashboard-token/ {print $1;exit}') -o jsonpath='{.data.token}'"

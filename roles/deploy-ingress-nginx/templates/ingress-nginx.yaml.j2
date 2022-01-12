@@ -15,12 +15,34 @@ controller:
       https: {{ ingress_https_port | default(30443) }}
   config: {{ingress.config|default("{}")}}
 
-  replicaCount: 3
+  replicaCount: {{ingress.replicas|default(3)|string}}
   minAvailable: 1
   resources:
+    limits:
+      cpu: 5000m
+      memory: 6Gi
     requests:
-      cpu: 100m
-      memory: 90Mi
+      cpu: 2000m
+      memory: 6Gi
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - ingress-nginx
+          - key: app.kubernetes.io/instance
+            operator: In
+            values:
+            - nginx-ingress
+          - key: app.kubernetes.io/component
+            operator: In
+            values:
+            - controller
+        topologyKey: "kubernetes.io/hostname"
 
   autoscaling:
     enabled: false
@@ -62,6 +84,45 @@ controller:
       nodeSelector: {}
       tolerations: []
       runAsUser: 2000
+
+  metrics:
+    port: 10254
+    # if this port is changed, change healthz-port: in extraArgs: accordingly
+    enabled: true
+
+    service:
+      annotations: {}
+      # prometheus.io/scrape: "true"
+      # prometheus.io/port: "10254"
+
+      # clusterIP: ""
+
+      ## List of IP addresses at which the stats-exporter service is available
+      ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
+      ##
+      externalIPs: []
+
+      # loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+      servicePort: 9913
+      type: ClusterIP
+      # externalTrafficPolicy: ""
+      # nodePort: ""
+
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: prometheus-operator
+      namespace: ""
+      namespaceSelector: {}
+      # Default: scrape .Release.Namespace only
+      # To scrape all, use the following:
+      # namespaceSelector:
+      #   any: true
+      scrapeInterval: 10s
+      # honorLabels: true
+      targetLabels: []
+      metricRelabelings: []
 
 defaultBackend:
   ##

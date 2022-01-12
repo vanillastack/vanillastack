@@ -5,7 +5,6 @@
     name:
      - haproxy
 
-
 - name: create bridge traffic config
   sysctl:
     name: "{{ item }}"

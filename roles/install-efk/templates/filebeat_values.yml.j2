@@ -3,6 +3,7 @@
 # such as filebeat.yml
 filebeatConfig:
   filebeat.yml: |
+    logging.level: warning
     filebeat.inputs:
     - type: container
       paths:
@@ -56,7 +57,7 @@ image: "{{repositories.registry_commercial}}/vanillastack/filebeat-oss"
 {% else %}
 image: "docker.elastic.co/beats/filebeat-oss"
 {% endif %}
-imageTag: "{{ efkstack.imageTag }}"
+imageTag: "{{ efkstack.filebeat.imageTag }}"
 imagePullPolicy: "IfNotPresent"
 imagePullSecrets: []
 

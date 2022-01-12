@@ -31,7 +31,7 @@ image: "{{repositories.registry_commercial}}/vanillastack/elasticsearch-oss"
 {% else %}
 image: "docker.elastic.co/elasticsearch/elasticsearch-oss"
 {% endif %}
-imageTag: "{{ efkstack.imageTag }}"
+imageTag: "{{ efkstack.es.imageTag }}"
 imagePullPolicy: "IfNotPresent"
 
 podAnnotations: {}
@@ -228,25 +228,25 @@ fullnameOverride: ""
 # https://github.com/elastic/helm-charts/issues/63
 masterTerminationFix: false
 
-lifecycle: {}
+lifecycle:
   # preStop:
   #   exec:
   #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
-  # postStart:
-  #   exec:
-  #     command:
-  #       - bash
-  #       - -c
-  #       - |
-  #         #!/bin/bash
-  #         # Add a template to adjust number of shards/replicas
-  #         TEMPLATE_NAME=my_template
-  #         INDEX_PATTERN="logstash-*"
-  #         SHARD_COUNT=8
-  #         REPLICA_COUNT=1
-  #         ES_URL=http://localhost:9200
-  #         while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do sleep 1; done
-  #         curl -XPUT "$ES_URL/_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d'{"index_patterns":['\""$INDEX_PATTERN"\"'],"settings":{"number_of_shards":'$SHARD_COUNT',"number_of_replicas":'$REPLICA_COUNT'}}'
+  postStart:
+    exec:
+      command:
+        - bash
+        - -c
+        - |
+          #!/bin/bash
+          # Add a template to adjust number of shards/replicas
+          TEMPLATE_NAME=enable_replica
+          INDEX_PATTERN="*"
+          SHARD_COUNT=1
+          REPLICA_COUNT=2
+          ES_URL=http://localhost:9200
+          while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do sleep 1; done
+          curl -XPUT "$ES_URL/_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d'{"index_patterns":['\""$INDEX_PATTERN"\"'],"settings":{"number_of_shards":'$SHARD_COUNT',"number_of_replicas":'$REPLICA_COUNT'}}'
 
 sysctlInitContainer:
   enabled: true

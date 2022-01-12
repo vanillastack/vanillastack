@@ -7,6 +7,25 @@
 - name: remove Packages
   apt:
     pkg:
+      - "haproxy"
+      - "keepalived"
+      - "kubelet"
+      - "kubeadm"
+      - "kubectl"
+      - "cri-o"
+      - "runc"
+      - "cri-o-runc"
+    state: absent
+    autoremove: true
+    force: true
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+
+- name: remove Packages
+  package:
+    name:
       - "kubelet"
       - "kubeadm"
       - "kubectl"

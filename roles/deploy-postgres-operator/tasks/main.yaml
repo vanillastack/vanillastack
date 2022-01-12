@@ -18,4 +18,3 @@
     src: /tmp/operator-config-yaml
     state: present
     wait: true
-

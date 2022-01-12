@@ -1,0 +1,6 @@
+---
+- name: cpupower governor service
+  hosts: all
+  become: true
+  roles:
+    - role: cpupower

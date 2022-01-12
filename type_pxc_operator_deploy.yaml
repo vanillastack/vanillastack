@@ -6,7 +6,7 @@
   roles:
     - role: deploy-pxc
       action: namespacewide
-      when: perconaOperator.mode is "perNamespace"
+      when: perconaOperator.mode == "perNamespace"
     - role: deploy-pxc
       action: clusterwide
-      when: perconaOperator.mode is "perCluster"
+      when: perconaOperator.mode == "perCluster"

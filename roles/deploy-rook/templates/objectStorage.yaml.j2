@@ -57,15 +57,15 @@ spec:
     # The number of pods in the rgw deployment
     instances: 2
     # The affinity rules to apply to the rgw deployment or daemonset.
-#    placement:
-#      nodeAffinity:
-#        requiredDuringSchedulingIgnoredDuringExecution:
-#          nodeSelectorTerms:
-#          - matchExpressions:
-#            - key: node-role.kubernetes.io/rook-ceph
-#              operator: In
-#              values:
-#              - ""
+    placement:
+    #  nodeAffinity:
+    #    requiredDuringSchedulingIgnoredDuringExecution:
+    #      nodeSelectorTerms:
+    #      - matchExpressions:
+    #        - key: role
+    #          operator: In
+    #          values:
+    #          - rgw-node
     #  topologySpreadConstraints:
     #  tolerations:
     #  - key: rgw-node
@@ -74,6 +74,9 @@ spec:
     #  podAntiAffinity:
     # A key/value list of annotations
     annotations:
+    #  key: value
+    # A key/value list of labels
+    labels:
     #  key: value
     resources:
     # The requests and limits set here, allow the object store gateway Pod(s) to use half of one CPU core and 1 gigabyte of memory
@@ -85,11 +88,11 @@ spec:
         memory: "1024Mi"
     # priorityClassName: my-priority-class
   #zone:
-  #  name: zone-a
+    #name: zone-a
   # service endpoint healthcheck
   healthCheck:
-    endpoint:
-      enabled: true
+    bucket:
+      disabled: false
       interval: 60s
     # Configure the pod liveness probe for the rgw daemon
     livenessProbe:

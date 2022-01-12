@@ -4,18 +4,16 @@
 
 replicaCount: 1
 
-image:
-{% if commercial.enabled %}
-  repository: {{repositories.registry_commercial}}/vanillastack/percona-xtradb-cluster-operator
-{% else %}
-  repository: percona/percona-xtradb-cluster-operator
-{% endif %}
-  tag: 1.7.0
-  pullPolicy: IfNotPresent
+operatorImageRepository: "{{repositories.registry_commercial}}/vanillastack/percona-xtradb-cluster-operator"
+imagePullPolicy: IfNotPresent
+image: "{{repositories.registry_commercial}}/vanillastack/percona-xtradb-cluster-operator:1.9.0"
 
 # set if you want to specify a namespace to watch
 # defaults to `.Release.namespace` if left blank
-watchNamespace: ""
+# watchNamespace:
+
+# set if operator should be deployed in cluster wide mode. defaults to false
+watchAllNamespaces: false
 
 # set if you want to use a different operator name
 # defaults to `percona-xtradb-cluster-operator`
@@ -31,11 +29,11 @@ fullnameOverride: ""
 
 resources:
   limits:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 200m
+    memory: 512Mi
   requests:
     cpu: 100m
-    memory: 128Mi
+    memory: 200Mi
 
 nodeSelector: {}
 

@@ -4,7 +4,7 @@ metadata:
   name: rook-ceph-mgr
   namespace: {{rook.namespace}}
   labels:
-    team: rook
+    release: prometheus-operator
 spec:
   namespaceSelector:
     matchNames:
@@ -16,4 +16,4 @@ spec:
   endpoints:
   - port: http-metrics
     path: /metrics
-    interval: 5s
+    interval: 10s

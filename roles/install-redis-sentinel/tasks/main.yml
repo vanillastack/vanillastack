@@ -1,0 +1,14 @@
+---
+- name: refresh helm repo
+  command: helm repo update
+
+- name: Deploy Redis Sentinel
+  community.kubernetes.helm:
+    name: redis-cluster
+    release_namespace: "{{redis.namespace}}"
+    create_namespace: true
+    chart_ref: "vanillastack/redis"
+    chart_version: "{{redis.chartVersion}}"
+    values: "{{ lookup('template', 'redis.yaml.j2') | from_yaml }}"
+  retries: 3
+  delay: 10

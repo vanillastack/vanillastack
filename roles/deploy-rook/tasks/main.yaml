@@ -3,6 +3,7 @@
   include_tasks: deploy.yaml
   when: rook.enabled
   with_items:
+    - { name: crds, wait: false, delay: 10}
     - { name: common, wait: false, delay: 0}
     - { name: operator, wait: false, delay: 10}
     - { name: cluster, wait: false, delay: 10}
@@ -12,6 +13,7 @@
     - { name: storageClassRBD, wait: false, delay: 0}
     - { name: storageClassObject, wait: false, delay: 0}
     - { name: storageClassFile, wait: false, delay: 0}
+    - { name: dashboard, wait: false, delay: 0}
 
 - name: Deploy Rook monitoring
   when: rook.cluster.monitoring.enabled

@@ -144,6 +144,21 @@
       args:
         warn: false
 
+- name: save kubeversion
+  lineinfile:
+    path: /tmp/kubeversion.yml
+    regexp: '^(.*)version(.*)$'
+    line: "version: {{ versions | replace ('-00','') }}"
+    create: true
+
+- name: fetch kubeversion
+  become: true
+  fetch:
+    src: "/tmp/kubeversion.yml"
+    dest: "/tmp/kubeversion.yml"
+    flat: true
+  run_once: true
+
 - name: Install packages
   apt:
     pkg:
