@@ -180,6 +180,15 @@
     - role: deploy-postgres-operator
       when: vanillaservices.pgOperator_enabled
 
+- name: Deploy Redis
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: prepare-registry
+      when: vanillaservices.redis_enabled
+    - role: install-redis-cluster
+      when: vanillaservices.pgOperator_enabled
+
 - name: Deploy Keycloak
   hosts: master[0]
   become: false

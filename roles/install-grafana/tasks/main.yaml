@@ -6,7 +6,7 @@
     state: present
 
 - name: Install Grafana
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: grafana
     chart_ref: vanillastack/grafana
     release_namespace: "{{grafana.namespace}}"

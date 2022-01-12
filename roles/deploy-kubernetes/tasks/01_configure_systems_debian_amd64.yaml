@@ -45,6 +45,23 @@
   register: result
   until: result is success
 
+- name: workaround to get correct libcompversion
+  block:
+    - name: add backportsrepository
+      lineinfile:
+        path: /etc/apt/sources.list
+        regexp: '^(.*)buster-backports(.*)$'
+        line: 'deb http://deb.debian.org/debian buster-backports main'
+        create: true
+    - apt:
+        update_cache: yes
+        autoclean: yes
+        autoremove: yes
+    - name: install libseccomp
+      command: apt-get -y -t buster-backports install libseccomp2
+      args:
+        warn: false
+
 - name: Install neccessary packages
   apt:
     name:
