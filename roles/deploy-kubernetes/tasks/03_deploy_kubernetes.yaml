@@ -46,8 +46,8 @@
                  {{ kubernetes.init_opts }}
   register: init_cluster
 
-- name: create folder
-  file: 
+- name: create .kube folder in /root for become == true cases
+  file:
     path: "{{ ansible_env.HOME }}/{{ item }}/"
     state: directory
     mode: '750'
@@ -55,12 +55,36 @@
   loop:
     - .kube
 
-- name: Copy admin.conf to Home directory
+- name: Copy admin.conf to Home directory /root
   become: true
   copy:
     src: "{{ kubernetes.kubeadmin_config }}"
-    dest: "{{ansible_env.HOME}}/.kube/config"
+    dest: "{{ ansible_env.HOME }}/.kube/config"
     owner: "{{ ansible_env.USER }}"
+    mode: 0600
+    remote_src: true
+
+- name: for debug - show env setting under become= true
+  become: true
+  command: >
+          /bin/bash -c set
+
+- name: create .kube folder for ansible_user
+  file:
+    path: "{{ ansible_env.PWD }}/{{ item }}/"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: '750'
+  loop:
+    - .kube
+
+
+- name: Copy admin.conf to Home directory of ansible_user
+  become: true
+  copy:
+    src: "{{ kubernetes.kubeadmin_config }}"
+    dest: "{{ ansible_env.PWD }}/.kube/config"
+    owner: "{{ ansible_user }}"
     mode: 0600
     remote_src: true
 
