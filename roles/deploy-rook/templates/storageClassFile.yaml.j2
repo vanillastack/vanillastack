@@ -14,10 +14,6 @@ parameters:
   # Required for provisionVolume: "true"
   pool: {{rook.filesystem.name}}-data0
 
-  # Root path of an existing CephFS volume
-  # Required for provisionVolume: "false"
-  # rootPath: /absolute/path
-
   # The secrets contain Ceph admin credentials. These are generated automatically by the operator
   # in the same namespace as the cluster.
   csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
@@ -33,9 +29,6 @@ parameters:
   # mounter: kernel
 reclaimPolicy: Delete
 allowVolumeExpansion: true
-#mountOptions:
-#  - noatime
-  # is used on the host mount opts
-  #- relatime
+mountOptions:
   # uncomment the following line for debugging
   #- debug

@@ -9,3 +9,13 @@
     values: "{{ lookup('template', 'redis.yaml.j2') | from_yaml }}"
   retries: 3
   delay: 10
+
+- name: Deploy Redis ServiceMonitor
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'redis-servicemonitor.yaml.j2') | from_yaml }}"
+    state: present
+
+- name: Deploy Redis PrometheusRule
+  community.kubernetes.k8s:
+    definition: "{{ lookup('template', 'redis-prometheusrules.yaml.j2') | from_yaml }}"
+    state: present

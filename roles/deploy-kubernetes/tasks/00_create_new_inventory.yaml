@@ -4,14 +4,14 @@
   register: worker
   ignore_errors: yes
 
-- name: Add all hosts running this playbook to the done group
+- name: Add new nodes running this playbook to the install_nodes group
   add_host:
     name: '{{ item }}'
     group: install_nodes
   when: 'worker.rc != 0 or item not in worker.stdout'
   loop: "{{ groups.worker }}"      
 
-- name: Add all hosts running this playbook to the done group
+- name: Add new masters running this playbook to the install_master group
   add_host:
     name: '{{ item }}'
     group: install_master

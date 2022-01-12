@@ -53,5 +53,12 @@ rook:
     enabled: true
     name: rook-cephfs
     replicaLevel: 2
-    failureDomain: host
     minSize: 1
+    failureDomain: host
+    resources:
+      limits:
+        cpu: "1500m"
+        memory: "4096Mi"
+      requests:
+        cpu: "100m"
+        memory: "1024Mi"

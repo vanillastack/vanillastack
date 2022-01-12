@@ -6,10 +6,10 @@
   - role: install-redis-cluster
     when: redis.cluster
 
-- name: install redis master-slave
+- name: install redis sentinel
   hosts: master[0]
   gather_facts: false
   roles:
-  - role: install-redis-cluster
-    when: not redis.cluster
+  - role: install-redis-sentinel
+    when: not redis.cluster and redis.sentinel
 

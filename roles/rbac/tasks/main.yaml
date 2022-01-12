@@ -46,3 +46,27 @@
     definition: "{{ lookup('template', 'namespace-rolebinding.yaml.j2') | from_yaml }}"
   with_items:
     - "{{rbac.namespaces}}"
+
+- name: create serviceaccounts
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'serviceaccounts.yaml.j2') | from_yaml }}"
+  loop: "{{rbac.serviceAccounts|default([])}}"
+  loop_control:
+    loop_var: sa
+
+- name: create serviceaccounts clusterrole
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'serviceaccounts-clusterrole.yaml.j2') | from_yaml }}"
+  loop: "{{rbac.serviceAccounts|default([])}}"
+  loop_control:
+    loop_var: sa
+
+- name: create serviceaccounts clusterrolebindings
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'serviceaccounts-clusterrolebinding.yaml.j2') | from_yaml }}"
+  loop: "{{rbac.serviceAccounts|default([])}}"
+  loop_control:
+    loop_var: sa

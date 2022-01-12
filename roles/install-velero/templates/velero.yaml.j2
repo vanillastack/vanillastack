@@ -7,15 +7,30 @@ image:
 {% endif %}
   tag: {{velero.version}}
 
-installCRDs: true
+# This job upgrades the CRDs.
+upgradeCRDs: true
 
-snapshotsEnabled: true
+# This job is meant primarily for cleaning up CRDs on CI systems.
+# Using this on production systems, especially those that have multiple releases of Velero, will be destructive.
+cleanUpCRDs: false
+
+backupsEnabled: true
+
+snapshotsEnabled: false
+
+resources:
+  requests:
+    cpu: "{{ velero.resources.requests.cpu }}"
+    memory: "{{ velero.resources.requests.memory }}"
+  limits:
+    cpu: "{{ velero.resources.limits.cpu }}"
+    memory: "{{ velero.resources.limits.memory }}"
 
 configuration:
 {% if velero.backend == "minio" %}
   provider: aws
   backupStorageLocation:
-    name: default
+    name:
     bucket: velero
     config:
       region: minio
@@ -27,28 +42,35 @@ configuration:
     bucket: kubernetes-pv
     config:
       region: minio
-      s3ForcePathStyle: "true"
+      s3ForcePathStyle: true
       publicUrl: "http://minio:9000"
       s3Url: "http://minio:9000"
 {% elif velero.backend == "aws" %}
   provider: aws
   backupStorageLocation:
-    name: default
+    name:
+    provider:
     bucket: {{velero.aws.bucketName}}
     config:
       region: {{velero.aws.region}}
-      s3ForcePathStyle: "true"
+      s3ForcePathStyle: true
       publicUrl: "{{velero.aws.publicURL}}"
       s3Url: "{{velero.aws.s3URL}}"
   volumeSnapshotLocation:
-    name: default-snap
-    bucket: {{velero.aws.snapshotBucketName}}
-    config:
-      region: {{velero.aws.region}}
-      s3ForcePathStyle: "true"
-      publicUrl: "{{velero.aws.publicURL}}"
-      s3Url: "{{velero.aws.s3URL}}"
+    name:
+    provider:
+    config: {}
+    #name: default-snap
+    #provider: aws
+    #bucket: {{velero.aws.snapshotBucketName}}
+    #config:
+    #  region: {{velero.aws.region}}
+    #  s3ForcePathStyle: true
+    #  publicUrl: "{{velero.aws.publicURL}}"
+    #  s3Url: "{{velero.aws.s3URL}}"
 {% endif %}
+  resticTimeout: 6h
+  defaultVolumesToRestic: true
 
 credentials:
   useSecret: true
@@ -62,14 +84,22 @@ credentials:
       aws_access_key_id = {{velero.aws.accessKey}}
       aws_secret_access_key = {{velero.aws.secretKey}}
 {% endif %}
+
 deployRestic: true
+
 restic:
   podVolumePath: /var/lib/kubelet/pods
-  privileged: false
+  privileged: true
   # Pod priority class name to use for the Restic daemonset. Optional.
   priorityClassName: ""
   # Resource requests/limits to specify for the Restic daemonset deployment. Optional.
-  resources: {}
+  resources:
+    requests:
+      cpu: "{{ velero.restic.resources.requests.cpu }}"
+      memory: "{{ velero.restic.resources.requests.memory }}"
+    limits:
+      cpu: "{{ velero.restic.resources.limits.cpu }}"
+      memory: "{{ velero.restic.resources.limits.memory }}"
   # Tolerations to use for the Restic daemonset. Optional.
   tolerations: []
 
@@ -85,26 +115,15 @@ restic:
   securityContext: {}
     # fsGroup: 1337
 
-# Backup schedules to create.
-# Eg:
-# schedules:
-#   mybackup:
-#     labels:
-#       myenv: foo
-#     schedule: "0 0 * * *"
-#     template:
-#       ttl: "240h"
-#       includedNamespaces:
-#       - foo
 schedules:
   {{ velero.schedules }}
 
 initContainers:
   - name: velero-plugin-for-aws
 {% if commercial.enabled %}
-    image: {{repositories.registry_commercial}}/vanillastack/velero-plugin-for-aws:v1.1.0
+    image: {{repositories.registry_commercial}}/vanillastack/velero-plugin-for-aws:v1.3.0
 {% else %}
-    image: velero/velero-plugin-for-aws:v1.1.0
+    image: velero/velero-plugin-for-aws:v1.3.0
 {% endif %}
     volumeMounts:
       - mountPath: /target

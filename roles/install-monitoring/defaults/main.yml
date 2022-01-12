@@ -4,6 +4,7 @@ prometheus:
   admin_user: admin
   admin_password: prompassword
   replicas: 1
+  retention: 360h
   ingress:
     enabled: true
     dns: "prometheus.{{ clusterTLDomain }}"

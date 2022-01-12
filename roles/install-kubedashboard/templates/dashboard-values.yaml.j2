@@ -44,13 +44,9 @@ metricsScraper:
     readOnlyRootFilesystem: true
     runAsGroup: 2001
     runAsUser: 1001
-  enabled: false
+  enabled: true
   image:
-{% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/metrics-scraper
-{% else %}
-    repository: kubernetesui/metrics-scraper
-{% endif %}
     tag: v1.0.6
   resources: {}
 networkPolicy:
@@ -65,17 +61,17 @@ podDisruptionBudget:
 podLabels: {}
 protocolHttp: false
 rbac:
-  clusterReadOnlyRole: false
+  clusterReadOnlyRole: true
   clusterRoleMetrics: true
   create: true
-replicaCount: 1
+replicaCount: 2
 resources:
   limits:
     cpu: 2
-    memory: 200Mi
+    memory: 1024Mi
   requests:
-    cpu: 100m
-    memory: 200Mi
+    cpu: 200m
+    memory: 512Mi
 service:
   annotations: {}
   clusterServiceLabel:

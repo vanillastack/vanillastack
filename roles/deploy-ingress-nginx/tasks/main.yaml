@@ -6,5 +6,8 @@
     release_namespace: "{{ ingress.namespace }}"
     create_namespace: true
     wait: true
+    chart_version: "{{ ingress.version }}"
     values: "{{ lookup('template', 'ingress-nginx.yaml.j2') | from_yaml }}"
-    chart_version: "{{ ingress.chartVersion }}"
+
+- pause: 
+    seconds: 15

@@ -92,8 +92,8 @@
       dest: /tmp/tempkey.pem
 
   - name: add ssh key as secret
-    command: >
-      kubectl create secret generic --namespace kube-system management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem
+    shell: >
+      kubectl create secret generic --namespace kube-system --save-config --dry-run=client management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem -o yaml | kubectl apply --namespace kube-system -f -
 
   - name: make sure, ssh key is removed
     file:

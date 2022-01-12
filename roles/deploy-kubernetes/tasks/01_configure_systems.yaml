@@ -491,6 +491,20 @@
 #    when: vanillaservices.openstack_enabled
 ##### SUSE FAMILY END
 
+- name: Disable Transparent Hugepages
+  copy:
+    src: disable-transparent-huge-pages.service
+    dest: /etc/systemd/system/disable-transparent-huge-pages.service
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Enable and start Disable Transparent Hugepages service
+  systemd:
+    name: disable-transparent-huge-pages
+    enabled: true
+    state: started
+
 - name: configure timesyncd for ntp
   template:
     src: timesyncd.conf.j2
