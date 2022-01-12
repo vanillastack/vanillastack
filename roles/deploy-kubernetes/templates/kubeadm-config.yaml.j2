@@ -26,7 +26,7 @@ apiVersion: kubeadm.k8s.io/v1beta2
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
 {% if make_ha %}
-controlPlaneEndpoint: api.{{ clusterTLDomain }}:6443
+controlPlaneEndpoint: {{ clusterTLDomain }}:6443
 {% endif %}
 controllerManager:
   extraArgs:

@@ -1,7 +1,7 @@
 efkstack:
   enabled: false
   filebeat:
-    imageTag: "7.16.2"
+    imageTag: "7.10.2"
   kibana:
     imageTag: "7.10.2"
     user: kibana_test

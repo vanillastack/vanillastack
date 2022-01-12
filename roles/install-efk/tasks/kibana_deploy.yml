@@ -28,7 +28,7 @@
 - name: Deploy kibana chart
   block:
     - name: Install kibana
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         name: kibana
         chart_ref: vanillastack/kibana
         release_namespace: kube-logging
@@ -37,13 +37,13 @@
         wait: true
   rescue:
     - name: remove kibana installation
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         name: kibana
         release_namespace: kube-logging
         state: absent
         wait: true
     - name: Install kibana
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         name: kibana
         chart_ref: vanillastack/kibana
         release_namespace: kube-logging

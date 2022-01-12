@@ -4,7 +4,7 @@
 - name: Deploy kubedashboard chart
   block:
     - name: Install Kube Dashboard
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         chart_ref: vanillastack/kubernetes-dashboard
         name: kubernetes-dashboard
         release_namespace: kube-dashboard
@@ -30,7 +30,7 @@
       pause: 
         seconds: 30
     - name: Install Kube Dashboard
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         chart_ref: vanillastack/kubernetes-dashboard
         name: kubernetes-dashboard
         release_namespace: kube-dashboard

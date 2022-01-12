@@ -3,7 +3,7 @@
   command: helm repo update
 
 - name: Deploy Redis Sentinel
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: redis-cluster
     release_namespace: "{{redis.namespace}}"
     create_namespace: true
