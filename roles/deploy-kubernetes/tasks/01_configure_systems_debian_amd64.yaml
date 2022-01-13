@@ -144,22 +144,22 @@
   set_fact:
     versions: "{{ apt_output.stdout }}"
 
-- name: workaround to get correct libcompversion
-  block:
-    - name: add backportsrepository
-      lineinfile:
-        path: /etc/apt/sources.list
-        regexp: '^(.*)buster-backports(.*)$'
-        line: 'deb http://deb.debian.org/debian buster-backports main'
-        create: true
-    - apt:
-        update_cache: yes
-        autoclean: yes
-        autoremove: yes
-    - name: install libseccomp
-      command: apt-get -y -t buster-backports install libseccomp2
-      args:
-        warn: false
+#- name: workaround to get correct libcompversion
+#  block:
+#    - name: add backportsrepository
+#      lineinfile:
+#        path: /etc/apt/sources.list
+#        regexp: '^(.*)buster-backports(.*)$'
+#        line: 'deb http://deb.debian.org/debian buster-backports main'
+#        create: true
+#    - apt:
+#        update_cache: yes
+#        autoclean: yes
+#        autoremove: yes
+#    - name: install libseccomp
+#      command: apt-get -y -t buster-backports install libseccomp2
+#      args:
+#        warn: false
 
 - name: save kubeversion
   lineinfile:
@@ -240,12 +240,21 @@
           "nproc=8192:8192"
       ]
 
-- name: Set CRI-O seccomp profile path
+#- name: Set CRI-O seccomp profile path
+#  lineinfile:
+#    path: /etc/crio/crio.conf
+#    state: present
+#    regexp: '^seccomp_profile =.*'
+#    line: 'seccomp_profile = ""'
+#    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+
+- name: Set CRI-O default seccomp profile as true
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
-    regexp: '^seccomp_profile =.*'
-    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
+    regexp: '^seccomp_use_default_when_empty =.*'
+    line: 'seccomp_use_default_when_empty = true'
+#    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 
 - name: Set CRI-O global auth
   lineinfile:
