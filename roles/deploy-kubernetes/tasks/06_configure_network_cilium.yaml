@@ -1,8 +1,8 @@
 ---
-- name: refresh repo
+- name: Refresh repo
   command: helm repo update
 
-- name: wait for etcd to be ready
+- name: Wait for etcd to be ready
   command: kubectl wait --namespace=kube-system --for=condition=ready pods etcd-{{ item }} --timeout=10s
   retries: 180
   delay: 10
@@ -10,10 +10,11 @@
   until: result.rc == 0
   loop: "{{ groups.master }}"
 
-- name: sleep 10 seconds
+- name: Sleep 10 seconds
   pause:
     seconds: 10
-- name:  Deploy latest version of Cilium
+
+- name:  Deploy Cilium
   block:
     - set_fact:
         template_version: "cilium-values"
@@ -32,13 +33,13 @@
         wait: true
         wait_timeout: "1m"
   rescue:
-    - name: remove cilium
+    - name: Remove cilium
       kubernetes.core.helm:
         name: cilium
         release_namespace: kube-system
         state: absent
         wait: true
-    - name: deploy cilium
+    - name: Deploy cilium
       kubernetes.core.helm:
         name: cilium
         chart_version: "{{ kubernetes.cilium.version }}"
@@ -48,22 +49,8 @@
         #create_namespace: true
         wait: true
         wait_timeout: "1m"
-
-          #- set_fact:
-          #    configuration: "{{ hostvars[inventory_hostname] }}"
-          #
-          #- name: save vars to kubeconfig
-          #  k8s:
-          #    state: present
-          #    definition:
-          #      apiVersion: v1
-          #      kind: ConfigMap
-          #      metadata:
-          #        name: cluster-config
-          #        namespace: kube-system
-          #      data:
-          #        clusterConfig: |
-          #          "{{ configuration | to_json }}"
+  retries: 10
+  delay: 7
 
 ### To get running config, execute 
 ### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq

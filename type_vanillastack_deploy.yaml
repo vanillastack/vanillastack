@@ -119,6 +119,21 @@
   become: false
   gather_facts: yes
 
+- name: Label Nodes
+  hosts: master[0]
+  gather_facts: yes
+  roles:
+    - role: deploy-kubernetes
+      action: 07_label_nodes
+
+- name: Install monitoring
+  hosts: master[0]
+  gather_facts: true
+  roles:
+  - role: install-monitoring
+    action: operator
+    when: vanillaservices.monitoring_enabled
+
 - name: Deploy Networking
   hosts: master[0]
   gather_facts: true
@@ -126,13 +141,6 @@
     - role: prepare-registry
     - role: deploy-kubernetes
       action: "06_configure_network_{{cluster_sdn|default('cilium')}}"
-
-- name: Label Nodes
-  hosts: master[0]
-  gather_facts: yes
-  roles:
-    - role: deploy-kubernetes
-      action: 07_label_nodes
 
 - name: Deploy Nginx-Ingress
   hosts: master[0]
@@ -197,7 +205,7 @@
     - role: deploy-keycloak
       when: vanillaservices.keycloak_enabled
 
-- name: install K8S Dashboard
+- name: Install K8S Dashboard
   hosts: master[0]
   gather_facts: true
   roles:
@@ -237,31 +245,23 @@
     - role: deploy-harbor
       when: vanillaservices.harbor_enabled
 
-- name: install monitoring
-  hosts: master[0]
-  gather_facts: true
-  roles:
-  - role: install-monitoring
-    action: operator
-    when: vanillaservices.monitoring_enabled
-
-- name: install Grafana
+- name: Install Grafana
   hosts: master[0]
   gather_facts: false
   roles:
   - role: install-grafana
     when: vanillaservices.grafana_enabled
 
-- name: install Loki
+- name: Install Loki
   hosts: master[0]
   gather_facts: false
   roles:
   - role: install-loki
-    when: 'vanillaservices.loki_enabled| default(false)'
+    when: 'vanillaservices.loki_enabled | default(false)'
 
-- name: install stratos
+- name: Install stratos
   hosts: master[0]
   gather_facts: true
   roles:
     - role: install-stratos
-      when: 'vanillaservices.stratos_enabled| default(false)'
+      when: 'vanillaservices.stratos_enabled | default(false)'

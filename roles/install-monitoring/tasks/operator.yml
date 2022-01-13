@@ -120,6 +120,8 @@
     release_namespace: monitoring
     values: "{{ lookup('template', 'operator_values.yml.j2') | from_yaml }}"
     chart_version: "{{ monitoring.chartVersion }}"
+  retries: 3
+  delay: 5
 
 - name: Clear files
   file:
