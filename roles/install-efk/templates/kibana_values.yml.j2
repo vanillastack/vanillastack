@@ -31,7 +31,7 @@ image: {{repositories.registry_commercial}}/vanillastack/kibana-oss
 {% else %}
 image: "docker.elastic.co/kibana/kibana-oss"
 {% endif %}
-imageTag: "{{ efkstack.kibana.imageTag }}"
+imageTag: "{{ efkstack.imageTag }}"
 imagePullPolicy: "IfNotPresent"
 
 # additionals labels

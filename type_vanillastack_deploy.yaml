@@ -119,6 +119,14 @@
   become: false
   gather_facts: yes
 
+- name: Deploy Networking
+  hosts: master[0]
+  gather_facts: true
+  roles:
+    - role: prepare-registry
+    - role: deploy-kubernetes
+      action: "06_configure_network_{{cluster_sdn|default('cilium')}}"
+
 - name: Label Nodes
   hosts: master[0]
   gather_facts: yes
@@ -133,14 +141,6 @@
   - role: install-monitoring
     action: operator
     when: vanillaservices.monitoring_enabled
-
-- name: Deploy Networking
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-    - role: deploy-kubernetes
-      action: "06_configure_network_{{cluster_sdn|default('cilium')}}"
 
 - name: Deploy Nginx-Ingress
   hosts: master[0]

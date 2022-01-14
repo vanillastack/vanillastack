@@ -49,8 +49,6 @@
         #create_namespace: true
         wait: true
         wait_timeout: "1m"
-  retries: 10
-  delay: 7
 
 ### To get running config, execute 
 ### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq

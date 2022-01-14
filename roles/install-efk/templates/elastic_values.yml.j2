@@ -31,7 +31,7 @@ image: "{{repositories.registry_commercial}}/vanillastack/elasticsearch-oss"
 {% else %}
 image: "docker.elastic.co/elasticsearch/elasticsearch-oss"
 {% endif %}
-imageTag: "{{ efkstack.es.imageTag }}"
+imageTag: "{{ efkstack.imageTag }}"
 imagePullPolicy: "IfNotPresent"
 
 podAnnotations: {}

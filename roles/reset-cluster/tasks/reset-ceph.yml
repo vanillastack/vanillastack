@@ -9,17 +9,17 @@
 - name: whipe disks on storage nodes
   block:
   - name: Zap the disk to a fresh, usable state
-    command: "sgdisk --zap-all /dev/{{ item.key }}"
+    command: "sudo sgdisk --zap-all /dev/{{ item.key }}"
     loop: "{{ q('dict', device_list) }}"
     when: "'ceph' in item | json_query('*.holders[]') | join(',')"
     notify: reboot_all_nodes
   - name: destroy information 
-    command: "wipefs -fa /dev/{{ item.key }}" 
+    command: "sudo wipefs -fa /dev/{{ item.key }}" 
     loop: "{{ q('dict', device_list) }}"
     when: "'ceph' in item | json_query('*.holders[]') | join(',')"
     notify: reboot_all_nodes
   - name: Clean hdds with dd
-    command: "dd if=/dev/zero of=/dev/{{ item.key }} bs=1M count=100 oflag=direct,dsync"
+    command: "sudo dd if=/dev/zero of=/dev/{{ item.key }} bs=1M count=100 oflag=direct,dsync"
     loop: "{{ q('dict', device_list) }}"
     when: "'ceph' in item | json_query('*.holders[]') | join(',')"
     notify: reboot_all_nodes
