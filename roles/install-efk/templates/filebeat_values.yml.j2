@@ -57,7 +57,7 @@ image: "{{repositories.registry_commercial}}/vanillastack/filebeat-oss"
 {% else %}
 image: "docker.elastic.co/beats/filebeat-oss"
 {% endif %}
-imageTag: "{{ efkstack.filebeat.imageTag }}"
+imageTag: "{{ efkstack.logaggregator.imageTag }}"
 imagePullPolicy: "IfNotPresent"
 imagePullSecrets: []
 
