@@ -34,6 +34,7 @@
         release_namespace: kube-logging
         values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
         create_namespace: true
+        chart_version: "{{ efkstack.kibana.imageTag }}"
         wait: true
   rescue:
     - name: remove kibana installation
@@ -49,6 +50,7 @@
         release_namespace: kube-logging
         values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
         create_namespace: true
+        chart_version: "{{ efkstack.kibana.imageTag }}"
         wait: true
 
 

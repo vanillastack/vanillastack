@@ -127,8 +127,8 @@ harbor:
       enabled: false
       cronjob: "30 */2 * * *"
 efkstack:
-  imageTag: "7.9.1"
   kibana:
+    imageTag: "7.9.1"
     user: kibana_test
     password: secretlysecretpassword
     replicas: 2
@@ -143,6 +143,7 @@ efkstack:
         cpu: "1000m"
         memory: "2Gi"
   es:
+    imageTag: "7.9.1"
     replicas: 3
     storage:
       class_name: "rook-ceph-block"
@@ -157,6 +158,7 @@ efkstack:
   logaggregator:
     # Choice of filebeat and fluentd
     name: filebeat
+    imageTag: "7.9.1"
     resources:
       limits:
         cpu: "500m"
