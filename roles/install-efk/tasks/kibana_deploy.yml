@@ -28,27 +28,29 @@
 - name: Deploy kibana chart
   block:
     - name: Install kibana
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         name: kibana
         chart_ref: vanillastack/kibana
         release_namespace: kube-logging
         values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
         create_namespace: true
+        chart_version: "{{ efkstack.kibana.imageTag }}"
         wait: true
   rescue:
     - name: remove kibana installation
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         name: kibana
         release_namespace: kube-logging
         state: absent
         wait: true
     - name: Install kibana
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         name: kibana
         chart_ref: vanillastack/kibana
         release_namespace: kube-logging
         values: "{{ lookup('template', 'kibana_values.yml.j2') | from_yaml }}"
         create_namespace: true
+        chart_version: "{{ efkstack.kibana.imageTag }}"
         wait: true
 
 

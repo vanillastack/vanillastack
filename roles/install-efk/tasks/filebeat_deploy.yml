@@ -6,5 +6,5 @@
     release_namespace: kube-logging
     values: "{{ lookup('template', 'filebeat_values.yml.j2') | from_yaml }}"
     create_namespace: true
-    chart_version: "{{ efkstack.imageTag }}"
+    chart_version: "{{ efkstack.logaggregator.imageTag }}"
     wait: true

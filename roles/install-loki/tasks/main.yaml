@@ -1,5 +1,5 @@
 ---
-- name: Create monitoring namespace
+- name: Create Loki namespace
   k8s:
     name: "{{loki.namespace}}"
     kind: Namespace

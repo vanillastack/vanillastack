@@ -45,3 +45,7 @@
   retries: 120
   delay: 10
   when: rook.enabled
+
+- name: Sleep 5 Minutes for letting rook be stable 
+  pause:
+    minutes: 5
