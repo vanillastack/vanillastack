@@ -123,6 +123,13 @@ harbor:
     replicas: 2
     version: "12"
     maxConnections: 400
+    resources:
+      requests:
+        cpu: "10m" #default 10m
+        memory: "100Mi" #default 100Mi
+      limits:
+        cpu: "20m" #default 500m
+        memory: "200Mi" #default 500Mi
     backup:
       enabled: false
       cronjob: "30 */2 * * *"
