@@ -128,8 +128,8 @@ harbor:
         cpu: "10m" #default 10m
         memory: "100Mi" #default 100Mi
       limits:
-        cpu: "20m" #default 500m
-        memory: "200Mi" #default 500Mi
+        cpu: "500m" #default 500m
+        memory: "500Mi" #default 500Mi
     backup:
       enabled: false
       cronjob: "30 */2 * * *"
