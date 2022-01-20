@@ -25,10 +25,10 @@ spec:
       max_connections: "{{harbor.postgres.maxConnections}}"
   resources:
     requests:
-      cpu: "{{ harbor.postgres.requests.cpu }}"
-      memory: "{{ harbor.postgres.requests.memory }}"
+      cpu: "{{ harbor.postgres.resources.requests.cpu }}"
+      memory: "{{ harbor.postgres.resources.requests.memory }}"
     limits:
-      cpu: "{{ harbor.postgres.limits.cpu }}"
-      memory: "{{ harbor.postgres.limits.memory }}"
+      cpu: "{{ harbor.postgres.resources.limits.cpu }}"
+      memory: "{{ harbor.postgres.resources.limits.memory }}"
   enableLogicalBackup: {{harbor.postgres.backup.enabled}}
   logicalBackupSchedule: {{harbor.postgres.backup.cronjob}}
