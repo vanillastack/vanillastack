@@ -144,6 +144,12 @@
     selinux:
       state: disabled
   
+  - name: Enable fstrim.timer
+    systemd:
+      name: fstrim.timer
+      state: started
+      enabled: yes
+
   - name: Check if systemd.unified_cgroup_hierarchy in grubenv already
     command: grep -Fq "systemd.unified_cgroup_hierarchy=0" /boot/grub2/grubenv
     register: grubenv_systemd_check
