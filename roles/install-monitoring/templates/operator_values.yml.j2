@@ -106,6 +106,18 @@ kubeProxy:
 kubeStateMetrics:
   enabled: {{ monitoring.kubeStateMetrics.enabled }}
 
+prometheus-node-exporter:
+  extraArgs:
+    - '--collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)'
+    - '--collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$'
+    - --collector.textfile
+    - --collector.textfile.directory=/var/lib/node_exporter
+  extraHostVolumeMounts:
+    - name: var-lib-node-exporter
+      hostPath: /var/lib/node_exporter
+      mountPath: /var/lib/node_exporter
+      readOnly: true
+
 prometheusOperator:
   enabled: true
   manageCrds: true

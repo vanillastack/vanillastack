@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter-textfile
+  labels:
+    app.kubernetes.io/name: node-exporter-textfile
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 5
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: node-exporter-textfile
+  template:
+    metadata:
+      name: node-exporter-textfile
+      labels:
+        app.kubernetes.io/name: node-exporter-textfile
+    spec:
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: "NoSchedule"
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: smartmon
+        {% if commercial.enabled %}
+        image: {{repositories.registry_commercial}}/vanillastack/node-exporter-smartmon:{{nodeExporterTextfile.imageTag}}
+        {% else %}
+        image: quay.io/galexrt/node-exporter-smartmon:{{nodeExporterTextfile.imageTag}}
+        {% endif %}
+        env:
+        - name: SCRIPT
+          value: "smartmon.py"
+        - name: INTERVAL
+          value: "900"
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            cpu: 25m
+            memory: 50Mi
+          limits:
+            cpu: 80m
+            memory: 75Mi
+        volumeMounts:
+        - mountPath: /dev
+          name: host-dev
+          readOnly: true
+        - mountPath: /var/lib/node_exporter
+          name: host-textfile
+          readOnly: false
+      - name: nvmemetrics
+        {% if commercial.enabled %}
+        image: {{repositories.registry_commercial}}/vanillastack/node-exporter-smartmon:{{nodeExporterTextfile.imageTag}}
+        {% else %}
+        image: quay.io/galexrt/node-exporter-smartmon:{{nodeExporterTextfile.imageTag}}
+        {% endif %}
+        env:
+        - name: SCRIPT
+          value: "nvme_metrics.sh"
+        - name: INTERVAL
+          value: "900"
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            cpu: 25m
+            memory: 50Mi
+          limits:
+            cpu: 80m
+            memory: 75Mi
+        volumeMounts:
+        - mountPath: /dev
+          name: host-dev
+          readOnly: true
+        - mountPath: /var/lib/node_exporter
+          name: host-textfile
+          readOnly: false
+      volumes:
+      - hostPath:
+          path: /dev
+        name: host-dev
+      - hostPath:
+          path: /var/lib/node_exporter
+        name: host-textfile

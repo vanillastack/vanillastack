@@ -76,3 +76,5 @@ grafana:
   ingress:
     enabled: true
     dns: "grafana.{{ clusterTLDomain }}"
+nodeExporterTextfile:
+  imageTag: v20220120-125405-519

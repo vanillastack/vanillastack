@@ -8,6 +8,9 @@
   - role: install-monitoring
     action: operator
     when: vanillaservices.monitoring_enabled
+  - role: install-monitoring
+    action: textile-exporters
+    when: vanillaservices.monitoring_enabled
 
 - name: install Grafana
   hosts: master[0]
