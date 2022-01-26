@@ -27,11 +27,11 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: smartmon
-        {% if commercial.enabled %}
+{% if commercial.enabled %}
         image: {{repositories.registry_commercial}}/vanillastack/node-exporter-smartmon:{{nodeExporterTextfile.imageTag}}
-        {% else %}
+{% else %}
         image: quay.io/galexrt/node-exporter-smartmon:{{nodeExporterTextfile.imageTag}}
-        {% endif %}
+{% endif %}
         env:
         - name: SCRIPT
           value: "smartmon.py"
@@ -54,11 +54,11 @@ spec:
           name: host-textfile
           readOnly: false
       - name: nvmemetrics
-        {% if commercial.enabled %}
+{% if commercial.enabled %}
         image: {{repositories.registry_commercial}}/vanillastack/node-exporter-smartmon:{{nodeExporterTextfile.imageTag}}
-        {% else %}
+{% else %}
         image: quay.io/galexrt/node-exporter-smartmon:{{nodeExporterTextfile.imageTag}}
-        {% endif %}
+{% endif %}
         env:
         - name: SCRIPT
           value: "nvme_metrics.sh"
