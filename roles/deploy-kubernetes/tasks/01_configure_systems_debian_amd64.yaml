@@ -127,6 +127,18 @@
   notify: restart timesyncd
   when: ntp.manage_timesyncd
 
+- name: Uninstall ntp package
+  apt:
+    name: ntp
+    state: absent
+  when: ntp.manage_timesyncd
+  
+- name: Enable fstrim.timer
+  systemd:
+    name: fstrim.timer
+    state: started
+    enabled: yes
+
 - name: make sure, domain search is not set
   lineinfile:
     regexp: '^(.*)search(.*)$'
