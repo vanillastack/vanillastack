@@ -77,4 +77,4 @@ grafana:
     enabled: true
     dns: "grafana.{{ clusterTLDomain }}"
 nodeExporterTextfile:
-  imageTag: v20220120-125405-519
+  imageTag: v20220127-125523-721
