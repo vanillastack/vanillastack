@@ -18,8 +18,8 @@ imagePullSecrets:
 # - name: "image-pull-secret"
 
 # kubeConfigPath: ~/.kube/config
-# k8sServiceHost:
-# k8sServicePort:
+k8sServiceHost: api.{{ clusterTLDomain }}
+k8sServicePort: 6443
 
 cluster:
   # -- Name of the cluster. Only required for Cluster Mesh.
@@ -45,7 +45,7 @@ serviceAccounts:
     annotations: {}
   preflight:
     create: true
-    name: cilium-pre-flight 
+    name: cilium-pre-flight
     annotations: {}
   relay:
     create: true
@@ -82,14 +82,14 @@ rollOutCiliumPods: false
 # -- Agent container image.
 image:
 {% if commercial.enabled %}
-  repository: {{repositories.registry_commercial}}/vanillstack/cilium
+  repository: {{repositories.registry_commercial}}/vanillastack/cilium
 {% else %}
   repository: quay.io/cilium/cilium
 {% endif %}
-  tag: v1.10.3
+  tag: v1.10.7
   pullPolicy: IfNotPresent
   # cilium-digest
-  digest: "sha256:8419531c5d3677158802882bdfe2297915c43f2ebe3649551aaac22de9f6d565"
+  digest: "sha256:e23f55e80e1988db083397987a89967aa204ad6fc32da243b9160fbcea29b0ca"
   useDigest: true
 
 # -- Pod affinity for cilium-agent.
@@ -233,10 +233,6 @@ bgp:
 bpf:
   # -- Enable BPF clock source probing for more efficient tick retrieval.
   clockProbe: false
-
-  # -- Force the cilium-agent DaemonSet to wait in an initContainer until the
-  # eBPF filesystem has been mounted.
-  waitForMount: false
 
   # -- Enables pre-allocation of eBPF map values. This increases
   # memory usage but can reduce latency.
@@ -504,7 +500,7 @@ eni:
 
 externalIPs:
   # -- Enable ExternalIPs service support.
-  enabled: false
+  enabled: true
 
 # fragmentTracking enables IPv4 fragment tracking support in the datapath.
 # fragmentTracking: true
@@ -524,12 +520,12 @@ hostFirewall: false
 
 hostPort:
   # -- Enable hostPort service support.
-  enabled: false
+  enabled: true
 
 # -- Configure ClusterIP service handling in the host namespace (the node).
 hostServices:
   # -- Enable host reachable services.
-  enabled: false
+  enabled: true
 
   # -- Supported list of protocols to apply ClusterIP translation to.
   protocols: tcp,udp
@@ -542,7 +538,7 @@ hostServices:
 certgen:
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/vanillstack/certgen
+    repository: {{repositories.registry_commercial}}/vanillastack/certgen
 {% else %}
     repository: quay.io/cilium/certgen
 {% endif %}
@@ -656,13 +652,13 @@ hubble:
     # -- Hubble-relay container image.
     image:
 {% if commercial.enabled %}
-      repository: {{repositories.registry_commercial}}/vanillstack/hubble-relay
+      repository: {{repositories.registry_commercial}}/vanillastack/hubble-relay
 {% else %}
       repository: quay.io/cilium/hubble-relay
 {% endif %}
-      tag: v1.10.3
+      tag: v1.10.7
        # hubble-relay-digest
-      digest: "sha256:af8ff09fe374c307356a85b0e0c158359a2e7299f93280151301b7f2fac27339"
+      digest: "sha256:385fcc4fa315eb6b66626c3e5f607b6b6514c8c3a863c47c2b2dbc97790acb47"
       useDigest: true
       pullPolicy: IfNotPresent
 
@@ -747,7 +743,7 @@ hubble:
       # -- Hubble-ui backend image.
       image:
 {% if commercial.enabled %}
-        repository: {{repositories.registry_commercial}}/vanillstack/hubble-ui-backend
+        repository: {{repositories.registry_commercial}}/vanillastack/hubble-ui-backend
 {% else %}
         repository: quay.io/cilium/hubble-ui-backend
 {% endif %}
@@ -768,7 +764,7 @@ hubble:
       # -- Hubble-ui frontend image.
       image:
 {% if commercial.enabled %}
-        repository: {{repositories.registry_commercial}}/vanillstack/hubble-ui
+        repository: {{repositories.registry_commercial}}/vanillastack/hubble-ui
 {% else %}
         repository: quay.io/cilium/hubble-ui
 {% endif %}
@@ -789,7 +785,7 @@ hubble:
       # -- Hubble-ui ingress proxy image.
       image:
 {% if commercial.enabled %}
-        repository: {{repositories.registry_commercial}}/vanillstack/envoy
+        repository: {{repositories.registry_commercial}}/vanillastack/envoy
 {% else %}
         repository: docker.io/envoyproxy/envoy
 {% endif %}
@@ -951,7 +947,7 @@ kubeProxyReplacement: "strict"
 # To enable set the value to '0.0.0.0:10256' for all ipv4
 # addresses and this '[::]:10256' for all ipv6 addresses.
 # By default it is disabled.
-kubeProxyReplacementHealthzBindAddr: ""
+kubeProxyReplacementHealthzBindAddr: "0.0.0.0:10256"
 
 # -- Enable Layer 7 network policy.
 l7Proxy: true
@@ -1135,7 +1131,7 @@ etcd:
   # -- cilium-etcd-operator image.
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/vanillstack/cilium-etcd-operator
+    repository: {{repositories.registry_commercial}}/vanillastack/cilium-etcd-operator
 {% else %}
     repository: quay.io/cilium/cilium-etcd-operator
 {% endif %}
@@ -1241,13 +1237,13 @@ operator:
   # -- cilium-operator image.
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/vanillstack/operator
+    repository: {{repositories.registry_commercial}}/vanillastack/operator
 {% else %}
     repository: quay.io/cilium/operator
 {% endif %}
-    tag: v1.10.3
+    tag: v1.10.7
     # operator-generic-digest
-    genericDigest: "sha256:337ebf27eae4fbad51cc4baf9110b3ec6753320dd33075bc136e2a1865be5eb5"
+    genericDigest: "sha256:d0b491d8d8cb45862ed7f0410f65e7c141832f0f95262643fa5ff1edfcddcafe"
     # operator-azure-digest
     azureDigest: "sha256:8cba20e22205d3a9fbcbed8bfc11bdd4d8e2fd5b0ce08f6e0f35f441ddc1de7e"
     # operator-aws-digest
@@ -1263,7 +1259,7 @@ operator:
 
   # -- For using with an existing serviceAccount.
   serviceAccountName: cilium-operator
- 
+
   # -- cilium-operator priorityClassName
   priorityClassName: ""
 
@@ -1386,7 +1382,7 @@ nodeinit:
   # -- node-init image.
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/vanillstack/startup-script
+    repository: {{repositories.registry_commercial}}/vanillastack/startup-script
 {% else %}
     repository: quay.io/cilium/startup-script
 {% endif %}
@@ -1473,13 +1469,13 @@ preflight:
   # -- Cilium pre-flight image.
   image:
 {% if commercial.enabled %}
-    repository: {{repositories.registry_commercial}}/vanillstack/cilium
+    repository: {{repositories.registry_commercial}}/vanillastack/cilium
 {% else %}
     repository: quay.io/cilium/cilium
 {% endif %}
-    tag: v1.10.3
+    tag: v1.10.7
     # cilium-digest
-    digest: "sha256:8419531c5d3677158802882bdfe2297915c43f2ebe3649551aaac22de9f6d565"
+    digest: "sha256:e23f55e80e1988db083397987a89967aa204ad6fc32da243b9160fbcea29b0ca"
     useDigest: true
     pullPolicy: IfNotPresent
 
@@ -1589,13 +1585,13 @@ clustermesh:
     # -- Clustermesh API server image.
     image:
 {% if commercial.enabled %}
-      repository: {{repositories.registry_commercial}}/vanillstack/clustermesh-apiserver
+      repository: {{repositories.registry_commercial}}/vanillastack/clustermesh-apiserver
 {% else %}
       repository: quay.io/cilium/clustermesh-apiserver
 {% endif %}
-      tag: v1.10.3
+      tag: v1.10.7
       # clustermesh-apiserver-digest
-      digest: "sha256:44f1e4bcfafcf58784c418520fb0387f8d817ebe75cced493ef4f492a1199f2d"
+      digest: "sha256:9afb0a15afffdf84812c8174df9de86e35239fb87a6ffd9539877a9e643d8132"
       useDigest: true
       pullPolicy: IfNotPresent
 
@@ -1603,7 +1599,7 @@ clustermesh:
       # -- Clustermesh API server etcd image.
       image:
 {% if commercial.enabled %}
-        repository: {{repositories.registry_commercial}}/vanillstack/etcd
+        repository: {{repositories.registry_commercial}}/vanillastack/etcd
 {% else %}
         repository: quay.io/coreos/etcd
 {% endif %}

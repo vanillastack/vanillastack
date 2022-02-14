@@ -17,10 +17,6 @@ kubernetes:
   pod_cidr: "10.0.0.0/8"
 
 ## the following may be historic keys that are no longer needed
-
-#pod_network_cidr: "10.244.0.0/16"
-#cidr: "10.244.0.0/16"
-#reset_cluster: false
 repo:
   url:  https://repo.vanillastack.cloudical.net
   debian:

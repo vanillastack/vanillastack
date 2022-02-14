@@ -1,6 +1,0 @@
----
-- name: install collabora
-  hosts: localhost
-  connection: local
-  roles:
-  - role: install-collabora

@@ -14,7 +14,6 @@ LE_issuer_mail: "testing@test.vanillastack.cloudical.net"
 loadbalancerIP: 135.181.48.19
 clusterTLDomain: test.vanillastack.cloudical.net
 reset_environment: false
-nextcloud_instancename: "nextcloud"
 localprovisioner:
   enabled: false
   name: local-path
@@ -22,18 +21,13 @@ localprovisioner:
 vanillaservices:
   dashboard_enabled: true
   cloudfoundry_enabled: false
-  nextcloud_enabled: false    
   stratos_enabled: false
-  guacamole_enabled: false
   pgOperator_enabled: true
   redis_enabled: true
   harbor_enabled: true
   loggingStack_enabled: true
   monitoring_enabled: true
-  kubevirt_enabled: false
-  moodle_enabled: false
   keycloak_enabled: true
-  openstack_enabled: false
   loki_enabled: true
   grafana_enabled: true
 vanillastorageprovider: "rook"

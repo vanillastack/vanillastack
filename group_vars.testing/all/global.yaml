@@ -19,11 +19,7 @@ kubernetes:
   kubeadm_opts: ""
   kubeadmin_config: /etc/kubernetes/admin.conf
   cilium:
-    version: v1.10.3
-cloudfoundry:
-  version: 2.7.12
-  storageclass: rook-ceph-block
-  coreDomain: "cf.{{ clusterTLDomain }}"
+    version: v1.10.7
 stratos:
   version: 4.4.0
   tag:  4.4.0-bc65c315c
@@ -33,18 +29,6 @@ stratos:
   uaa:
     encryptionKey: xry5RPkqPABkdoW22mcLLpvsY
     adminKey: K0Wk7VVyKQBMvEyihFZ2Zt9E5
-guacamole:
-  imageTag: 202009100849
-  namespace: guacamole
-  coreDomain: "guacamole.{{ clusterTLDomain }}"
-  postgres:
-    maxConnections: 400
-    backup:
-      enabled: false
-      cronjob: "30 */2 * * *"
-    version: "12"
-    replicas: "2"
-    size: "20Gi"
 postgresOperator:
   chartName: "postgres-operator"
   chartVersion: "1.5.0"
@@ -309,22 +293,6 @@ loki:
     enabled: true
     size: 30Gi
     storageClass: rook-ceph-block
-kubevirt:
-  namespace: kubevirt
-  version: v0.33.0
-moodle:
-  username: admin
-  namespace: moodle
-  storage:
-    classname: "rook-ceph-block"
-    size: 8Gi
-  mariadb:
-    persistence: true
-    classname: "rook-ceph-block"
-    size: 8Gi
-  ingress:
-    enabled: true
-    dns: "moodle.{{ clusterTLDomain }}"
 keycloak:
   namespace: keycloak
   externalDatabase: false
@@ -342,35 +310,3 @@ keycloak:
   realm:
     name: "{{ clusterTLDomain }}"
     id: "{{ clusterTLDomain }}"
-nextcloud:
-  version: 20.0.4
-  chartVersion: 2.5.0
-  replicas: 1
-  use_hpa: true
-  ingress:
-    enabled: true
-    publicDomain: "{{ nextcloud_instancename }}.{{ clusterTLDomain }}"
-  mail:
-    enabled: false
-    fromAddress: user
-    domain: domain.com
-    smtp:
-      host: domain.com
-      port: 465
-      authtype: LOGIN
-      name: user
-      password: pass
-  nginx:
-    version: 1.19.2-alpine
-  postgresql:
-    name: nextcloud-postgresql
-  collabora:
-    ingress:
-      enabled: true
-      publicDomain: "{{ nextcloud_instancename }}office.{{ clusterTLDomain }}"
-  redis:
-    name: redis-master
-    chartVersion: 10.8.1
-    persistence:
-      storageClass: "rook-ceph-block"
-      size: 8Gi

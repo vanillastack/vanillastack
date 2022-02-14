@@ -835,8 +835,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "guacamole",
-          "value": "guacamole"
+          "text": "default",
+          "value": "default"
         },
         "datasource": "$datasource",
         "definition": "",
@@ -862,8 +862,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "guacamole-postgresql",
-          "value": "guacamole-postgresql"
+          "text": "hello-world",
+          "value": "hello-world"
         },
         "datasource": "$datasource",
         "definition": "",

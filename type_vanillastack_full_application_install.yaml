@@ -1,55 +1,10 @@
 ---
-- name: Deploy cloudfoundry
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-    - role: install-cloudfoundry
-
 - name: install stratos
   hosts: master[0]
   gather_facts: true
   roles:
     - role: prepare-registry
     - role: install-stratos
-
-- name: install guacamole
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-    - role: install-guacamole
-
-- name: Deploy KubeVirt
-  hosts: master[0]
-  become: false
-  gather_facts: false
-  roles:
-    - role: prepare-registry
-    - role: deploy-kubevirt
-      action: operator
-
-- name: Deploy KubeVirt CLI
-  hosts: master[0]
-  become: true
-  gather_facts: false
-  roles:
-    - role: deploy-kubevirt
-      action: virtctl
-
-- name: install moodle
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-    - role: install-moodle
-
-- name: install nextcloud
-  hosts: master[0]
-  gather_facts: false
-  roles:
-  - role: install-nextcloud
-  - role: install-collabora
 
 - name: install redis cluster
   hosts: master[0]

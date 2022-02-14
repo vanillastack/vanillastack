@@ -16,19 +16,13 @@
 
 - name:  Deploy Cilium
   block:
-    - set_fact:
-        template_version: "cilium-values"
-      when: ansible_os_family == 'Suse' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Ubuntu'
-    - set_fact: 
-        template_version: "cilium-values-debian"
-      when: ansible_distribution == 'Debian'
     - name: deploy cilium chart
       kubernetes.core.helm:
         name: cilium
         chart_version: "{{ kubernetes.cilium.version }}"
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
-        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
+        values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
         #create_namespace: true
         wait: true
         wait_timeout: "1m"
@@ -85,4 +79,3 @@
       path: /tmp/tempkey.pem
       state: absent
   when: ansible_ssh_private_key_file is defined and ansible_ssh_private_key_file|length>0
-

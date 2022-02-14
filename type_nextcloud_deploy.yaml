@@ -1,6 +1,0 @@
----
-- name: install nextcloud
-  hosts: master[0]
-  gather_facts: false
-  roles:
-  - role: install-nextcloud

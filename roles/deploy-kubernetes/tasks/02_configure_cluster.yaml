@@ -82,12 +82,5 @@
     regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
     replace: '#\1\2\3swap\4'
 
-- name: Persist swapoff
-  template:
-    src: boot.local
-    dest: /etc/init.d/boot.local
-    mode: 0755
-  when: ansible_os_family == 'Suse' or ansible_distribution == 'CentOS'
-
 - name: "Reboot machine to get latest updates"
   reboot:
