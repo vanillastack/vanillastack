@@ -42,6 +42,12 @@
     line: "source <(kubectl completion bash)"
     state: present
 
+- name: set bash history timestamps for all users using pam
+  lineinfile:
+    path: /etc/environment
+    line: 'export HISTTIMEFORMAT="%F %T "'
+    state: present
+
 - name: manage access creds
   block:
   - name: copy ssh key to master1
