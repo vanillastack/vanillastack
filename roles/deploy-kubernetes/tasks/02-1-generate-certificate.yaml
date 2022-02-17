@@ -7,7 +7,7 @@
 - name: save token
   lineinfile:
     path: /tmp/cluster_vars.yml
-    regexp: '^(.*)token:(.*)$'
+    regexp: "^(.*)token:(.*)$"
     line: "token: '{{ generated_token.stdout }}'"
     create: true
 
@@ -18,7 +18,7 @@
 - name: save ca cert hash
   lineinfile:
     path: /tmp/cluster_vars.yml
-    regexp: '^(.*)ca_cert_hash(.*)$'
+    regexp: "^(.*)ca_cert_hash(.*)$"
     line: "ca_cert_hash: {{ generated_ca_cert_hash.stdout }}"
     create: true
 

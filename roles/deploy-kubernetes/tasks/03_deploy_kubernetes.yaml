@@ -10,7 +10,7 @@
 - name: save certificate key
   lineinfile:
     path: /tmp/cluster_vars.yml
-    regexp: '^(.*)certificate_key(.*)$'
+    regexp: "^(.*)certificate_key(.*)$"
     line: "certificate_key: {{ generated_certificate_key.stdout }}"
     create: true
 
@@ -29,26 +29,26 @@
     apiport: "{% if create_extLB %}6443{% else %}8443{% endif %}"
 
 - name: create kubeadmconfig
-  template: 
+  template:
     src: kubeadm-config.yaml.j2
     dest: /tmp/kubeadm-config.yaml
 
 - name: Init Cluster
   become: true
-  command: > 
+  command: >
     kubeadm init --node-name {{ inventory_hostname_short }} \
-                 --upload-certs \
-                 --skip-phases=addon/kube-proxy \
-                 --config /tmp/kubeadm-config.yaml
-                 {{ kubernetes.kubeadm_opts }} \
-                 {{ kubernetes.init_opts }}
+        --upload-certs \
+        --skip-phases=addon/kube-proxy \
+        --config /tmp/kubeadm-config.yaml
+        {{ kubernetes.kubeadm_opts }} \
+        {{ kubernetes.init_opts }}
   register: init_cluster
 
 - name: create .kube folder in /root for become == true cases
   file:
     path: "{{ ansible_env.HOME }}/{{ item }}/"
     state: directory
-    mode: '750'
+    mode: "750"
     owner: "{{ ansible_env.USER  }}"
   loop:
     - .kube
@@ -65,17 +65,16 @@
 - name: for debug - show env setting under become= true
   become: true
   command: >
-          /bin/bash -c set
+    /bin/bash -c set
 
 - name: create .kube folder for ansible_user
   file:
     path: "{{ ansible_env.PWD }}/{{ item }}/"
     state: directory
     owner: "{{ ansible_user }}"
-    mode: '750'
+    mode: "750"
   loop:
     - .kube
-
 
 - name: Copy admin.conf to Home directory of ansible_user
   become: true

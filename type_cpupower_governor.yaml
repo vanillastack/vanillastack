@@ -1,0 +1,6 @@
+---
+- name: Set cpupower governor
+  hosts: all
+  become: true
+  roles:
+    - role: cpupower

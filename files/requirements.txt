@@ -1,8 +1,0 @@
-cffi==1.14.4
-cryptography==3.3.2
-Jinja2==2.11.3
-jmespath==0.10.0
-openshift==0.11.2
-PyYAML==5.4.1
-ansible==2.10.6
-ansible-base==2.10.5

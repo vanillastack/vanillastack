@@ -1,14 +1,13 @@
---- 
-- name: check lb ip
+---
+- name: Check if loadbalancer IP is ping-able
   command: "ping -c 1 -t 60 {{ loadbalancerIP }}"
   register: ping
   ignore_errors: true
 
-- debug:
-    msg: "{{ loadbalancerIP }} is not reachable via Ping"
-  when: not ping.rc == 0
-
-- name: check dns entry
+- name: Check clusterTLDomain DNS record
   debug:
     msg: "{{ lookup('dig', clusterTLDomain)}}"
 
+- fail:
+    msg: "{{ loadbalancerIP }} is not reachable via ping"
+  when: not ping.rc == 0

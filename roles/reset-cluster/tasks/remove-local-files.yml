@@ -6,8 +6,8 @@
   with_items:
     - cluster_vars.yml
     - ansible
-- name: remove kubeconfig
+
+- name: Remove kubeconfig
   file:
     path: ".kube"
     state: absent
-

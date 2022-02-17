@@ -36,11 +36,10 @@ dns:
 etcd:
   local:
     dataDir: /var/lib/etcd
-{% if ansible_os_family == 'Suse' and commercial.enabled != true %}
-imageRepository: k8s.gcr.io
-{% endif %}
 {% if commercial.enabled %}
 imageRepository: {{repositories.registry_commercial}}/vanillastack
+{% else %}
+imageRepository: k8s.gcr.io
 {% endif %}
 kind: ClusterConfiguration
 kubernetesVersion: {{ version }}

@@ -3,52 +3,52 @@
   stat:
     path: "/etc/kubernetes/pki/{{item}}.key"
   register: user_key
-  become: yes
+  become: true
 
 - name: "Create {{item}}.key"
   shell: "openssl genrsa -out /etc/kubernetes/pki/{{item}}.key 2048"
   when: not user_key.stat.exists
-  become: yes
+  become: true
 
 - name: "Check if {{item}}.csr exists"
   stat:
     path: "/etc/kubernetes/pki/{{item}}.csr"
   register: user_csr
-  become: yes
+  become: true
   
 - name: "Create {{item}}.csr"
   shell: "openssl req -new -key /etc/kubernetes/pki/{{item}}.key -out /etc/kubernetes/pki/{{item}}.csr -subj '/CN={{item}}/O=customer'"
   when: not user_csr.stat.exists
-  become: yes
+  become: true
 
 - name: "Check if {{item}}.crt exists"
   stat:
     path: "/etc/kubernetes/pki/{{item}}.crt"
   register: user_crt
-  become: yes
+  become: true
   
 - name: "Create {{item}}.crt"
   shell: "openssl x509 -req -in /etc/kubernetes/pki/{{item}}.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out /etc/kubernetes/pki/{{item}}.crt -days 390"
   when: not user_crt.stat.exists
-  become: yes
+  become: true
 
 - name: "Get ca.crt"
   slurp:
     src: "/etc/kubernetes/pki/ca.crt"
   register: certificate_authority_data
-  become: yes
+  become: true
 
 - name: "Get {{item}}.key"
   slurp:
     src: "/etc/kubernetes/pki/{{item}}.key"
   register: client_key_data
-  become: yes
+  become: true
 
 - name: "Get {{item}}.crt"
   slurp:
     src: "/etc/kubernetes/pki/{{item}}.crt"
   register: client_certificate_data
-  become: yes
+  become: true
 
 - name: "Create home kubeconfig dir"
   ansible.builtin.file:

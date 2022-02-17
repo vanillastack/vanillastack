@@ -7,5 +7,3 @@ This is a collection of pitfalls we encountered in the project and how we solved
 * https://gitlab.cloudical.net/vanillastack/vanillastack/-/issues/38
 +
 CRI-O CNI Config must be removed during installation
-
-*

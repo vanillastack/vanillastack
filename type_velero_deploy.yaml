@@ -12,7 +12,7 @@
 - name: Deploy Velero server
   hosts: master[0]
   become: false
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: prepare-registry
     - role: install-velero

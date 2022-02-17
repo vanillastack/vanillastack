@@ -1,18 +1,20 @@
 ---
 - name: Install basic packages
-  package: 
-    state: present 
+  package:
+    state: present
     name:
-     - haproxy
+      - haproxy
 
 - name: create bridge traffic config
   sysctl:
-    name: "{{ item }}"
-    value: '1'
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
     sysctl_file: /etc/sysctl.d/ipbind.conf
-    reload: yes
-  with_items:
-    "net.ipv4.ip_nonlocal_bind"
+    reload: true
+  loop: "{{ sysctls | dict2items }}"
+  vars:
+    sysctls:
+      net.ipv4.ip_nonlocal_bind: 1
 
 #- name: Start reading wildcard certificate
 #  include_vars: vars/wildcard_.pem.yml
@@ -29,7 +31,7 @@
   template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
-    backup: yes
+    backup: true
     owner: root
     mode: 0644
   notify:

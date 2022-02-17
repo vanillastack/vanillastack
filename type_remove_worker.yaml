@@ -1,4 +1,5 @@
+# TODO Implement logic to remove a single worker
 #kubectl drain node --ignore-daemonsets --delete-local-data
 #kubectl delete node node
 #
-#kubeadm reset # on node if reachabl
+#kubeadm reset # on node if reachable

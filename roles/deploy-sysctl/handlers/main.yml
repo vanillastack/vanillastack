@@ -1,3 +1,0 @@
----
-- name: Reload sysctl
-  shell: "{{ sysctl_bin }} -p"

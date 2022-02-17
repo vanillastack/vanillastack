@@ -1,9 +1,0 @@
----
-- name: install cloudfoundry
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: install-cloudfoundry
-    - role: install-stratos
-
-

@@ -1,38 +1,38 @@
 ---
-- name: catch disk information
+- name: Setup Ansible facts
   setup:
   register: setup_res
 
-- set_fact:
+- name: Get list of Ceph storage devices
+  set_fact:
     device_list: "{{ setup_res | json_query('ansible_facts.ansible_devices') | to_json |  from_json }}"
 
-- name: whipe disks on storage nodes
+- name: Wipe Ceph storage disks on storage nodes
   block:
-  - name: Zap the disk to a fresh, usable state
-    command: "sudo sgdisk --zap-all /dev/{{ item.key }}"
-    loop: "{{ q('dict', device_list) }}"
-    when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-    notify: reboot_all_nodes
-  - name: destroy information 
-    command: "sudo wipefs -fa /dev/{{ item.key }}" 
-    loop: "{{ q('dict', device_list) }}"
-    when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-    notify: reboot_all_nodes
-  - name: Clean hdds with dd
-    command: "sudo dd if=/dev/zero of=/dev/{{ item.key }} bs=1M count=100 oflag=direct,dsync"
-    loop: "{{ q('dict', device_list) }}"
-    when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-    notify: reboot_all_nodes
- # - name: discard content of sectors
- #   command: "blkdiscard /dev/{{ item.key }}"  
- #   loop: "{{ q('dict', device_list) }}"
- #   when: "'ceph' in item | json_query('*.holders[]') | join(',')"
- #   ignore_errors: true
- #   notify: reboot_all_nodes
+    - name: Zap the disk to a fresh, usable state
+      command: "sudo sgdisk --zap-all /dev/{{ item.key }}"
+      loop: "{{ q('dict', device_list) }}"
+      when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+      notify: reboot_all_nodes
+    - name: destroy information
+      command: "sudo wipefs -fa /dev/{{ item.key }}"
+      loop: "{{ q('dict', device_list) }}"
+      when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+      notify: reboot_all_nodes
+    - name: Clean hdds with dd
+      command: "sudo dd if=/dev/zero of=/dev/{{ item.key }} bs=1M count=100 oflag=direct,dsync"
+      loop: "{{ q('dict', device_list) }}"
+      when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+      notify: reboot_all_nodes
+  # - name: discard content of sectors
+  #   command: "blkdiscard /dev/{{ item.key }}"
+  #   loop: "{{ q('dict', device_list) }}"
+  #   when: "'ceph' in item | json_query('*.holders[]') | join(',')"
+  #   ignore_errors: true
+  #   notify: reboot_all_nodes
 
-- name: make sure, rook folder is absent
-  file: 
+- name: Make sure rook's datadirHostPath is gone
+  file:
     path: /var/lib/rook
-    state: absent  
+    state: absent
   notify: reboot_all_nodes
-

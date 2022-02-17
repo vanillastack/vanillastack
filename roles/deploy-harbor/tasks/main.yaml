@@ -29,7 +29,7 @@
   kubernetes.core.helm:
     name: redis
     release_namespace: "{{harbor.namespace}}"
-    create_namespace: yes
+    create_namespace: true
     chart_ref: "vanillastack/redis"
     chart_version: "{{ harbor.redis.chartVersion }}"
     values: "{{ lookup('template', 'redis.yaml.j2') | from_yaml }}"
@@ -49,7 +49,7 @@
   kubernetes.core.helm:
     name: harbor
     release_namespace: "{{harbor.namespace}}"
-    create_namespace: yes
+    create_namespace: true
     chart_ref: "vanillastack/harbor"
     chart_version: "{{ harbor.chartVersion }}"
     values: "{{ lookup('template', 'harbor.yaml.j2') | from_yaml }}"

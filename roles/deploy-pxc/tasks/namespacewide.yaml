@@ -5,5 +5,5 @@
     chart_ref: "vanillastack/{{perconaOperator.chartName}}"
     release_namespace: "{{ pxcNamespace }}"
     chart_version: "{{perconaOperator.chartVersion}}"
-    create_namespace: yes
+    create_namespace: true
     values: "{{ lookup('template', 'operator.yaml.j2') | from_yaml }}"

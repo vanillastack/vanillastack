@@ -10,15 +10,35 @@
       - gnupg
       - python3
 
-- name: Remove old repositories
-  file:
-    path: "{{item}}"
-    state: absent
-  with_items:
-    - "/etc/apt/sources.list.d"
-    - /etc/apt/sources.list
+- name: Clear apt sources.list
+  copy:
+    content: ""
+    dest: /etc/apt/sources.list
 
-- name: Add key for Cloudical repos
+- name: List files in apt sources.list.d directory
+  find:
+    path: /etc/apt/sources.list.d
+    file_type: file
+    excludes:
+      - repo_vanillastack_cloudical_net.list
+    register: found_sources_lists
+
+- name: Remove other apt sources.list.d lists
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ found_sources_lists.files }}"
+  when: found_sources_lists is defined and found_sources_lists.files is defined
+
+- name: Add Cloudical APT repositories
+  template:
+    src: etc/apt/sources.list.d/repo_vanillastack_cloudical_net.list
+    dest: /etc/apt/sources.list.d/repo_vanillastack_cloudical_net.list
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Add key for Cloudical APT repositories
   apt_key:
     url: "{{ item }}"
   loop:
@@ -45,24 +65,6 @@
   register: result
   until: result is success
 
-- name: workaround to get correct libcompversion
-  block:
-    - name: Add Debian buster-backports repository
-      lineinfile:
-        path: /etc/apt/sources.list
-        regexp: '^(.*)buster-backports(.*)$'
-        line: 'deb http://deb.debian.org/debian buster-backports main'
-        create: true
-    - apt:
-        update_cache: yes
-        autoclean: yes
-        autoremove: yes
-    - name: Install libseccomp
-      apt:
-        name: libseccomp2
-        default_release: buster-backports
-        state: latest
-
 - name: Install neccessary packages
   apt:
     name:
@@ -86,20 +88,20 @@
       - python3-passlib
       - fail2ban
       - python3-jmespath
-    autoclean: yes
-    update_cache: yes
-    autoremove: yes
+      - libseccomp2
+    autoclean: true
+    update_cache: true
+    autoremove: true
   register: result
   until: result is not failed
   retries: 10
   delay: 10
 
-
 - name: Upgrade OS
   apt:
-    autoclean: yes
-    update_cache: yes
-    autoremove: yes
+    autoclean: true
+    update_cache: true
+    autoremove: true
     upgrade: full
   register: result
   until: result is not failed
@@ -108,10 +110,10 @@
 
 - name: Upgrade all packages to the latest version
   apt:
-    autoclean: yes
-    update_cache: yes
-    autoremove: yes
-    name: '*'
+    autoclean: true
+    update_cache: true
+    autoremove: true
+    name: "*"
     state: latest
   register: result
   until: result is not failed
@@ -120,7 +122,7 @@
 
 - name: configure timesyncd for ntp
   template:
-    src: timesyncd.conf.j2
+    src: etc/systemd/timesyncd.conf.j2
     dest: /etc/systemd/timesyncd.conf
     mode: 0444
   notify: restart timesyncd
@@ -131,16 +133,16 @@
     name: ntp
     state: absent
   when: ntp.manage_timesyncd
-  
+
 - name: Enable fstrim.timer
   systemd:
     name: fstrim.timer
     state: started
-    enabled: yes
+    enabled: true
 
 - name: make sure, domain search is not set
   lineinfile:
-    regexp: '^(.*)search(.*)$'
+    regexp: "^(.*)search(.*)$"
     state: absent
     path: /etc/resolv.conf
 
@@ -160,7 +162,7 @@
 - name: save kubeversion
   lineinfile:
     path: /tmp/kubeversion.yml
-    regexp: '^(.*)version(.*)$'
+    regexp: "^(.*)version(.*)$"
     line: "version: {{ versions | replace ('-00','') }}"
     create: true
 
@@ -181,16 +183,16 @@
       - "cri-o"
       - "cri-o-runc"
       - libgtk2.0-0
-    update_cache: yes
-    autoclean: yes
-    autoremove: yes
+    update_cache: true
+    autoclean: true
+    autoremove: true
   register: result
   until: result is not failed
   retries: 10
   delay: 10
 
 - name: mark packages as hold
-  command: "apt-mark hold {{ item }}" 
+  command: "apt-mark hold {{ item }}"
   with_items:
     - "kubelet"
     - "kubeadm"
@@ -201,29 +203,29 @@
 - name: configure crio
   lineinfile:
     path: /etc/crio/crio.conf
-    regexp: '^(.*)conmon =(.*)$'
+    regexp: "^(.*)conmon =(.*)$"
     line: 'conmon = "/usr/bin/conmon"'
-    backrefs: yes
+    backrefs: true
 
 - name: fix runc runtime path in crio config
   lineinfile:
     path: /etc/crio/crio.conf
-    regexp: '^runtime_path =(.*)$'
+    regexp: "^runtime_path =(.*)$"
     line: 'runtime_path = "/usr/lib/cri-o-runc/sbin/runc"'
-    backrefs: yes
+    backrefs: true
 
 - name: configure kubelet
   lineinfile:
     path: /etc/default/kubelet
-    regexp: '^(.*)KUBELET_EXTRA_ARGS(.*)$'
+    regexp: "^(.*)KUBELET_EXTRA_ARGS(.*)$"
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
     create: true
-    
+
 - name: Set CRI-O cgroups driver
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
-    regexp: '^cgroup_manager =.*'
+    regexp: "^cgroup_manager =.*"
     line: 'cgroup_manager = "systemd"'
 
 - name: Set CRI-O default_ulimits
@@ -248,15 +250,15 @@
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
-    regexp: '^seccomp_use_default_when_empty =.*'
-    line: 'seccomp_use_default_when_empty = true'
+    regexp: "^seccomp_use_default_when_empty =.*"
+    line: "seccomp_use_default_when_empty = true"
 #    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 
 - name: Set CRI-O global auth
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
-    regexp: '^global_auth_file =.*'
+    regexp: "^global_auth_file =.*"
     line: 'global_auth_file = "/etc/crio/auth.json"'
   when: commercial.enabled
 
@@ -269,8 +271,8 @@
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
-    regexp: '^pids_limit*.'
-    line: 'pids_limit = 8192'
+    regexp: "^pids_limit*."
+    line: "pids_limit = 8192"
 
 - name: "Check for installed packages"
   package_facts:
@@ -291,11 +293,11 @@
   systemd:
     name: "rpcbind"
     state: stopped
-    enabled: no
+    enabled: false
 
 - name: Copy Fail2ban jail.conf
   template:
-    src: jail.conf.j2 
+    src: etc/fail2ban/jail.conf.j2
     dest: /etc/fail2ban/jail.conf
 
 - name: Enable Fail2ban
@@ -309,17 +311,35 @@
     limit_type: soft
     limit_item: nofile
     value: 1048576
-    domain: '*'
+    domain: "*"
 
 - name: Set nofile hard limit
   community.general.pam_limits:
     limit_type: hard
     limit_item: nofile
     value: 1048576
-    domain: '*'
+    domain: "*"
 
 - name: set hosts if kubeapi is not dns resolvable
   lineinfile:
     path: /etc/hosts
     state: present
     line: "{{ loadbalancerIP }} api.{{ clusterTLDomain }}"
+
+- name: Copy disable transpartent huge pages service unit file
+  copy:
+    src: etc/systemd/system/disable-transparent-huge-pages.service
+    dest: /etc/systemd/system/disable-transparent-huge-pages.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: Enable and start disable transpartent huge pages service
+  systemd:
+    name: disable-transparent-huge-pages
+    state: restarted
+    enabled: true

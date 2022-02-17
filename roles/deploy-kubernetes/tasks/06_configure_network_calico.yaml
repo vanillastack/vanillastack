@@ -14,17 +14,10 @@
   pause:
     seconds: 10
 
-- name: deploy Calico for amd64
+- name: Deploy Calico for amd64
   community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template','calico_amd64.yaml.j2')}}"
-
-- name: deploy Calico for ppc64le
-  community.kubernetes.k8s:
-    state: present
-    definition: "{{ lookup('template','calico_ppc64le.yaml.j2')}}"
-  when:  hostvars[item].ansible_architecture == "ppc64le"
-  loop: "{{groups.worker}}"
 
 - name: Wait for control-plane pods become ready
   command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s"
@@ -50,18 +43,17 @@
 
 - name: manage access creds
   block:
-  - name: copy ssh key to master1
-    copy:
-      src: "{{ ansible_ssh_private_key_file }}"
-      dest: /tmp/tempkey.pem
+    - name: copy ssh key to master1
+      copy:
+        src: "{{ ansible_ssh_private_key_file }}"
+        dest: /tmp/tempkey.pem
 
-  - name: add ssh key as secret
-    command: >
-      kubectl create secret generic --namespace kube-system management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem
+    - name: add ssh key as secret
+      command: >
+        kubectl create secret generic --namespace kube-system management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem
 
-  - name: make sure, ssh key is removed
-    file:
-      path: /tmp/tempkey.pem
-      state: absent
+    - name: make sure, ssh key is removed
+      file:
+        path: /tmp/tempkey.pem
+        state: absent
   when: ansible_ssh_private_key_file is defined and ansible_ssh_private_key_file|length>0
-

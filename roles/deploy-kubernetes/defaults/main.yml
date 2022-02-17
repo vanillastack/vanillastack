@@ -18,14 +18,14 @@ kubernetes:
 
 ## the following may be historic keys that are no longer needed
 repo:
-  url:  https://repo.vanillastack.cloudical.net
+  url: https://repo.vanillastack.cloudical.net
   debian:
     tag: "stable"
 
 ntp:
-  manage_timesyncd: yes
-# we have applied already for a vendor-zone "vanilla.pool.ntp.org" for
-# the use with vanillastack, because no vendor should deliver by
-# default with pool.ntp.org. As soon as we get affirmation this must
-# be changed
+  manage_timesyncd: true
+  # we have applied already for a vendor-zone "vanilla.pool.ntp.org" for
+  # the use with vanillastack, because no vendor should deliver by
+  # default with pool.ntp.org. As soon as we get affirmation this must
+  # be changed
   server: pool.ntp.org

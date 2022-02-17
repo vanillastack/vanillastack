@@ -1,22 +1,14 @@
 ---
-#- name: reconfigure repositories.registry_community
-#  set_fact:
-#    vanillastackRegistry: "{{ repositories.registry_community }}"
-#  when: commercial.enabled != true
-#
-#- name: reconfigure repositories.registry_community
-#  set_fact:
-#    vanillastackRegistry: "{{ repositories.registry_commercial }}"
-#  when: commercial.enabled
-
-- name: install Vanillastack Helm repository - commercial
+- name: reconfigure repositories.registry_community
   kubernetes.core.helm_repository:
     name: vanillastack
-    repo_url: https://{{ repositories.registry_commercial }}/chartrepo/vanillastack
-  ignore_errors: yes
-  
+    repo_url: "https://{{ repositories.registry_community }}/chartrepo/vanillastack"
+    update_repo_cache: true
+  when: not commercial.enabled
 
-- name: update repo
-  command: "helm repo update"
-
-
+- name: Add Vanillastack Commercial Helm repository
+  kubernetes.core.helm_repository:
+    name: vanillastack
+    repo_url: "https://{{ repositories.registry_commercial }}/chartrepo/vanillastack"
+    update_repo_cache: true
+  when: commercial.enabled

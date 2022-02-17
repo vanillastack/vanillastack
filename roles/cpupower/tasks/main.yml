@@ -4,13 +4,6 @@
     name: 'linux-cpupower'
     state: present
 
-- name: Delete old cpupower governor service
-  file:
-    path: /etc/systemd/system/cpupower-govenor.service
-    state: absent
-  notify:
-    - systemd reload
-
 - name: Create cpupower set governor service
   template:
     src: etc/systemd/system/cpupower-governor.service
@@ -25,4 +18,4 @@
 - name: Enable cpupower governor service
   systemd:
     name: cpupower-governor
-    enabled: yes
+    enabled: true

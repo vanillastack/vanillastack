@@ -1,11 +1,13 @@
 ---
-- name: install galaxy collection
+- name: Setup Installation Node (localhost)
   hosts: localhost
   connection: local
   tasks:
-  - command: ansible-galaxy collection install community.kubernetes
-  - command: ansible-galaxy collection install community.general
-  - command: pwd
-  - name: install pip dependencies
+  - name: Install collections from Ansible galaxy
+    command: "ansible-galaxy collection install {{ item }}"
+    loop:
+      - community.kubernetes
+      - community.general
+  - name: Install pip dependencies
     pip:
-      requirements: "{{ lookup('env', 'PWD') }}/requirements.txt"
+      requirements: "{{ playbook_dir }}/requirements.txt"

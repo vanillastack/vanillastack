@@ -2,6 +2,6 @@
 - name: Deploy Harbor
   hosts: master[0]
   become: false
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: deploy-harbor
