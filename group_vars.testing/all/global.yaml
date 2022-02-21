@@ -20,15 +20,6 @@ kubernetes:
   kubeadmin_config: /etc/kubernetes/admin.conf
   cilium:
     version: v1.10.7
-stratos:
-  version: 4.4.0
-  tag:  4.4.0-bc65c315c
-  namespace: stratos
-  adminpassword: 4JOA4l8DK7Sr
-  coreDomain: "stratos.{{ clusterTLDomain }}"
-  uaa:
-    encryptionKey: xry5RPkqPABkdoW22mcLLpvsY
-    adminKey: K0Wk7VVyKQBMvEyihFZ2Zt9E5
 postgresOperator:
   chartName: "postgres-operator"
   chartVersion: "1.5.0"

@@ -20,7 +20,6 @@ localprovisioner:
   localPath: /srv/
 vanillaservices:
   dashboard_enabled: true
-  stratos_enabled: false
   pgOperator_enabled: true
   redis_enabled: true
   harbor_enabled: true
