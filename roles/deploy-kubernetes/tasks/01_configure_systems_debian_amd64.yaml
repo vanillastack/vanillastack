@@ -61,6 +61,7 @@
       apt:
         name: libseccomp2
         default_release: buster-backports
+        state: present
       args:
         warn: false
 
