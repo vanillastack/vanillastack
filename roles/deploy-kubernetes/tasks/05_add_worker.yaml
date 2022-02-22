@@ -9,7 +9,7 @@
     kubeadm join --token {{ token }} --node-name {{ inventory_hostname_short }} \
                  --discovery-token-ca-cert-hash sha256:{{ ca_cert_hash }} 
                  {% if make_ha %}
-                 {{ clusterTLDomain }}:6443 
+                 api.{{ clusterTLDomain }}:6443 
                  {% else %}
                  {{ hostvars[groups.master | first]['ansible_default_ipv4']['address'] }}:6443
                  {% endif %}                 

@@ -61,9 +61,7 @@
       apt:
         name: libseccomp2
         default_release: buster-backports
-        state: present
-      args:
-        warn: false
+        state: latest
 
 - name: Install neccessary packages
   apt:
@@ -102,7 +100,7 @@
     autoclean: yes
     update_cache: yes
     autoremove: yes
-    upgrade: dist
+    upgrade: full
   register: result
   until: result is not failed
   retries: 10
@@ -324,4 +322,4 @@
   lineinfile:
     path: /etc/hosts
     state: present
-    line: "{{ loadbalancerIP }} {{ clusterTLDomain }}"
+    line: "{{ loadbalancerIP }} api.{{ clusterTLDomain }}"
