@@ -210,7 +210,52 @@ monitoring:
     enabled: true
   kubeStateMetrics:
     enabled: true
-  additionalRules: {}
+  additionalRules: 
+    cloudical:
+      groups:
+      - name: Memory_CPU_Using
+        rules:
+        # reference URL see: https://medium.com/faun/how-much-is-too-much-the-linux-oomkiller-and-used-memory-d32186f29c9d
+        # - alert: ContainerCpuHighUtilization
+        #   expr: ((sum(rate(container_cpu_usage_seconds_total{name!=""}[5m])) BY (pod, namespace)) / (sum(kube_pod_container_resource_limits_cpu_cores) BY (pod, namespace))) * 100 > 80
+        #   for: 15m
+        #   labels:
+        #     severity: warning
+        #   annotations:
+        #     summary: 'High CPU Usage Warning for Pod {{"{{ $labels.pod }}"}} on {{"{{ $labels.namespace }}"}}'
+        #     description: 'Container CPU usage is above 80%\n  VALUE = {{"{{ $value }}"}}\n  LABELS = {{"{{ $labels.pod }}"}}'
+        - alert: ContainerMemoryUsage
+          expr: (sum by(container, pod, namespace) (container_memory_working_set_bytes{namespace!~"cert-manager|grafana~|harbor|kube.*|local-path-storage|monitoring|nginx-ingress|postgres-operator|redis|rook-ceph|vanillastack-system|velero"}) / sum by(container, pod, namespace) (kube_pod_container_resource_limits_memory_bytes{}) * 100) > 85
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'High Memory Usage Warning for {{"{{ $labels.pod }}"}}'
+            description: 'pod {{"{{ $labels.pod }}"}} is using high memory (over 85%)'
+        - alert: ContainerMemoryUsage95
+          expr: (sum by(container, pod, namespace) (container_memory_working_set_bytes{namespace!=""}) / sum by(container, pod, namespace) (kube_pod_container_resource_limits_memory_bytes{}) * 100) > 95
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'High Memory Usage Warning for {{"{{ $labels.pod }}"}}'
+            description: 'pod {{"{{ $labels.pod }}"}} is using high memory (over 95%)'
+        - alert: ContainerOOMKiller
+          expr: (kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}) > 0 and rate(kube_pod_container_status_restarts_total{namespace=~".*"}[5m]) * 60 * 5 > 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: 'Pod-killed (OOM) CRITICAL for {{"{{ $labels.pod }}"}}'
+            description: 'pod {{"{{ $labels.pod }}"}} was killed because OOM'
+        - alert: PodTerminating
+          expr: (sum by (container, pod, namespace) (kube_pod_container_status_terminated_reason{reason="Terminating"} offset 1m )) >= 1
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Pod-terminted WARNING for {{"{{ $labels.pod }}"}}'
+            description: 'pod {{"{{ $labels.pod }}"}} is tarminated longer for 1 minute'
 alertmanager:
   enabled: true
   admin_user: admin
