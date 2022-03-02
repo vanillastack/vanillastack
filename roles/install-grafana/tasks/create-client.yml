@@ -12,7 +12,7 @@
         grafana_client_secret: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
     
     - name: Deploy Grafanaclient
-      community.kubernetes.k8s:
+      kubernetes.core.k8s:
         definition: "{{ lookup('template', 'vanillastack-client-keycloack.yaml.j2') | from_yaml }}"
         state: present
         wait: true

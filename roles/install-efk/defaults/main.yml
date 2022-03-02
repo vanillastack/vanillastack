@@ -1,7 +1,5 @@
 efkstack:
   enabled: false
-  filebeat:
-    imageTag: "7.10.2"
   kibana:
     imageTag: "7.10.2"
     user: kibana_test
@@ -41,6 +39,7 @@ efkstack:
         cpu: "100m"
         memory: "200Mi"
   filebeat:
+    imageTag: "7.10.2"
     version: 7.9.1
   fluentd:
     version: 0.1.2

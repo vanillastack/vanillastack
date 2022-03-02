@@ -15,7 +15,7 @@
     seconds: 10
 
 - name: Deploy Calico for amd64
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template','calico_amd64.yaml.j2')}}"
 

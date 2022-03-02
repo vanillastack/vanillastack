@@ -11,11 +11,11 @@
   delay: 10
 
 - name: Deploy Redis ServiceMonitor
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', 'redis-servicemonitor.yaml.j2') | from_yaml }}"
     state: present
 
 - name: Deploy Redis PrometheusRule
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', 'redis-prometheusrules.yaml.j2') | from_yaml }}"
     state: present

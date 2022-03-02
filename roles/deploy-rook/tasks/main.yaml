@@ -17,7 +17,7 @@
 
 - name: Deploy Rook monitoring
   when: rook.cluster.monitoring.enabled
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template','{{item}}')}}"
   with_items:
@@ -27,7 +27,7 @@
 
 - name: Deploy Rook monitoring
   when: rook.cluster.monitoring.enabled
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('file','{{item}}')}}"
   with_items:

@@ -2,8 +2,7 @@
 - name: get nodes in cluster
   command: kubectl get nodes -o name
   register: worker
-  args:
-    ignore_errors: true
+  ignore_errors: true
 
 - name: Add new nodes running this playbook to the install_nodes group
   add_host:

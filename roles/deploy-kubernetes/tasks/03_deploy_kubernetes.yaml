@@ -96,7 +96,7 @@
     configuration: "{{ hostvars[inventory_hostname] }}"
 
 - name: save vars to kubeconfig
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
