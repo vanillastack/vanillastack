@@ -21,7 +21,7 @@
     file_type: file
     excludes:
       - repo_vanillastack_cloudical_net.list
-    register: found_sources_lists
+  register: found_sources_lists
 
 - name: Remove other apt sources.list.d lists
   file:
