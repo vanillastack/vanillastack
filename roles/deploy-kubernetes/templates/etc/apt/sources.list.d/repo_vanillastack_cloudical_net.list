@@ -6,4 +6,3 @@ deb {{repositories.package_repository}} {{staging_tag}}-debian-buster-main main
 deb {{repositories.package_repository}} {{staging_tag}}-debian11-crio-{{kubernetes.crioVersion}} main
 deb {{repositories.package_repository}} {{staging_tag}}-helm main
 deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main
-deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main

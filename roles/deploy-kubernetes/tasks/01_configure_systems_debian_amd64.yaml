@@ -59,7 +59,6 @@
     - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-{{kubernetes.crioVersion}} main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-cloudfoundry main"
   retries: 3
   delay: 1
   register: result
@@ -68,27 +67,24 @@
 - name: Install neccessary packages
   apt:
     name:
-      - gnupg
-      - git
-      - vim
-      - lvm2
-      - jq
-      - curl
-      - tar
       - ansible
-      - needrestart
+      - curl
+      - fail2ban
+      - git
+      - gnupg
       - helm
-      - cf-cli
-      - nfs-common
       - iproute2
-      - python3-openshift
-      - python3-pyhelm
-      - python3-pip
+      - jq
+      - libseccomp2
+      - lvm2
+      - needrestart
+      - nfs-common
+      - python3-jmespath
       - python3-kubernetes
       - python3-passlib
-      - fail2ban
-      - python3-jmespath
-      - libseccomp2
+      - python3-pip
+      - tar
+      - vim
     autoclean: true
     update_cache: true
     autoremove: true
@@ -182,7 +178,6 @@
       - "kubectl={{ versions }}"
       - "cri-o"
       - "cri-o-runc"
-      - libgtk2.0-0
     update_cache: true
     autoclean: true
     autoremove: true
@@ -200,21 +195,14 @@
     - "cri-o"
     - "cri-o-runc"
 
-- name: configure crio
+- name: Configure crio
   lineinfile:
     path: /etc/crio/crio.conf
     regexp: "^(.*)conmon =(.*)$"
     line: 'conmon = "/usr/bin/conmon"'
     backrefs: true
 
-- name: fix runc runtime path in crio config
-  lineinfile:
-    path: /etc/crio/crio.conf
-    regexp: "^runtime_path =(.*)$"
-    line: 'runtime_path = "/usr/lib/cri-o-runc/sbin/runc"'
-    backrefs: true
-
-- name: configure kubelet
+- name: Configure kubelet
   lineinfile:
     path: /etc/default/kubelet
     regexp: "^(.*)KUBELET_EXTRA_ARGS(.*)$"
@@ -238,21 +226,12 @@
           "nproc=8192:8192"
       ]
 
-#- name: Set CRI-O seccomp profile path
-#  lineinfile:
-#    path: /etc/crio/crio.conf
-#    state: present
-#    regexp: '^seccomp_profile =.*'
-#    line: 'seccomp_profile = ""'
-#    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
-
 - name: Set CRI-O default seccomp profile as true
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
     regexp: "^seccomp_use_default_when_empty =.*"
     line: "seccomp_use_default_when_empty = true"
-#    line: 'seccomp_profile = "/usr/share/containers/seccomp.json"'
 
 - name: Set CRI-O global auth
   lineinfile:
@@ -261,11 +240,6 @@
     regexp: "^global_auth_file =.*"
     line: 'global_auth_file = "/etc/crio/auth.json"'
   when: commercial.enabled
-
-- name: remove preconfigures crio.conf from dpkg
-  file:
-    path: /etc/crio/crio.conf.d/01-crio-runc.conf
-    state: absent
 
 - name: Set CRI-O PIDs limit
   lineinfile:
