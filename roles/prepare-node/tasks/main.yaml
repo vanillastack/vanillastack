@@ -16,7 +16,7 @@
       - openshift
     extra_args: --ignore-installed
 
-# TODO download helm from VanillaStack controlled servers  
+# TODO download helm from VanillaStack controlled servers
 - name: Download helm install script
   get_url:
     url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
