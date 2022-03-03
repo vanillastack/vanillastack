@@ -1,6 +1,6 @@
 ---
 - name: Create monitoring namespace
-  k8s:
+  kubernetes.core.k8s:
     name: monitoring
     kind: Namespace
     state: present
@@ -18,7 +18,7 @@
   register: prometheus_auth_slurp
 
 - name: Create secret prometheus
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
@@ -43,7 +43,7 @@
   register: alertmanager_auth_slurp
 
 - name: Create secret alertmanager
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1

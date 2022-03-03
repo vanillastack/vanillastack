@@ -6,19 +6,19 @@
 #  template: src=./templates/objectbucketclaim.yaml.j2 dest=/tmp/harbor_objectbucketclaim.yaml
 
 - name: Create Namespace
-  k8s:
+  kubernetes.core.k8s:
     state: present
     kind: Namespace
     name: "{{harbor.namespace}}"
     api_version: v1
 
 #- name: Create ObjectStorageBucket
-#  k8s:
+#  kubernetes.core.k8s:
 #    src: /tmp/harbor_objectbucketclaim.yaml
 #    state: present
 
 - name: Create PostgreSQL
-  k8s:
+  kubernetes.core.k8s:
     src: /tmp/harbor_postgres.yaml
     state: present
 

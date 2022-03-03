@@ -154,7 +154,7 @@
       ]'
 
 - name: apply grafana configmap
-  k8s:
+  kubernetes.core.k8s:
     state: present     
     definition: "{{ lookup('template', 'grafana_configmap.yml.j2') | from_yaml }}"
 

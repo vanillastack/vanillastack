@@ -1,6 +1,6 @@
 ---
 - name: Create kube-logging namespace
-  k8s:
+  kubernetes.core.k8s:
     wait: true
     name: kube-logging
     kind: Namespace

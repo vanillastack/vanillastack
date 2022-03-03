@@ -1,6 +1,6 @@
 ---
 - name: Create Loki namespace
-  k8s:
+  kubernetes.core.k8s:
     name: "{{loki.namespace}}"
     kind: Namespace
     state: present

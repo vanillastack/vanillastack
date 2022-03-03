@@ -1,6 +1,6 @@
 ---
 - name: create namespaces
-  k8s:
+  kubernetes.core.k8s:
     name: "{{item}}"
     api_version: v1
     kind: Namespace
@@ -21,34 +21,34 @@
     - "{{rbac.users}}"
 
 - name: create global ClusterRole
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'global-clusterrole.yaml.j2') | from_yaml }}"
 
 - name: create ClusterRole ClusterRoleBinding
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'global-clusterrolebinding-clusterroles.yaml.j2') | from_yaml }}"
 
 - name: create global ClusterRoleBinding
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'global-clusterrolebinding.yaml.j2') | from_yaml }}"
 
 - name: create ClusterRole
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'clusterrole.yaml.j2') | from_yaml }}"
 
 - name: create namespace rolebindings
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'namespace-rolebinding.yaml.j2') | from_yaml }}"
   with_items:
     - "{{rbac.namespaces}}"
 
 - name: create serviceaccounts
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'serviceaccounts.yaml.j2') | from_yaml }}"
   loop: "{{rbac.serviceAccounts|default([])}}"
@@ -56,7 +56,7 @@
     loop_var: sa
 
 - name: create serviceaccounts clusterrole
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'serviceaccounts-clusterrole.yaml.j2') | from_yaml }}"
   loop: "{{rbac.serviceAccounts|default([])}}"
@@ -64,7 +64,7 @@
     loop_var: sa
 
 - name: create serviceaccounts clusterrolebindings
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'serviceaccounts-clusterrolebinding.yaml.j2') | from_yaml }}"
   loop: "{{rbac.serviceAccounts|default([])}}"

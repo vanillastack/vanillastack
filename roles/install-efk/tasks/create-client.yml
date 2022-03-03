@@ -157,11 +157,11 @@
       ]'
 
 - name: apply kibana configmaps
-  k8s:
+  kubernetes.core.k8s:
     state: present     
     definition: "{{ lookup('template', 'gatekeeper-config.yml.j2') | from_yaml }}"
 - name: apply kibana configmaps
-  k8s:
+  kubernetes.core.k8s:
     state: present     
     definition: "{{ lookup('template', 'gatekeeper-files.yml.j2') | from_yaml }}"
 
