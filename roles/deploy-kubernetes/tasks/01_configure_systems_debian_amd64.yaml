@@ -48,17 +48,16 @@
   register: result
   until: result is success
 
-- name: Add Cloudical Repositories
+- name: Add Cloudical Repo Server
   apt_repository:
     repo: "{{ item }}"
     state: present
   loop:
-    - "deb {{repositories.package_repository}} {{staging_tag}}-pip3 main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-ansible main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-debian-buster-main main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-debian10-crio-{{kubernetes.crioVersion}} main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-pip3 main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-debian11-crio-{{kubernetes.crioVersion}} main"
     - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
+    - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
   retries: 3
   delay: 1
   register: result
@@ -67,7 +66,6 @@
 - name: Install neccessary packages
   apt:
     name:
-      - ansible
       - curl
       - fail2ban
       - git
@@ -186,8 +184,10 @@
   retries: 10
   delay: 10
 
-- name: mark packages as hold
-  command: "apt-mark hold {{ item }}"
+- name: Hold packages
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
   with_items:
     - "kubelet"
     - "kubeadm"
@@ -300,7 +300,7 @@
     state: present
     line: "{{ loadbalancerIP }} api.{{ clusterTLDomain }}"
 
-- name: Copy disable transpartent huge pages service unit file
+- name: Copy disable transparent huge pages service unit file
   copy:
     src: etc/systemd/system/disable-transparent-huge-pages.service
     dest: /etc/systemd/system/disable-transparent-huge-pages.service
@@ -312,7 +312,7 @@
   systemd:
     daemon_reload: true
 
-- name: Enable and start disable transpartent huge pages service
+- name: Enable and start disable transparent huge pages service
   systemd:
     name: disable-transparent-huge-pages
     state: restarted

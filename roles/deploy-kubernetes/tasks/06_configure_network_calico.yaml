@@ -1,7 +1,4 @@
 ---
-- name: refresh repo
-  command: helm repo update
-
 - name: wait for etcd to be ready
   command: kubectl wait --namespace=kube-system --for=condition=ready pods etcd-{{ item }} --timeout=10s
   retries: 180
@@ -25,9 +22,6 @@
   delay: 10
   register: result
   until: result.rc == 0
-
-#- name: restart kubedns
-#  command: kubectl delete po -n kube-system -l k8s-app=kube-dns
 
 - name: enable auto completion
   lineinfile:

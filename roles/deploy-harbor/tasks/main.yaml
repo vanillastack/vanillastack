@@ -22,9 +22,6 @@
     src: /tmp/harbor_postgres.yaml
     state: present
 
-- name: refresh helm repo
-  command: helm repo update
-
 - name: Deploy Redis
   kubernetes.core.helm:
     name: redis
@@ -33,6 +30,7 @@
     chart_ref: "vanillastack/redis"
     chart_version: "{{ harbor.redis.chartVersion }}"
     values: "{{ lookup('template', 'redis.yaml.j2') | from_yaml }}"
+    update_repo_cache: true
 
 - name: "wait until postgres pod is ready"
   shell: 'kubectl get postgresql -n {{ harbor.namespace }}|grep "{{harbor.namespace}}-postgres"|grep "Running"'
