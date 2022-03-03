@@ -39,7 +39,7 @@
     kubeadm init --node-name {{ inventory_hostname_short }} \
         --upload-certs \
         --skip-phases=addon/kube-proxy \
-        --config /tmp/kubeadm-config.yaml
+        --config /tmp/kubeadm-config.yaml \
         {{ kubernetes.kubeadm_opts }} \
         {{ kubernetes.init_opts }}
   register: init_cluster
