@@ -136,6 +136,7 @@
 
 - name: Install monitoring
   hosts: master[0]
+  become: false
   gather_facts: true
   roles:
   - role: install-monitoring
@@ -145,7 +146,7 @@
     action: textile-exporters
     when: vanillaservices.monitoring_enabled
 
-- name: Deploy Nginx-Ingress
+- name: Deploy Ingress Nginx
   hosts: master[0]
   become: false
   gather_facts: false

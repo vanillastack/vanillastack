@@ -583,7 +583,13 @@ hubble:
     #
     #   --set metrics.enabled="{dns:query;ignoreAAAA,drop,tcp,flow,icmp,http}"
     #
-    enabled: ~
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - icmp
+      - http
     # -- Configure the port the hubble metric server listens on.
     port: 9091
     serviceMonitor:
@@ -644,10 +650,10 @@ hubble:
 
   relay:
     # -- Enable Hubble Relay (requires hubble.enabled=true)
-    enabled: false
+    enabled: true
 
     # -- Roll out Hubble Relay pods automatically when configmap is updated.
-    rollOutPods: false
+    rollOutPods: true
 
     # -- Hubble-relay container image.
     image:

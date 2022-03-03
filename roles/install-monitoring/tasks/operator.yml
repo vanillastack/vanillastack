@@ -1,10 +1,4 @@
 ---
-- name: Create monitoring namespace
-  kubernetes.core.k8s:
-    name: monitoring
-    kind: Namespace
-    state: present
-
 - name: Create prometheus user apache
   htpasswd:
     path: "/tmp/prometheus_auth"
@@ -16,6 +10,32 @@
   slurp:
     src: "/tmp/prometheus_auth"
   register: prometheus_auth_slurp
+
+- name: Create alertmanager user apache
+  htpasswd:
+    path: /tmp/alertmanager_auth
+    name: "{{ alertmanager.admin_user }}"
+    password: "{{ alertmanager.admin_password }}"
+    mode: 0640
+
+- name: Slurp auth file prometheus
+  slurp:
+    src: /tmp/alertmanager_auth
+  register: alertmanager_auth_slurp
+
+- name: Clear auth files
+  file:
+    state: absent
+    path: "{{ item }}"
+  loop:
+    - /tmp/prometheus_auth
+    - /tmp/alertmanager_auth
+
+- name: Create monitoring namespace
+  kubernetes.core.k8s:
+    name: monitoring
+    kind: Namespace
+    state: present
 
 - name: Create secret prometheus
   kubernetes.core.k8s:
@@ -30,18 +50,6 @@
       data:
         auth: "{{ prometheus_auth_slurp.content }}"
 
-- name: Create alertmanager user apache
-  htpasswd:
-    path: /tmp/alertmanager_auth
-    name: "{{ alertmanager.admin_user }}"
-    password: "{{ alertmanager.admin_password }}"
-    mode: 0640
-
-- name: Slurp auth file prometheus
-  slurp:
-    src: /tmp/alertmanager_auth
-  register: alertmanager_auth_slurp
-
 - name: Create secret alertmanager
   kubernetes.core.k8s:
     state: present
@@ -55,39 +63,45 @@
       data:
         auth: "{{ alertmanager_auth_slurp.content }}"
 
-- name: Check that the /etc/kubernetes/pki/etcd/server.crt exists
-  stat:
-    path: /etc/kubernetes/pki/etcd/server.crt
-  register: etcd_server_crt_result
-
-- name: Get server crt master
-  slurp:
-    src: /etc/kubernetes/pki/etcd/server.crt
-  register: etcd_server_crt_slurp
-  when: etcd_server_crt_result.stat.exists
-
-- name: Check that the /etc/kubernetes/pki/etcd/server.key exists
-  stat:
-    path: /etc/kubernetes/pki/etcd/server.key
-  register: etcd_server_key_result
-
-- name: Get server key master
+- name: Create etcd secrets for monitoring
   become: true
-  slurp:
-    src: /etc/kubernetes/pki/etcd/server.key
-  register: etcd_server_key_slurp
-  when: etcd_server_key_result.stat.exists
+  become_user: root
+  block:
+    # etcd server.crt
+    - name: Check that the /etc/kubernetes/pki/etcd/server.crt exists
+      stat:
+        path: /etc/kubernetes/pki/etcd/server.crt
+      register: etcd_server_crt_result
 
-- name: Check that the /etc/kubernetes/pki/etcd/ca.crt exists
-  stat:
-    path: /etc/kubernetes/pki/etcd/ca.crt
-  register: etcd_ca_crt_result
+    - name: Get etcd server.crt
+      slurp:
+        src: /etc/kubernetes/pki/etcd/server.crt
+      register: etcd_server_crt_slurp
+      when: etcd_server_crt_result.stat.exists
 
-- name: Get ca crt master
-  slurp:
-    src: /etc/kubernetes/pki/etcd/ca.crt
-  register: etcd_ca_crt_slurp
-  when: etcd_ca_crt_result.stat.exists
+    # etcd server.key
+    - name: Check that the /etc/kubernetes/pki/etcd/server.key exists
+      stat:
+        path: /etc/kubernetes/pki/etcd/server.key
+      register: etcd_server_key_result
+
+    - name: Get etcd server.key
+      slurp:
+        src: /etc/kubernetes/pki/etcd/server.key
+      register: etcd_server_key_slurp
+      when: etcd_server_key_result.stat.exists
+
+    # etcd ca.crt
+    - name: Check that the /etc/kubernetes/pki/etcd/ca.crt exists
+      stat:
+        path: /etc/kubernetes/pki/etcd/ca.crt
+      register: etcd_ca_crt_result
+
+    - name: Get etcd ca.crt
+      slurp:
+        src: /etc/kubernetes/pki/etcd/ca.crt
+      register: etcd_ca_crt_slurp
+      when: etcd_ca_crt_result.stat.exists
 
 - name: Check if etcd secret exists
   k8s_info:
@@ -97,6 +111,7 @@
     namespace: monitoring
   register: etcd_secret
 
+# TODO What if the etcd certs are expired?
 - name: Create etcd secret if doesn't exist
   command: >
     kubectl create secret generic etcd-certs -n monitoring
@@ -104,14 +119,10 @@
     --from-literal=healthcheck-client.crt="{{ etcd_server_crt_slurp.content | b64decode }}"
     --from-literal=healthcheck-client.key="{{ etcd_server_key_slurp.content | b64decode }}"
   when:
+    - etcd_secret.resources is defined
     - etcd_secret.resources|length == 0
     - etcd_server_crt_result.stat.exists
   no_log: true
-
-- name: create template
-  template:
-    src: operator_values.yml.j2
-    dest: /tmp/operator.yml
 
 - name: Install prometheus-operator
   kubernetes.core.helm:
@@ -122,12 +133,3 @@
     chart_version: "{{ monitoring.chartVersion }}"
   retries: 3
   delay: 5
-
-- name: Clear files
-  file:
-    state: absent
-    path: "{{ item }}"
-  loop:
-    - /tmp/prometheus_auth
-    - /tmp/alertmanager_auth
-    - /tmp/operator.yml

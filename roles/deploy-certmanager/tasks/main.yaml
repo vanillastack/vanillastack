@@ -14,6 +14,7 @@
     src: clusterissuer.yaml.j2
     dest: /tmp/clusterissuer.yaml
   when:
+
 - name: Create ClusterIssuer
   block:
     - name: Apply ClusterIssuer Issuer

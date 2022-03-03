@@ -8,6 +8,7 @@
     loop:
       - community.kubernetes
       - community.general
+
   - name: Install pip dependencies
     pip:
       requirements: "{{ playbook_dir }}/requirements.txt"

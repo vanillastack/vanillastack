@@ -77,7 +77,8 @@
 
 - name: Install packages to masters
   apt:
-    name: helm
+    name:
+      - helm
     autoclean: true
     update_cache: true
     autoremove: true
@@ -85,7 +86,7 @@
   until: result is not failed
   retries: 10
   delay: 10
-  when: "'groupname' not in group_names"
+  when: "'master' in group_names"
 
 - name: Upgrade OS
   apt:

@@ -72,7 +72,7 @@ backend master
         option tcp-check
             timeout server 300000
 {% for host in groups['master'] %}
-        server {{ host }} {{ hostvars[host].ansible_host }}:8443 check
+        server {{ host }} {{ hostvars[host].ansible_host }}:{% if create_extLB and make_ha %}6443{% else %}8443{% endif %} check check
 {% endfor %}
 
 frontend worker-http
