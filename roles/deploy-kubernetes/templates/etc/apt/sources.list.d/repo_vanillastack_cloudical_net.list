@@ -5,4 +5,4 @@ deb {{repositories.package_repository}} {{staging_tag}}-debian11-crio-{{kubernet
 deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main
 {% if 'master' in group_names %}
 deb {{repositories.package_repository}} {{staging_tag}}-helm main
-{% end %}
+{% endif %}
