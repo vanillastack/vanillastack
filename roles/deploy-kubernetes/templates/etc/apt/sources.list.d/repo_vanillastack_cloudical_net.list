@@ -1,8 +1,8 @@
 {{ ansible_managed | comment }}
 
-deb {{repositories.package_repository}} {{staging_tag}}-pip3 main
-deb {{repositories.package_repository}} {{staging_tag}}-ansible main
-deb {{repositories.package_repository}} {{staging_tag}}-debian-buster-main main
+deb {{repositories.package_repository}} {{staging_tag}}-debian-bullseye-main main
 deb {{repositories.package_repository}} {{staging_tag}}-debian11-crio-{{kubernetes.crioVersion}} main
-deb {{repositories.package_repository}} {{staging_tag}}-helm main
 deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main
+{% if 'master' in group_names %}
+deb {{repositories.package_repository}} {{staging_tag}}-helm main
+{% end %}

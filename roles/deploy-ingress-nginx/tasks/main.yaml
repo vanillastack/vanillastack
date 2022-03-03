@@ -1,5 +1,5 @@
 ---
-- name: "helm install ingress-nginx"
+- name: "Deploy Ingress NGINX Chart"
   kubernetes.core.helm:
     name: nginx-ingress
     chart_ref: vanillastack/ingress-nginx

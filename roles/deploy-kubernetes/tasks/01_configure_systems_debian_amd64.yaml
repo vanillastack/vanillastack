@@ -48,20 +48,6 @@
   register: result
   until: result is success
 
-- name: Add Cloudical Repo Server
-  apt_repository:
-    repo: "{{ item }}"
-    state: present
-  loop:
-    - "deb {{repositories.package_repository}} {{staging_tag}}-debian-bullseye-main main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-debian11-crio-{{kubernetes.crioVersion}} main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-helm main"
-    - "deb {{repositories.package_repository}} {{staging_tag}}-kubernetes-xenial main"
-  retries: 3
-  delay: 1
-  register: result
-  until: result is success
-
 - name: Install neccessary packages
   apt:
     name:
@@ -69,7 +55,6 @@
       - fail2ban
       - git
       - gnupg
-      - helm
       - iproute2
       - jq
       - libseccomp2
@@ -89,6 +74,18 @@
   until: result is not failed
   retries: 10
   delay: 10
+
+- name: Install packages to masters
+  apt:
+    name: helm
+    autoclean: true
+    update_cache: true
+    autoremove: true
+  register: result
+  until: result is not failed
+  retries: 10
+  delay: 10
+  when: "'groupname' not in group_names"
 
 - name: Upgrade OS
   apt:
