@@ -2,7 +2,7 @@
 repositories:
   registry_community: harbor.cloudical.net
   registry_commercial: harbor.cloudical.net
-  package_repository:  https://repo.vanillastack.cloudical.net
+  package_repository:  https://repo-new.vanillastack.cloudical.net
 ingress:
   namespace: nginx-ingress
   enabled: true
