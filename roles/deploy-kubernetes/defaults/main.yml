@@ -16,12 +16,6 @@ kubernetes:
   helm_version: "v3.3.1"
   pod_cidr: "10.0.0.0/8"
 
-## the following may be historic keys that are no longer needed
-repo:
-  url: https://repo.vanillastack.cloudical.net
-  debian:
-    tag: "stable"
-
 ntp:
   manage_timesyncd: true
   # we have applied already for a vendor-zone "vanilla.pool.ntp.org" for

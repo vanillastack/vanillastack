@@ -31,10 +31,7 @@
     - role: deploy-kubernetes
       action: 01_configure_systems_debian_amd64
       when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
-#    - role: deploy-kubernetes
-#      action: 01_configure_systems_debian_ppc64le
-#      when: ansible_distribution == 'Debian' and ansible_architecture == "ppc64le"
-#
+
 #- name: Install Keepalived
 #  hosts: haproxy[0]
 #  become: true

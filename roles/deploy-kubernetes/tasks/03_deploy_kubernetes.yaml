@@ -62,11 +62,6 @@
     mode: 0600
     remote_src: true
 
-- name: for debug - show env setting under become= true
-  become: true
-  command: >
-    /bin/bash -c set
-
 - name: create .kube folder for ansible_user
   file:
     path: "{{ ansible_env.PWD }}/{{ item }}/"

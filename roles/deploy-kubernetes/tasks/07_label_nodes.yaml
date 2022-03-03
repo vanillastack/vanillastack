@@ -1,8 +1,7 @@
 ---
 - name: label worker nodes
   command: >
-    kubectl label nodes "{{ item }}" node-role.kubernetes.io/worker=worker \
-    openvswitch=enabled linuxbridge=enabled ceph-rgw=enabled
+    kubectl label nodes "{{ item }}" node-role.kubernetes.io/worker=worker ceph-rgw=enabled
   loop: "{{ groups.install_nodes }}"
   ignore_errors: true
 

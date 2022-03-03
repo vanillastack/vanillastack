@@ -23,7 +23,6 @@
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
         values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
-        #create_namespace: true
         wait: true
         wait_timeout: "1m"
   rescue:
@@ -40,7 +39,6 @@
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
         values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
-        #create_namespace: true
         wait: true
         wait_timeout: "1m"
 

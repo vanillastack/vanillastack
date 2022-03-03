@@ -10,7 +10,7 @@
 - name: Join to Kubernetes cluster
   command: >
     kubeadm join --token {{ token }} --node-name {{ inventory_hostname_short }} \
-        --discovery-token-ca-cert-hash sha256:{{ ca_cert_hash }} \                                          
+        --discovery-token-ca-cert-hash sha256:{{ ca_cert_hash }} \
         --control-plane api.{{ clusterTLDomain }}:6443 \
         --certificate-key {{ certificate_key }} \
         --apiserver-bind-port {{ apiport }}
