@@ -56,7 +56,7 @@
 - name: Copy admin.conf to Home directory /root
   become: true
   copy:
-    src: "{{ kubernetes.kubeadmin_config }}"
+    src: "/etc/kubernetes/admin.conf"
     dest: "{{ ansible_env.HOME }}/.kube/config"
     owner: "{{ ansible_env.USER }}"
     mode: 0600
@@ -74,7 +74,7 @@
 - name: Copy admin.conf to Home directory of ansible_user
   become: true
   copy:
-    src: "{{ kubernetes.kubeadmin_config }}"
+    src: "/etc/kubernetes/admin.conf"
     dest: "{{ ansible_env.PWD }}/.kube/config"
     owner: "{{ ansible_user }}"
     mode: 0600
@@ -83,7 +83,7 @@
 - name: fetch kubeadm config
   become: true
   fetch:
-    src: "{{ kubernetes.kubeadmin_config }}"
+    src: "/etc/kubernetes/admin.conf"
     dest: "/tmp/ansible/{{ cluster_uuid }}/"
     flat: true
 

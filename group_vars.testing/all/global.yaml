@@ -17,7 +17,6 @@ kubernetes:
   helm_version: "v3.5.3"
   init_opts: ""
   kubeadm_opts: ""
-  kubeadmin_config: /etc/kubernetes/admin.conf
   cilium:
     version: v1.10.7
 postgresOperator:
