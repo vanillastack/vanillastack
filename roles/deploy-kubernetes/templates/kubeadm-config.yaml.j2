@@ -24,7 +24,7 @@ apiServer:
     authorization-mode: Node,RBAC
 apiVersion: kubeadm.k8s.io/v1beta2
 certificatesDir: /etc/kubernetes/pki
-clusterName: kubernetes
+clusterName: {{ kubernetes.clusterName }}
 controlPlaneEndpoint: api.{{ clusterTLDomain }}:6443
 controllerManager:
   extraArgs:

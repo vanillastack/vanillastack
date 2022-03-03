@@ -1,7 +1,0 @@
----
-- name: install redis cluster
-  hosts: master[0]
-  gather_facts: false
-  roles:
-    - role: install-redis-cluster
-    - role: install-redis

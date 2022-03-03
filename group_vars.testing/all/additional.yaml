@@ -28,11 +28,3 @@ velero:
         #- '*'
         storageLocation: incluster-cephobjectn1
         ttl: 336h0m0s
-perconaOperator:
-  enabled: true
-  # define how to install the operator: perNamespace or perCluster
-  # for first option, one operator per namespace has to be installed
-  mode: "perCluster"
-  chartName: "pxc-operator"
-  chartVersion: "0.1.10"
-  namespace: "pxc-operator"

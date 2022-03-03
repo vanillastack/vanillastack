@@ -6,14 +6,16 @@ repositories:
 ingress:
   namespace: nginx-ingress
   enabled: true
+  config: {}
+  replicas: 3
   chartVersion: "3.25.0"
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
     chartVersion: "4.0.3"
-  clusterName: kube
-  version: "1.20"
-  crioVersion: "1.20"
+  clusterName: kubernetes
+  version: "1.23"
+  crioVersion: "1.23"
   helm_version: "v3.5.3"
   init_opts: ""
   kubeadm_opts: ""
@@ -32,16 +34,6 @@ postgresOperator:
       endpoint: nul
       bucketName: nul
     cron: "30 00 * * *"
-redis:
-  environment: test
-  cluster: true
-  enabled: true
-  chartVersion: 4.3.1
-  password: "Opstree@1235"
-  persistence:
-    storageClass: "rook-ceph-block"
-    size: 15Gi
-  namespace: "redis"
 harbor:
   chartVersion: 1.5.1
   namespace: harbor

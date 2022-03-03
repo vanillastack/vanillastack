@@ -21,7 +21,6 @@ localprovisioner:
 vanillaservices:
   dashboard_enabled: true
   pgOperator_enabled: true
-  redis_enabled: true
   harbor_enabled: true
   loggingStack_enabled: true
   monitoring_enabled: true

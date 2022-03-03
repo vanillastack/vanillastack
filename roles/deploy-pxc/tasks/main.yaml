@@ -1,3 +1,0 @@
----
-- name: "{{ action }}"
-  include_tasks: "{{ action }}.yaml"
