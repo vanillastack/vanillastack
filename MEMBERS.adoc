@@ -40,3 +40,4 @@ Maintainers will be added according to the process defined in link:GOVERNANCE.ad
 | Karsten Samaschke <karsten.samaschke@cloudical.io>
 | Christian Schilliing <christian.schilling@cloudical.io>
 | Jeff Chousterman <jeff.choustermann@cloudical.io>
+|===

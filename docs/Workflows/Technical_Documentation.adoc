@@ -6,11 +6,11 @@ This Document describes how Technical Documentation has to be done for Contribut
 === Header
 1. title
 - Title of the topic
-1. author
+2. author
 - name of the author(s)
-1. date
+3. date
 - creation date
-1. abstract
+4. abstract
    - Short Description as a summarizing statement.
 
 === Body
@@ -18,27 +18,27 @@ This section contains steps to take and/or methods to use in order to resolve th
 
 1. Introduction
 - presents the main goal and what to expect further in document
-- shouldn’t be confused with abstract
+- shouldn't be confused with abstract
 - contains the subject of your document, the issue resolved, the purpose, its scope and background information
-1. Background information
+2. Background information
 - should be relevant
 - usually, this part includes the history of the problem
 - a summary of previous research and reasons why
-1. Theory
+3. Theory
 - separated section that describes all the formulae and techniques used
-1. Procedure
+4. Procedure
 - Describe all methods that you used for gathering data.
-1. Results
+5. Results
 - sum up the data of the whole project in this part
 - can include charts and figures to visualize your results in an effective manner
-1. Discussion
+6. Discussion
 - is about commenting results
-1. Conclusion
+7. Conclusion
 - summary of the main results and other key points of the document
 
 == End matter
 This section provides useful information and materials outside the main body.
 This end part consists of:
-- a list of sources that you’ve used.
+- a list of sources that you've used.
 - materials that are not essential parts of the text like additional diagrams, tables, lists, etc.
 - Add to your index important subject, topics, proper names.
