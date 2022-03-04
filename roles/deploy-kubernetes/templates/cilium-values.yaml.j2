@@ -18,7 +18,7 @@ imagePullSecrets:
 # - name: "image-pull-secret"
 
 # kubeConfigPath: ~/.kube/config
-k8sServiceHost: api.{{ clusterTLDomain }}:6443
+k8sServiceHost: api.{{ clusterTLDomain }}
 k8sServicePort: 6443
 
 cluster:
@@ -260,7 +260,7 @@ bpf:
   policyMapMax: 16384
 
   # -- Configure auto-sizing for all BPF maps based on available memory.
-  # ref: https://docs.cilium.io/en/v1.9/concepts/ebpf/maps/#ebpf-maps
+  # ref: https://docs.cilium.io/en/v1.10/concepts/ebpf/maps/#ebpf-maps
   #mapDynamicSizeRatio: 0.0025
 
   # -- Configure the level of aggregation for monitor notifications.
@@ -279,7 +279,7 @@ bpf:
   lbExternalClusterIP: false
 
   # -- Enable native IP masquerade support in eBPF
-  #masquerade: true
+  #masquerade: false
 
   # -- Configure whether direct routing mode should route traffic via
   # host stack (true) or directly and more efficiently out of BPF (false) if
@@ -530,6 +530,8 @@ hostServices:
   # -- Supported list of protocols to apply ClusterIP translation to.
   protocols: tcp,udp
 
+  # -- Disable socket lb for non-root ns. This is used to enable Istio routing rules.
+  # hostNamespaceOnly: false
 
 # -- Configure certificate generation for Hubble integration.
 # If hubble.tls.auto.method=cronJob, these values are used
@@ -542,7 +544,7 @@ certgen:
 {% else %}
     repository: quay.io/cilium/certgen
 {% endif %}
-    tag: v0.1.4
+    tag: v0.1.5
     pullPolicy: IfNotPresent
   # -- Seconds after which the completed job pod will be deleted
   ttlSecondsAfterFinished: 1800
@@ -597,6 +599,8 @@ hubble:
       # This requires the prometheus CRDs to be available.
       # ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
       enabled: false
+      # -- Labels to add to ServiceMonitor hubble
+      labels: {}
 
   # -- Unix domain socket path to listen to when Hubble is enabled.
   socketPath: /var/run/cilium/hubble.sock
@@ -774,7 +778,7 @@ hubble:
 {% else %}
         repository: quay.io/cilium/hubble-ui
 {% endif %}
-        tag: v0.7.9@sha256:e0e461c680ccd083ac24fe4f9e19e675422485f04d8720635ec41f2ba9e5562c
+        tag: v0.8.5@sha256:4eaca1ec1741043cfba6066a165b3bf251590cf4ac66371c4f63fbed2224ebb4
         pullPolicy: IfNotPresent
       # [Example]
       # resources:
@@ -795,7 +799,7 @@ hubble:
 {% else %}
         repository: docker.io/envoyproxy/envoy
 {% endif %}
-        tag: v1.18.2@sha256:e8b37c1d75787dd1e712ff389b0d37337dc8a174a63bed9c34ba73359dc67da7
+        tag: v1.18.4@sha256:e5c2bb2870d0e59ce917a5100311813b4ede96ce4eb0c6bfa879e3fbe3e83935
         pullPolicy: IfNotPresent
       # [Example]
       # resources:
@@ -955,6 +959,12 @@ kubeProxyReplacement: "strict"
 # By default it is disabled.
 kubeProxyReplacementHealthzBindAddr: "0.0.0.0:10256"
 
+l2NeighDiscovery:
+  # -- Enable L2 neighbour discovery in the agent
+  enabled: true
+  # -- Set period for arping
+  arping-refresh-period: "5m"
+
 # -- Enable Layer 7 network policy.
 l7Proxy: true
 
@@ -1060,6 +1070,8 @@ prometheus:
     # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/master/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
     #
     enabled: false
+    # -- Labels to add to ServiceMonitor cilium-agent
+    labels: {}
     # -- Specify the Kubernetes namespace where Prometheus expects to find
     # service monitors configured.
     # namespace: ""
@@ -1251,11 +1263,11 @@ operator:
     # operator-generic-digest
     genericDigest: "sha256:d0b491d8d8cb45862ed7f0410f65e7c141832f0f95262643fa5ff1edfcddcafe"
     # operator-azure-digest
-    azureDigest: "sha256:8cba20e22205d3a9fbcbed8bfc11bdd4d8e2fd5b0ce08f6e0f35f441ddc1de7e"
+    azureDigest: "sha256:556d692b2f08822101c159d9d6f731efe6c437d2b80f0ef96813e8745203c852"
     # operator-aws-digest
-    awsDigest: "sha256:d3aed74d90b9326959a33a6a354b16117942dac0017090380b1bc3a1dbe8be2d"
+    awsDigest: "sha256:97b378e0e3b6b5ade6ae1706024c7a25fe6fc48e00102b65a6b7ac51d6327f40"
     # operator-alibabacloud-digest
-    alibabacloudDigest: "sha256:291e05fef5c2ebebce785a985903a50075e539804b3e946aab8042fc526262b6"
+    alibabacloudDigest: "sha256:7a6ccc99195ae6a8216d2a1e1e0cc05d49c2d263b194895da264899fe9d0f45a"
     useDigest: true
     pullPolicy: IfNotPresent
     suffix: ""
@@ -1265,7 +1277,7 @@ operator:
 
   # -- For using with an existing serviceAccount.
   serviceAccountName: cilium-operator
-
+ 
   # -- cilium-operator priorityClassName
   priorityClassName: ""
 
@@ -1376,6 +1388,8 @@ operator:
       # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/master/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
       ##
       enabled: false
+      # -- Labels to add to ServiceMonitor cilium-operator
+      labels: {}
 
   # -- Skip CRDs creation for cilium-operator
   skipCRDCreation: false
