@@ -13,7 +13,7 @@
 
 - name: Deploy Cilium
   block:
-    - name: deploy cilium chart
+    - name: Deploy cilium chart
       kubernetes.core.helm:
         name: cilium
         chart_version: "{{ kubernetes.cilium.version }}"
@@ -37,7 +37,7 @@
         chart_version: "{{ kubernetes.cilium.version }}"
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
-        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
+        values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
         wait: true
         wait_timeout: "1m"
         update_repo_cache: true
