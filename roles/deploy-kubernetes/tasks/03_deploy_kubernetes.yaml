@@ -87,19 +87,19 @@
     dest: "/tmp/ansible/{{ cluster_uuid }}/"
     flat: true
 
-- name: Set var with current Vanillastack cluster config
-  set_fact:
-    configuration: "{{ hostvars[inventory_hostname] }}"
+# - name: Set var with current Vanillastack cluster config
+#   set_fact:
+#     configuration: "{{ hostvars[inventory_hostname] | to_json }}"
 
-- name: save vars to kubeconfig
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: vanillastack-cluster-config
-        namespace: kube-system
-      data:
-        clusterConfig: |
-          {{ configuration | to_json }}
+# - name: save vars to kubeconfig
+#   kubernetes.core.k8s:
+#     state: present
+#     definition:
+#       apiVersion: v1
+#       kind: ConfigMap
+#       metadata:
+#         name: vanillastack-cluster-config
+#         namespace: kube-system
+#       data:
+#         clusterConfig: |
+#           {{ configuration }}
