@@ -17,3 +17,5 @@ ntp:
   # default with pool.ntp.org. As soon as we get affirmation this must
   # be changed
   server: pool.ntp.org
+
+vanillastack_upload_cluster_config: false

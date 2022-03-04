@@ -28,7 +28,7 @@
   set_fact:
     apiport: "{% if create_extLB %}6443{% else %}8443{% endif %}"
 
-- name: create kubeadmconfig
+- name: Create kubeadm config file
   template:
     src: kubeadm-config.yaml.j2
     dest: /tmp/kubeadm-config.yaml
@@ -62,7 +62,7 @@
     mode: 0600
     remote_src: true
 
-- name: create .kube folder for ansible_user
+- name: Create .kube folder for ansible_user
   file:
     path: "{{ ansible_env.PWD }}/{{ item }}/"
     state: directory
@@ -87,19 +87,22 @@
     dest: "/tmp/ansible/{{ cluster_uuid }}/"
     flat: true
 
-# - name: Set var with current Vanillastack cluster config
-#   set_fact:
-#     configuration: "{{ hostvars[inventory_hostname] | to_json }}"
+- name: Upload Vanillastack cluster config
+  block:
+    - name: Set var with current Vanillastack cluster config
+      set_fact:
+        configuration: "{{ hostvars[inventory_hostname] }}"
 
-# - name: save vars to kubeconfig
-#   kubernetes.core.k8s:
-#     state: present
-#     definition:
-#       apiVersion: v1
-#       kind: ConfigMap
-#       metadata:
-#         name: vanillastack-cluster-config
-#         namespace: kube-system
-#       data:
-#         clusterConfig: |
-#           {{ configuration }}
+    - name: Save vars to kubeconfig
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: vanillastack-cluster-config
+            namespace: kube-system
+          data:
+            clusterConfig: |
+              {{ configuration | to_json }}
+  when: vanillastack_upload_cluster_config
