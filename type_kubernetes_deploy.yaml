@@ -70,21 +70,21 @@
     - role: deploy-kubernetes
       action: 02_configure_cluster
 
-- name: Init KubeCluster
+- name: Init Kubernetes Cluster
   hosts: install_master[0]
   gather_facts: true
   roles:
     - role: deploy-kubernetes
       action: 03_deploy_kubernetes
 
-- name: generate secrets
+- name: Generate Secrets
   hosts: master[0]
   gather_facts: false
   roles:
     - role: deploy-kubernetes
       action: 02-1-generate-certificate
 
-- name: Add Master to KubeCluster
+- name: Add Master to Kubernetes Cluster
   hosts: install_master[1:]
   become: true
   gather_facts: false
@@ -92,7 +92,7 @@
     - role: deploy-kubernetes
       action: 04_add_nodes
 
-- name: Add worker to KubeCluster
+- name: Add worker to Kubernetes Cluster
   hosts: install_nodes
   become: true
   gather_facts: false
