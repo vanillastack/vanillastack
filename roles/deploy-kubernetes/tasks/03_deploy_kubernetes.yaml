@@ -44,7 +44,7 @@
         {{ kubernetes.init_opts }}
   register: init_cluster
 
-- name: create .kube folder in /root for become == true cases
+- name: Create .kube folder in /root for become == true cases
   file:
     path: "{{ ansible_env.HOME }}/{{ item }}/"
     state: directory
@@ -80,14 +80,15 @@
     mode: 0600
     remote_src: true
 
-- name: fetch kubeadm config
+- name: Fetch kubeadm config
   become: true
   fetch:
     src: "/etc/kubernetes/admin.conf"
     dest: "/tmp/ansible/{{ cluster_uuid }}/"
     flat: true
 
-- set_fact:
+- name: Set var with current Vanillastack cluster config
+  set_fact:
     configuration: "{{ hostvars[inventory_hostname] }}"
 
 - name: save vars to kubeconfig

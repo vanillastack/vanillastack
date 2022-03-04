@@ -110,12 +110,12 @@
     - role: deploy-kubernetes
       action: 05_add_worker
 
-- name: create folder for config
+- name: Create folder for config
   hosts: localhost
   vars:
     ansible_connection: local
   tasks:
-    - name: make sure local uuid directory exists
+    - name: Make sure local uuid directory exists
       file:
         state: directory
         path: "/tmp/ansible/{{ cluster_uuid }}"

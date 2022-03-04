@@ -1,5 +1,5 @@
 ---
-- name: reset kubernetes cluster
+- name: Reset kubernetes cluster
   hosts: master,worker
   become: true
   gather_facts: false
@@ -11,21 +11,11 @@
       action: remove-local-files
       when: reset_environment
         
-- name: reset osds
+- name: Reset OSDs
   hosts: storage
   become: true
   gather_facts: false
   roles:
     - role: reset-cluster
       action: reset-ceph
-      when: reset_environment
-
-- name: remove stored files
-  hosts: localhost
-  connection: local
-  become: true
-  gather_facts: false
-  roles:
-    - role: reset-cluster
-      action: remove-local-files
       when: reset_environment
