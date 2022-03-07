@@ -25,7 +25,6 @@
       - jq
       - libseccomp2
       - lvm2
-      - needrestart
       - nfs-common
       - python3-jmespath
       - python3-kubernetes
