@@ -56,6 +56,8 @@
     state: present
 
 - name: Set bash history timestamps for all users using pam
+  become: true
+  become_user: root
   lineinfile:
     path: /etc/environment
     line: 'export HISTTIMEFORMAT="%F %T "'
