@@ -29,6 +29,8 @@
 - name: Check if any nodes need an update
   include_tasks: 00-1_check_update.yaml
   with_items: "{{ groups.master + groups.worker }}"
+  loop_control:
+    loop_var: hostname
   when:
     - current_nodes_version.stdout is defined
     - current_nodes_version.stdout != kubernetes.version
