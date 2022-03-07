@@ -16,4 +16,4 @@
         group: update_nodes
       when: hostname in groups['worker']
   when:
-    - (node_kubelet_version_command.stdout | replace('v', '')) is version(kubernetes.version, 'lt', version_type='semver')
+    - (node_kubelet_version_command.stdout | replace('v', '')) is version(kubernetes.version, 'lt')
