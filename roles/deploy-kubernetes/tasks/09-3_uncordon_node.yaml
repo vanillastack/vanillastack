@@ -1,6 +1,6 @@
 ---
 - name: Uncordon Node
-  delegate_to: groups.master[0]
+  delegate_to: "{{ groups.master[0] }}"
   command: |
     kubectl \
         uncordon \
