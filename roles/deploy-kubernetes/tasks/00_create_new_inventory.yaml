@@ -26,6 +26,9 @@
   register: current_nodes_version
   ignore_errors: true
 
+- debug:
+    var: hostname in groups.install_nodes or hostname in groups.install_master
+
 - name: Check if any nodes need an update
   include_tasks: 00-1_check_update.yaml
   with_items: "{{ groups.master + groups.worker }}"
@@ -34,7 +37,7 @@
   when:
     - current_nodes_version.stdout is defined
     - current_nodes_version.stdout != kubernetes.version
-    - hostname not in groups.install_nodes or hostname not in groups.install_master
+    - hostname in groups.install_nodes or hostname in groups.install_master
 
 - debug:
     var: groups.update_master
