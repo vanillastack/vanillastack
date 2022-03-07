@@ -10,6 +10,7 @@ kubernetes:
   crioRuncVersion: "1.0.1~0"
   helm_version: "v3.3.1"
   pod_cidr: "10.0.0.0/8"
+  drainTimeout: "10m"
 
 ntp:
   manage_timesyncd: true
