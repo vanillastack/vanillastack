@@ -34,6 +34,7 @@
   when:
     - current_nodes_version.stdout is defined
     - current_nodes_version.stdout != kubernetes.version
+    - hostname not in groups.install_nodes or hostname not in groups.install_master
 
 - debug:
     var: groups.update_master
