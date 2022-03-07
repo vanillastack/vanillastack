@@ -22,6 +22,8 @@ install_nodes
 # should be installed. That can be changed to other systems as well
 [haproxy:children]
 master
-# This group needs to be empty, as it is used to scale worker nodes
+# These groups need to be empty, as it is used to scale and update nodes
 [install_nodes]
 [install_master]
+[update_nodes]
+[update_master]

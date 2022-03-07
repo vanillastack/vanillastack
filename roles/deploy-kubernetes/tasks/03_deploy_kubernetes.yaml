@@ -1,13 +1,13 @@
 ---
-- name: create join token
+- name: Create join token
   command: kubeadm token generate
   register: generated_token
 
-- name: create certificate key
+- name: Create certificate key
   command: kubeadm certs certificate-key
   register: generated_certificate_key
 
-- name: save certificate key
+- name: Save certificate key
   lineinfile:
     path: /tmp/cluster_vars.yml
     regexp: "^(.*)certificate_key(.*)$"

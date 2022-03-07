@@ -142,22 +142,22 @@
     name: unattended-upgrades
     state: absent
 
-- name: get latest kube version
+- name: Get available Kubernetes ube version
   shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
-  register: apt_output
+  register: kubeversion_apt_output
 
-- name: get kubeversion
+- name: Set Kubernetes version variable
   set_fact:
-    versions: "{{ apt_output.stdout }}"
+    kube_version: "{{ kubeversion_apt_output.stdout }}"
 
-- name: save kubeversion
+- name: Save kubeversion to YAML file
   lineinfile:
     path: /tmp/kubeversion.yml
     regexp: "^(.*)version(.*)$"
-    line: "version: {{ versions | replace ('-00','') }}"
+    line: "version: {{ kube_version | regex_replace('-[0-9]+', '') }}"
     create: true
 
-- name: fetch kubeversion
+- name: Fetch kubeversion.yml
   become: true
   fetch:
     src: "/tmp/kubeversion.yml"
@@ -168,9 +168,9 @@
 - name: Install packages
   apt:
     pkg:
-      - "kubelet={{ versions }}"
-      - "kubeadm={{ versions }}"
-      - "kubectl={{ versions }}"
+      - "kubelet={{ kube_version }}"
+      - "kubeadm={{ kube_version }}"
+      - "kubectl={{ kube_version }}"
       - "cri-o"
       - "cri-o-runc"
     update_cache: true
@@ -291,7 +291,7 @@
     value: 1048576
     domain: "*"
 
-- name: set hosts if kubeapi is not dns resolvable
+- name: Add api name to hosts file
   lineinfile:
     path: /etc/hosts
     state: present

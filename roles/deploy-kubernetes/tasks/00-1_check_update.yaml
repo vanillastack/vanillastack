@@ -1,0 +1,24 @@
+---
+- name: Get Node Kubernetes version
+  command: kubectl get nodes --no-headers -o custom-columns=VERSION:.status.nodeInfo.kubeletVersion {{ item }}
+  register: node_kubelet_version
+
+- debug:
+    var: node_kubelet_version is version(kubernetes.version, '<')
+
+- name: Add node to the update group
+  block:
+    - name: Add master to the update_master group
+      add_host:
+        name: "{{ item }}"
+        group: update_master
+      with_items: "{{ groups.master }}"
+      when: item in groups['master']
+    - name: Add node to the update_nodes group
+      add_host:
+        name: "{{ item }}"
+        group: update_nodes
+      with_items: "{{ groups.worker }}"
+      when: item in groups['worker']
+  when:
+    - node_kubelet_version is version(kubernetes.version, '<')
