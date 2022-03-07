@@ -1,0 +1,31 @@
+---
+- name: Create inventory for Kubernetes Update
+  hosts: master[0]
+  roles:
+    - role: deploy-kubernetes
+      action: 00_create_new_inventory
+
+- name: Update first Master
+  hosts: update_master[0]
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 09-1_upgrade_first_master
+
+- name: Updater others Masters in Kubernetes Cluster
+  hosts: update_master[1:]
+  serial: 1
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 09-2_upgrade_nodes
+
+- name: Update workers in Kubernetes Cluster
+  hosts: update_nodes
+  serial: 1
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 09-2_upgrade_nodes

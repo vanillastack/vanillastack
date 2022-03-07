@@ -10,43 +10,7 @@
       - gnupg
       - python3
 
-- name: Clear apt sources.list
-  copy:
-    content: ""
-    dest: /etc/apt/sources.list
-
-- name: List files in apt sources.list.d directory
-  find:
-    path: /etc/apt/sources.list.d
-    file_type: file
-    excludes:
-      - repo_vanillastack_cloudical_net.list
-  register: found_sources_lists
-
-- name: Remove other apt sources.list.d lists
-  file:
-    path: "{{ item }}"
-    state: absent
-  with_items: "{{ found_sources_lists.files }}"
-  when: found_sources_lists is defined and found_sources_lists.files is defined
-
-- name: Add Cloudical APT repositories
-  template:
-    src: etc/apt/sources.list.d/repo_vanillastack_cloudical_net.list
-    dest: /etc/apt/sources.list.d/repo_vanillastack_cloudical_net.list
-    owner: root
-    group: root
-    mode: 0644
-
-- name: Add key for Cloudical APT repositories
-  apt_key:
-    url: "{{ item }}"
-  loop:
-    - "{{repositories.package_repository}}/public-gpg-key"
-  retries: 3
-  delay: 1
-  register: result
-  until: result is success
+- include_tasks: configure_debian_repos.yaml
 
 - name: Install neccessary packages
   apt:
@@ -131,7 +95,7 @@
     state: started
     enabled: true
 
-- name: make sure, domain search is not set
+- name: Make sure, domain search is not set
   lineinfile:
     regexp: "^(.*)search(.*)$"
     state: absent
@@ -142,13 +106,7 @@
     name: unattended-upgrades
     state: absent
 
-- name: Get available Kubernetes ube version
-  shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
-  register: kubeversion_apt_output
-
-- name: Set Kubernetes version variable
-  set_fact:
-    kube_version: "{{ kubeversion_apt_output.stdout }}"
+- include_tasks: kube_crio_install.yaml
 
 - name: Save kubeversion to YAML file
   lineinfile:
@@ -165,85 +123,14 @@
     flat: true
   run_once: true
 
-- name: Install packages
-  apt:
-    pkg:
-      - "kubelet={{ kube_version }}"
-      - "kubeadm={{ kube_version }}"
-      - "kubectl={{ kube_version }}"
-      - "cri-o"
-      - "cri-o-runc"
-    update_cache: true
-    autoclean: true
-    autoremove: true
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
-
-- name: Hold packages
-  dpkg_selections:
-    name: "{{ item }}"
-    selection: hold
-  with_items:
-    - "kubelet"
-    - "kubeadm"
-    - "kubectl"
-    - "cri-o"
-    - "cri-o-runc"
-
-- name: Configure crio
-  lineinfile:
-    path: /etc/crio/crio.conf
-    regexp: "^(.*)conmon =(.*)$"
-    line: 'conmon = "/usr/bin/conmon"'
-    backrefs: true
-
 - name: Configure kubelet
   lineinfile:
     path: /etc/default/kubelet
     regexp: "^(.*)KUBELET_EXTRA_ARGS(.*)$"
-    line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
+    line: 'KUBELET_EXTRA_ARGS=--container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
     create: true
 
-- name: Set CRI-O cgroups driver
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: "^cgroup_manager =.*"
-    line: 'cgroup_manager = "systemd"'
-
-- name: Set CRI-O default_ulimits
-  blockinfile:
-    path: /etc/crio/crio.conf
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-    block: |
-      default_ulimits = [
-          "nofile=16384:24576",
-          "nproc=8192:8192"
-      ]
-
-- name: Set CRI-O default seccomp profile as true
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: "^seccomp_use_default_when_empty =.*"
-    line: "seccomp_use_default_when_empty = true"
-
-- name: Set CRI-O global auth
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: "^global_auth_file =.*"
-    line: 'global_auth_file = "/etc/crio/auth.json"'
-  when: commercial.enabled
-
-- name: Set CRI-O PIDs limit
-  lineinfile:
-    path: /etc/crio/crio.conf
-    state: present
-    regexp: "^pids_limit*."
-    line: "pids_limit = 8192"
+- include_tasks: configure_crio.yaml
 
 - name: "Check for installed packages"
   package_facts:

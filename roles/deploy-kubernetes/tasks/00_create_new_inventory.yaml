@@ -1,24 +1,24 @@
 ---
 - name: Get Nodes in Kubernetes Cluster
   command: kubectl get nodes -o name
-  register: current_worker
+  register: current_nodes
   ignore_errors: true
 
 - name: Add nodes that do not exist in the Kubernetes Cluster to install_ groups
-  when: current_worker.rc != 0
+  when: current_nodes.stdout is defined
   block:
     - name: Add new masters running this playbook to the install_master group
       add_host:
         name: "{{ item }}"
         group: install_master
-      when: "item not in current_worker.stdout"
+      when: "item not in current_nodes.stdout"
       loop: "{{ groups.master }}"
 
     - name: Add new nodes running this playbook to the install_nodes group
       add_host:
         name: "{{ item }}"
         group: install_nodes
-      when: "item not in current_worker.stdout"
+      when: "item not in current_nodes.stdout"
       loop: "{{ groups.worker }}"
 
 - name: Get Nodes with Version in Kubernetes Cluster
@@ -37,10 +37,4 @@
   when:
     - current_nodes_version.stdout is defined
     - current_nodes_version.stdout != kubernetes.version
-    - hostname in groups.install_nodes or hostname in groups.install_master
-
-- debug:
-    var: groups.update_master
-
-- name: Test
-  fail: {}
+    - hostname not in groups.install_nodes and hostname not in groups.install_master

@@ -1,0 +1,10 @@
+---
+- name: Drain Node with timeout of 5 minutes
+  delegate_to: groups.master[0]
+  command: |
+    kubectl \
+        drain \
+        --timeout=5m \
+        --delete-emptydir-data=true \
+        --ignore-daemonsets=true \
+        {{ hostname }}
