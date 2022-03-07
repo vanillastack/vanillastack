@@ -78,7 +78,7 @@
         #  gather_facts: true
         #  roles:
         #    - role: deploy-kubernetes
-        #      action: 02-1-generate-certificate
+        #      action: 02-1_generate-certificate.yaml
 
 - name: Init Kubernetes Cluster
   hosts: install_master[0]
@@ -92,7 +92,7 @@
   gather_facts: false
   roles:
     - role: deploy-kubernetes
-      action: 02-1-generate-certificate
+      action: 02-1_generate-certificate.yaml
 
 - name: Add Master to Kubernetes Cluster
   hosts: install_master[1:]

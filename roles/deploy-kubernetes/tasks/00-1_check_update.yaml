@@ -1,10 +1,10 @@
 ---
 - name: Get Node Kubernetes version
   command: kubectl get nodes --no-headers -o custom-columns=VERSION:.status.nodeInfo.kubeletVersion {{ item }}
-  register: node_kubelet_version
+  register: node_kubelet_version_command
 
 - debug:
-    var: node_kubelet_version is version(kubernetes.version, '<')
+    var: node_kubelet_version_command.stdout is version(kubernetes.version, '<')
 
 - name: Add node to the update group
   block:
@@ -21,4 +21,4 @@
       with_items: "{{ groups.worker }}"
       when: item in groups['worker']
   when:
-    - node_kubelet_version is version(kubernetes.version, '<')
+    - node_kubelet_version_command.stdout is version(kubernetes.version, '<')
