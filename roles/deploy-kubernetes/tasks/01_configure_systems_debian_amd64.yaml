@@ -17,6 +17,8 @@
     name:
       - curl
       - fail2ban
+      - firmware-linux
+      - firmware-linux-nonfree
       - git
       - gnupg
       - iproute2
