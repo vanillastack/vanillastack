@@ -6,8 +6,8 @@
   - name: Install collections from Ansible galaxy
     command: "ansible-galaxy collection install {{ item }}"
     loop:
-      - community.kubernetes
       - community.general
+      - kubernetes.core
 
   - name: Install pip dependencies
     pip:
