@@ -4,24 +4,22 @@
   register: current_nodes
   ignore_errors: true
 
+# TODO If anyhow kubectl fails, servers will be added to the install_ groups
+
 - name: Add nodes that do not exist in the Kubernetes Cluster to install_ groups
   block:
     - name: Add new masters running this playbook to the install_master group
       add_host:
         name: "{{ item }}"
         group: install_master
-      when:
-        - current_nodes.stdout is defined
-        - item not in current_nodes.stdout
+      when: current_nodes.stdout is not defined or item not in current_nodes.stdout
       loop: "{{ groups.master }}"
 
     - name: Add new nodes running this playbook to the install_nodes group
       add_host:
         name: "{{ item }}"
         group: install_nodes
-      when:
-        - current_nodes.stdout is defined
-        - item not in current_nodes.stdout
+      when: current_nodes.stdout is not defined or item not in current_nodes.stdout
       loop: "{{ groups.worker }}"
 
 - name: Get Nodes with Version in Kubernetes Cluster
