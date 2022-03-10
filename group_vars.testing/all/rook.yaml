@@ -12,7 +12,6 @@ rook:
     csiEnableGRPC: true
   cluster:
     enabled: true
-    image: ceph/ceph:v15.2.5-20200916
     name: rook-ceph
     dataHostDir: /var/lib/rook
     mon:

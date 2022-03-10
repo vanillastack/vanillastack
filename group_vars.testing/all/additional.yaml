@@ -1,30 +1,52 @@
 velero:
   enabled: false
-  version: v1.5.2
-  chartVersion: 2.13.6
+  version: v1.7.1
+  chartVersion: 2.27.0
   namespace: velero
-  backend: minio
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "3Gi"
+    limits:
+      cpu: "1000m"
+      memory: "6Gi"
+  restic:
+    resources:
+      requests:
+        cpu: "125m"
+        memory: "3Gi"
+      limits:
+        cpu: "1000m"
+        memory: "5Gi"
+  backend: minio # minio|aws
+  aws: {}
+  #  bucketName: YOUR_BUCKET_NAME
+  #  snapshotBucketName: YOUR_SNAPSHOT_BUCKET_NAME
+  #  region: "us-east-1"
+  #  s3ForcePathStyle: false
+  #  publicURL: https://s3.example.com
+  #  s3URL: https://s3.example.com
+  #  accessKey: YOUR_ACCESS_KEY
+  #  secretKey: YOUR_SECRET_KEY
   minio:
     enabled: true
     chartVersion: 8.0.2
     nfs:
       size: 50Gi
-      server: 95.217.63.249
+      server: example.com
       path: /srv/nfs
     accessKey: NQhlZ2qu6Gi73f4AfTBbGyLob
     secretKey: p7v1jHW8cW3BQNMknrTAJqpUX
   schedules:
     k8s-cluster:
-      schedule: 15 */4 * * *
+      schedule: 15 */6 * * *
       template:
         excludedResources:
-        - pvcs
-        - pvs
+        - persistentvolumeclaims
+        - peristentvolumes
         hooks: {}
         includeClusterResources: true
         includedNamespaces:
         - '*'
-        #includedResources:
-        #- '*'
-        storageLocation: incluster-cephobjectn1
+        storageLocation: default
         ttl: 336h0m0s

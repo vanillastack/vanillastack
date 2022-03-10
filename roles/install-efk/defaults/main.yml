@@ -31,6 +31,7 @@ efkstack:
   logaggregator:
     # Choice of filebeat and fluentd
     name: filebeat
+    imageTag: "7.9.1"
     resources:
       limits:
         cpu: "500m"
@@ -38,8 +39,5 @@ efkstack:
       requests:
         cpu: "100m"
         memory: "200Mi"
-  filebeat:
-    imageTag: "7.10.2"
-    version: 7.9.1
   fluentd:
     version: 0.1.2

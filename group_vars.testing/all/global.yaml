@@ -14,7 +14,7 @@ kubernetes:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
     chartVersion: "4.0.3"
   clusterName: kubernetes
-  version: "1.23.14"
+  version: "1.23.4"
   crioVersion: "1.23"
   crioRuncVersion: "1.0.1~0"
   helm_version: "v3.5.3"
@@ -103,7 +103,7 @@ harbor:
       cronjob: "30 */2 * * *"
 efkstack:
   kibana:
-    imageTag: "7.9.1"
+    imageTag: "7.10.2"
     user: kibana_test
     password: secretlysecretpassword
     replicas: 2
@@ -118,7 +118,7 @@ efkstack:
         cpu: "1000m"
         memory: "2Gi"
   es:
-    imageTag: "7.9.1"
+    imageTag: "7.10.2"
     replicas: 3
     storage:
       class_name: "rook-ceph-block"
@@ -145,7 +145,7 @@ monitoring:
   admin_user: admin
   admin_password: prompassword
   replicas: 2
-  chartVersion: 13.4.1
+  chartVersion: 14.4.0
   retention: 360h
   ingress:
     enabled: true
@@ -178,7 +178,7 @@ monitoring:
     enabled: true
   kubeStateMetrics:
     enabled: true
-  additionalRules: 
+  additionalRules:
     cloudical:
       groups:
       - name: Memory_CPU_Using
@@ -259,7 +259,7 @@ alertmanager:
     - name: 'null'
 grafana:
   namespace: grafana
-  chartVersion: 6.2.1 
+  chartVersion: 6.6.4 
   replicas: 1
   enabled: true
   admin_user: admin
@@ -267,6 +267,16 @@ grafana:
   ingress:
     enabled: true
     dns: "grafana.{{ clusterTLDomain }}"
+  persistence:
+    type: pvc
+    enabled: false
+    storageClassName: rook-ceph-block
+    accessModes:
+      - ReadWriteOnce
+    size: 15Gi
+    # annotations: {}
+    finalizers:
+      - kubernetes.io/pvc-protection
 loki:
   namespace: loki
   chartVersion: 2.3.1
