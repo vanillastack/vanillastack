@@ -13,26 +13,20 @@
       command: "sudo sgdisk --zap-all /dev/{{ item.key }}"
       loop: "{{ q('dict', device_list) }}"
       when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-      notify: reboot_all_nodes
+      notify: reboot node
     - name: destroy information
       command: "sudo wipefs -fa /dev/{{ item.key }}"
       loop: "{{ q('dict', device_list) }}"
       when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-      notify: reboot_all_nodes
+      notify: reboot node
     - name: Clean hdds with dd
       command: "sudo dd if=/dev/zero of=/dev/{{ item.key }} bs=1M count=100 oflag=direct,dsync"
       loop: "{{ q('dict', device_list) }}"
       when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-      notify: reboot_all_nodes
-  # - name: discard content of sectors
-  #   command: "blkdiscard /dev/{{ item.key }}"
-  #   loop: "{{ q('dict', device_list) }}"
-  #   when: "'ceph' in item | json_query('*.holders[]') | join(',')"
-  #   ignore_errors: true
-  #   notify: reboot_all_nodes
+      notify: reboot node
 
-- name: Make sure rook's datadirHostPath is gone
+- name: Make sure rook's data dir HostPath is gone
   file:
     path: /var/lib/rook
     state: absent
-  notify: reboot_all_nodes
+  notify: reboot node
