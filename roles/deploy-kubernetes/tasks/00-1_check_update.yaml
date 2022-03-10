@@ -2,6 +2,7 @@
 - name: Get Node Kubernetes version
   command: kubectl get nodes --no-headers -o custom-columns=VERSION:.status.nodeInfo.kubeletVersion {{ hostname }}
   register: node_kubelet_version_command
+  ignore_errors: true
 
 - name: Add node to the update group
   block:
@@ -16,5 +17,6 @@
         group: update_nodes
       when: hostname in groups['worker']
   when:
+    - node_kubelet_version_command.rc is defined and node_kubelet_version_command.rc == 0
     - node_kubelet_version_command.stdout is defined
     - (node_kubelet_version_command.stdout | replace('v', '')) is version(kubernetes.version, 'lt')
