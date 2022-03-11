@@ -10,7 +10,6 @@ This page lists all Members assigned to a Role to make it possible to address PR
 |===
 | Name
 
-| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>
 | Karsten Samaschke <karsten.samaschke@cloudical.io>
 |===
 
@@ -22,10 +21,10 @@ Steering committee members are added according the link:GOVERNANCE.adoc[GOVERNAN
 |===
 | Name                                                    | Represents  | Github
 
-| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>          | Cloudical   | [kisahm](https://github.com/kisahm)
 | Karsten Samaschke <karsten.samaschke@cloudical.io>      | Cloudical   | [ksamaschke](https://github.com/ksamaschke)
-| Christian Schilliing <christian.schilling@cloudical.io> | Cloudical   | [christiancloudical](https://github.com/christiancloudical)
-| Jeff Chousterman <jeff.choustermann@cloudical.io>       | Cloudical   | [j0x00](https://github.com/j0x00)
+| Jurlind Budurushi <jurlind.budurushi@cloudical.io> | Cloudical   | 
+| Ivo Mende <ivo.mende@cloudical.io> | Cloudical |
+| Patrick Scheel <patrick.scheel@cloudical.io       | Cloudical   |
 |===
 
 == Maintainers
@@ -36,8 +35,10 @@ Maintainers will be added according to the process defined in link:GOVERNANCE.ad
 |===
 | Name
 
-| Kim-Norman Sahm <kim-norman.sahm@cloudical.io>
 | Karsten Samaschke <karsten.samaschke@cloudical.io>
-| Christian Schilliing <christian.schilling@cloudical.io>
-| Jeff Chousterman <jeff.choustermann@cloudical.io>
+| Jurlind Budurushi <jurlind.budurushi@cloudical.io>
+| Ivo Mende <ivo.mende@cloudical.io>
+| Patrick Scheel <patrick.scheel@cloudical.io>
+| Martin Lorenz <martin.lorenz@cloudicla.io>
+| Daniel Lehmann <daniel.lehmann@cloudical.io>
 |===
