@@ -157,7 +157,7 @@ prometheusOperator:
 {% else %}
     repository: docker.io/jimmidyson/configmap-reload
 {% endif %}
-  monitoring.onfigReloaderImage:
+  monitoring.ConfigReloaderImage:
 {% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-config-reloader
 {% else %}
