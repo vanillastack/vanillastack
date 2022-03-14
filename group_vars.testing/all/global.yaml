@@ -9,6 +9,8 @@ ingress:
   config: {}
   replicas: 3
   chartVersion: "4.0.18"
+  defaultBackend:
+    replicas: 1
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
