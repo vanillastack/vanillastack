@@ -2,4 +2,4 @@ ingress:
   enabled: false
   config: {}
   replicas: 3
-  chartVersion: "3.25.0"
+  chartVersion: "4.0.18"

@@ -8,7 +8,7 @@ ingress:
   enabled: true
   config: {}
   replicas: 3
-  chartVersion: "3.25.0"
+  chartVersion: "4.0.18"
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
