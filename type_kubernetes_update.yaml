@@ -11,15 +11,17 @@
   roles:
     - role: deploy-kubernetes
       action: 09-1_upgrade_first_master
+      when: groups.update_master[0] == groups.master[0]
 
 - name: Updater others Masters in Kubernetes Cluster
-  hosts: update_master[1:]
+  hosts: update_master
   serial: 1
   become: true
   gather_facts: true
   roles:
     - role: deploy-kubernetes
       action: 09-2_upgrade_nodes
+      when: inventory_hostname != groups.master[0]
 
 - name: Update workers in Kubernetes Cluster
   hosts: update_nodes
