@@ -75,7 +75,7 @@ controller:
   # -- Process Ingress objects without ingressClass annotation/ingressClassName field
   # Overrides value for --watch-ingress-without-class flag of the controller binary
   # Defaults to false
-  watchIngressWithoutClass: false
+  watchIngressWithoutClass: true
 
   # -- Process IngressClass per name (additionally as per spec.controller).
   ingressClassByName: false
@@ -115,7 +115,7 @@ controller:
     # -- Is this the default ingressClass for the cluster
     default: true
     # -- Controller-value of the controller that is processing this ingressClass
-    controllerValue: "k8s.io/ingress-nginx"
+    controllerValue: ""
 
     # -- Parameters is a link to a custom resource containing additional
     # configuration for the controller. This is optional if the controller
@@ -505,12 +505,17 @@ controller:
 
     type: NodePort
 
+    ## type: NodePort
+    ## nodePorts:
+    ##   http: 32080
+    ##   https: 32443
+    ##   tcp:
+    ##     8080: 32808
     nodePorts:
       http: {{ ingress_http_port | default(30080) }}
       https: {{ ingress_https_port | default(30443) }}
       tcp: {}
       udp: {}
-
 
     external:
       enabled: true
