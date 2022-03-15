@@ -40,7 +40,8 @@ postgresOperator:
       bucketName: nul
     cron: "30 00 * * *"
 harbor:
-  chartVersion: 1.5.1
+  enabled: true
+  chartVersion: 1.5.3
   namespace: harbor
   ingress:
     coreDomain: "harbor.{{ clusterTLDomain }}"

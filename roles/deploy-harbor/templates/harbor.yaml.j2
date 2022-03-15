@@ -170,6 +170,14 @@ internalTLS:
     crt: ""
     # Content of chartmuseum's TLS key file, only available when `certSource` is "manual"
     key: ""
+  # clair related cert configuration
+  clair:
+    # secret name for clair's tls certs
+    secretName: ""
+    # Content of clair's TLS key file, only available when `certSource` is "manual"
+    crt: ""
+    # Content of clair's TLS key file, only available when `certSource` is "manual"
+    key: ""
   # trivy related cert configuration
   trivy:
     # secret name for trivy's tls certs
@@ -243,85 +251,86 @@ persistence:
   # images and charts. Refer to
   # https://github.com/docker/distribution/blob/master/docs/configuration.md#storage
   # for the detail.
-#  imageChartStorage:
-#    # Specify whether to disable `redirect` for images and chart storage, for
-#    # backends which not supported it (such as using minio for `s3` storage type), please disable
-#    # it. To disable redirects, simply set `disableredirect` to `true` instead.
-#    # Refer to
-#    # https://github.com/docker/distribution/blob/master/docs/configuration.md#redirect
-#    # for the detail.
-#    disableredirect: false
-#    # Specify the "caBundleSecretName" if the storage service uses a self-signed certificate.
-#    # The secret must contain keys named "ca.crt" which will be injected into the trust store
-#    # of registry's and chartmuseum's containers.
-#    # caBundleSecretName:
-#
-#    # Specify the type of storage: "filesystem", "azure", "gcs", "s3", "swift",
-#    # "oss" and fill the information needed in the corresponding section. The type
-#    # must be "filesystem" if you want to use persistent volumes for registry
-#    # and chartmuseum
-#    type: filesystem
-#    filesystem:
-#      rootdirectory: /storage
-#      #maxthreads: 100
-#    azure:
-#      accountname: accountname
-#      accountkey: base64encodedaccountkey
-#      container: containername
-#      #realm: core.windows.net
-#    gcs:
-#      bucket: bucketname
-#      # The base64 encoded json file which contains the key
-#      encodedkey: base64-encoded-json-key-file
-#      #rootdirectory: /gcs/object/name/prefix
-#      #chunksize: "5242880"
-#    s3:
-#      region: "$BUCKET_REGION"
-#      bucket: "$BUCKET_NAME"
-#      accesskey: "$AWS_ACCESS_KEY_ID"
-#      secretkey: "$AWS_SECRET_ACCESS_KEY"
-#      regionendpoint: "http://$BUCKET_HOST:$BUCKET_PORT"
-#      encrypt: false
-#      #keyid: mykeyid
-#      secure: false
-#      v4auth: true
-#      chunksize: "5242880"
-#      #rootdirectory: /s3/object/name/prefix
-#      #storageclass: STANDARD
-#      #multipartcopychunksize: "33554432"
-#      #multipartcopymaxconcurrency: 100
-#      #multipartcopythresholdsize: "33554432"
-#    swift:
-#      authurl: https://storage.myprovider.com/v3/auth
-#      username: username
-#      password: password
-#      container: containername
-#      #region: fr
-#      #tenant: tenantname
-#      #tenantid: tenantid
-#      #domain: domainname
-#      #domainid: domainid
-#      #trustid: trustid
-#      #insecureskipverify: false
-#      #chunksize: 5M
-#      #prefix:
-#      #secretkey: secretkey
-#      #accesskey: accesskey
-#      #authversion: 3
-#      #endpointtype: public
-#      #tempurlcontainerkey: false
-#      #tempurlmethods:
-#    oss:
-#      accesskeyid: accesskeyid
-#      accesskeysecret: accesskeysecret
-#      region: regionname
-#      bucket: bucketname
-#      #endpoint: endpoint
-#      #internal: false
-#      #encrypt: false
-#      #secure: true
-#      #chunksize: 10M
-#      #rootdirectory: rootdirectory
+  imageChartStorage:
+    # Specify whether to disable `redirect` for images and chart storage, for
+    # backends which not supported it (such as using minio for `s3` storage type), please disable
+    # it. To disable redirects, simply set `disableredirect` to `true` instead.
+    # Refer to
+    # https://github.com/docker/distribution/blob/master/docs/configuration.md#redirect
+    # for the detail.
+    disableredirect: false
+    # Specify the "caBundleSecretName" if the storage service uses a self-signed certificate.
+    # The secret must contain keys named "ca.crt" which will be injected into the trust store
+    # of registry's and chartmuseum's containers.
+    # caBundleSecretName:
+
+    # Specify the type of storage: "filesystem", "azure", "gcs", "s3", "swift",
+    # "oss" and fill the information needed in the corresponding section. The type
+    # must be "filesystem" if you want to use persistent volumes for registry
+    # and chartmuseum
+    type: filesystem
+    filesystem:
+      rootdirectory: /storage
+      #maxthreads: 100
+    azure:
+      accountname: accountname
+      accountkey: base64encodedaccountkey
+      container: containername
+      #realm: core.windows.net
+    gcs:
+      bucket: bucketname
+      # The base64 encoded json file which contains the key
+      encodedkey: base64-encoded-json-key-file
+      #rootdirectory: /gcs/object/name/prefix
+      #chunksize: "5242880"
+    s3:
+      region: us-west-1
+      bucket: bucketname
+      #accesskey: awsaccesskey
+      #secretkey: awssecretkey
+      #regionendpoint: http://myobjects.local
+      #encrypt: false
+      #keyid: mykeyid
+      #secure: true
+      #skipverify: false
+      #v4auth: true
+      #chunksize: "5242880"
+      #rootdirectory: /s3/object/name/prefix
+      #storageclass: STANDARD
+      #multipartcopychunksize: "33554432"
+      #multipartcopymaxconcurrency: 100
+      #multipartcopythresholdsize: "33554432"
+    swift:
+      authurl: https://storage.myprovider.com/v3/auth
+      username: username
+      password: password
+      container: containername
+      #region: fr
+      #tenant: tenantname
+      #tenantid: tenantid
+      #domain: domainname
+      #domainid: domainid
+      #trustid: trustid
+      #insecureskipverify: false
+      #chunksize: 5M
+      #prefix:
+      #secretkey: secretkey
+      #accesskey: accesskey
+      #authversion: 3
+      #endpointtype: public
+      #tempurlcontainerkey: false
+      #tempurlmethods:
+    oss:
+      accesskeyid: accesskeyid
+      accesskeysecret: accesskeysecret
+      region: regionname
+      bucket: bucketname
+      #endpoint: endpoint
+      #internal: false
+      #encrypt: false
+      #secure: true
+      #chunksize: 10M
+      #rootdirectory: rootdirectory
 
 imagePullPolicy: IfNotPresent
 
@@ -588,6 +597,44 @@ chartmuseum:
   podAnnotations: {}
   ## The priority class to run the pod as
   priorityClassName:
+
+clair:
+  enabled: true
+  # set the service account to be used, default if left empty
+  serviceAccountName: ""
+  clair:
+    image:
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/clair-photon
+{% else %}
+      repository: goharbor/clair-photon
+{% endif %}
+      tag: v2.1.3
+    # resources:
+    #  requests:
+    #    memory: 256Mi
+    #    cpu: 100m
+  adapter:
+    image:
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/clair-adapter-photon
+{% else %}
+      repository: goharbor/clair-adapter-photon
+{% endif %}
+      tag: v2.1.3
+    # resources:
+    #  requests:
+    #    memory: 256Mi
+    #    cpu: 100m
+  replicas: 1
+  # The interval of clair updaters, the unit is hour, set to 0 to
+  # disable the updaters
+  updatersInterval: 12
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ## Additional deployment annotations
+  podAnnotations: {}
 
 trivy:
   # enabled the flag to enable Trivy scanner

@@ -1,6 +1,6 @@
 harbor:
   enabled: false
-  chartVersion: 1.4.0
+  chartVersion: 1.5.3
   namespace: harbor
   ingress:
     coreDomain: ""
