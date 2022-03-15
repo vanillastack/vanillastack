@@ -7,7 +7,7 @@
   command: kubeadm upgrade plan
 
 - name: Run kubeadm upgrade apply v{{ kubernetes.version }}
-  command: kubeadm upgrade apply v{{ kubernetes.version }}
+  command: kubeadm upgrade apply --yes v{{ kubernetes.version }}
 
 - name: Reload systemd
   systemd:
