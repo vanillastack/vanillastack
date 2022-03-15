@@ -858,7 +858,11 @@ exporter:
     # mount the service account token
     automountServiceAccountToken: false
     image:
+{% if commercial.enabled %}
+      repository: {{repositories.registry_commercial}}/vanillastack/harbor-exporter
+{% else %}
       repository: goharbor/harbor-exporter
+{% endif %}
       tag: v2.4.1
     nodeSelector: {}
     tolerations: []
