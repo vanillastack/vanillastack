@@ -7,6 +7,12 @@
 
 - include_tasks: kube_crio_install.yaml
 
+- name: Uncordon node if is master
+  include_tasks: 09-3_uncordon_node.yaml
+  vars:
+    hostname: "{{ inventory_hostname }}"
+  when: inventory_hostname in groups.update_master
+
 - name: Run kubeadm upgrade node
   command: kubeadm upgrade node
 

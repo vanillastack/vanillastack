@@ -7,6 +7,11 @@
 
 - include_tasks: kube_crio_install.yaml
 
+- name: Uncordon first master node
+  include_tasks: 09-3_uncordon_node.yaml
+  vars:
+    hostname: "{{ inventory_hostname }}"
+
 - name: Run kubeadm upgrade plan
   command: kubeadm upgrade plan
 
