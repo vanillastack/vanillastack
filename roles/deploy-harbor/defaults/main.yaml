@@ -14,27 +14,28 @@ harbor:
   jobservice:
     replicas: 1
     persistence:
-      storageClass: rook-ceph-block
+      storageClass: cephfsn1
+      accessMode: ReadWriteMany
       size: 15Gi
   registry:
     replicas: 1
     persistence:
-      storageClass: rook-ceph-block
+      storageClass: cephfsn1
+      accessMode: ReadWriteMany
       size: 10Gi
   chartmuseum:
     enabled: true
     replicas: 1
     persistence:
-      storageClass: rook-ceph-block
+      storageClass: cephfsn1
+      accessMode: ReadWriteMany
       size: 5Gi
-  clair:
-    enabled: true
-    replicas: 1
   trivy:
     enabled: true
     replicas: 1
     persistence:
       storageClass: rook-ceph-block
+      accessMode: ReadWriteOnce
       size: 5Gi
   notary:
     enabled: true

@@ -223,19 +223,19 @@ persistence:
       # Set it to "-" to disable dynamic provisioning
       storageClass: "{{harbor.registry.persistence.storageClass}}"
       subPath: ""
-      accessMode: ReadWriteOnce
+      accessMode: {{harbor.registry.persistence.accessMode|default('ReadWriteMany')}}
       size: {{harbor.registry.persistence.size}}
     chartmuseum:
       existingClaim: ""
       storageClass: "{{harbor.chartmuseum.persistence.storageClass}}"
       subPath: ""
-      accessMode: ReadWriteOnce
+      accessMode: {{harbor.chartmuseum.persistence.accessMode|default('ReadWriteMany')}}
       size: {{harbor.chartmuseum.persistence.size}}
     jobservice:
       existingClaim: ""
       storageClass: "{{harbor.jobservice.persistence.storageClass}}"
       subPath: ""
-      accessMode: ReadWriteOnce
+      accessMode: {{harbor.jobservice.persistence.accessMode|default('ReadWriteMany')}}
       size: {{harbor.jobservice.persistence.size}}
     # If external database is used, the following settings for database will
     # be ignored
@@ -257,7 +257,7 @@ persistence:
       existingClaim: ""
       storageClass: "{{harbor.trivy.persistence.storageClass}}"
       subPath: ""
-      accessMode: ReadWriteOnce
+      accessMode: {{harbor.trivy.persistence.accessMode|default('ReadWriteOnce')}}
       size: {{harbor.trivy.persistence.size}}
   # Define which storage backend is used for registry and chartmuseum to store
   # images and charts. Refer to
