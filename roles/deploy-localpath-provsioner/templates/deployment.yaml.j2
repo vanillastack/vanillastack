@@ -16,23 +16,27 @@ spec:
     spec:
       serviceAccountName: local-path-provisioner-service-account
       containers:
-      - name: local-path-provisioner
-        image: {{ repositories.registry_commercial }}/vanillastack/local-path-provisioner:v0.0.18
-        imagePullPolicy: IfNotPresent
-        command:
-        - local-path-provisioner
-        - --debug
-        - start
-        - --config
-        - /etc/config/config.json
-        volumeMounts:
-        - name: config-volume
-          mountPath: /etc/config/
-        env:
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+        - name: local-path-provisioner
+{% if commercial.enabled %}
+          image: {{ repositories.registry_commercial }}/vanillastack/local-path-provisioner:v0.0.21
+{% else %}
+          image: docker.io/rancher/local-path-provisioner:v0.0.21
+{% endif %}
+          imagePullPolicy: IfNotPresent
+          command:
+            - local-path-provisioner
+            - --debug
+            - start
+            - --config
+            - /etc/config/config.json
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config/
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
       volumes:
         - name: config-volume
           configMap:

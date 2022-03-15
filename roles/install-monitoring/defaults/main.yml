@@ -1,6 +1,7 @@
 ---
-prometheus:
+monitoring:
   enabled: false
+  chartVersion: 33.2.1
   admin_user: admin
   admin_password: prompassword
   replicas: 1

@@ -6,19 +6,12 @@
     kind: Namespace
     state: present
 
-- name: Create service account
-  kubernetes.core.k8s:
-    name: local-path-provisioner-service-account
-    api_version: v1
-    kind: ServiceAccount
-    state: present
-    namespace: local-path-storage
-
-- name: Deploy storageprovder
+- name: Deploy localpath provisioner
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', item ~ '.yaml.j2') | from_yaml }}"
   loop:
+    - serviceaccount
     - clusterrole
     - clusterrolebinding
     - configmap
