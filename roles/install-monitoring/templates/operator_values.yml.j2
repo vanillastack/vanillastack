@@ -158,21 +158,7 @@ alertmanager:
   ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
   ##
   config:
-  # {{alertmanager.config|indent(width=4)}}
-    global:
-      resolve_timeout: 5m
-    route:
-      group_by: ['job']
-      group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 12h
-      receiver: 'null'
-      routes:
-      - match:
-          alertname: Watchdog
-        receiver: 'null'
-    receivers:
-    - name: 'null'
+    {{alertmanager.config|indent(width=4)}}
     templates:
     - '/etc/alertmanager/config/*.tmpl'
 
@@ -197,6 +183,7 @@ alertmanager:
   templateFiles: {}
   #
   ## An example template:
+{% raw %}
   #   template_1.tmpl: |-
   #       {{ define "cluster" }}{{ .ExternalURL | reReplaceAll ".*alertmanager\\.(.*)" "$1" }}{{ end }}
   #
@@ -213,13 +200,14 @@ alertmanager:
   #           {{ end }}
   #       {{ end }}
   #       {{ end }}
+{% endraw %}
 
   ingress:
     enabled: {{ alertmanager.ingress.enabled }}
 
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
     # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
-    # ingressClassName: nginx
+    ingressClassName: nginx
 
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
@@ -272,7 +260,9 @@ alertmanager:
     labels: {}
 
     ## Final form of the hostname for each per replica ingress is
+{% raw %}
     ## {{ ingressPerReplica.hostPrefix }}-{{ $replicaNumber }}.{{ ingressPerReplica.hostDomain }}
+{% endraw %}
     ##
     ## Prefix for the per replica ingress that will have `-$replicaNumber`
     ## appended to the end
@@ -298,7 +288,9 @@ alertmanager:
     tlsSecretPerReplica:
       enabled: false
       ## Final form of the secret for each per replica ingress is
+{% raw %}
       ## {{ tlsSecretPerReplica.prefix }}-{{ $replicaNumber }}
+{% endraw %}
       ##
       prefix: "alertmanager"
 
@@ -512,7 +504,7 @@ alertmanager:
           resources:
             requests:
               storage: {{ alertmanager.storage.size }}
-        selector: {}
+    #   selector: {}
 
 
     ## The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name. string  false
@@ -716,7 +708,7 @@ grafana:
 
   sidecar:
     dashboards:
-      enabled: true
+      enabled: false
       label: grafana_dashboard
       labelValue: "1"
 
@@ -776,7 +768,9 @@ grafana:
   #       tlsSkipVerify: true
   #   orgId: 1
   #   type: prometheus
+{% raw %}
   #   url: https://{{ printf "%s-prometheus.svc" .Release.Name }}:9090
+{% endraw %}
   #   version: 1
 
   ## Passed to grafana subchart and used by servicemonitor below
@@ -1158,7 +1152,7 @@ kubeDns:
 ## Component scraping etcd
 ##
 kubeEtcd:
-  enabled: "{{ monitoring.kubeEtcd.enabled }}"
+  enabled: {{ monitoring.kubeEtcd.enabled }}
 
   ## If your etcd is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1227,7 +1221,7 @@ kubeEtcd:
 ## Component scraping kube scheduler
 ##
 kubeScheduler:
-  enabled: "{{ monitoring.kubeScheduler.enabled }}"
+  enabled: {{ monitoring.kubeScheduler.enabled }}
 
   ## If your kube scheduler is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1622,7 +1616,9 @@ prometheusOperator:
   kubeletService:
     enabled: true
     namespace: kube-system
+{% raw %}
     ## Use '{{ template "kube-prometheus-stack.fullname" . }}-kubelet' by default
+{% endraw %}
     name: ""
 
   ## Create a servicemonitor for the operator
@@ -2021,7 +2017,7 @@ prometheus:
 
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
     # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
-    # ingressClassName: nginx
+    ingressClassName: nginx
 
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
@@ -2071,7 +2067,9 @@ prometheus:
     labels: {}
 
     ## Final form of the hostname for each per replica ingress is
+{% raw %}
     ## {{ ingressPerReplica.hostPrefix }}-{{ $replicaNumber }}.{{ ingressPerReplica.hostDomain }}
+{% endraw %}
     ##
     ## Prefix for the per replica ingress that will have `-$replicaNumber`
     ## appended to the end
@@ -2097,7 +2095,9 @@ prometheus:
     tlsSecretPerReplica:
       enabled: false
       ## Final form of the secret for each per replica ingress is
+{% raw %}      
       ## {{ tlsSecretPerReplica.prefix }}-{{ $replicaNumber }}
+{% endraw %}
       ##
       prefix: "prometheus"
 
@@ -2488,7 +2488,7 @@ prometheus:
           resources:
             requests:
               storage: {{ monitoring.storage.size }}
-        selector: {}
+    #   selector: {}
 
     ## Using tmpfs volume
     ##
