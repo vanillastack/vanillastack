@@ -8,12 +8,12 @@
     create_namespace: true
     values: "{{ lookup('template', 'operator.yaml.j2') | from_yaml }}"
 
-- name: create operator configs
+- name: Create operator configs
   template:
     src: operator-config-yaml.j2
     dest: /tmp/operator-config-yaml
 
-- name: load config
+- name: Load config
   kubernetes.core.k8s:
     src: /tmp/operator-config-yaml
     state: present

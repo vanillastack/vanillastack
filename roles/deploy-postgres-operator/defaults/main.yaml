@@ -1,7 +1,7 @@
 postgresOperator:
   enabled: false
   chartName: "postgres-operator"
-  chartVersion: "1.5.0"
+  chartVersion: "1.7.1"
   namespace: "postgres-operator"
   backup:
     enabled: false
