@@ -13,7 +13,7 @@
   register: kibana_auth_slurp
 
 - name: Create secret kibana
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1

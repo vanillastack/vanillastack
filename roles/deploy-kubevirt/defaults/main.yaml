@@ -1,7 +1,0 @@
----
-# defaults file for deploy-kubevirt
-
-kubevirt:
-  enabled: false
-  namespace: kubevirt
-  version: v0.33.0

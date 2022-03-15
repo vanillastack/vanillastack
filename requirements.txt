@@ -2,7 +2,8 @@ cffi==1.14.4
 cryptography==3.3.2
 Jinja2==2.11.3
 jmespath==0.10.0
-openshift==0.11.2
 PyYAML==5.4.1
-#ansible==2.9.18
-#ansible-base==2.10.7
+chardet==4.0.0
+urllib3==1.26.8
+#ansible==2.10.17
+#ansible-base==2.10.5

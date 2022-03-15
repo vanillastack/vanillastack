@@ -1,6 +1,6 @@
 ---
 - name: Deploy Keycloak CRDs
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
     wait: true
@@ -12,7 +12,7 @@
     - keycloak.org_keycloaks_crd.yaml.j2
 
 - name: Create Keycloak namespace
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     name: "{{keycloak.namespace}}"
     api_version: v1
     kind: Namespace
@@ -20,7 +20,7 @@
     wait: true
 
 - name: Deploy Keycloak Operator
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
     wait: true
@@ -38,7 +38,7 @@
   until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
 
 - name: Create PostgreSQL
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', 'postgres.yaml.j2') | from_yaml }}"
     state: present
     wait: true
@@ -58,13 +58,13 @@
   when: keycloak.externalDatabase
 
 - name: Deploy postgres secret
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', 'vanillastack-keycloak-db-secret.yaml.j2') | from_yaml }}"
     state: present
   when: keycloak.externalDatabase
 
 - name: Deploy VanillaStack Keycloak instance
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', 'vanillastack-keycloak.yaml.j2') | from_yaml }}"
     state: present
     wait: true
@@ -78,7 +78,7 @@
   until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
 
 - name: Deploy ingress
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', 'vanillastack-keycloak-ingress.yaml.j2') | from_yaml }}"
     state: present
     wait: true
@@ -89,7 +89,7 @@
   when: keycloak.ingress.enabled
 
 - name: Deploy VanillaStack Realm
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     definition: "{{ lookup('template', 'vanillastack-realm.yaml.j2') | from_yaml }}"
     state: present
     wait: true
@@ -154,7 +154,7 @@
         admin_vanilla_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
 #    - name: store admin password in cluster
-#      k8s:
+#      kubernetes.core.k8s:
 #        state: present
 #        definition:
 #          apiVersion: v1

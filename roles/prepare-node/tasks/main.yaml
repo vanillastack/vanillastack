@@ -1,5 +1,5 @@
 ---
-- name: install required packages
+- name: Install basic required packages
   apt:
     pkg:
       - python3-pip
@@ -9,12 +9,19 @@
       - python3-passlib
       - curl
 
-- name: install pip modules
+- name: Install pip modules
   pip:
     name:
       - pyhelm
       - openshift
     extra_args: --ignore-installed
-  
-- name: install helm
-  shell: curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 && chmod 700 get_helm.sh && ./get_helm.sh
+
+# TODO download helm from VanillaStack controlled servers
+- name: Download helm install script
+  get_url:
+    url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    dest: /tmp/get_helm.sh
+    mode: 0700
+
+- name: Install helm using install script
+  command: /tmp/get_helm.sh

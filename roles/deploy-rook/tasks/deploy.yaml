@@ -6,7 +6,7 @@
   when: rook[item.name]['enabled']
 
 - name: "{{item.name}} | deploy manifest"
-  k8s:
+  kubernetes.core.k8s:
     src: "/tmp/rook_{{item.name}}.yaml"
     state: present
   when: rook[item.name]['enabled']
@@ -18,7 +18,7 @@
   when: rook[item.name]['enabled'] and item.name == "objectStorage"
 
 - name: "{{item.name}} | deploy ingress"
-  k8s:
+  kubernetes.core.k8s:
     src: "/tmp/rook_object-ingress.yaml"
     state: present
   when: rook[item.name]['enabled'] and item.name == "objectStorage"

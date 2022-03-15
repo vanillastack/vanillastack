@@ -24,10 +24,8 @@ apiServer:
     authorization-mode: Node,RBAC
 apiVersion: kubeadm.k8s.io/v1beta2
 certificatesDir: /etc/kubernetes/pki
-clusterName: kubernetes
-{% if make_ha %}
+clusterName: {{ kubernetes.clusterName }}
 controlPlaneEndpoint: api.{{ clusterTLDomain }}:6443
-{% endif %}
 controllerManager:
   extraArgs:
     bind-address: 0.0.0.0
@@ -36,11 +34,12 @@ dns:
 etcd:
   local:
     dataDir: /var/lib/etcd
-{% if ansible_os_family == 'Suse' and commercial.enabled != true %}
-imageRepository: k8s.gcr.io
-{% endif %}
+    extraArgs:
+      listen-metrics-urls: "http://0.0.0.0:2381"
 {% if commercial.enabled %}
 imageRepository: {{repositories.registry_commercial}}/vanillastack
+{% else %}
+imageRepository: k8s.gcr.io
 {% endif %}
 kind: ClusterConfiguration
 kubernetesVersion: {{ version }}

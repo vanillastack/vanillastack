@@ -5,7 +5,7 @@ image:https://open.rocket.chat/images/join-chat.svg[link="https://rocketchat.van
 
 There are multiple Vendor-Stacks out there, that promise to deliver an installation without hazzles, full integration and total flexibility - only to vendor lock you to the tools, frameworks and interfaces of a product.
 
-VanillaStack wants to be and is different: VanillaStack offers the integration of plain upstream projects. VanillaStack will use directly the core components of Kubernetes, OpenStack, Ceph, Rook, Cloudfoundry, Harbor and many more.
+VanillaStack wants to be and is different: VanillaStack offers the integration of plain upstream projects. VanillaStack will use directly the core components of Kubernetes, Ceph, Rook, Harbor and many more.
 
 This ensures, at any time, to work around or without VanillaStack, because, Vanilla doesn't want to own the stack. Vanilla wants to help but imposes no limits on your tooling.
 
@@ -15,10 +15,7 @@ VanillaStack understands Kubernetes as the operating system of your datacenter a
 It offers a cloudstack installation of the following OpenSource projects:
 
 * Kubernetes
-* Ceph via Rook
-* Cloudfoundry
-* Guacamole
-* Kubevirt
+* Rook Ceph
 * Prometheus
 * Promtail
 * Grafana
@@ -38,8 +35,6 @@ Always and everwhere.
 
 IaaS. CaaS. PaaS. All included. All working::
 VanillaStack is based on the best Container-as-a-Service-platform: Kubernetes.
-It allows you to roll out the best Infrastructure-as-a-Service-platform: OpenStack.
-It runs the best Platform-as-a-Service-platform: Cloud Foundry.
 All from an easy to use installer, all working out-of-the-box.
 
 The best management and operations tools::
@@ -104,9 +99,7 @@ VanillaStack requirements:
 
 * Internet network access
   ** `https://harbor.vanillastack.io`
-
-* Debian 10 (prefered)
-* CentOS 8
+* Debian 11
 
 == Ressources
 

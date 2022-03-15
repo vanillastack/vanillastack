@@ -1,7 +1,7 @@
 ---
 - name: systemd reload
   systemd:
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: restart cpupower governor service
   systemd:

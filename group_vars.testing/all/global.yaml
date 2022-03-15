@@ -2,49 +2,29 @@
 repositories:
   registry_community: harbor.cloudical.net
   registry_commercial: harbor.cloudical.net
-  package_repository:  https://repo.vanillastack.cloudical.net
+  package_repository:  https://repo-new.vanillastack.cloudical.net
 ingress:
   namespace: nginx-ingress
   enabled: true
-  chartVersion: "3.25.0"
+  config: {}
+  replicas: 3
+  chartVersion: "4.0.18"
+  defaultBackend:
+    replicas: 1
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
     chartVersion: "4.0.3"
-  clusterName: kube
-  version: "1.20"
-  crioVersion: "1.20"
+  clusterName: kubernetes
+  version: "1.23.4"
+  crioVersion: "1.23"
+  crioRuncVersion: "1.0.1~0"
   helm_version: "v3.5.3"
   init_opts: ""
   kubeadm_opts: ""
-  kubeadmin_config: /etc/kubernetes/admin.conf
+  drainTimeout: "10m"
   cilium:
-    version: v1.10.3
-cloudfoundry:
-  version: 2.7.12
-  storageclass: rook-ceph-block
-  coreDomain: "cf.{{ clusterTLDomain }}"
-stratos:
-  version: 4.4.0
-  tag:  4.4.0-bc65c315c
-  namespace: stratos
-  adminpassword: 4JOA4l8DK7Sr
-  coreDomain: "stratos.{{ clusterTLDomain }}"
-  uaa:
-    encryptionKey: xry5RPkqPABkdoW22mcLLpvsY
-    adminKey: K0Wk7VVyKQBMvEyihFZ2Zt9E5
-guacamole:
-  imageTag: 202009100849
-  namespace: guacamole
-  coreDomain: "guacamole.{{ clusterTLDomain }}"
-  postgres:
-    maxConnections: 400
-    backup:
-      enabled: false
-      cronjob: "30 */2 * * *"
-    version: "12"
-    replicas: "2"
-    size: "20Gi"
+    version: v1.10.7
 postgresOperator:
   chartName: "postgres-operator"
   chartVersion: "1.5.0"
@@ -58,16 +38,6 @@ postgresOperator:
       endpoint: nul
       bucketName: nul
     cron: "30 00 * * *"
-redis:
-  environment: test
-  cluster: true
-  enabled: true
-  chartVersion: 4.3.1
-  password: "Opstree@1235"
-  persistence:
-    storageClass: "rook-ceph-block"
-    size: 15Gi
-  namespace: "redis"
 harbor:
   chartVersion: 1.5.1
   namespace: harbor
@@ -135,7 +105,7 @@ harbor:
       cronjob: "30 */2 * * *"
 efkstack:
   kibana:
-    imageTag: "7.9.1"
+    imageTag: "7.10.2"
     user: kibana_test
     password: secretlysecretpassword
     replicas: 2
@@ -150,7 +120,7 @@ efkstack:
         cpu: "1000m"
         memory: "2Gi"
   es:
-    imageTag: "7.9.1"
+    imageTag: "7.10.2"
     replicas: 3
     storage:
       class_name: "rook-ceph-block"
@@ -177,7 +147,7 @@ monitoring:
   admin_user: admin
   admin_password: prompassword
   replicas: 2
-  chartVersion: 13.4.1
+  chartVersion: 14.4.0
   retention: 360h
   ingress:
     enabled: true
@@ -210,7 +180,7 @@ monitoring:
     enabled: true
   kubeStateMetrics:
     enabled: true
-  additionalRules: 
+  additionalRules:
     cloudical:
       groups:
       - name: Memory_CPU_Using
@@ -291,7 +261,7 @@ alertmanager:
     - name: 'null'
 grafana:
   namespace: grafana
-  chartVersion: 6.2.1 
+  chartVersion: 6.6.4 
   replicas: 1
   enabled: true
   admin_user: admin
@@ -299,6 +269,16 @@ grafana:
   ingress:
     enabled: true
     dns: "grafana.{{ clusterTLDomain }}"
+  persistence:
+    type: pvc
+    enabled: false
+    storageClassName: rook-ceph-block
+    accessModes:
+      - ReadWriteOnce
+    size: 15Gi
+    # annotations: {}
+    finalizers:
+      - kubernetes.io/pvc-protection
 loki:
   namespace: loki
   chartVersion: 2.3.1
@@ -309,22 +289,6 @@ loki:
     enabled: true
     size: 30Gi
     storageClass: rook-ceph-block
-kubevirt:
-  namespace: kubevirt
-  version: v0.33.0
-moodle:
-  username: admin
-  namespace: moodle
-  storage:
-    classname: "rook-ceph-block"
-    size: 8Gi
-  mariadb:
-    persistence: true
-    classname: "rook-ceph-block"
-    size: 8Gi
-  ingress:
-    enabled: true
-    dns: "moodle.{{ clusterTLDomain }}"
 keycloak:
   namespace: keycloak
   externalDatabase: false
@@ -342,35 +306,3 @@ keycloak:
   realm:
     name: "{{ clusterTLDomain }}"
     id: "{{ clusterTLDomain }}"
-nextcloud:
-  version: 20.0.4
-  chartVersion: 2.5.0
-  replicas: 1
-  use_hpa: true
-  ingress:
-    enabled: true
-    publicDomain: "{{ nextcloud_instancename }}.{{ clusterTLDomain }}"
-  mail:
-    enabled: false
-    fromAddress: user
-    domain: domain.com
-    smtp:
-      host: domain.com
-      port: 465
-      authtype: LOGIN
-      name: user
-      password: pass
-  nginx:
-    version: 1.19.2-alpine
-  postgresql:
-    name: nextcloud-postgresql
-  collabora:
-    ingress:
-      enabled: true
-      publicDomain: "{{ nextcloud_instancename }}office.{{ clusterTLDomain }}"
-  redis:
-    name: redis-master
-    chartVersion: 10.8.1
-    persistence:
-      storageClass: "rook-ceph-block"
-      size: 8Gi

@@ -1,7 +1,4 @@
 ---
-- name: Refresh repo
-  command: helm repo update
-
 - name: Wait for etcd to be ready
   command: kubectl wait --namespace=kube-system --for=condition=ready pods etcd-{{ item }} --timeout=10s
   retries: 180
@@ -14,24 +11,18 @@
   pause:
     seconds: 10
 
-- name:  Deploy Cilium
+- name: Deploy Cilium
   block:
-    - set_fact:
-        template_version: "cilium-values"
-      when: ansible_os_family == 'Suse' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Ubuntu'
-    - set_fact: 
-        template_version: "cilium-values-debian"
-      when: ansible_distribution == 'Debian'
-    - name: deploy cilium chart
+    - name: Deploy cilium chart
       kubernetes.core.helm:
         name: cilium
         chart_version: "{{ kubernetes.cilium.version }}"
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
-        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
-        #create_namespace: true
+        values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
         wait: true
         wait_timeout: "1m"
+        update_repo_cache: true
   rescue:
     - name: Remove cilium
       kubernetes.core.helm:
@@ -39,50 +30,52 @@
         release_namespace: kube-system
         state: absent
         wait: true
+        update_repo_cache: true
     - name: Deploy cilium
       kubernetes.core.helm:
         name: cilium
         chart_version: "{{ kubernetes.cilium.version }}"
         chart_ref: vanillastack/cilium
         release_namespace: kube-system
-        values: "{{ lookup('template', '{{ template_version }}.yaml.j2') | from_yaml }}"
-        #create_namespace: true
+        values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
         wait: true
         wait_timeout: "1m"
+        update_repo_cache: true
 
-### To get running config, execute 
-### kubectl get -n kube-system cm cluster-config -o=jsonpath='{.data.clusterConfig}' | jq
-          
 - name: Wait for control-plane pods become ready
-  command: "kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s"
+  command: kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s
   retries: 180
   delay: 10
   register: result
   until: result.rc == 0
 
-#- name: restart kubedns
-#  command: kubectl delete po -n kube-system -l k8s-app=kube-dns
-
-- name: enable auto completion
+- name: Enable auto completion
   lineinfile:
     path: "{{ ansible_env.HOME }}/.bashrc"
     line: "source <(kubectl completion bash)"
     state: present
 
+- name: Set bash history timestamps for all users using pam
+  become: true
+  become_user: root
+  lineinfile:
+    path: /etc/environment
+    line: 'export HISTTIMEFORMAT="%F %T "'
+    state: present
+
 - name: manage access creds
   block:
-  - name: copy ssh key to master1
-    copy:
-      src: "{{ ansible_ssh_private_key_file }}"
-      dest: /tmp/tempkey.pem
+    - name: copy ssh key to master1
+      copy:
+        src: "{{ ansible_ssh_private_key_file }}"
+        dest: /tmp/tempkey.pem
 
-  - name: add ssh key as secret
-    shell: >
-      kubectl create secret generic --namespace kube-system --save-config --dry-run=client management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem -o yaml | kubectl apply --namespace kube-system -f -
+    - name: add ssh key as secret
+      shell: >
+        kubectl create secret generic --namespace kube-system --save-config --dry-run=client management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem -o yaml | kubectl apply --namespace kube-system -f -
 
-  - name: make sure, ssh key is removed
-    file:
-      path: /tmp/tempkey.pem
-      state: absent
+    - name: make sure, ssh key is removed
+      file:
+        path: /tmp/tempkey.pem
+        state: absent
   when: ansible_ssh_private_key_file is defined and ansible_ssh_private_key_file|length>0
-

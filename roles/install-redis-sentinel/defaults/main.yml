@@ -1,3 +1,0 @@
----
-redis:
-  replicaCount: 3

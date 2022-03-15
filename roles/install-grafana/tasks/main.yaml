@@ -1,6 +1,6 @@
 ---
 - name: Create monitoring namespace
-  k8s:
+  kubernetes.core.k8s:
     name: "{{grafana.namespace}}"
     kind: Namespace
     state: present

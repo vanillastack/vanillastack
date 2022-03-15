@@ -12,7 +12,7 @@
         kibana_client_secret: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
     
     - name: Deploy kibanaclient
-      community.kubernetes.k8s:
+      kubernetes.core.k8s:
         definition: "{{ lookup('template', 'kibana-client-keycloack.yml.j2') | from_yaml }}"
         state: present
         wait: true
@@ -157,11 +157,11 @@
       ]'
 
 - name: apply kibana configmaps
-  k8s:
+  kubernetes.core.k8s:
     state: present     
     definition: "{{ lookup('template', 'gatekeeper-config.yml.j2') | from_yaml }}"
 - name: apply kibana configmaps
-  k8s:
+  kubernetes.core.k8s:
     state: present     
     definition: "{{ lookup('template', 'gatekeeper-files.yml.j2') | from_yaml }}"
 

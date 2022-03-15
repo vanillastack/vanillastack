@@ -3,10 +3,10 @@
   systemd: 
     name: haproxy 
     state: restarted
-    enabled: yes
+    enabled: true
 
 - name: restart keepalived
   systemd:
     name: keepalived 
     state: restarted
-    enabled: yes
+    enabled: true

@@ -200,6 +200,5 @@ fabric.properties
 backend/public/*
 frontend/dist/*
 
-# Exclude submodules
-collections/ansible_collections/community/general/*
-collections/ansible_collections/community/kubernetes/*
+# Exclude downloaded Ansible collections
+collections/*

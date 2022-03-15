@@ -20,7 +20,7 @@
     #    state: absent
     #    wait: true
     #- name: delete namespace
-    #  community.kubernetes.k8s:
+    #  kubernetes.core.k8s:
     #    name: kube-dashboard
     #    api_version: v1
     #    kind: Namespace

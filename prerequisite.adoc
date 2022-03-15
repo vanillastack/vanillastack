@@ -1,4 +1,4 @@
-= Install Kubecluster
+= Install Kubernetes Cluster
 == Before you begin
 
 To start deployment, you need at least a minimum of 5 machines:

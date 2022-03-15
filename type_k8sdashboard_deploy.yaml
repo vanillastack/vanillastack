@@ -3,4 +3,4 @@
   hosts: master[0]
   gather_facts: true
   roles:
-  - role: install-kubedashboard
+    - role: install-kubedashboard

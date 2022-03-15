@@ -1,47 +1,44 @@
 ---
-- name: "copy postgres.yaml"
-  template: src=./templates/postgres.yaml.j2 dest=/tmp/harbor_postgres.yaml
-
-#- name: "copy objectbucketclaim.yaml.j2"
-#  template: src=./templates/objectbucketclaim.yaml.j2 dest=/tmp/harbor_objectbucketclaim.yaml
-
 - name: Create Namespace
-  k8s:
+  kubernetes.core.k8s:
     state: present
     kind: Namespace
     name: "{{harbor.namespace}}"
     api_version: v1
 
-#- name: Create ObjectStorageBucket
-#  k8s:
-#    src: /tmp/harbor_objectbucketclaim.yaml
-#    state: present
+- name: Copy postgres.yaml
+  template:
+    src: ./templates/postgres.yaml.j2
+    dest: /tmp/harbor_postgres.yaml
 
 - name: Create PostgreSQL
-  k8s:
+  kubernetes.core.k8s:
     src: /tmp/harbor_postgres.yaml
     state: present
 
-- name: refresh helm repo
-  command: helm repo update
+- name: Delete postgres.yaml
+  file:
+    path: /tmp/harbor_postgres.yaml
+    state: absent
 
 - name: Deploy Redis
   kubernetes.core.helm:
     name: redis
     release_namespace: "{{harbor.namespace}}"
-    create_namespace: yes
+    create_namespace: true
     chart_ref: "vanillastack/redis"
     chart_version: "{{ harbor.redis.chartVersion }}"
     values: "{{ lookup('template', 'redis.yaml.j2') | from_yaml }}"
+    update_repo_cache: true
 
-- name: "wait until postgres pod is ready"
+- name: Wait until postgres pod is ready
   shell: 'kubectl get postgresql -n {{ harbor.namespace }}|grep "{{harbor.namespace}}-postgres"|grep "Running"'
   register: postgresReady
   until: postgresReady.rc == 0
   retries: 60
   delay: 10
 
-- name: "register postgres application password"
+- name: Register postgres application password
   shell: echo "$(kubectl get secret -n {{ harbor.namespace }} -o json harbor.{{harbor.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
   register: postgrespassword
 
@@ -49,24 +46,14 @@
   kubernetes.core.helm:
     name: harbor
     release_namespace: "{{harbor.namespace}}"
-    create_namespace: yes
+    create_namespace: true
     chart_ref: "vanillastack/harbor"
     chart_version: "{{ harbor.chartVersion }}"
     values: "{{ lookup('template', 'harbor.yaml.j2') | from_yaml }}"
 
-- name: wait for pods to come up
+- name: Wait for pods to come up
+  shell: kubectl get pods -o json -n "{{harbor.namespace}}" --field-selector=status.phase!=Succeeded
   retries: 120
   delay: 10
-  shell: kubectl get pods -o json -n "{{harbor.namespace}}" --field-selector=status.phase!=Succeeded
   register: kubectl_get_pods
   until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
-
-- name: "delete postgres.yaml"
-  file:
-    path: /tmp/harbor_postgres.yaml
-    state: absent
-
-#- name: "delete objectbucketclaim.yaml"
-#  file:
-#    path: /tmp/harbor_objectbucketclaim.yaml
-#    state: absent

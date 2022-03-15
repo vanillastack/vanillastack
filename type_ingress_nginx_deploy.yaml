@@ -1,0 +1,9 @@
+- name: Deploy Ingress NGINX
+  hosts: master[0]
+  become: false
+  gather_facts: false
+  roles:
+    - role: prepare-registry
+      when: ingress.enabled
+    - role: deploy-ingress-nginx
+      when: ingress.enabled

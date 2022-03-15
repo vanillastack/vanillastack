@@ -1,0 +1,46 @@
+---
+- name: Configure crio
+  lineinfile:
+    path: /etc/crio/crio.conf
+    regexp: "^(.*)conmon =(.*)$"
+    line: 'conmon = "/usr/bin/conmon"'
+    backrefs: true
+
+- name: Set CRI-O cgroups driver
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: "^cgroup_manager =.*"
+    line: 'cgroup_manager = "systemd"'
+
+- name: Set CRI-O default_ulimits
+  blockinfile:
+    path: /etc/crio/crio.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      default_ulimits = [
+          "nofile=16384:24576",
+          "nproc=8192:8192"
+      ]
+
+- name: Set CRI-O default seccomp profile as true
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: "^seccomp_use_default_when_empty =.*"
+    line: "seccomp_use_default_when_empty = true"
+
+- name: Set CRI-O global auth
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: "^global_auth_file =.*"
+    line: 'global_auth_file = "/etc/crio/auth.json"'
+  when: commercial.enabled
+
+- name: Set CRI-O PIDs limit
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: "^pids_limit*."
+    line: "pids_limit = 8192"

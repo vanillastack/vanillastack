@@ -2,6 +2,6 @@
 - name: Deploy Keycloak
   hosts: master[0]
   become: false
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: deploy-keycloak

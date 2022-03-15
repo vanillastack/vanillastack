@@ -157,14 +157,6 @@ dashboards:
       gnetId: 13541
       fatasource: Prometheus
 {% endif %}
-{% if cluster_sdn == "calico" %}
-    calico:
-      gnetId: 3244
-      datasource: Prometheus
-    felix:
-      gnetId: 12175
-      datasource: Prometheus
-{% endif %}
 
 dashboardProviders: 
   dashboardproviders.yaml:

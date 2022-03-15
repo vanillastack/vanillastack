@@ -1,16 +1,16 @@
 ---
-- name: create join token
+- name: Create join token
   command: kubeadm token generate
   register: generated_token
 
-- name: create certificate key
-  command: "kubeadm certs certificate-key"
+- name: Create certificate key
+  command: kubeadm certs certificate-key
   register: generated_certificate_key
 
-- name: save certificate key
+- name: Save certificate key
   lineinfile:
     path: /tmp/cluster_vars.yml
-    regexp: '^(.*)certificate_key(.*)$'
+    regexp: "^(.*)certificate_key(.*)$"
     line: "certificate_key: {{ generated_certificate_key.stdout }}"
     create: true
 
@@ -28,29 +28,27 @@
   set_fact:
     apiport: "{% if create_extLB %}6443{% else %}8443{% endif %}"
 
-- name: create kubeadmconfig
-  template: 
+- name: Create kubeadm config file
+  template:
     src: kubeadm-config.yaml.j2
     dest: /tmp/kubeadm-config.yaml
 
 - name: Init Cluster
   become: true
-  command: > 
+  command: >
     kubeadm init --node-name {{ inventory_hostname_short }} \
-                 --upload-certs \
-                 {% if ansible_distribution != 'Debian' %}
-                 --skip-phases=addon/kube-proxy \
-                 {% endif %}
-                 --config /tmp/kubeadm-config.yaml
-                 {{ kubernetes.kubeadm_opts }} \
-                 {{ kubernetes.init_opts }}
+        --upload-certs \
+        --skip-phases=addon/kube-proxy \
+        --config /tmp/kubeadm-config.yaml \
+        {{ kubernetes.kubeadm_opts }} \
+        {{ kubernetes.init_opts }}
   register: init_cluster
 
-- name: create .kube folder in /root for become == true cases
+- name: Create .kube folder in /root for become == true cases
   file:
     path: "{{ ansible_env.HOME }}/{{ item }}/"
     state: directory
-    mode: '750'
+    mode: "750"
     owner: "{{ ansible_env.USER  }}"
   loop:
     - .kube
@@ -58,55 +56,53 @@
 - name: Copy admin.conf to Home directory /root
   become: true
   copy:
-    src: "{{ kubernetes.kubeadmin_config }}"
+    src: "/etc/kubernetes/admin.conf"
     dest: "{{ ansible_env.HOME }}/.kube/config"
     owner: "{{ ansible_env.USER }}"
     mode: 0600
     remote_src: true
 
-- name: for debug - show env setting under become= true
-  become: true
-  command: >
-          /bin/bash -c set
-
-- name: create .kube folder for ansible_user
+- name: Create .kube folder for ansible_user
   file:
     path: "{{ ansible_env.PWD }}/{{ item }}/"
     state: directory
     owner: "{{ ansible_user }}"
-    mode: '750'
+    mode: "750"
   loop:
     - .kube
-
 
 - name: Copy admin.conf to Home directory of ansible_user
   become: true
   copy:
-    src: "{{ kubernetes.kubeadmin_config }}"
+    src: "/etc/kubernetes/admin.conf"
     dest: "{{ ansible_env.PWD }}/.kube/config"
     owner: "{{ ansible_user }}"
     mode: 0600
     remote_src: true
 
-- name: fetch kubeadm config
+- name: Fetch kubeadm config
   become: true
   fetch:
-    src: "{{ kubernetes.kubeadmin_config }}"
+    src: "/etc/kubernetes/admin.conf"
     dest: "/tmp/ansible/{{ cluster_uuid }}/"
     flat: true
 
-- set_fact:
-    configuration: "{{ hostvars[inventory_hostname] }}"
+- name: Upload Vanillastack cluster config
+  block:
+    - name: Set var with current Vanillastack cluster config
+      set_fact:
+        configuration: "{{ hostvars[inventory_hostname] }}"
 
-- name: save vars to kubeconfig
-  community.kubernetes.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: cluster-config
-        namespace: kube-system
-      data:
-        clusterConfig: |
-          "{{ configuration | to_json }}"
+    - name: Save vars to kubeconfig
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: vanillastack-cluster-config
+            namespace: kube-system
+          data:
+            clusterConfig: |
+              {{ configuration | to_json }}
+  when: vanillastack_upload_cluster_config

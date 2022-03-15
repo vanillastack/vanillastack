@@ -3,19 +3,18 @@
   hosts: master[0]
   gather_facts: true
   roles:
-  - role: install-efk
-    action: init
-    when: vanillaservices.loggingStack_enabled
-  - role: install-efk
-    action: es_deploy
-    when: vanillaservices.loggingStack_enabled
-  - role: install-efk
-    action: kibana_deploy
-    when: vanillaservices.loggingStack_enabled
-  - role: install-efk
-    action: "{{ efkstack.logaggregator.name }}_deploy"
-    when: vanillaservices.loggingStack_enabled
-  - role: install-efk
-    action: create-client
-    when: vanillaservices.loggingStack_enabled and vanillaservices.keycloak_enabled
-
+    - role: install-efk
+      action: init
+      when: vanillaservices.loggingStack_enabled
+    - role: install-efk
+      action: es_deploy
+      when: vanillaservices.loggingStack_enabled
+    - role: install-efk
+      action: kibana_deploy
+      when: vanillaservices.loggingStack_enabled
+    - role: install-efk
+      action: "{{ efkstack.logaggregator.name }}_deploy"
+      when: vanillaservices.loggingStack_enabled
+    - role: install-efk
+      action: create-client
+      when: vanillaservices.loggingStack_enabled and vanillaservices.keycloak_enabled

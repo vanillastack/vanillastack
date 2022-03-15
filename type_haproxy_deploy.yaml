@@ -23,9 +23,3 @@
   roles:
     - role: install-haproxy
       action: 02_install_haproxy
-
-
-
-
-
-

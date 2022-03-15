@@ -8,7 +8,7 @@
 - name: Wait for nodes
   hosts: install_nodes,install_master,master[0]
   become: false
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: wait-for-nodes
 
@@ -65,6 +65,15 @@
       action: 02_install_haproxy
       when: not create_extLB
 
+- name: Install HaProxy
+  hosts: haproxy
+  become: true
+  gather_facts: true
+  roles:
+    - role: install-haproxy
+      action: 02_install_haproxy
+      when: create_extLB
+
 - name: Configure Kube Systems
   hosts: install_nodes,install_master
   become: true
@@ -73,7 +82,7 @@
     - role: deploy-kubernetes
       action: 02_configure_cluster
 
-- name: Init KubeCluster
+- name: Init Kubernetes Cluster
   hosts: install_master[0]
   gather_facts: true
   roles:
@@ -85,39 +94,39 @@
   gather_facts: false
   roles:
     - role: deploy-kubernetes
-      action: 02-1-generate-certificate
+      action: 02-1_generate-certificate
 
-- name: Add Master to KubeCluster
+- name: Add Master to Kubernetes Cluster
   hosts: install_master[1:]
   become: true
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: deploy-kubernetes
       action: 04_add_nodes
 
-- name: Add worker to KubeCluster
+- name: Add worker to Kubernetes Cluster
   hosts: install_nodes
   become: true
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: deploy-kubernetes
       action: 05_add_worker
 
-- name: create folder for config
+- name: Create folder for config
   hosts: localhost
   vars:
     ansible_connection: local
   tasks:
-    - name: make sure local uuid directory exists
+    - name: Make sure local uuid directory exists
       file:
         state: directory
         path: "/tmp/ansible/{{ cluster_uuid }}"
-        recurse: yes
+        recurse: true
 
 - name: Gather facts
   hosts: master,worker
   become: false
-  gather_facts: yes
+  gather_facts: true
 
 - name: Deploy Networking
   hosts: master[0]
@@ -129,13 +138,14 @@
 
 - name: Label Nodes
   hosts: master[0]
-  gather_facts: yes
+  gather_facts: true
   roles:
     - role: deploy-kubernetes
       action: 07_label_nodes
 
 - name: Install monitoring
   hosts: master[0]
+  become: false
   gather_facts: true
   roles:
   - role: install-monitoring
@@ -145,7 +155,7 @@
     action: textile-exporters
     when: vanillaservices.monitoring_enabled
 
-- name: Deploy Nginx-Ingress
+- name: Deploy Ingress Nginx
   hosts: master[0]
   become: false
   gather_facts: false
@@ -191,19 +201,10 @@
     - role: deploy-postgres-operator
       when: vanillaservices.pgOperator_enabled
 
-- name: Deploy Redis
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.redis_enabled
-    - role: install-redis-cluster
-      when: vanillaservices.pgOperator_enabled
-
 - name: Deploy Keycloak
   hosts: master[0]
   become: false
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: deploy-keycloak
       when: vanillaservices.keycloak_enabled
@@ -261,10 +262,3 @@
   roles:
   - role: install-loki
     when: 'vanillaservices.loki_enabled | default(false)'
-
-- name: Install stratos
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: install-stratos
-      when: 'vanillaservices.stratos_enabled | default(false)'

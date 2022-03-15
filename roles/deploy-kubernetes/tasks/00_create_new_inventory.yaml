@@ -1,19 +1,38 @@
 ---
-- name: get nodes in cluster
+- name: Get Nodes in Kubernetes Cluster
   command: kubectl get nodes -o name
-  register: worker
-  ignore_errors: yes
+  register: current_nodes
+  ignore_errors: true
 
-- name: Add new nodes running this playbook to the install_nodes group
-  add_host:
-    name: '{{ item }}'
-    group: install_nodes
-  when: 'worker.rc != 0 or item not in worker.stdout'
-  loop: "{{ groups.worker }}"      
+# TODO If anyhow kubectl fails, servers will be added to the install_ groups
 
-- name: Add new masters running this playbook to the install_master group
-  add_host:
-    name: '{{ item }}'
-    group: install_master
-  when: 'worker.rc != 0 or item not in worker.stdout'
-  loop: "{{ groups.master }}"
+- name: Add nodes that do not exist in the Kubernetes Cluster to install_ groups
+  block:
+    - name: Add new masters running this playbook to the install_master group
+      add_host:
+        name: "{{ item }}"
+        group: install_master
+      when: current_nodes.stdout is not defined or item not in current_nodes.stdout
+      loop: "{{ groups.master }}"
+
+    - name: Add new nodes running this playbook to the install_nodes group
+      add_host:
+        name: "{{ item }}"
+        group: install_nodes
+      when: current_nodes.stdout is not defined or item not in current_nodes.stdout
+      loop: "{{ groups.worker }}"
+
+- name: Get Nodes with Version in Kubernetes Cluster
+  shell: kubectl get nodes --no-headers -o custom-columns=VERSION:.status.nodeInfo.kubeletVersion | sort | uniq
+  register: current_nodes_version
+  ignore_errors: true
+
+- name: Check if any nodes need an update
+  include_tasks: 00-1_check_update.yaml
+  with_items: "{{ groups.master + groups.worker }}"
+  loop_control:
+    loop_var: hostname
+  when:
+    - current_nodes_version.stdout is defined
+    - current_nodes_version.stdout != kubernetes.version
+    - hostname not in groups.install_nodes and hostname not in groups.install_master

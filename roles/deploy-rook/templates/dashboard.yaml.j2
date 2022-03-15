@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: certmanager-selfsigned
 {% if rook.dashboard.ingress.tls.enabled|default(false) %}
     cert-manager.io/cluster-issuer: "{{rook.objectStorage.ingress.tls.issuerName}}"
@@ -14,6 +13,7 @@ metadata:
   name: rook-ceph-mgr-dashboard
   namespace: rook-ceph
 spec:
+  ingressClassName: nginx
   rules:
   - host: {{rook.dashboard.ingress.domain}}
     http:

@@ -5,7 +5,7 @@
     chart_ref: "vanillastack/{{postgresOperator.chartName}}"
     release_namespace: "{{postgresOperator.namespace}}"
     chart_version: "{{postgresOperator.chartVersion}}"
-    create_namespace: yes
+    create_namespace: true
     values: "{{ lookup('template', 'operator.yaml.j2') | from_yaml }}"
 
 - name: create operator configs
@@ -14,7 +14,7 @@
     dest: /tmp/operator-config-yaml
 
 - name: load config
-  k8s:
+  kubernetes.core.k8s:
     src: /tmp/operator-config-yaml
     state: present
     wait: true

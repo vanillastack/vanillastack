@@ -11,36 +11,18 @@ variables:
 
 stages:
   - test
-  - run_playbook_centos8
-  - run_playbook_debian10
+  - run_playbook_debian11
   - release
 
-run_playbook_centos8:
+run_playbook_debian11:
   only:
     refs:
       - testing
-  stage: run_playbook_centos8
+  stage: run_playbook_debian11
   interruptible: true
   allow_failure: true
   script:
-    - curl $WEBHOOK_REDEPLOY_CENTOS8 && sleep 60
-    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-    - mv group_vars.testing group_vars
-    - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
-    - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/container_vars.yaml
-    - if [ "$COMMUNITY" == true ]; then yq -Yi .commercial.enabled='false' group_vars/all/container_vars.yaml; fi
-    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_prepare_installnode.yaml
-    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
-
-run_playbook_debian10:
-  only:
-    refs:
-      - testing
-  stage: run_playbook_debian10
-  interruptible: true
-  allow_failure: true
-  script:
-    - curl $WEBHOOK_REDEPLOY_DEBIAN10 && sleep 60
+    - curl $WEBHOOK_REDEPLOY_DEBIAN11 && sleep 60
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - mv group_vars.testing group_vars
     - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml

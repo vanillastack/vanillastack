@@ -1,0 +1,38 @@
+---
+- name: Clear apt sources.list
+  copy:
+    content: ""
+    dest: /etc/apt/sources.list
+
+- name: List files in apt sources.list.d directory
+  find:
+    path: /etc/apt/sources.list.d
+    file_type: file
+    excludes:
+      - repo_vanillastack_cloudical_net.list
+  register: found_sources_lists
+
+- name: Remove other apt sources.list.d lists
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ found_sources_lists.files }}"
+  when: found_sources_lists is defined and found_sources_lists.files is defined
+
+- name: Add Cloudical APT repositories
+  template:
+    src: etc/apt/sources.list.d/repo_vanillastack_cloudical_net.list
+    dest: /etc/apt/sources.list.d/repo_vanillastack_cloudical_net.list
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Add key for Cloudical APT repositories
+  apt_key:
+    url: "{{ item }}"
+  loop:
+    - "{{repositories.package_repository}}/public-gpg-key"
+  retries: 3
+  delay: 1
+  register: result
+  until: result is success
