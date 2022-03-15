@@ -147,7 +147,7 @@ monitoring:
   admin_user: admin
   admin_password: prompassword
   replicas: 2
-  chartVersion: 14.4.0
+  chartVersion: 33.2.1
   retention: 360h
   ingress:
     enabled: true

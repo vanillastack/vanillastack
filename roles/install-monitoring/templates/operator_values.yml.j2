@@ -128,7 +128,7 @@ alertmanager:
 
   ## Deploy alertmanager
   ##
-  enabled: {{ alertmanager.enabled }}
+  enabled: "{{ alertmanager.enabled }}"
 
   ## Annotations for Alertmanager
   ##
@@ -161,8 +161,19 @@ alertmanager:
   ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
   ##
   config:
-    {{alertmanager.config|indent(width=4)}}
-
+  # {{alertmanager.config|indent(width=4)}}
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'null'
+      routes:
+      - match:
+          alertname: Watchdog
+        receiver: 'null'
     receivers:
     - name: 'null'
     templates:
@@ -213,7 +224,6 @@ alertmanager:
     # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
     # ingressClassName: nginx
 
-    annotations:
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
       cert-manager.io/cluster-issuer: {{ LE_issuer_name }}
@@ -413,17 +423,12 @@ alertmanager:
     ## Image of Alertmanager
     ##
     image:
-      {% if commercial.enabled %}
+{% if commercial.enabled %}
       repository: {{repositories.registry_commercial}}/vanillastack/alertmanager
-
-      {% else %}
+{% else %}
       repository: quay.io/prometheus.alertmanager
-
-
-      {% endif %}
+{% endif %}
       tag: v0.23.0
-
-
       sha: ""
 
     ## If true then the user will be responsible to provide a secret with alertmanager configuration
@@ -492,7 +497,7 @@ alertmanager:
 
     ## Size is the expected size of the alertmanager cluster. The controller will eventually make the size of the
     ## running cluster equal to the expected size.
-    replicas: {{alertmanager.replicas|default(1)}}
+    replicas: "{{alertmanager.replicas|default(1)}}"
 
     ## Time duration Alertmanager shall retain data for. Default is '120h', and must match the regular expression
     ## [0-9]+(ms|s|m|h) (milliseconds seconds minutes hours).
@@ -502,15 +507,15 @@ alertmanager:
     ## Storage is the definition of how storage will be used by the Alertmanager instances.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
     ##
-    storage: 
-    # volumeClaimTemplate:
-    #   spec:
-    #     storageClassName: {{ alertmanager.storage.classname }}
-    #     accessModes: ["ReadWriteOnce"]
-    #     resources:
-    #       requests:
-    #         storage: {{ alertmanager.storage.size }}
-    #   selector: {}
+    storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: {{ alertmanager.storage.classname }}
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ alertmanager.storage.size }}
+      selector: {}
 
 
     ## The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name. string  false
@@ -1489,11 +1494,11 @@ prometheusOperator:
     patch:
       enabled: true
       image:
-        {% if commercial.enabled %}
+{% if commercial.enabled %}
         repository: {{repositories.registry_commercial}}/vanillastack/kube-webhook-certgen
-        {% else %}
+{% else %}
         repository: k8s.gcr.io/ingress-nginx/kube-webhook-certgen
-        {% endif %}        
+{% endif %}
         tag: v1.1.1
         sha: ""
         pullPolicy: IfNotPresent
@@ -2053,7 +2058,7 @@ prometheus:
     ## TLS configuration for Prometheus Ingress
     ## Secret must be manually created in the namespace
     ##
-    tls: 
+    tls:
       - secretName: monitoring-ingress-tls
         hosts:
           - "{{ monitoring.ingress.dns }}"
