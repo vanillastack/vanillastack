@@ -12,7 +12,7 @@ namespaceOverride: ""
 
 ## Provide a k8s version to auto dashboard import script example: kubeTargetVersionOverride: 1.16.6
 ##
-kubeTargetVersionOverride: "{{ kubernetes.version }}"
+kubeTargetVersionOverride: {{ kubernetes.version }}
 
 ## Allow kubeVersion to be overridden while creating the ingress
 ##
@@ -89,10 +89,7 @@ defaultRules:
 
 ## Provide custom recording or alerting rules to be deployed into the cluster.
 ##
-{% if monitoring.additionalRules is defined %}
-additionalPrometheusRulesMap:
-{{monitoring.additionalRules|to_nice_yaml(indent=2, width=1337)|trim|indent(width=2,indentfirst=True)}}
-{% endif %}
+additionalPrometheusRulesMap: {}
 #  rule-name:
 #    groups:
 #    - name: my_group
@@ -128,7 +125,7 @@ alertmanager:
 
   ## Deploy alertmanager
   ##
-  enabled: "{{ alertmanager.enabled }}"
+  enabled: {{ alertmanager.enabled }}
 
   ## Annotations for Alertmanager
   ##
@@ -218,7 +215,7 @@ alertmanager:
   #       {{ end }}
 
   ingress:
-    enabled: "{{ alertmanager.ingress.enabled }}"
+    enabled: {{ alertmanager.ingress.enabled }}
 
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
     # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
@@ -237,7 +234,7 @@ alertmanager:
     ## Hosts must be provided if Ingress is enabled.
     ##
     hosts:
-      - "{{ alertmanager.ingress.dns }}"
+      - {{ alertmanager.ingress.dns }}
 
     ## Paths to use for ingress rules - one path should match the alertmanagerSpec.routePrefix
     ##
@@ -254,7 +251,7 @@ alertmanager:
     tls:
     - secretName: alertmanager-ingress-tls
       hosts:
-      - "{{ alertmanager.ingress.dns }}"
+      - {{ alertmanager.ingress.dns }}
 
   ## Configuration for Alertmanager secret
   ##
@@ -497,7 +494,7 @@ alertmanager:
 
     ## Size is the expected size of the alertmanager cluster. The controller will eventually make the size of the
     ## running cluster equal to the expected size.
-    replicas: "{{alertmanager.replicas|default(1)}}"
+    replicas: {{alertmanager.replicas|default(1)}}
 
     ## Time duration Alertmanager shall retain data for. Default is '120h', and must match the regular expression
     ## [0-9]+(ms|s|m|h) (milliseconds seconds minutes hours).
@@ -508,14 +505,14 @@ alertmanager:
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
     ##
     storage:
-    volumeClaimTemplate:
-      spec:
-        storageClassName: {{ alertmanager.storage.classname }}
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: {{ alertmanager.storage.size }}
-      selector: {}
+      volumeClaimTemplate:
+        spec:
+          storageClassName: {{ alertmanager.storage.classname }}
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: {{ alertmanager.storage.size }}
+        selector: {}
 
 
     ## The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name. string  false
@@ -865,7 +862,7 @@ kubeApiServer:
 ## Component scraping the kubelet and kubelet-hosted cAdvisor
 ##
 kubelet:
-  enabled: true
+  enabled: {{ monitoring.kubelet.enabled }}
   namespace: kube-system
 
   serviceMonitor:
@@ -1161,7 +1158,7 @@ kubeDns:
 ## Component scraping etcd
 ##
 kubeEtcd:
-  enabled: {{ monitoring.kubeEtcd.enabled }}
+  enabled: "{{ monitoring.kubeEtcd.enabled }}"
 
   ## If your etcd is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1230,7 +1227,7 @@ kubeEtcd:
 ## Component scraping kube scheduler
 ##
 kubeScheduler:
-  enabled: {{ monitoring.kubeScheduler.enabled }}
+  enabled: "{{ monitoring.kubeScheduler.enabled }}"
 
   ## If your kube scheduler is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1410,9 +1407,8 @@ prometheus-node-exporter:
     ##
     jobLabel: node-exporter
   extraArgs:
-
-    - '--collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)'
-    - '--collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$'
+    - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
+    - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
     - --collector.textfile
     - --collector.textfile.directory=/var/lib/node_exporter
   extraHostVolumeMounts:
@@ -1724,12 +1720,11 @@ prometheusOperator:
   ## Prometheus-operator image
   ##
   image:
-    {% if commercial.enabled %}
+{% if commercial.enabled %}
     repository: {{repositories.registry_commercial}}/vanillastack/prometheus-operator
-    {% else %}
+{% else %}
     repository: quay.io/prometheus-operator/prometheus-operator
-
-    {% endif %}
+{% endif %}
     tag: v0.54.1
     sha: ""
     pullPolicy: IfNotPresent
@@ -1748,12 +1743,11 @@ prometheusOperator:
 
     # image to use for config and rule reloading
     image:
-      {% if commercial.enabled %}
+{% if commercial.enabled %}
       repository: {{repositories.registry_commercial}}/vanillastack/prometheus-config-reloader
-      {% else %}
+{% else %}
       repository: quay.io/prometheus-operator/prometheus-config-reloader
-    {% endif %}
-
+{% endif %}
       tag: v0.54.1
       sha: ""
 
@@ -2023,7 +2017,7 @@ prometheus:
   #     someoneelse:$apr1$DMZX2Z4q$6SbQIfyuLQd.xmo/P0m2c.
 
   ingress:
-    enabled: "{{ monitoring.ingress.enabled }}"
+    enabled: {{ monitoring.ingress.enabled }}
 
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
     # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
@@ -2049,7 +2043,7 @@ prometheus:
     ## Paths to use for ingress rules - one path should match the prometheusSpec.routePrefix
     ##
     paths:
-    - /
+      - /
 
     ## For Kubernetes >= 1.18 you should specify the pathType (determines how Ingress paths should be matched)
     ## See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#better-path-matching-with-path-types
@@ -2195,10 +2189,11 @@ prometheus:
     ##
 
     image:
-      {% if commercial.enabled %}
+{% if commercial.enabled %}
       repository: {{repositories.registry_commercial}}/vanillastack/prometheus
-      {% else %}
+{% else %}
       repository: quay.io/prometheus/prometheus
+{% endif %}
       tag: v2.33.4
       sha: ""
 
@@ -2473,7 +2468,6 @@ prometheus:
     ## Resource limits & requests
     ##
     resources:
-    resources:
       limits:
         cpu: {{ monitoring.resources.limits.cpu }}
         memory: {{ monitoring.resources.limits.memory }}
@@ -2484,7 +2478,7 @@ prometheus:
     ## Prometheus StorageSpec for persistent data
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
     ##
-    storageSpec: {}
+    storageSpec:
     ## Using PersistentVolumeClaim
     ##
       volumeClaimTemplate:
@@ -2494,7 +2488,7 @@ prometheus:
           resources:
             requests:
               storage: {{ monitoring.storage.size }}
-    #    selector: {}
+        selector: {}
 
     ## Using tmpfs volume
     ##
