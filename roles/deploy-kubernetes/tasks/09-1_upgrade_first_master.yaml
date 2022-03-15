@@ -1,7 +1,7 @@
 ---
 - include_tasks: 09-3_drain_node.yaml
   vars:
-    hostname: inventory_hostname
+    hostname: "{{ inventory_hostname }}"
 
 - include_tasks: configure_debian_repos.yaml
 
@@ -24,4 +24,4 @@
 
 - include_tasks: 09-3_uncordon_node.yaml
   vars:
-    hostname: inventory_hostname
+    hostname: "{{ inventory_hostname }}"
