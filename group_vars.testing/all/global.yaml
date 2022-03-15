@@ -23,6 +23,7 @@ kubernetes:
   init_opts: ""
   kubeadm_opts: ""
   drainTimeout: "10m"
+  ignoreDrainErrors: true
   cilium:
     version: v1.10.7
 postgresOperator:

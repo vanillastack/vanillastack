@@ -9,3 +9,4 @@
         --ignore-daemonsets=true \
         --force \
         {{ hostname }}
+  ignore_errors: "{{ ignoreDrainErrors | bool }}"
