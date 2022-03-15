@@ -9,4 +9,4 @@
         --ignore-daemonsets=true \
         --force \
         {{ hostname }}
-  ignore_errors: "{{ ignoreDrainErrors | bool }}"
+  ignore_errors: "{{ kubernetes.ignoreDrainErrors | default(false) | bool }}"
