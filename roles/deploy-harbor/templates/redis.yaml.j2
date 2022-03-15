@@ -638,7 +638,7 @@ metrics:
     ## Redis prometheus rules
     ## These are just examples rules, please adapt them to your needs.
     ## Make sure to constraint the rules to the current redis service.
-    {% raw %}
+{% raw %}
     # rules:
     #   - alert: RedisDown
     #     expr: redis_up{service="{{ "{{ template "redis.fullname" . }}" }}-metrics"} == 0
@@ -671,7 +671,8 @@ metrics:
     #        summary: Redis instance {{ "{{ $labels.instance }}" }} has evicted keys
     #        description: |
     #          Redis instance {{ "{{ $labels.instance }}" }} has evicted {{ "{{ $value }}" }} keys in the last 5 minutes.
-    {% endraw %}
+{% endraw %}
+
     rules: []
 
   ## Metrics exporter pod priorityClassName

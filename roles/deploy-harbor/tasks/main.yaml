@@ -32,7 +32,7 @@
     update_repo_cache: true
 
 - name: Wait until postgres pod is ready
-  shell: 'kubectl get postgresql -n {{ harbor.namespace }}|grep "{{harbor.namespace}}-postgres"|grep "Running"'
+  shell: 'kubectl get postgresql -n {{ harbor.namespace }}|grep "harbor-postgresql"|grep "Running"'
   register: postgresReady
   until: postgresReady.rc == 0
   retries: 60
