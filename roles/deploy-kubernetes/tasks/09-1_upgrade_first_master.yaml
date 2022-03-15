@@ -23,9 +23,9 @@
     name: crio
     state: restarted
   when:
-    - kube_crio_apt_result is defined
-    - kube_crio_apt_result.changed is defined
-    - kube_crio_apt_result.changed
+    - crio_apt_result is defined
+    - crio_apt_result.changed is defined
+    - crio_apt_result.changed
 
 - name: Sleep a few seconds for good measure
   pause:
