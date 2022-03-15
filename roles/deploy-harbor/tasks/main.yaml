@@ -32,14 +32,14 @@
     update_repo_cache: true
 
 - name: Wait until postgres pod is ready
-  shell: 'kubectl get postgresql -n {{ harbor.namespace }}|grep "harbor-postgresql"|grep "Running"'
+  shell: 'kubectl get postgresql -n {{ harbor.namespace }} | grep "harbor-postgresql" | grep "Running"'
   register: postgresReady
   until: postgresReady.rc == 0
   retries: 60
   delay: 10
 
 - name: Register postgres application password
-  shell: echo "$(kubectl get secret -n {{ harbor.namespace }} -o json harbor.{{harbor.namespace}}-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
+  shell: echo "$(kubectl get secret -n {{ harbor.namespace }} -o json harbor.harbor-postgresql.credentials.postgresql.acid.zalan.do|jq -r '.data.password')"|base64 -d
   register: postgrespassword
 
 - name: Deploy Harbor
