@@ -15,6 +15,15 @@
   set_fact:
     crio_package_version: "{{ crioversion_apt_output.stdout }}"
 
+- name: Unhold packages
+  command: apt-mark unhold {{ item }}
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o"
+    - "cri-o-runc"
+
 - name: Install packages
   apt:
     pkg:
