@@ -12,7 +12,7 @@
 
 - include_tasks: configure_debian_repos.yaml
 
-- name: Install neccessary packages
+- name: Install necessary packages
   apt:
     name:
       - curl
