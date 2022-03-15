@@ -60,7 +60,7 @@ rook:
     minSize: 1
   filesystem:
     enabled: false
-    name: cephfsn1
+    name: rook-cephfs
     replicaLevel: 2
     minSize: 1
     failureDomain: host
