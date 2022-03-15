@@ -89,7 +89,10 @@ defaultRules:
 
 ## Provide custom recording or alerting rules to be deployed into the cluster.
 ##
-additionalPrometheusRulesMap: {}
+{% if monitoring.additionalRules is defined %}
+additionalPrometheusRulesMap:
+{{monitoring.additionalRules|to_nice_yaml(indent=2, width=1337)|trim|indent(width=2,indentfirst=True)}}
+{% endif %}
 #  rule-name:
 #    groups:
 #    - name: my_group
