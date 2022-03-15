@@ -4,4 +4,5 @@
   become: false
   gather_facts: false
   roles:
+    - role: prepare-registry
     - role: deploy-postgres-operator
