@@ -41,7 +41,7 @@ postgresOperator:
     cron: "30 00 * * *"
 harbor:
   enabled: true
-  chartVersion: 1.5.3
+  chartVersion: 1.8.1
   namespace: harbor
   ingress:
     coreDomain: "harbor.{{ clusterTLDomain }}"

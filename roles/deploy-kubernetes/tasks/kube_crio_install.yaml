@@ -35,8 +35,8 @@
     update_cache: true
     autoclean: true
     autoremove: true
-  register: result
-  until: result is not failed
+  register: kube_crio_apt_result
+  until: kube_crio_apt_result is not failed
   retries: 10
   delay: 10
 

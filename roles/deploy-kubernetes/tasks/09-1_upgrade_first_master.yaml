@@ -18,6 +18,15 @@
     name: kubelet
     state: restarted
 
+- name: Restart CRI-O when the packages installed changed
+  systemd:
+    name: crio
+    state: restarted
+  when:
+    - kube_crio_apt_result is defined
+    - kube_crio_apt_result.changed is defined
+    - kube_crio_apt_result.changed
+
 - name: Sleep a few seconds for good measure
   pause:
     seconds: 5

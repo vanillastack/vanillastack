@@ -4,12 +4,14 @@ expose:
   # in the corresponding section
   type: ingress
   tls:
-    # Enable the tls or not. Note: if the type is "ingress" and the tls
+    # Enable the tls or not.
+    # Delete the "ssl-redirect" annotations in "expose.ingress.annotations" when TLS is disabled and "expose.type" is "ingress"
+    # Note: if the "expose.type" is "ingress" and the tls
     # is disabled, the port must be included in the command when pull/push
     # images. Refer to https://github.com/goharbor/harbor/issues/5291
     # for the detail.
     enabled: true
-    # The source of the tls certificate. Set it as "auto", "secret" 
+    # The source of the tls certificate. Set it as "auto", "secret"
     # or "none" and fill the information in the corresponding section
     # 1) auto: generate the tls certificate automatically
     # 2) secret: read the tls certificate from the specified secret.
@@ -40,7 +42,11 @@ expose:
     # set to `gce` if using the GCE ingress controller
     # set to `ncp` if using the NCP (NSX-T Container Plugin) ingress controller
     controller: default
+    ## Allow .Capabilities.KubeVersion.Version to be overridden while creating ingress
+    kubeVersionOverride: ""
     annotations:
+      # note different ingress controllers may require a different ssl-redirect annotation
+      # for Envoy, use ingress.kubernetes.io/force-ssl-redirect: "true" and remove the nginx lines below
       kubernetes.io/ingress.class: nginx
       ingress.kubernetes.io/ssl-redirect: "true"
       ingress.kubernetes.io/proxy-body-size: "0"
@@ -50,6 +56,12 @@ expose:
       cert-manager.io/cluster-issuer: {{LE_issuer_name}}
       kubernetes.io/tls-acme: "true"
 {% endif %}
+    notary:
+      # notary-specific annotations
+      annotations: {}
+    harbor:
+      # harbor ingress-specific annotations
+      annotations: {}
   clusterIP:
     # The name of ClusterIP service
     name: harbor
@@ -170,14 +182,6 @@ internalTLS:
     crt: ""
     # Content of chartmuseum's TLS key file, only available when `certSource` is "manual"
     key: ""
-  # clair related cert configuration
-  clair:
-    # secret name for clair's tls certs
-    secretName: ""
-    # Content of clair's TLS key file, only available when `certSource` is "manual"
-    crt: ""
-    # Content of clair's TLS key file, only available when `certSource` is "manual"
-    key: ""
   # trivy related cert configuration
   trivy:
     # secret name for trivy's tls certs
@@ -186,6 +190,14 @@ internalTLS:
     crt: ""
     # Content of trivy's TLS key file, only available when `certSource` is "manual"
     key: ""
+
+ipFamily:
+  # ipv6Enabled set to true if ipv6 is enabled in cluster, currently it affected the nginx related component
+  ipv6:
+    enabled: true
+  # ipv4Enabled set to true if ipv4 is enabled in cluster, currently it affected the nginx related component
+  ipv4:
+    enabled: true
 
 # The persistence is enabled by default and a default StorageClass
 # is needed in the k8s cluster to provision volumes dynamicly.
@@ -359,7 +371,7 @@ caSecretName: ""
 # The secret key used for encryption. Must be a string of 16 chars.
 secretKey: "{{harbor.auth.secret}}"
 
-# The proxy settings for updating clair vulnerabilities from the Internet and replicating
+# The proxy settings for updating trivy vulnerabilities from the Internet and replicating
 # artifacts from/to the registries that cannot be reached directly
 proxy:
   httpProxy:
@@ -371,7 +383,7 @@ proxy:
     - trivy
 
 # The custom ca bundle secret, the secret must contain key named "ca.crt"
-# which will be injected into the trust store for chartmuseum, clair, core, jobservice, registry, trivy components
+# which will be injected into the trust store for chartmuseum, core, jobservice, registry, trivy components
 # caBundleSecretName: ""
 
 ## UAA Authentication Options
@@ -389,9 +401,11 @@ nginx:
 {% else %}
     repository: goharbor/nginx-photon
 {% endif %}
-    tag: v2.3.1
+    tag: v2.4.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
+  # mount the service account token
+  automountServiceAccountToken: false
   replicas: 1
   # resources:
   #  requests:
@@ -412,7 +426,7 @@ portal:
 {% else %}
     repository: goharbor/harbor-portal
 {% endif %}
-    tag: v2.3.1
+    tag: v2.4.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -437,7 +451,7 @@ core:
 {% else %}
     repository: goharbor/harbor-core
 {% endif %}
-    tag: v2.3.1
+    tag: v2.4.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -446,7 +460,7 @@ core:
   ## Startup probe values
   startupProbe:
     enabled: true
-    initialDelaySeconds: 45
+    initialDelaySeconds: 30
   # resources:
   #  requests:
   #    memory: 256Mi
@@ -479,15 +493,19 @@ jobservice:
 {% else %}
     repository: goharbor/harbor-jobservice
 {% endif %}
-    tag: v2.3.1
+    tag: v2.4.1
   replicas: {{harbor.jobservice.replicas}}
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
   automountServiceAccountToken: false
-  maxJobWorkers: 15 # 10 in 1.7.1
+  maxJobWorkers: 10
   # The logger for jobs: "file", "database" or "stdout"
-  jobLogger: file
+  jobLoggers:
+    - file
+    # - database
+    # - stdout
+
   # resources:
   #   requests:
   #     memory: 256Mi
@@ -517,7 +535,7 @@ registry:
 {% else %}
       repository: goharbor/registry-photon
 {% endif %}
-      tag: v2.3.1
+      tag: v2.4.1
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -529,7 +547,7 @@ registry:
 {% else %}
       repository: goharbor/harbor-registryctl
 {% endif %}
-      tag: v2.3.1
+      tag: v2.4.1
 
     # resources:
     #  requests:
@@ -584,7 +602,7 @@ chartmuseum:
 {% else %}
     repository: goharbor/chartmuseum-photon
 {% endif %}
-    tag: v2.3.1
+    tag: v2.4.1
   replicas: {{harbor.chartmuseum.replicas}}
   # resources:
   #  requests:
@@ -597,44 +615,8 @@ chartmuseum:
   podAnnotations: {}
   ## The priority class to run the pod as
   priorityClassName:
-
-clair:
-  enabled: true
-  # set the service account to be used, default if left empty
-  serviceAccountName: ""
-  clair:
-    image:
-{% if commercial.enabled %}
-      repository: {{repositories.registry_commercial}}/vanillastack/clair-photon
-{% else %}
-      repository: goharbor/clair-photon
-{% endif %}
-      tag: v2.1.3
-    # resources:
-    #  requests:
-    #    memory: 256Mi
-    #    cpu: 100m
-  adapter:
-    image:
-{% if commercial.enabled %}
-      repository: {{repositories.registry_commercial}}/vanillastack/clair-adapter-photon
-{% else %}
-      repository: goharbor/clair-adapter-photon
-{% endif %}
-      tag: v2.1.3
-    # resources:
-    #  requests:
-    #    memory: 256Mi
-    #    cpu: 100m
-  replicas: 1
-  # The interval of clair updaters, the unit is hour, set to 0 to
-  # disable the updaters
-  updatersInterval: 12
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  ## Additional deployment annotations
-  podAnnotations: {}
+  ## limit the number of parallel indexers
+  indexLimit: 0
 
 trivy:
   # enabled the flag to enable Trivy scanner
@@ -647,7 +629,7 @@ trivy:
     repository: goharbor/trivy-adapter-photon
 {% endif %}
     # tag the tag for Trivy adapter image
-    tag: v2.3.1
+    tag: v2.4.1
   # set the service account to be used, default if left empty
   serviceAccountName: ""
   # mount the service account token
@@ -679,7 +661,6 @@ trivy:
   #
   # You can create a GitHub token by following the instructions in
   # https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
-  # GitHub Token name: "Cloudical Registry Harbor Trivy — public access"
   # TODO we need some way to get a GitHub token
   gitHubToken: ""
   # skipUpdate the flag to disable Trivy DB downloads from GitHub
@@ -688,6 +669,8 @@ trivy:
   # If the value is set to `true` you have to manually download the `trivy.db` file and mount it in the
   # `/home/scanner/.cache/trivy/db/trivy.db` path.
   skipUpdate: false
+  # The duration to wait for scan completion
+  timeout: 5m0s
   resources:
     requests:
       cpu: 200m
@@ -716,8 +699,7 @@ notary:
 {% else %}
       repository: goharbor/notary-server-photon
 {% endif %}
-      tag: v2.3.1
-    # set the service account to be used, default if left empty
+      tag: v2.4.1
     replicas: {{harbor.notary.replicas}}
     # resources:
     #  requests:
@@ -741,7 +723,7 @@ notary:
 {% else %}
       repository: goharbor/notary-signer-photon
 {% endif %}
-      tag: v2.3.1
+      tag: v2.4.1
     replicas: {{harbor.notary.replicas}}
     # resources:
     #  requests:
@@ -773,7 +755,7 @@ database:
     automountServiceAccountToken: false
     image:
       repository: goharbor/harbor-db
-      tag: v2.3.1
+      tag: v2.4.1
     # The initial superuser password for internal database
     password: "changeit"
     # The size limit for Shared memory, pgSQL use it for shared_buffer
@@ -806,7 +788,6 @@ database:
     username: "harbor"
     password: "{{postgrespassword.stdout}}"
     coreDatabase: "registry"
-    clairDatabase: "clair"
     notaryServerDatabase: "notary_server"
     notarySignerDatabase: "notary_signer"
     # "disable" - No SSL
@@ -817,13 +798,13 @@ database:
     # server was signed by a trusted CA and the server host name matches the one
     # in the certificate)
     sslmode: "require"
-  # The maximum number of connections in the idle connection pool.
+  # The maximum number of connections in the idle connection pool per pod (core+exporter).
   # If it <=0, no idle connections are retained.
-  maxIdleConns: 50 #100 in 1.7.1
-  # The maximum number of open connections to the database.
+  maxIdleConns: 50
+  # The maximum number of open connections to the database per pod (core+exporter).
   # If it <= 0, then there is no limit on the number of open connections.
   # Note: the default number of connections is 1024 for postgre of harbor.
-  maxOpenConns: 350 #900 in 1.7.1
+  maxOpenConns: 350
   ## Additional deployment annotations
   podAnnotations: {}
 
@@ -838,7 +819,7 @@ redis:
     automountServiceAccountToken: false
     image:
       repository: goharbor/redis-photon
-      tag: v2.3.1
+      tag: v2.4.1
     # resources:
     #  requests:
     #    memory: 256Mi
@@ -861,7 +842,6 @@ redis:
     jobserviceDatabaseIndex: "1"
     registryDatabaseIndex: "2"
     chartmuseumDatabaseIndex: "3"
-    clairAdapterIndex: "4"
     trivyAdapterIndex: "5"
     password: "{{harbor.redis.password}}"
   ## Additional deployment annotations
@@ -879,7 +859,7 @@ exporter:
     automountServiceAccountToken: false
     image:
       repository: goharbor/harbor-exporter
-      tag: v2.3.1
+      tag: v2.4.1
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -924,3 +904,32 @@ metrics:
       #   targetLabel: nodename
       #   replacement: $1
       #   action: replace
+
+trace:
+  enabled: false
+  # trace provider: jaeger or otel
+  # jaeger should be 1.26+
+  provider: jaeger
+  # set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth
+  sample_rate: 1
+  # namespace used to differentiate different harbor services
+  # namespace:
+  # attributes is a key value dict contains user defined attributes used to initialize trace provider
+  # attributes:
+  #   application: harbor
+  jaeger:
+    # jaeger supports two modes:
+    #   agent mode(uncomment endpoint and uncomment username, password if needed)
+    #   collector mode(uncomment agent_host and agent_port)
+    endpoint: http://hostname:14268/api/traces
+    # username:
+    # password:
+    # agent_host: hostname
+    # export trace data by jaeger.thrift in compact mode
+    # agent_port: 6831
+  otel:
+    endpoint: hostname:4318
+    url_path: /v1/traces
+    compression: false
+    insecure: true
+    timeout: 10s
