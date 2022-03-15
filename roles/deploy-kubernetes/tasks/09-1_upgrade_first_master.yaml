@@ -17,3 +17,7 @@
   systemd:
     name: kubelet
     state: restarted
+
+- name: Sleep a few seconds for good measure
+  pause:
+    seconds: 5

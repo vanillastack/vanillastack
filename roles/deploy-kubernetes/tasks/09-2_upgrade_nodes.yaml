@@ -28,3 +28,7 @@
 - include_tasks: 09-3_uncordon_node.yaml
   vars:
     hostname: "{{ inventory_hostname }}"
+
+- name: Sleep a few seconds for good measure
+  pause:
+    seconds: 5
