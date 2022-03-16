@@ -2,4 +2,4 @@
 certmanager:
   enabled: true
   namespace: "cert-manager"
-  chartVersion: "v0.16.1"
+  chartVersion: "v1.7.1"

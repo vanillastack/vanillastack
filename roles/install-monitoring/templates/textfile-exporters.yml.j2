@@ -49,7 +49,10 @@ spec:
         volumeMounts:
         - mountPath: /dev
           name: host-dev
-          readOnly: true
+          # TODO prod-master-* seem to have issues, the prod-worker-* don't..
+          # Probably a combination of issues with CRI-O, kubelet and OS version
+          # causing issues with the /dev/termination-log and /dev (read-only) mount to conflict
+          readOnly: false
         - mountPath: /var/lib/node_exporter
           name: host-textfile
           readOnly: false
@@ -76,7 +79,7 @@ spec:
         volumeMounts:
         - mountPath: /dev
           name: host-dev
-          readOnly: true
+          readOnly: false
         - mountPath: /var/lib/node_exporter
           name: host-textfile
           readOnly: false
