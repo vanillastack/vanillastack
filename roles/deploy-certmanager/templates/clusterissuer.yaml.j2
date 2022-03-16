@@ -1,5 +1,5 @@
 {% if LE_issuer_name in letscencrypt_issuers %}
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: {{ LE_issuer_name }}
@@ -22,35 +22,36 @@ spec:
         ingress:
           class: nginx
 {% elif LE_issuer_name in custom_issuers %}
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: selfsigned-issuer
 spec:
   selfSigned: {}
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
- name: ca-custom-tls
+  name: ca-custom-tls
 spec:
- secretName: ca-custom-tls
- isCA: true
- usages:
-   - server auth
-   - client auth
- issuerRef:
-   name: selfsigned-issuer
-   kind: ClusterIssuer
- commonName: '{% if clusterTLDomain is defined %}{{ clusterTLDomain }}{% else %}vanillastack.local{% endif %}'
- dnsNames:
-   - '{% if clusterTLDomain is defined %}{{ clusterTLDomain }}{% else %}vanillastack.local{% endif %}'
+  secretName: ca-custom-tls
+  isCA: true
+  usages:
+    - server auth
+    - client auth
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+  commonName: '{% if clusterTLDomain is defined %}{{ clusterTLDomain }}{% else %}vanillastack.local{% endif %}'
+  dnsNames:
+    - '{% if clusterTLDomain is defined %}{{ clusterTLDomain }}{% else %}vanillastack.local{% endif %}'
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
- name: {{ LE_issuer_name }}
+  name: {{ LE_issuer_name }}
 spec:
- ca:
-   secretName: ca-custom-tls
+  ca:
+    secretName: ca-custom-tls
 {% endif %}
