@@ -25,7 +25,7 @@ kubernetes:
   drainTimeout: "10m"
   ignoreDrainErrors: true
   cilium:
-    version: v1.10.7
+    version: v1.11.2
 postgresOperator:
   chartName: "postgres-operator"
   chartVersion: "1.7.1"
