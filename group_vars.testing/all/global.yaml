@@ -263,7 +263,7 @@ alertmanager:
     - name: 'null'
 grafana:
   namespace: grafana
-  chartVersion: 6.6.4 
+  chartVersion: 6.24.1 
   replicas: 1
   enabled: true
   admin_user: admin
