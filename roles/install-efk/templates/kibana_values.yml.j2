@@ -9,6 +9,8 @@ replicas: {{ efkstack.kibana.replicas }}
 extraEnvs:
   - name: "NODE_OPTIONS"
     value: "--max-old-space-size=1800"
+#  - name: MY_ENVIRONMENT_VAR
+#    value: the_value_goes_here
 
 # Allows you to load environment variables from kubernetes secret or config map
 envFrom: []
@@ -25,6 +27,12 @@ secretMounts: []
 #    secretName: kibana-keystore
 #    path: /usr/share/kibana/data/kibana.keystore
 #    subPath: kibana.keystore # optional
+
+hostAliases: []
+#- ip: "127.0.0.1"
+#  hostnames:
+#  - "foo.local"
+#  - "bar.local"
 
 {% if commercial.enabled %}
 image: {{repositories.registry_commercial}}/vanillastack/kibana-oss
@@ -109,6 +117,7 @@ service:
     # service.beta.kubernetes.io/cce-load-balancer-internal-vpc: "true"
   loadBalancerSourceRanges: []
     # 0.0.0.0/0
+  httpPortName: http
 
 ingress:
   enabled: true

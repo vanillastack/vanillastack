@@ -17,7 +17,6 @@ efkstack:
   es:
     imageTag: "7.10.2"
     replicas: 3
-    version: 7.9.1
     storage:
       class_name: "rook-ceph-block"
       size: "30Gi"
@@ -31,7 +30,7 @@ efkstack:
   logaggregator:
     # Choice of filebeat and fluentd
     name: filebeat
-    imageTag: "7.9.1"
+    imageTag: "7.10.2"
     resources:
       limits:
         cpu: "500m"

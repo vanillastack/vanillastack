@@ -1,9 +1,27 @@
 ---
 clusterName: "elasticsearch"
+nodeGroup: "master"
+
+# The service that non master groups will try to connect to when joining the cluster
+# This should be set to clusterName + "-" + nodeGroup for your master group
+masterService: ""
+
+# Elasticsearch roles that will be applied to this nodeGroup
+# These will be set as environment variables. E.g. node.master=true
+roles:
+  master: "true"
+  ingest: "true"
+  data: "true"
+  remote_cluster_client: "true"
+# ml: "true" # ml is not availble with elasticsearch-oss
 
 replicas: {{ efkstack.es.replicas }}
 minimumMasterNodes: 2
 
+esMajorVersion: ""
+
+# Allows you to add any config files in /usr/share/elasticsearch/config/
+# such as elasticsearch.yml and log4j2.properties
 esConfig: {}
 #  elasticsearch.yml: |
 #    key:
@@ -11,21 +29,35 @@ esConfig: {}
 #  log4j2.properties: |
 #    key = value
 
+# Extra environment variables to append to this nodeGroup
+# This will be appended to the current 'env:' key. You can use any of the kubernetes env
+# syntax here
 extraEnvs: []
 #  - name: MY_ENVIRONMENT_VAR
 #    value: the_value_goes_here
 
+# Allows you to load environment variables from kubernetes secret or config map
 envFrom: []
 # - secretRef:
 #     name: env-secret
 # - configMapRef:
 #     name: config-map
 
+# A list of secrets and their paths to mount inside the pod
+# This is useful for mounting certificates for security and for mounting
+# the X-Pack license
 secretMounts: []
 #  - name: elastic-certificates
 #    secretName: elastic-certificates
 #    path: /usr/share/elasticsearch/config/certs
 #    defaultMode: 0755
+
+hostAliases: []
+#- ip: "127.0.0.1"
+#  hostnames:
+#  - "foo.local"
+#  - "bar.local"
+
 {% if commercial.enabled %}
 image: "{{repositories.registry_commercial}}/vanillastack/elasticsearch-oss"
 {% else %}
@@ -76,7 +108,7 @@ volumeClaimTemplate:
       storage: {{ efkstack.es.storage.size }}
 
 rbac:
-  create: true
+  create: false
   serviceAccountAnnotations: {}
   serviceAccountName: ""
 
@@ -97,11 +129,12 @@ podSecurityPolicy:
       - secret
       - configMap
       - persistentVolumeClaim
+      - emptyDir      
 
 persistence:
   enabled: true
   labels:
-    # Add default labels for the volumeClaimTemplate fo the StatefulSet
+    # Add default labels for the volumeClaimTemplate of the StatefulSet
     enabled: false
   annotations: {}
 
@@ -163,6 +196,7 @@ service:
   transportPortName: transport
   loadBalancerIP: ""
   loadBalancerSourceRanges: []
+  externalTrafficPolicy: ""
 
 updateStrategy: RollingUpdate
 
@@ -195,7 +229,7 @@ readinessProbe:
   successThreshold: 3
   timeoutSeconds: 5
 
-# https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params wait_for_status
+# https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cluster-health.html#request-params wait_for_status
 clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
 
 ## Use an alternate scheduler.
