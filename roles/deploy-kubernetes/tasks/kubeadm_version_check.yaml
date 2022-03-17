@@ -1,21 +1,10 @@
 ---
-- name: Check kubeadm version
-  block:
-  - name: Increment the retry count
-    set_fact:
-      retries: "{{ 0 if retries is undefined else retries | int + 1 }}"
+- name: Get kubeadm version
+  command: kubeadm version
+  register: local_kubeadm_version
 
-  - name: Get kubeadm version
-    command: kubeadm version
-    register: local_kubeadm_version
-
-  - name: Fail when kubeadm version is not the expected version
-    fail:
-      msg: "The host {{ inventory_hostname }} did not have the expected kubeadm version {{ kubernetes.version }} installed after the package update process!"
-    when:
-      - kubernetes.version not in local_kubeadm_version.stdout
-  rescue:
-    - fail:
-        msg: "The host {{ inventory_hostname }} did not have the expected kubeadm version {{ kubernetes.version }} installed after the package update process after {{ retries }} retries!"
-      when: retries | int == 5
-    - include: kubeadm_version_check.yaml
+- name: Fail when kubeadm version is not the expected version
+  fail:
+    msg: "The host {{ inventory_hostname }} did not have the expected kubeadm version {{ kubernetes.version }} installed after the package update process!"
+  when:
+    - kubernetes.version not in local_kubeadm_version.stdout
