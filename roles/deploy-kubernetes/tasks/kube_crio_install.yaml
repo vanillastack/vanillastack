@@ -85,7 +85,3 @@
     - "cri-o-runc"
 
 - include_tasks: kubeadm_version_check.yaml
-  register: kubeadm_version_check_success
-  until: kubeadm_version_check_success is not failed
-  retries: 10
-  delay: 5
