@@ -18,4 +18,4 @@
     - fail:
         msg: "The host {{ inventory_hostname }} did not have the expected kubeadm version {{ kubernetes.version }} installed after the package update process after {{ retries }} retries!"
       when: retries | int == 5
-    - include_task: kubeadm_version_check.yaml
+    - include: kubeadm_version_check.yaml
