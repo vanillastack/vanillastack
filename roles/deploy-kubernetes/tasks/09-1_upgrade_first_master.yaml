@@ -7,7 +7,7 @@
   command: kubeadm upgrade plan
 
 - name: Run kubeadm upgrade apply v{{ kubernetes.version }}
-  command: kubeadm upgrade apply --yes v{{ kubernetes.version }}
+  command: kubeadm upgrade apply --yes v{{ kubernetes.version }} {% if kubernetes.ignorePreflightErrors is defined and kubernetes.ignorePreflightErrors|length > 0 %} --ignore-preflight-errors={{ kubernetes.ignorePreflightErrors|join(", ") }} {% endif %}
 
 - name: Reload systemd
   systemd:
