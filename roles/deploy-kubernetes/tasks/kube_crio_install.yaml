@@ -84,12 +84,8 @@
     - "cri-o"
     - "cri-o-runc"
 
-- name: Check if kubeadm has the expected version
-  command: kubeadm version
-  register: local_kubeadm_version
-
-- name: Fail when kubeadm version is not the expected version
-  fail:
-    msg: "The host {{ inventory_hostname }} did not have the expected kubeadm version {{ kubernetes.version }} installed after the package update process!"
-  when:
-    - kubernetes.version not in local_kubeadm_version.stdout
+- include_tasks: kubeadm_version_check.yaml
+  register: kubeadm_version_check_success
+  until: kubeadm_version_check_success is not failed
+  retries: 10
+  delay: 5
