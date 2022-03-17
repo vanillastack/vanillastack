@@ -55,7 +55,6 @@
     update_cache: true
     autoclean: true
     autoremove: true
-    allow_downgrade: true
   register: kube_apt_result
   until: kube_apt_result is not failed
   retries: 10
