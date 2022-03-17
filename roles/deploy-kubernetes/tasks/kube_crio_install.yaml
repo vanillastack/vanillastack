@@ -1,4 +1,8 @@
 ---
+- name: Install kube packages
+  apt:
+    update_cache: true
+
 - name: Get available Kubernetes version
   shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
   register: kubeversion_apt_output
@@ -30,8 +34,7 @@
       - "kubelet={{ kube_version }}"
       - "kubeadm={{ kube_version }}"
       - "kubectl={{ kube_version }}"
-    update_cache: true
-    force_apt_get: yes
+    force_apt_get: true
   register: kube_apt_result
   until: kube_apt_result is not failed
   retries: 10
@@ -42,8 +45,7 @@
     pkg:
       - "cri-o={{ crio_package_version }}"
       - "cri-o-runc={{ kubernetes.crioRuncVersion }}"
-    update_cache: true
-    force_apt_get: yes
+    force_apt_get: true
   register: crio_apt_result
   until: crio_apt_result is not failed
   retries: 10
