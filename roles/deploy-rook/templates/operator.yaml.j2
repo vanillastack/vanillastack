@@ -373,11 +373,11 @@ spec:
       serviceAccountName: rook-ceph-system
       containers:
         - name: rook-ceph-operator
-        {% if commercial.enabled %}
+{% if commercial.enabled %}
           image: {{repositories.registry_commercial}}/vanillastack/ceph:v1.6.11
-        {% else %}
+{% else %}
           image: docker.io/rook/ceph:v1.6.11
-        {% endif %}
+{% endif %}
           args: ["ceph", "operator"]
           volumeMounts:
             - mountPath: /var/lib/rook
