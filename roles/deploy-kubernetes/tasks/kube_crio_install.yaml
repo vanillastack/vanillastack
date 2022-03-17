@@ -15,14 +15,16 @@
   set_fact:
     crio_package_version: "{{ crioversion_apt_output.stdout }}"
 
-- name: Unhold packages
-  command: apt-mark unhold {{ item }}
-  with_items:
-    - "kubelet"
-    - "kubeadm"
-    - "kubectl"
-    - "cri-o"
-    - "cri-o-runc"
+- name: Set restart-without-asking debconf flag to false
+  ansible.builtin.debconf:
+    name: "{{ item }}"
+    question: libraries/restart-without-asking
+    value: 'false'
+    vtype: boolean
+  loop:
+    - kubelet
+    - cri-o
+    - cri-o-runc
 
 - name: Set restart-services debconf flag to false
   ansible.builtin.debconf:
@@ -35,16 +37,14 @@
     - cri-o
     - cri-o-runc
 
-- name: Set restart-without-asking debconf flag to false
-  ansible.builtin.debconf:
-    name: "{{ item }}"
-    question: libraries/restart-without-asking
-    value: 'false'
-    vtype: boolean
-  loop:
-    - kubelet
-    - cri-o
-    - cri-o-runc
+- name: Unhold packages
+  command: apt-mark unhold {{ item }}
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o"
+    - "cri-o-runc"
 
 - name: Install kube packages
   apt:
@@ -55,6 +55,7 @@
     update_cache: true
     autoclean: true
     autoremove: true
+    allow_downgrade: true
   register: kube_apt_result
   until: kube_apt_result is not failed
   retries: 10
