@@ -11,6 +11,11 @@
   set_fact:
     kube_version: "{{ kubeversion_apt_output.stdout }}"
 
+- name: Fail when kubernetes version is empty
+  fail:
+    msg: Unable to determine Kubernetes package version from apt-cache!
+  when: kube_version is not defined or kube_version|trim == ""
+
 - name: Get available CRI-O version
   shell: apt-cache madison cri-o | grep {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f4
   register: crioversion_apt_output
@@ -18,6 +23,11 @@
 - name: Set CRI-O Package version
   set_fact:
     crio_package_version: "{{ crioversion_apt_output.stdout }}"
+
+- name: Fail when CRI-O version is empty
+  fail:
+    msg: Unable to determine CRI-O package version from apt-cache!
+  when: crio_package_version is not defined or crio_package_version|trim == ""
 
 - name: Unhold packages
   command: apt-mark unhold {{ item }}
