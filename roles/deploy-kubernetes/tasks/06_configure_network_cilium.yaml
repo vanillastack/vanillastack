@@ -49,32 +49,18 @@
   register: result
   until: result.rc == 0
 
-- name: Enable auto completion
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
-    line: "source <(kubectl completion bash)"
-    state: present
-
-- name: Set bash history timestamps for all users using pam
-  become: true
-  become_user: root
-  lineinfile:
-    path: /etc/environment
-    line: 'export HISTTIMEFORMAT="%F %T "'
-    state: present
-
-- name: manage access creds
+- name: Manage access creds
   block:
-    - name: copy ssh key to master1
+    - name: Copy ssh key to master1
       copy:
         src: "{{ ansible_ssh_private_key_file }}"
         dest: /tmp/tempkey.pem
 
-    - name: add ssh key as secret
+    - name: Add ssh key as secret
       shell: >
         kubectl create secret generic --namespace kube-system --save-config --dry-run=client management-ssh-key --from-file=id_rsa=/tmp/tempkey.pem -o yaml | kubectl apply --namespace kube-system -f -
 
-    - name: make sure, ssh key is removed
+    - name: Make sure, ssh key is removed
       file:
         path: /tmp/tempkey.pem
         state: absent

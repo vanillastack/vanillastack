@@ -95,3 +95,17 @@
     - cri-o-runc
 
 - include_tasks: kubeadm_version_check.yaml
+
+- name: Enable auto completion
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: "source <(kubectl completion bash)"
+    state: present
+
+- name: Set bash history timestamps for all users using pam
+  become: true
+  become_user: root
+  lineinfile:
+    path: /etc/environment
+    line: 'export HISTTIMEFORMAT="%F %T "'
+    state: present
