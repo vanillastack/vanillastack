@@ -40,4 +40,4 @@
 
 - name: Sleep a few seconds for good measure
   pause:
-    seconds: 10
+    seconds: "{{ kubernetes.updateSleepSeconds | int }}"
