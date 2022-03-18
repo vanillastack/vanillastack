@@ -3,4 +3,4 @@
 kubernetes:
   dashboard:
     coreDomain: "k8s-dashboard.{{ clusterTLDomain }}"
-    version: 5.3.1
+    chartVersion: 5.3.1
