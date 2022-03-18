@@ -14,7 +14,7 @@ ingress:
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
-    chartVersion: "4.0.3"
+    chartVersion: "5.3.1"
   clusterName: kubernetes
   version: "1.23.4"
   crioVersion: "1.23"
