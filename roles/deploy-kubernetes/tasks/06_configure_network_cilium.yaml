@@ -19,7 +19,7 @@
     release_namespace: kube-system
     values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
     wait: true
-    wait_timeout: "1m"
+    wait_timeout: "{{ kubernetes.cilium.waitTimeout }}"
     update_repo_cache: true
 
 - name: Wait for control-plane pods become ready
