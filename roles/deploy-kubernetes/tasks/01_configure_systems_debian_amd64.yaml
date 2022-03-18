@@ -30,6 +30,7 @@
       - python3-kubernetes
       - python3-passlib
       - python3-pip
+      - systemd-timesyncd
       - tar
       - vim
     autoclean: true
