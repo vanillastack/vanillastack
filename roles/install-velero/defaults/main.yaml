@@ -1,13 +1,13 @@
 ---
 velero:
   enabled: false
-  version: v1.5.2
-  chartVersion: 2.13.6
+  version: v1.8.1
+  chartVersion: 2.29.0
   namespace: velero
   backend: minio
   minio:
     enabled: true
-    chartVersion: 8.0.2
+    chartVersion: 3.6.2
     nfs:
       size: 50Gi
       server: <NFS server ip>
