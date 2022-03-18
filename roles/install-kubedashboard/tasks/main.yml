@@ -1,20 +1,18 @@
 ---
-# tasks file for install-kubedashboard
-#
 - name: Install Kube Dashboard
   kubernetes.core.helm:
     chart_ref: vanillastack/kubernetes-dashboard
     name: kubernetes-dashboard
     release_namespace: kube-dashboard
-    update_repo_cache: true
     create_namespace: true
-    chart_version: "{{ kubernetes.dashboard.chartVersion }}"
     values: "{{ lookup('template', 'dashboard-values.yaml.j2') | from_yaml }}"
+    chart_version: "{{ kubernetes.dashboard.chartVersion }}"
     wait: true
 
-- name: Print accesstoken
+- name: Get Kube Dashboard ServiceAccount access token
   shell: "kubectl get secrets -n kube-dashboard $(kubectl get secrets -n kube-dashboard | awk '/kubernetes-dashboard-token/ {print $1;exit}') -o jsonpath='{.data.token}'"
   register: dashboardtoken
 
-- debug:
+- name: Print Kube Dashboard ServiceAccount access token
+  debug:
     msg: "{{ dashboardtoken.stdout | b64decode }}"
