@@ -86,10 +86,10 @@ image:
 {% else %}
   repository: quay.io/cilium/cilium
 {% endif %}
-  tag: v1.10.7
+  tag: v1.11.2
   pullPolicy: IfNotPresent
   # cilium-digest
-  digest: "sha256:e23f55e80e1988db083397987a89967aa204ad6fc32da243b9160fbcea29b0ca"
+  digest: "sha256:4332428fbb528bda32fffe124454458c9b716c86211266d1a03c4ddf695d7f60"
   useDigest: true
 
 # -- Pod affinity for cilium-agent.
@@ -229,6 +229,8 @@ bgp:
   announce:
     # -- Enable allocation and announcement of service LoadBalancer IPs
     loadbalancerIP: false
+    # -- Enable announcement of node pod CIDR
+    podCIDR: false
 
 bpf:
   # -- Enable BPF clock source probing for more efficient tick retrieval.
@@ -294,6 +296,10 @@ bpf:
   # -- Configure the FIB lookup bypass optimization for nodeport reverse
   # NAT handling.
   # lbBypassFIBLookup: true
+
+  # -- Configure explicitly allowed VLAN id's for bpf logic bypass.
+  # [0] will allow all VLAN id's without any filtering.
+  # vlan-bpf-bypass: []
 
 # -- Clean all eBPF datapath state from the initContainer of the cilium-agent
 # DaemonSet.
@@ -412,10 +418,13 @@ enableK8sEventHandover: false
 
 # enableK8sEndpointSlice: false
 
+# -- Enable CiliumEndpointSlice feature.
+enableCiliumEndpointSlice: false
+
 # -- Enables the fallback compatibility solution for when the xt_socket kernel
 # module is missing and it is needed for the datapath L7 redirection to work
 # properly. See documentation for details on when this can be disabled:
-# http://docs.cilium.io/en/stable/install/system_requirements/#admin-kernel-version.
+# https://docs.cilium.io/en/stable/operations/system_requirements/#linux-kernel.
 enableXTSocketFallback: true
 
 encryption:
@@ -441,6 +450,10 @@ encryption:
 
     # -- The interface to use for encrypted traffic.
     interface: ""
+
+  wireguard:
+    # -- Enables the fallback to the user-space implementation.
+    userspaceFallback: false
 
   # -- Deprecated in favor of encryption.ipsec.keyFile.
   # Name of the key file inside the Kubernetes secret configured via secretName.
@@ -515,8 +528,10 @@ healthChecking: true
 # -- TCP port for the agent health API. This is not the port for cilium-health.
 healthPort: 9876
 
-# -- Enables the enforcement of host policies in the eBPF datapath.
-hostFirewall: false
+# -- Configure the host firewall.
+hostFirewall:
+  # -- Enables the enforcement of host policies in the eBPF datapath.
+  enabled: false
 
 hostPort:
   # -- Enable hostPort service support.
@@ -566,7 +581,7 @@ hubble:
   # eventBufferCapacity: "4095"
 
   # -- Hubble metrics configuration.
-  # See https://docs.cilium.io/en/stable/configuration/metrics/#hubble-metrics
+  # See https://docs.cilium.io/en/stable/operations/metrics/#hubble-metrics
   # for more comprehensive documentation about Hubble metrics.
   metrics:
     # -- Configures the list of metrics to collect. If empty or null, metrics
@@ -594,6 +609,8 @@ hubble:
       - http
     # -- Configure the port the hubble metric server listens on.
     port: 9091
+    # -- Annotations to be added to hubble-metrics service.
+    serviceAnnotations: {}
     serviceMonitor:
       # -- Create ServiceMonitor resources for Prometheus Operator.
       # This requires the prometheus CRDs to be available.
@@ -601,6 +618,8 @@ hubble:
       enabled: false
       # -- Labels to add to ServiceMonitor hubble
       labels: {}
+      # -- Annotations to add to ServiceMonitor hubble
+      annotations: {}
 
   # -- Unix domain socket path to listen to when Hubble is enabled.
   socketPath: /var/run/cilium/hubble.sock
@@ -625,10 +644,11 @@ hubble:
       # appropriate values below.
       enabled: true
       # -- Set the method to auto-generate certificates. Supported values:
-      # - helm:      This method uses Helm to generate all certificates.
-      # - cronJob:   This method uses a Kubernetes CronJob the generate any
-      #              certificates not provided by the user at installation
-      #              time.
+      # - helm:         This method uses Helm to generate all certificates.
+      # - cronJob:      This method uses a Kubernetes CronJob the generate any
+      #                 certificates not provided by the user at installation
+      #                 time.
+      # - certmanager:  This method use cert-manager to generate & rotate certificates.
       method: helm
       # -- Generated certificates validity duration in days.
       certValidityDuration: 1095
@@ -640,6 +660,15 @@ hubble:
       # Defaults to midnight of the first day of every fourth month. For syntax, see
       # https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/#schedule
       schedule: "0 0 1 */4 *"
+
+      # [Example]
+      # certManagerIssuerRef:
+      #   group: cert-manager.io
+      #   kind: ClusterIssuer
+      #   name: ca-issuer
+      # -- certmanager issuer used when hubble.tls.auto.method=certmanager.
+      # If not specified, a CA issuer will be created.
+      certManagerIssuerRef: {}
     # -- base64 encoded PEM values for the Hubble CA certificate and private key.
     ca:
       cert: ""
@@ -651,6 +680,10 @@ hubble:
     server:
       cert: ""
       key: ""
+      # -- Extra DNS names added to certificate when it's auto generated
+      extraDnsNames: []
+      # -- Extra IP addresses added to certificate when it's auto generated
+      extraIpAddresses: []
 
   relay:
     # -- Enable Hubble Relay (requires hubble.enabled=true)
@@ -666,9 +699,9 @@ hubble:
 {% else %}
       repository: quay.io/cilium/hubble-relay
 {% endif %}
-      tag: v1.10.7
+      tag: v1.11.2
        # hubble-relay-digest
-      digest: "sha256:385fcc4fa315eb6b66626c3e5f607b6b6514c8c3a863c47c2b2dbc97790acb47"
+      digest: "sha256:f031f95f3c9ba8962094649c0cc913f90723d553203444c8fb9a591e38873c9d"
       useDigest: true
       pullPolicy: IfNotPresent
 
@@ -690,8 +723,10 @@ hubble:
 
     # -- Node tolerations for pod assignment on nodes with taints
     # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-    #
     tolerations: []
+
+    # -- The priority class to use for hubble-relay
+    priorityClassName: ""
 
     # -- hubble-relay update strategy
     updateStrategy:
@@ -722,6 +757,10 @@ hubble:
         # These values need to be set manually if hubble.tls.auto.enabled is false.
         cert: ""
         key: ""
+        # -- extra DNS names added to certificate when its auto gen
+        extraDnsNames: []
+        # -- extra IP addresses added to certificate when its auto gen
+        extraIpAddresses: []
 
     # -- Dial timeout to connect to the local hubble instance to receive peer information (e.g. "30s").
     dialTimeout: ~
@@ -746,8 +785,41 @@ hubble:
     # -- Whether to enable the Hubble UI.
     enabled: false
 
+    standalone:
+      # -- When true, it will allow installing the Hubble UI only, without checking dependencies.
+      # It is useful if a cluster already has cilium and Hubble relay installed and you just
+      # want Hubble UI to be deployed.
+      # When installed via helm, installing UI should be done via `helm upgrade` and when installed via the cilium cli, then `cilium hubble enable --ui`
+      enabled: false
+
+      tls:
+        # -- When deploying Hubble UI in standalone, with tls enabled for Hubble relay, it is required
+        # to provide a volume for mounting the client certificates.
+        certsVolume: {}
+          # projected:
+          #   defaultMode: 0400
+          #   sources:
+          #   - secret:
+          #       name: hubble-ui-client-certs
+          #       items:
+          #       - key: tls.crt
+          #         path: client.crt
+          #       - key: tls.key
+          #         path: client.key
+          #       - key: ca.crt
+          #         path: hubble-relay-ca.crt
+
     # -- Roll out Hubble-ui pods automatically when configmap is updated.
     rollOutPods: false
+
+    tls:
+      # -- base64 encoded PEM values used to connect to hubble-relay
+      # This keypair is presented to Hubble Relay instances for mTLS
+      # authentication and is required when hubble.relay.tls.server.enabled is true.
+      # These values need to be set manually if hubble.tls.auto.enabled is false.
+      client:
+        cert: ""
+        key: ""
 
     backend:
       # -- Hubble-ui backend image.
@@ -757,7 +829,7 @@ hubble:
 {% else %}
         repository: quay.io/cilium/hubble-ui-backend
 {% endif %}
-        tag: v0.7.9@sha256:632c938ef6ff30e3a080c59b734afb1fb7493689275443faa1435f7141aabe76
+        tag: v0.8.5@sha256:2bce50cf6c32719d072706f7ceccad654bfa907b2745a496da99610776fe31ed
         pullPolicy: IfNotPresent
       # [Example]
       # resources:
@@ -830,6 +902,9 @@ hubble:
     #
     tolerations: []
 
+    # -- The priority class to use for hubble-ui
+    priorityClassName: ""
+
     # -- hubble-ui update strategy.
     updateStrategy:
       rollingUpdate:
@@ -883,12 +958,18 @@ ipam:
   # ref: https://docs.cilium.io/en/stable/concepts/networking/ipam/
   mode: "cluster-pool"
   operator:
-    # -- IPv4 CIDR range to delegate to individual nodes for IPAM.
+    # -- Deprecated in favor of ipam.operator.clusterPoolIPv4PodCIDRList.
+    # IPv4 CIDR range to delegate to individual nodes for IPAM.
     clusterPoolIPv4PodCIDR: "{{ cluster_pod_cidr }}"
+    # -- IPv4 CIDR list range to delegate to individual nodes for IPAM.
+    clusterPoolIPv4PodCIDRList: []
     # -- IPv4 CIDR mask size to delegate to individual nodes for IPAM.
     clusterPoolIPv4MaskSize: 24
-    # -- IPv6 CIDR range to delegate to individual nodes for IPAM.
+    # -- Deprecated in favor of ipam.operator.clusterPoolIPv6PodCIDRList.
+    # IPv6 CIDR range to delegate to individual nodes for IPAM.
     clusterPoolIPv6PodCIDR: "fd00::/104"
+     # -- IPv6 CIDR list range to delegate to individual nodes for IPAM.
+    clusterPoolIPv6PodCIDRList: []
     # -- IPv6 CIDR mask size to delegate to individual nodes for IPAM.
     clusterPoolIPv6MaskSize: 120
 
@@ -908,7 +989,7 @@ ipv6:
   enabled: false
 
 ipvlan:
-  # -- Enable the IPVLAN datapath
+  # -- Enable the IPVLAN datapath (deprecated)
   enabled: false
 
   # -- masterDevice is the name of the device to use to attach secondary IPVLAN
@@ -960,10 +1041,10 @@ kubeProxyReplacement: "strict"
 kubeProxyReplacementHealthzBindAddr: "0.0.0.0:10256"
 
 l2NeighDiscovery:
-  # -- Enable L2 neighbour discovery in the agent
+  # -- Enable L2 neighbor discovery in the agent
   enabled: true
-  # -- Set period for arping
-  arping-refresh-period: "5m"
+  # -- Override the agent's default neighbor resolution refresh period.
+  arping-refresh-period: "30s"
 
 # -- Enable Layer 7 network policy.
 l7Proxy: true
@@ -1002,9 +1083,14 @@ enableIPv6Masquerade: true
 egressGateway:
   enabled: false
 
-# -- Specify the CIDR for native routing (ie to avoid IP masquerade for).
+# -- Specify the IPv4 CIDR for native routing (ie to avoid IP masquerade for).
 # This value corresponds to the configured cluster-cidr.
+# Deprecated in favor of ipv4NativeRoutingCIDR, will be removed in 1.12.
 # nativeRoutingCIDR:
+
+# -- Specify the IPv4 CIDR for native routing (ie to avoid IP masquerade for).
+# This value corresponds to the configured cluster-cidr.
+# ipv4NativeRoutingCIDR:
 
 monitor:
   # -- Enable the cilium-monitor sidecar.
@@ -1031,6 +1117,10 @@ monitor:
   # -- dsrDispatch configures whether IP option or IPIP encapsulation is
   # used to pass a service IP and port to remote backend
   # dsrDispatch: opt
+
+  # -- serviceTopology enables K8s Topology Aware Hints -based service
+  # endpoints filtering
+  # serviceTopology: false
 
 # -- Configure N-S k8s service loadbalancing
 nodePort:
@@ -1137,6 +1227,9 @@ tls:
 #   - geneve
 tunnel: "vxlan"
 
+# -- Disable the usage of CiliumEndpoint CRD.
+disableEndpointCRD: "false"
+
 wellKnownIdentities:
   # -- Enable the use of well-known identities.
   enabled: false
@@ -1156,7 +1249,7 @@ etcd:
     tag: v2.0.7
     pullPolicy: IfNotPresent
 
-  # -- cilium-etcd-operator priorityClassName
+  # -- The priority class to use for cilium-etcd-operator
   priorityClassName: ""
 
   # -- Additional cilium-etcd-operator container arguments.
@@ -1201,14 +1294,12 @@ etcd:
 
   # -- PodDisruptionBudget settings
   # ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
-  #
   podDisruptionBudget:
     enabled: true
     maxUnavailable: 2
 
   # -- cilium-etcd-operator resource limits & requests
   # ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  #
   resources: {}
     # limits:
     #   cpu: 4000m
@@ -1218,7 +1309,6 @@ etcd:
     #   memory: 512Mi
 
   # -- Security context to be added to cilium-etcd-operator pods
-  #
   securityContext: {}
     # runAsUser: 0
 
@@ -1259,15 +1349,15 @@ operator:
 {% else %}
     repository: quay.io/cilium/operator
 {% endif %}
-    tag: v1.10.7
+    tag: v1.11.2
     # operator-generic-digest
-    genericDigest: "sha256:d0b491d8d8cb45862ed7f0410f65e7c141832f0f95262643fa5ff1edfcddcafe"
+    genericDigest: "sha256:4c8bea6818ee3e4932f99e9c1d7efa88b8c0f3cd516160caec878406531e45e7"
     # operator-azure-digest
-    azureDigest: "sha256:556d692b2f08822101c159d9d6f731efe6c437d2b80f0ef96813e8745203c852"
+    azureDigest: "sha256:6221ea3e47ae6ad4ab226d7dc886d74ad666e54f50b85863b09d913ae06a497d"
     # operator-aws-digest
-    awsDigest: "sha256:97b378e0e3b6b5ade6ae1706024c7a25fe6fc48e00102b65a6b7ac51d6327f40"
+    awsDigest: "sha256:abb7af69d6679e64dab9d7a87eae73377b3e9b880ff90ab8689ad1bf9e6ff3cd"
     # operator-alibabacloud-digest
-    alibabacloudDigest: "sha256:7a6ccc99195ae6a8216d2a1e1e0cc05d49c2d263b194895da264899fe9d0f45a"
+    alibabacloudDigest: "sha256:a4c04d3af0a8b44d66f7fa04361023c082b4a5112bc357f6c9ed95ee5e073213"
     useDigest: true
     pullPolicy: IfNotPresent
     suffix: ""
@@ -1277,8 +1367,8 @@ operator:
 
   # -- For using with an existing serviceAccount.
   serviceAccountName: cilium-operator
- 
-  # -- cilium-operator priorityClassName
+
+  # -- The priority class to use for cilium-operator
   priorityClassName: ""
 
   # -- cilium-operator update strategy
@@ -1337,7 +1427,6 @@ operator:
 
   # -- Node labels for cilium-operator pod assignment
   # ref: https://kubernetes.io/docs/user-guide/node-selection/
-  #
   nodeSelector: {}
 
   # -- Annotations to be added to cilium-operator pods
@@ -1348,14 +1437,12 @@ operator:
 
   # -- PodDisruptionBudget settings
   # ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
-  #
   podDisruptionBudget:
     enabled: false
     maxUnavailable: 1
 
   # -- cilium-operator resource limits & requests
   # ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  #
   resources: {}
     # limits:
     #   cpu: 1000m
@@ -1365,7 +1452,6 @@ operator:
     #   memory: 128Mi
 
   # -- Security context to be added to cilium-operator pods
-  #
   securityContext: {}
     # runAsUser: 0
 
@@ -1386,10 +1472,11 @@ operator:
     serviceMonitor:
       # -- Enable service monitors.
       # This requires the prometheus CRDs to be available (see https://github.com/prometheus-operator/prometheus-operator/blob/master/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml)
-      ##
       enabled: false
       # -- Labels to add to ServiceMonitor cilium-operator
       labels: {}
+      # -- Annotations to add to ServiceMonitor cilium-operator
+      annotations: {}
 
   # -- Skip CRDs creation for cilium-operator
   skipCRDCreation: false
@@ -1439,7 +1526,6 @@ nodeinit:
 
   # -- Node tolerations for nodeinit scheduling to nodes with taints
   # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-  #
   tolerations:
   - operator: Exists
     # - key: "key"
@@ -1449,7 +1535,6 @@ nodeinit:
 
   # -- Node labels for nodeinit pod assignment
   # ref: https://kubernetes.io/docs/user-guide/node-selection/
-  #
   nodeSelector: {}
 
   # -- Annotations to be added to node-init pods.
@@ -1460,21 +1545,18 @@ nodeinit:
 
   # -- PodDisruptionBudget settings
   # ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
-  #
   podDisruptionBudget:
     enabled: true
     maxUnavailable: 2
 
   # -- nodeinit resource limits & requests
   # ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  #
   resources:
     requests:
       cpu: 100m
       memory: 100Mi
 
   # -- Security context to be added to nodeinit pods.
-  #
   securityContext: {}
     # runAsUser: 0
 
@@ -1493,9 +1575,9 @@ preflight:
 {% else %}
     repository: quay.io/cilium/cilium
 {% endif %}
-    tag: v1.10.7
+    tag: v1.11.2
     # cilium-digest
-    digest: "sha256:e23f55e80e1988db083397987a89967aa204ad6fc32da243b9160fbcea29b0ca"
+    digest: "sha256:4332428fbb528bda32fffe124454458c9b716c86211266d1a03c4ddf695d7f60"
     useDigest: true
     pullPolicy: IfNotPresent
 
@@ -1529,7 +1611,6 @@ preflight:
 
   # -- Node tolerations for preflight scheduling to nodes with taints
   # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-  #
   tolerations:
   - effect: NoSchedule
     key: node.kubernetes.io/not-ready
@@ -1547,7 +1628,6 @@ preflight:
 
   # -- Node labels for preflight pod assignment
   # ref: https://kubernetes.io/docs/user-guide/node-selection/
-  #
   nodeSelector: {}
 
   # -- Annotations to be added to preflight pods
@@ -1558,14 +1638,12 @@ preflight:
 
   # -- PodDisruptionBudget settings
   # ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
-  #
   podDisruptionBudget:
     enabled: true
     maxUnavailable: 2
 
   # -- preflight resource limits & requests
   # ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  #
   resources: {}
     # limits:
     #   cpu: 4000m
@@ -1575,7 +1653,6 @@ preflight:
     #   memory: 512Mi
 
   # -- Security context to be added to preflight pods
-  #
   securityContext: {}
     # runAsUser: 0
 
@@ -1609,9 +1686,9 @@ clustermesh:
 {% else %}
       repository: quay.io/cilium/clustermesh-apiserver
 {% endif %}
-      tag: v1.10.7
+      tag: v1.11.2
       # clustermesh-apiserver-digest
-      digest: "sha256:9afb0a15afffdf84812c8174df9de86e35239fb87a6ffd9539877a9e643d8132"
+      digest: "sha256:2be171e91944a7f764c0fe13618401f68d1b7a7b199d09711db0da38f8cbaf70"
       useDigest: true
       pullPolicy: IfNotPresent
 
@@ -1672,6 +1749,9 @@ clustermesh:
         maxUnavailable: 1
       type: RollingUpdate
 
+    # -- The priority class to use for clustermesh-apiserver
+    priorityClassName: ""
+
     tls:
       # -- Configure automatic TLS certificates generation.
       # A Kubernetes CronJob is used the generate any
@@ -1683,10 +1763,11 @@ clustermesh:
         # If set to false, the certs to be provided by setting appropriate values below.
         enabled: true
         # Sets the method to auto-generate certificates. Supported values:
-        # - helm:      This method uses Helm to generate all certificates.
-        # - cronJob:   This method uses a Kubernetes CronJob the generate any
-        #              certificates not provided by the user at installation
-        #              time.
+        # - helm:         This method uses Helm to generate all certificates.
+        # - cronJob:      This method uses a Kubernetes CronJob the generate any
+        #                 certificates not provided by the user at installation
+        #                 time.
+        # - certmanager:  This method use cert-manager to generate & rotate certificates.
         method: helm
         # -- Generated certificates validity duration in days.
         certValidityDuration: 1095
@@ -1703,6 +1784,15 @@ clustermesh:
         # fourth month. For syntax, see
         # https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/#schedule
         # schedule: "0 0 1 */4 *"
+
+        # [Example]
+        # certManagerIssuerRef:
+        #   group: cert-manager.io
+        #   kind: ClusterIssuer
+        #   name: ca-issuer
+        # -- certmanager issuer used when clustermesh.apiserver.tls.auto.method=certmanager.
+        # If not specified, a CA issuer will be created.
+        certManagerIssuerRef: {}
       # -- base64 encoded PEM values for the ExternalWorkload CA certificate and private key.
       ca:
         # -- Optional CA cert. If it is provided, it will be used by the 'cronJob' method to
@@ -1716,6 +1806,10 @@ clustermesh:
       server:
         cert: ""
         key: ""
+        # -- Extra DNS names added to certificate when it's auto generated
+        extraDnsNames: []
+        # -- Extra IP addresses added to certificate when it's auto generated
+        extraIpAddresses: []
       # -- base64 encoded PEM values for the clustermesh-apiserver admin certificate and private key.
       # Used if 'auto' is not enabled.
       admin:
