@@ -23,6 +23,7 @@ kubernetes:
   init_opts: ""
   kubeadm_opts: ""
   drainTimeout: "10m"
+  updateSleepSeconds: 90
   ignoreDrainErrors: true
   cilium:
     version: v1.11.2
