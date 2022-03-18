@@ -253,10 +253,7 @@ metricsScraper:
   enabled: false
   image:
 {% if commercial.enabled %}
-
-
     repository: {{repositories.registry_commercial}}/vanillastack/metrics-scraper
-
 {% else %}
     repository: kubernetesui/metrics-scraper
 {% endif %}
