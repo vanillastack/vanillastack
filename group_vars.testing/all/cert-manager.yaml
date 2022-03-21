@@ -2,7 +2,7 @@
 certmanager:
   enabled: true
   namespace: "cert-manager"
-  chartVersion: "v1.1.0"
+  chartVersion: "v1.7.1"
 letscencrypt_issuers:
   - "letsencrypt-staging"
   - "letsencrypt-prod"
