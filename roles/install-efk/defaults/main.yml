@@ -1,4 +1,5 @@
 efkstack:
+  chartVersion: "7.16.1"
   enabled: false
   kibana:
     imageTag: "7.10.2"
@@ -30,7 +31,7 @@ efkstack:
   logaggregator:
     # Choice of filebeat and fluentd
     name: filebeat
-    imageTag: "7.10.2"
+    imageTag: "8.0.1"
     resources:
       limits:
         cpu: "500m"

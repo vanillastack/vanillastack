@@ -108,6 +108,7 @@ harbor:
       enabled: false
       cronjob: "30 */2 * * *"
 efkstack:
+  chartVersion: "7.16.1"
   kibana:
     imageTag: "7.10.2"
     user: kibana_test
@@ -139,7 +140,7 @@ efkstack:
   logaggregator:
     # Choice of filebeat and fluentd
     name: filebeat
-    imageTag: "7.10.2"
+    imageTag: "8.1.0"
     resources:
       limits:
         cpu: "500m"
