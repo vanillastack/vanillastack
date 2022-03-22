@@ -4,7 +4,7 @@ metadata:
   name: minio-nfs-pv
 spec:
   capacity:
-    storage: {{velero.minio.nfs.size}}
+    storage: {{ velero.minio.nfs.size }}
   volumeMode: Filesystem
   accessModes:
     - ReadWriteMany
@@ -14,5 +14,5 @@ spec:
 #    - hard
 #    - nfsvers=4.1
   nfs:
-    path: {{velero.minio.nfs.path}}
-    server: {{velero.minio.nfs.server}}
+    path: {{ velero.minio.nfs.path }}
+    server: {{ velero.minio.nfs.server }}

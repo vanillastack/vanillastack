@@ -1,19 +1,25 @@
 ---
 velero:
   enabled: false
-  version: v1.5.2
-  chartVersion: 2.13.6
+  version: v1.8.1
+  chartVersion: 2.29.0
   namespace: velero
-  backend: minio
-  minio:
-    enabled: true
-    chartVersion: 8.0.2
-    nfs:
-      size: 50Gi
-      server: <NFS server ip>
-      path: <NFS path>
-    accessKey: <access key>
-    secretKey: <secret key>
+  backend: minio # minio|aws
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "3Gi"
+    limits:
+      cpu: "1000m"
+      memory: "6Gi"
+  restic:
+    resources:
+      requests:
+        cpu: "125m"
+        memory: "3Gi"
+      limits:
+        cpu: "1000m"
+        memory: "5Gi"
   aws:
     bucketName: velero
     snapshotBucketName: kubernetes-pv
@@ -22,6 +28,22 @@ velero:
     s3URL: <s3 url> 
     accessKey: <access key>
     secretKey: <secret key>
+  minio:
+    enabled: true
+    chartVersion: 3.6.2
+    nfs:
+      size: 50Gi
+      server: <NFS server ip>
+      path: <NFS path>
+    accessKey: <access key>
+    secretKey: <secret key>
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "1024Mi"
   schedules:
     k8s-cluster:
       schedule: 15 */4 * * *
