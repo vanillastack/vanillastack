@@ -111,6 +111,7 @@ harbor:
 efkstack:
   kibana:
     imageTag: "7.10.2"
+    chartVersion: "7.16.1"
     user: kibana_test
     password: secretlysecretpassword
     replicas: 2
@@ -126,6 +127,7 @@ efkstack:
         memory: "2Gi"
   es:
     imageTag: "7.10.2"
+    chartVersion: "7.16.1"
     replicas: 3
     storage:
       class_name: "rook-ceph-block"
@@ -140,7 +142,8 @@ efkstack:
   logaggregator:
     # Choice of filebeat and fluentd
     name: filebeat
-    imageTag: "7.9.1"
+    chartVersion: "7.16.1"
+    imageTag: "8.1.0"
     resources:
       limits:
         cpu: "500m"
