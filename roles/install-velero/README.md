@@ -1,20 +1,23 @@
-= deploy-velero
+# deploy-velero
 Ansible role to deploy Velero to schedule backups.
 
-== Requirements
+## Requirements
+
 NFS is required as the backup target. 
 
 Note: Don't store backups in the local running Rook / Ceph cluster because its senseless in regards of DR.
 
-== Included Components
-* Velero
-** incl. Restic
-** incl. AWS plugin
-* Minio
-** as S3 backup target
+## Included Components
 
-== Example configuration
-```
+* Velero
+    * incl. Restic
+    * incl. AWS plugin
+* Minio
+    * as S3 backup target
+
+## Example configuration
+
+```yaml
 velero:
   enabled: true
   version: v1.5.2

@@ -459,8 +459,6 @@ restic:
 schedules:
   {{ velero.schedules }}
 
-# TODO Do we need this for restore from Restic?
-
 # Velero ConfigMaps.
 # Eg:
 # configMaps:
@@ -470,7 +468,17 @@ schedules:
 #       velero.io/restic: RestoreItemAction
 #     data:
 #       image: velero/velero-restic-restore-helper:v1.8.0
-configMaps: {}
+configMaps:
+  restic-restore-action-config:
+    labels:
+      velero.io/plugin-config: ""
+      velero.io/restic: RestoreItemAction
+    data:
+{% if commercial.enabled %}
+      image: {{repositories.registry_commercial}}/vanillastack/velero-restic-restore-helper:v1.8.0
+{% else %}
+      image: velero/velero-restic-restore-helper:v1.8.0
+{% endif %}
 
 ##
 ## End of additional Velero resource settings.
