@@ -2,10 +2,20 @@
 grafana:
   enabled: false
   namespace: grafana
-  chartVersion: 6.2.1
+  chartVersion: 6.24.1
   admin_user: admin
   admin_password: <password>
   replicas: 2
   ingress:
     enabled: true
     dns: "grafana.{{ clusterTLDomain }}"
+  persistence:
+    type: pvc
+    enabled: false
+    storageClassName: rook-ceph-block
+    accessModes:
+      - ReadWriteOnce
+    size: 15Gi
+    # annotations: {}
+    finalizers:
+      - kubernetes.io/pvc-protection

@@ -1,5 +1,5 @@
 ---
-- name: Create monitoring namespace
+- name: Create Grafana namespace
   kubernetes.core.k8s:
     name: "{{grafana.namespace}}"
     kind: Namespace

@@ -265,10 +265,10 @@ alertmanager:
     receivers:
     - name: 'null'
 grafana:
-  namespace: grafana
-  chartVersion: 6.24.1 
-  replicas: 1
   enabled: true
+  namespace: grafana
+  chartVersion: 6.24.1
+  replicas: 1
   admin_user: admin
   admin_password: grafanapassword
   ingress:

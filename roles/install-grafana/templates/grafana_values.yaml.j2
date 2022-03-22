@@ -297,18 +297,7 @@ extraContainerVolumes: []
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
 ##
 persistence:
-  type: pvc
-  enabled: false
-  # storageClassName: default
-  accessModes:
-    - ReadWriteOnce
-  size: 10Gi
-  # annotations: {}
-  finalizers:
-    - kubernetes.io/pvc-protection
-  # selectorLabels: {}
-  # subPath: ""
-  # existingClaim:
+  {{ grafana.persistence | to_nice_yaml(indent=2) | trim | indent(2) }}
 
   ## If persistence is not enabled, this allows to mount the
   ## local storage in-memory to improve performance
