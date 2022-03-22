@@ -27,6 +27,7 @@ kubernetes:
   ignoreDrainErrors: true
   cilium:
     version: v1.11.2
+    waitTimeout: 120s
   ignorePreflightErrors: []
 postgresOperator:
   chartName: "postgres-operator"
