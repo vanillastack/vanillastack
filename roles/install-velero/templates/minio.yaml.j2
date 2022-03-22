@@ -16,7 +16,7 @@ clusterDomain: cluster.local
 ##
 image:
 {% if commercial.enabled %}
-  repository: {{repositories.registry_commercial}}/vanillastack/minio
+  repository: {{ repositories.registry_commercial }}/vanillastack/minio
 {% else %}
   repository: quay.io/minio/minio
 {% endif %}
@@ -31,7 +31,7 @@ imagePullSecrets: []
 ##
 mcImage:
 {% if commercial.enabled %}
-  repository: {{repositories.registry_commercial}}/vanillastack/mc
+  repository: {{ repositories.registry_commercial }}/vanillastack/mc
 {% else %}
   repository: quay.io/minio/mc
 {% endif %}
@@ -103,8 +103,8 @@ configPathmc: "/etc/minio/mc/"
 ## Path where PV would be mounted on the MinIO Pod
 mountPath: "/export"
 ## Override the root directory which the minio server should serve from.
-## If left empty, it defaults to the value of {{ .Values.mountPath }}
-## If defined, it must be a sub-directory of the path specified in {{ .Values.mountPath }}
+## If left empty, it defaults to the value of {{ "{{" }} .Values.mountPath {{ "}}" }}
+## If defined, it must be a sub-directory of the path specified in {{ "{{" }} .Values.mountPath {{ "}}" }}
 ##
 bucketRoot: ""
 
@@ -161,7 +161,7 @@ persistence:
   storageClass: nfs
   VolumeName: ""
   accessMode: ReadWriteOnce
-  size: {{velero.minio.nfs.size}}
+  size: {{ velero.minio.nfs.size }}
 
   ## If subPath is set mount a sub folder of a volume instead of the root of the volume.
   ## This is especially handy for volume plugins that don't natively support sub mounting (like glusterfs).
@@ -330,8 +330,8 @@ users:
   ## Add new policies as explained here https://docs.min.io/docs/minio-multi-user-quickstart-guide.html
   ## NOTE: this will fail if LDAP is enabled in your MinIO deployment
   ## make sure to disable this if you are using LDAP.
-  - accessKey: {{velero.minio.accessKey}}
-    secretKey: {{velero.minio.secretKey}}
+  - accessKey: {{ velero.minio.accessKey }}
+    secretKey: {{ velero.minio.secretKey }}
     policy: consoleAdmin
   # Or you can refer to specific secret
   #- accessKey: externalSecret

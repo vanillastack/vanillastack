@@ -1,7 +1,7 @@
 ---
 - name: Download velero client
   get_url:
-    url: "https://github.com/vmware-tanzu/velero/releases/download/{{velero.version}}/velero-{{velero.version}}-linux-amd64.tar.gz"
+    url: "https://github.com/vmware-tanzu/velero/releases/download/{{ velero.version }}/velero-{{ velero.version }}-linux-amd64.tar.gz"
     dest: /tmp/velero.tgz
 
 - name: untar velero
@@ -12,7 +12,7 @@
 
 - name: mv velero binary
   copy:
-    src: /tmp/velero-{{velero.version}}-linux-amd64/velero
+    src: /tmp/velero-{{ velero.version }}-linux-amd64/velero
     dest: /usr/local/bin/velero
     owner: root
     group: root
@@ -21,8 +21,8 @@
 
 - name: cleanup
   file:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: absent
   with_items:
     - /tmp/velero.tgz
-    - /tmp/velero-{{velero.version}}-linux-amd64
+    - /tmp/velero-{{ velero.version }}-linux-amd64
