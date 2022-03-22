@@ -475,9 +475,9 @@ configMaps:
       velero.io/restic: RestoreItemAction
     data:
 {% if commercial.enabled %}
-      image: {{repositories.registry_commercial}}/vanillastack/velero-restic-restore-helper:v1.8.0
+      image: {{repositories.registry_commercial}}/vanillastack/velero-restic-restore-helper:{{velero.version}}
 {% else %}
-      image: velero/velero-restic-restore-helper:v1.8.0
+      image: velero/velero-restic-restore-helper:{{velero.version}}
 {% endif %}
 
 ##
