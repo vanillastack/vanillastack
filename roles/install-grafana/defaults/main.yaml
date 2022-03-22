@@ -16,6 +16,7 @@ grafana:
     accessModes:
       - ReadWriteOnce
     size: 15Gi
-    # annotations: {}
+    annotations:
+      helm.sh/resource-policy: keep
     finalizers:
       - kubernetes.io/pvc-protection
