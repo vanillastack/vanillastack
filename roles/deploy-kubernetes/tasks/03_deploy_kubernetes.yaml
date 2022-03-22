@@ -38,7 +38,9 @@
   command: >
     kubeadm init --node-name {{ inventory_hostname_short }} \
         --upload-certs \
+    {%- if kubernetes.cilium.proxyReplacement == "strict" %}
         --skip-phases=addon/kube-proxy \
+    {% endif %}
         --config /tmp/kubeadm-config.yaml \
         {{ kubernetes.kubeadm_opts }} \
         {{ kubernetes.init_opts }}
