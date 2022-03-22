@@ -29,6 +29,7 @@ kubernetes:
   cilium:
     version: v1.11.2
     waitTimeout: 120s
+    proxyReplacement: "strict" #possible values: "disabled", "probe", "partial", "strict"
   ignorePreflightErrors: []
 postgresOperator:
   chartName: "postgres-operator"

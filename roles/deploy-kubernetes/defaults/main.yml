@@ -16,6 +16,7 @@ kubernetes:
   cilium:
     version: v1.11.2
     waitTimeout: 10m
+    proxyReplacement: "strict" #possible values: "disabled", "probe", "partial", "strict"
   ignorePreflightErrors: []
 
 ntp:
