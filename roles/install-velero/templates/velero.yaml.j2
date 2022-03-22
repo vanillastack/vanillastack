@@ -8,11 +8,11 @@
 # enabling restic). Required.
 image:
 {% if commercial.enabled %}
-  repository: {{repositories.registry_commercial}}/vanillastack/velero
+  repository: {{ repositories.registry_commercial }}/vanillastack/velero
 {% else %}
   repository: velero/velero
 {% endif %}
-  tag: {{velero.version}}
+  tag: {{ velero.version }}
   # Digest value example: sha256:d238835e151cec91c6a811fe3a89a66d3231d9f64d09e5f3c49552672d271f38.
   # If used, it will take precedence over the image.tag.
   # digest:
@@ -259,24 +259,24 @@ configuration:
   backupStorageLocation:
     name:
     provider:
-    bucket: {{velero.aws.bucketName}}
+    bucket: {{ velero.aws.bucketName }}
     config:
-      region: {{velero.aws.region}}
+      region: {{ velero.aws.region }}
       s3ForcePathStyle: true
-      publicUrl: "{{velero.aws.publicURL}}"
-      s3Url: "{{velero.aws.s3URL}}"
+      publicUrl: "{{ velero.aws.publicURL }}"
+      s3Url: "{{ velero.aws.s3URL }}"
   volumeSnapshotLocation:
     name:
     provider:
     config: {}
     #name: default-snap
     #provider: aws
-    #bucket: {{velero.aws.snapshotBucketName}}
+    #bucket: {{ velero.aws.snapshotBucketName }}
     #config:
-    #  region: {{velero.aws.region}}
+    #  region: {{ velero.aws.region }}
     #  s3ForcePathStyle: true
-    #  publicUrl: "{{velero.aws.publicURL}}"
-    #  s3Url: "{{velero.aws.s3URL}}"
+    #  publicUrl: "{{ velero.aws.publicURL }}"
+    #  s3Url: "{{ velero.aws.s3URL }}"
 {% endif %}
 
   # These are server-level settings passed as CLI flags to the `velero server` command. Velero
@@ -367,11 +367,11 @@ credentials:
     cloud: |
       [default]
 {% if velero.backend == "minio" %}
-      aws_access_key_id = {{velero.minio.accessKey}}
-      aws_secret_access_key = {{velero.minio.secretKey}}
+      aws_access_key_id = {{ velero.minio.accessKey }}
+      aws_secret_access_key = {{ velero.minio.secretKey }}
 {% elif velero.backend == "aws" %}
-      aws_access_key_id = {{velero.aws.accessKey}}
-      aws_secret_access_key = {{velero.aws.secretKey}}
+      aws_access_key_id = {{ velero.aws.accessKey }}
+      aws_secret_access_key = {{ velero.aws.secretKey }}
 {% endif %}
   # additional key/value pairs to be used as environment variables such as "DIGITALOCEAN_TOKEN: <your-key>". Values will be stored in the secret.
   extraEnvVars: {}
