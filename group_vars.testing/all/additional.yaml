@@ -1,8 +1,9 @@
 velero:
   enabled: false
-  version: v1.7.1
-  chartVersion: 2.27.0
+  version: v1.8.1
+  chartVersion: 2.29.0
   namespace: velero
+  backend: minio # minio|aws
   resources:
     requests:
       cpu: "1000m"
@@ -18,7 +19,6 @@ velero:
       limits:
         cpu: "1000m"
         memory: "5Gi"
-  backend: minio # minio|aws
   aws: {}
   #  bucketName: YOUR_BUCKET_NAME
   #  snapshotBucketName: YOUR_SNAPSHOT_BUCKET_NAME
@@ -37,6 +37,13 @@ velero:
       path: /srv/nfs
     accessKey: NQhlZ2qu6Gi73f4AfTBbGyLob
     secretKey: p7v1jHW8cW3BQNMknrTAJqpUX
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "1024Mi"
   schedules:
     k8s-cluster:
       schedule: 15 */6 * * *

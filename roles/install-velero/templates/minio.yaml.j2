@@ -260,7 +260,11 @@ podLabels: {}
 ##
 resources:
   requests:
-    memory: 16Gi
+    cpu: "{{ velero.restic.resources.requests.cpu }}"
+    memory: "{{ velero.restic.resources.requests.memory }}"
+  limits:
+    cpu: "{{ velero.restic.resources.limits.cpu }}"
+    memory: "{{ velero.restic.resources.limits.memory }}"
 
 ## List of policies to be created after minio install
 ##
