@@ -71,7 +71,16 @@ spec:
     #  - key: rgw-node
     #    operator: Exists
     #  podAffinity:
-    #  podAntiAffinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - rook-ceph-rgw
+            # topologyKey: kubernetes.io/hostname will place MDS across different hosts
+            topologyKey: kubernetes.io/hostname
     # A key/value list of annotations
     annotations:
     #  key: value
