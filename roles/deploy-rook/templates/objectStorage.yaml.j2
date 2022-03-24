@@ -58,14 +58,14 @@ spec:
     instances: 2
     # The affinity rules to apply to the rgw deployment or daemonset.
     placement:
-    #  nodeAffinity:
-    #    requiredDuringSchedulingIgnoredDuringExecution:
-    #      nodeSelectorTerms:
-    #      - matchExpressions:
-    #        - key: role
-    #          operator: In
-    #          values:
-    #          - rgw-node
+     nodeAffinity:
+       requiredDuringSchedulingIgnoredDuringExecution:
+         nodeSelectorTerms:
+         - matchExpressions:
+           - key: rook
+             operator: In
+             values:
+             - enabled
     #  topologySpreadConstraints:
     #  tolerations:
     #  - key: rgw-node
