@@ -58,20 +58,29 @@ spec:
     instances: 2
     # The affinity rules to apply to the rgw deployment or daemonset.
     placement:
-    #  nodeAffinity:
-    #    requiredDuringSchedulingIgnoredDuringExecution:
-    #      nodeSelectorTerms:
-    #      - matchExpressions:
-    #        - key: role
-    #          operator: In
-    #          values:
-    #          - rgw-node
+     nodeAffinity:
+       requiredDuringSchedulingIgnoredDuringExecution:
+         nodeSelectorTerms:
+         - matchExpressions:
+           - key: rook
+             operator: In
+             values:
+             - enabled
     #  topologySpreadConstraints:
     #  tolerations:
     #  - key: rgw-node
     #    operator: Exists
     #  podAffinity:
-    #  podAntiAffinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - rook-ceph-rgw
+            # topologyKey: kubernetes.io/hostname will place RGW across different hosts
+            topologyKey: kubernetes.io/hostname
     # A key/value list of annotations
     annotations:
     #  key: value
