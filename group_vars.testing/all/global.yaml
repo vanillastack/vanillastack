@@ -149,7 +149,7 @@ efkstack:
     # Choice of filebeat and fluentd
     name: filebeat
     chartVersion: "7.16.1"
-    imageTag: "8.1.0"
+    imageTag: "7.10.2"
     resources:
       limits:
         cpu: "500m"
