@@ -1038,7 +1038,7 @@ kubeProxyReplacement: "{{ kubernetes.cilium.proxyReplacement }}"
 # To enable set the value to '0.0.0.0:10256' for all ipv4
 # addresses and this '[::]:10256' for all ipv6 addresses.
 # By default it is disabled.
-kubeProxyReplacementHealthzBindAddr: "0.0.0.0:10256"
+kubeProxyReplacementHealthzBindAddr: ""
 
 l2NeighDiscovery:
   # -- Enable L2 neighbor discovery in the agent
