@@ -2,7 +2,7 @@
 - name: Install Metrics Server
   kubernetes.core.helm:
     name: metrics-server
-    chart_ref: metrics-server/metrics-server
+    chart_ref: vanillastack/metrics-server
     release_namespace: "{{ metricsServer.namespace }}"
     values: "{{ lookup('template', 'metrics_server_values.yaml.j2') | from_yaml }}"
     chart_version: "{{ metricsServer.chartVersion }}"
