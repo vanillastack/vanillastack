@@ -1,5 +1,5 @@
 ---
-- name: Install Matrics Server
+- name: Install Metrics Server
   kubernetes.core.helm:
     name: metrics-server
     chart_ref: metrics-server/metrics-server
