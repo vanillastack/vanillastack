@@ -1,6 +1,6 @@
 image:
 {% if commercial.enabled %}
-  repository: {{repositories.registry_commercial}}/vanillastack
+  repository: {{repositories.registry_commercial}}/vanillastack/metrics-server
 {% else %}
   repository: k8s.gcr.io/metrics-server/metrics-server
 {% endif %}
