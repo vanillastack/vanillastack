@@ -1,5 +1,5 @@
 ---
-- name: Install Grafana
+- name: Install Matrics Server
   kubernetes.core.helm:
     name: metrics-server
     chart_ref: metrics-server/metrics-server
