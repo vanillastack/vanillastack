@@ -1,0 +1,8 @@
+---
+- name: Install Grafana
+  kubernetes.core.helm:
+    name: metrics-server
+    chart_ref: metrics-server/metrics-server
+    release_namespace: "{{ metricsServer.namespace }}"
+    values: "{{ lookup('template', 'metrics_server_values.yaml.j2') | from_yaml }}"
+    chart_version: "{{ metricsServer.chartVersion }}"
