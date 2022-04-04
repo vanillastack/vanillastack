@@ -1,6 +1,5 @@
 ---
 metricsServer:
-  enabled: true
   namespace: monitoring
   chartVersion: 3.8.2
   imageTag: 0.6.1

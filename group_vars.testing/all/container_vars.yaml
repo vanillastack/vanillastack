@@ -27,6 +27,7 @@ vanillaservices:
   keycloak_enabled: true
   loki_enabled: true
   grafana_enabled: true
+  metricsServer_enabled: true
 vanillastorageprovider: "rook"
 polyverse:
   enabled: false
