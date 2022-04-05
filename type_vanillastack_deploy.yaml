@@ -154,6 +154,8 @@
   - role: install-monitoring
     action: textile-exporters
     when: vanillaservices.monitoring_enabled
+  - role: deploy-metrics-server
+    when: vanillaservices.metricsServer_enabled    
 
 - name: Deploy Ingress Nginx
   hosts: master[0]
