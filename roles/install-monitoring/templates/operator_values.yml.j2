@@ -1351,7 +1351,11 @@ kube-state-metrics:
   prometheus:
     monitor:
       enabled: true
-
+      
+      # workaround for https://github.com/prometheus-community/helm-charts/issues/1631
+      additionalLabels:
+        release: prometheus-operator
+      
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       ##
       interval: ""
