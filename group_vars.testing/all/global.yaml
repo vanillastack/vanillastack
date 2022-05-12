@@ -11,6 +11,14 @@ ingress:
   chartVersion: "4.0.18"
   defaultBackend:
     replicas: 1
+  ## check values yaml for resource recommendation
+  resources:
+    limits:
+      cpu: "1000m" #default "5000m"
+      memory: "2Gi" #default "6Gi"
+    requests:
+      cpu: "500m" #default "2000m"
+      memory: "1Gi" #default "6Gi"
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"

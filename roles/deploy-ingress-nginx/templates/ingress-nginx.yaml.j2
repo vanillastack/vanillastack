@@ -355,13 +355,20 @@ controller:
   ## ref: https://github.com/kubernetes/ingress-nginx/issues/4735#issuecomment-551204903
   ## Ideally, there should be no limits.
   ## https://engineering.indeedblog.com/blog/2019/12/cpu-throttling-regression-fix/
+  # resources:
+  #   limits:
+  #     cpu: 5000m
+  #     memory: 6Gi
+  #   requests:
+  #     cpu: 2000m
+  #     memory: 6Gi
   resources:
     limits:
-      cpu: 5000m
-      memory: 6Gi
+      cpu: "{{ ingress.resources.limits.cpu }}"
+      memory: "{{ ingress.resources.limits.memory }}"
     requests:
-      cpu: 2000m
-      memory: 6Gi
+      cpu: "{{ ingress.resources.requests.cpu }}"
+      memory: "{{ ingress.resources.requests.memory }}"
 
   # Mutually exclusive with keda autoscaling
   autoscaling:
@@ -635,7 +642,7 @@ controller:
         image: kube-webhook-certgen
 {% else %}
         registry: k8s.gcr.io
-        image ingress-nginx/kube-webhook-certgen
+        image: ingress-nginx/kube-webhook-certgen
 {% endif %}
 
         ## for backwards compatibility consider setting the full image url via the repository value below
@@ -771,7 +778,7 @@ defaultBackend:
     image: defaultbackend-amd64
 {% else %}
     registry: k8s.gcr.io
-    image defaultbackend-amd64
+    image: defaultbackend-amd64
 {% endif %}
 
     ## for backwards compatibility consider setting the full image url via the repository value below
