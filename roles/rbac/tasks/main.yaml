@@ -25,10 +25,13 @@
     state: present
     definition: "{{ lookup('template', 'global-clusterrole.yaml.j2') | from_yaml }}"
 
+#? Needs to be evaluated
 - name: create ClusterRole ClusterRoleBinding
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'global-clusterrolebinding-clusterroles.yaml.j2') | from_yaml }}"
+  with_items:
+    - "{{ rbac.clusterRoles }}"
 
 - name: create global ClusterRoleBinding
   kubernetes.core.k8s:

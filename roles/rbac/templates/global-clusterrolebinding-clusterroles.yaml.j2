@@ -1,17 +1,15 @@
-{% for user in rbac.users %}
-{% for clusterrole in rbac.clusterRoles %}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: "mpaas-customer-binding-{{user}}-{{clusterrole}}"
+  name: "mpaas-customer-binding-users-{{ item }}"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: "{{clusterrole}}"
+  name: "{{ item }}"
 subjects:
+{% for user in rbac.users %}
 - kind: User
-  name: "{{user}}"
+  name: "{{ user }}"
   apiGroup: ""
-{% endfor %}
 {% endfor %}
