@@ -2477,7 +2477,7 @@ prometheus:
 
     ## How long to retain metrics
     ##
-    retention: {{ monitoring.retention|default(14d) }}
+    retention: {{ monitoring.retention|default("14d") }}
 
     ## Maximum size of metrics
     ##
@@ -2648,6 +2648,7 @@ prometheus:
     ## If scrape config contains a repetitive section, you may want to use a template.
     ## In the following example, you can see how to define `gce_sd_configs` for multiple zones
     # additionalScrapeConfigs: |
+{% raw %}
     #  - job_name: "node-exporter"
     #    gce_sd_configs:
     #    {{range $zone := .Values.gcp_zones}}
@@ -2655,6 +2656,7 @@ prometheus:
     #      zone: "{{$zone}}"
     #      port: 9100
     #    {{end}}
+{% endraw %}
     #    relabel_configs:
     #    ...
 
