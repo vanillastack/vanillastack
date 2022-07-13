@@ -184,6 +184,8 @@ monitoring:
     requests:
       cpu: 200m
       memory: 512Mi
+  remoteWriteReceiver:
+    enabled: false #default false!
   kubeApiServer:
     enabled: true
   kubelet:
@@ -193,7 +195,7 @@ monitoring:
   coreDns:
     enabled: true
   kubeDns:
-    enabled: false
+    enabled: true
   kubeEtcd:
     enabled: true
   kubeScheduler:
