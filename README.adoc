@@ -103,7 +103,7 @@ VanillaStack requirements:
 
 == Installation Guide
 
-A detailed Installation Instrunction can be found at link:https://docs.vanillastack.io[Vanillastack User Guide]
+A detailed Installation Instruction can be found at link:https://docs.vanillastack.io[Vanillastack User Guide]
 
 == Update Vanillstack 
 
