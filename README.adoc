@@ -101,14 +101,24 @@ VanillaStack requirements:
   ** `https://harbor.vanillastack.io`
 * Debian 11
 
+== Installation Guide
+
+A detailed Installation Instrunction can be found at link:https://docs.vanillastack.io[Vanillastack User Guide]
+
+== Update Vanillstack 
+
+An Update from Vanillastack Version 1.8.2 to 2.0.0 is not possible. The Vanillastack needs a new installation.
+
 == Ressources
 
 * Main Hub around the Project is the link:https://vanillastack.io/[Website]
 * Check out our link:https://www.youtube.com/playlist?list=PLJcz3tF8m0MS7DbVXzutPpJW-Vc_-9d_N[Youtube Channel]
-* The development documentation is stored at: [docs.vanillastack.io]
+* Bugs, Suggestions, Feature Requests are reported in the related Repository.
+
+////
 * Discussions are happening on our link:https://discourse.vanillastack.io/[Discourse] Channels
 * live discussions are possible at: link:https://rocketchat.vanillastack.io[Rocket.Chat]
-* Bugs, Suggestions, Feature Requests are reported in our link:gitlab.cloudical.net/vanillastack/vanillastack/-/issues[Vanillastack-Gitlab]
+////
 
 == Contribution
 
