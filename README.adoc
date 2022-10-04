@@ -68,6 +68,7 @@ Vanilla is continuously growing and adapting. As a community project, there is n
 
 We are excited about your interest in Vanilla and hope you will join us. We take our community very seriously, and we are committed to creating a community built on respectful interactions and inclusivity
 
+<!---
 == How to Get Started
 
 * The installer is only a side module that can run anywhere on your network (even locally on your desktop).
@@ -94,6 +95,7 @@ VanillaStack Installer:
 * SSH-access to the machines that vanillastack should be installed on
 *
 
+-->
 
 VanillaStack requirements:
 
