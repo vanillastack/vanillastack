@@ -68,34 +68,34 @@ Vanilla is continuously growing and adapting. As a community project, there is n
 
 We are excited about your interest in Vanilla and hope you will join us. We take our community very seriously, and we are committed to creating a community built on respectful interactions and inclusivity
 
-<!---
-== How to Get Started
 
-* The installer is only a side module that can run anywhere on your network (even locally on your desktop).
-* The installer must be able to login via SSH into the nodes that VanillaStack will be installed on.
-* The User for the login must be able to do sudo
-* The installer will create an unique SSH Keypair everytime it runs. This Key must be manually installed on your nodes by *YOU* footnote:[This ensures that none of *your* private keys get leaked while possibly transferring them. This way, a key ist created and destroyed after installation and you are free to remove the key anytime you wish from your nodes]
+# == How to Get Started
 
-* Variant a) Use a machine with an ready made installation ISO image:
-** Download the ISO and Boot it: `https://downloads.vanillastack.io/iso/live-image/vanillastack-installer-amd64.hybrid.iso`
+# * The installer is only a side module that can run anywhere on your network (even locally on your desktop).
+# * The installer must be able to login via SSH into the nodes that VanillaStack will be installed on.
+# * The User for the login must be able to do sudo
+# * The installer will create an unique SSH Keypair everytime it runs. This Key must be manually installed on your nodes by *YOU* footnote:[This ensures that none of *your* private keys get leaked while possibly transferring them. This way, a key ist created and destroyed after installation and you are free to remove the key anytime you wish from your nodes]
 
-* Variant b) Use an already running Docker instance:
-** pull and run the Docker-Container if you have a local docker running already:
+# * Variant a) Use a machine with an ready made installation ISO image:
+# ** Download the ISO and Boot it: `https://downloads.vanillastack.io/iso/live-image/vanillastack-installer-amd64.hybrid.iso`
 
- $ docker run --name vanilla --rm harbor.vanillastack.io/vanillastack/installer
+# * Variant b) Use an already running Docker instance:
+# ** pull and run the Docker-Container if you have a local docker running already:
 
-** Point your browser to the installer at `http://localhost:8080`
+# $ docker run --name vanilla --rm harbor.vanillastack.io/vanillastack/installer
 
-== Requirements
+# ** Point your browser to the installer at `http://localhost:8080`
 
-VanillaStack Installer:
+# == Requirements
 
-* a working local Docker installation __or...__
-* __...or__ a empty machine (can be virtual) for running ISO image
-* SSH-access to the machines that vanillastack should be installed on
-*
+# VanillaStack Installer:
 
--->
+# * a working local Docker installation __or...__
+# * __...or__ a empty machine (can be virtual) for running ISO image
+# * SSH-access to the machines that vanillastack should be installed on
+# *
+
+
 
 VanillaStack requirements:
 
