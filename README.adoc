@@ -97,7 +97,7 @@ VanillaStack Installer:
 
 ////
 
-VanillaStack requirements:
+VanillaStack requirements::
 
 * Internet network access
   ** `https://harbor.vanillastack.io`
