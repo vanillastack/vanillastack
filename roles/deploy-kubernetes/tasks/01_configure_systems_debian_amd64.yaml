@@ -203,3 +203,11 @@
     name: disable-transparent-huge-pages
     state: restarted
     enabled: true
+
+- name: Create hosts file entry
+  ansible.builtin.lineinfile:
+    path: '/etc/hosts'
+    line: "{{ hostvars[item]['ansible_host'] }} {{ item }}"
+  with_items: 
+    - "{{ groups['master'] }}"
+    - "{{ groups['worker'] }}"
