@@ -63,15 +63,6 @@
   roles:
     - role: install-haproxy
       action: 02_install_haproxy
-      when: not create_extLB
-
-- name: Install HaProxy
-  hosts: haproxy
-  become: true
-  gather_facts: true
-  roles:
-    - role: install-haproxy
-      action: 02_install_haproxy
       when: create_extLB
 
 - name: Configure Kube Systems

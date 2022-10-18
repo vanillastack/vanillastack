@@ -63,7 +63,7 @@
   roles:
     - role: install-haproxy
       action: 02_install_haproxy
-      when: not create_extLB
+      when: create_extLB
 
 - name: Configure Kube Systems
   hosts: install_nodes,install_master
@@ -72,13 +72,6 @@
   roles:
     - role: deploy-kubernetes
       action: 02_configure_cluster
-
-        #- name: generate secrets
-        #  hosts: master[0]
-        #  gather_facts: true
-        #  roles:
-        #    - role: deploy-kubernetes
-        #      action: 02-1_generate-certificate
 
 - name: Init Kubernetes Cluster
   hosts: install_master[0]

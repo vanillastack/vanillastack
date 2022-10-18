@@ -1,7 +1,9 @@
 ---
 commercial:
   enabled: true
+# This Install keepalived if you dont have a LB defined needs an floating IP defined in 'locadbalancerIP'
 make_ha: false
+# This Creates an external Load Balancer
 create_extLB: false
 cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 cluster_pod_cidr: "10.0.0.0/8"
