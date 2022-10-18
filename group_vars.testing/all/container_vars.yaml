@@ -1,7 +1,7 @@
 ---
 commercial:
   enabled: true
-# This Install keepalived if you dont have a LB defined needs an flating IP defined in 'locadbalancerIP'
+# This Install keepalived if you dont have a LB defined needs an floating IP defined in 'locadbalancerIP'
 make_ha: false
 # This Creates an external Load Balancer
 create_extLB: false
