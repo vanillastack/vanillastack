@@ -4,33 +4,33 @@
     update_cache: true
 
 - name: Get available Kubernetes version
-  shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  ansible.builtin.shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
   register: kubeversion_apt_output
 
 - name: Set Kubernetes version variable
-  set_fact:
+  ansible.builtin.set_fact:
     kube_version: "{{ kubeversion_apt_output.stdout }}"
 
 - name: Fail when kubernetes version is empty
-  fail:
+  ansible.builtin.fail:
     msg: Unable to determine Kubernetes package version from apt-cache!
   when: kube_version is not defined or kube_version|trim == ""
 
 - name: Get available CRI-O version
-  shell: apt-cache madison cri-o | grep {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  ansible.builtin.shell: apt-cache madison cri-o | grep {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f4
   register: crioversion_apt_output
 
 - name: Set CRI-O Package version
-  set_fact:
+  ansible.builtin.set_fact:
     crio_package_version: "{{ crioversion_apt_output.stdout }}"
 
 - name: Fail when CRI-O version is empty
-  fail:
+  ansible.builtin.fail:
     msg: Unable to determine CRI-O package version from apt-cache!
   when: crio_package_version is not defined or crio_package_version|trim == ""
 
 - name: Unhold packages
-  command: apt-mark unhold {{ item }}
+  ansible.builtin.command: apt-mark unhold {{ item }}
   with_items:
     - "kubelet"
     - "kubeadm"
@@ -39,7 +39,7 @@
     - "cri-o-runc"
 
 - name: Install kube packages
-  apt:
+  ansible.builtin.apt:
     pkg:
       - "kubelet={{ kube_version }}"
       - "kubeadm={{ kube_version }}"
@@ -51,7 +51,7 @@
   delay: 10
 
 - name: Install cri-o packages
-  apt:
+  ansible.builtin.apt:
     pkg:
       - "cri-o={{ crio_package_version }}"
       - "cri-o-runc={{ kubernetes.crioRuncVersion }}"
@@ -62,7 +62,7 @@
   delay: 10
 
 - name: Hold packages
-  dpkg_selections:
+  ansible.builtin.dpkg_selections:
     name: "{{ item }}"
     selection: hold
   with_items:
@@ -97,7 +97,7 @@
 - include_tasks: kubeadm_version_check.yaml
 
 - name: Enable auto completion
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ ansible_env.HOME }}/.bashrc"
     line: "source <(kubectl completion bash)"
     state: present
@@ -105,7 +105,7 @@
 - name: Set bash history timestamps for all users using pam
   become: true
   become_user: root
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/environment
     line: 'export HISTTIMEFORMAT="%F %T "'
     state: present
