@@ -2,7 +2,7 @@
 - name: Check if distribution is supported
   fail:
     msg: This disribution is currently not supported by VanillaStack
-  when: ansible_distribution != 'Debian'
+  when: ansible_distribution != 'RHEL'
 
 - name: Preinstall packages
   apt:

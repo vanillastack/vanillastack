@@ -1,4 +1,4 @@
 ---
 # tasks file for deploy-kubernetes
 - name: "{{ action }}"
-  include_tasks: "{{ action }}.yaml"
+  ansible.builtin.include_tasks: "{{ action }}.yaml"
