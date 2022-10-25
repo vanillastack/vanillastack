@@ -1,0 +1,200 @@
+rbac:
+  namespaces:
+    - my-namespace
+  users:
+    - my-user
+  globalPermissions:
+    # Read-only everything in the cluster
+    # Taken from https://gist.github.com/karthik101/201374aee2ebea25ddf6c723858568be
+    - apiGroups:
+      - ""
+      resources:
+      - componentstatuses
+      - configmaps
+      - endpoints
+      - persistentvolumeclaims
+      - pods
+      - replicationcontrollers
+      - replicationcontrollers/scale
+      - serviceaccounts
+      - services
+      - nodes
+      - persistentvolumeclaims
+      - persistentvolumes
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - ""
+      resources:
+      - bindings
+      - events
+      - limitranges
+      - namespaces/status
+      - pods/log
+      - pods/status
+      - replicationcontrollers/status
+      - resourcequotas
+      - resourcequotas/status
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - ""
+      resources:
+      - namespaces
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - apps
+      resources:
+      - daemonsets
+      - deployments
+      - deployments/scale
+      - replicasets
+      - replicasets/scale
+      - statefulsets
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - autoscaling
+      resources:
+      - horizontalpodautoscalers
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - batch
+      resources:
+      - cronjobs
+      - jobs
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - extensions
+      resources:
+      - daemonsets
+      - deployments
+      - deployments/scale
+      - ingresses
+      - networkpolicies
+      - replicasets
+      - replicasets/scale
+      - replicationcontrollers/scale
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - policy
+      resources:
+      - poddisruptionbudgets
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - networking.k8s.io
+      resources:
+      - networkpolicies
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - storage.k8s.io
+      resources:
+      - storageclasses
+      - volumeattachments
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - rbac.authorization.k8s.io
+      resources:
+      - clusterrolebindings
+      - clusterroles
+      - roles
+      - rolebindings
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - pxc.percona.com
+      resources:
+      - perconaxtradbbackups
+      - perconaxtradbbackups/status
+      - perconaxtradbclusters
+      - perconaxtradbclusters/status
+      - perconaxtradbclusterbackups
+      - perconaxtradbclusterbackups/status
+      - perconaxtradbclusterrestores
+      - perconaxtradbclusterrestores/status
+      verbs:
+      - get
+      - list
+      - watch
+  clusterRoles:
+    - view
+  serviceAccounts: []
+    # - name: my-service-account
+    #   namespace: my-service-account
+    #   globalPermissions:
+    #     - apiGroups:
+    #       - ""
+    #       - storage.k8s.io
+    #       - rbac.authorization.k8s.io
+    #       - apps
+    #       - extensions
+    #       - batch
+    #       - autoscaling
+    #       - networking.k8s.io/v1beta1
+    #       resources:
+    #       - componentstatuses
+    #       - nodes
+    #       - nodes/proxy
+    #       - services
+    #       - pods
+    #       - configmaps
+    #       - secrets
+    #       - resourcequotas
+    #       - replicationcontrollers
+    #       - limitranges
+    #       - persistentvolumeclaims
+    #       - persistentvolumes
+    #       - namespaces
+    #       - endpoints
+    #       - storageclasses
+    #       - clusterroles
+    #       - roles
+    #       - daemonsets
+    #       - deployments
+    #       - replicasets
+    #       - ingresses
+    #       - statefulsets
+    #       - cronjobs
+    #       - jobs
+    #       - horizontalpodautoscalers
+    #       verbs: ["get", "list"]
+    #     - apiGroups:
+    #       - custom.metrics.k8s.io
+    #       resources: ["*"]
+    #       verbs:
+    #       - get
+    #       - list
+    #     - nonResourceURLs:
+    #       - /version
+    #       - /healthz
+    #       - /metrics
+    #       verbs: ["get"]
