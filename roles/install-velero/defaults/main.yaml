@@ -25,7 +25,7 @@ velero:
     snapshotBucketName: kubernetes-pv
     region: <region name>
     publicURL: <public url>
-    s3URL: <s3 url> 
+    s3URL: <s3 url>
     accessKey: <access key>
     secretKey: <secret key>
   minio:

@@ -3,7 +3,7 @@ Ansible role to deploy Velero to schedule backups.
 
 ## Requirements
 
-NFS is required as the backup target. 
+NFS is required as the backup target.
 
 Note: Don't store backups in the local running Rook / Ceph cluster because its senseless in regards of DR.
 

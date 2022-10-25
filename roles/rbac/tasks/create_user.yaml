@@ -15,7 +15,7 @@
     path: "/etc/kubernetes/pki/{{item}}.csr"
   register: user_csr
   become: true
-  
+
 - name: "Create {{item}}.csr"
   shell: "openssl req -new -key /etc/kubernetes/pki/{{item}}.key -out /etc/kubernetes/pki/{{item}}.csr -subj '/CN={{item}}/O=customer'"
   when: not user_csr.stat.exists
@@ -26,7 +26,7 @@
     path: "/etc/kubernetes/pki/{{item}}.crt"
   register: user_crt
   become: true
-  
+
 - name: "Create {{item}}.crt"
   shell: "openssl x509 -req -in /etc/kubernetes/pki/{{item}}.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out /etc/kubernetes/pki/{{item}}.crt -days 390"
   when: not user_crt.stat.exists

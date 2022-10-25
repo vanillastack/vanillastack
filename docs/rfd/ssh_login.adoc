@@ -100,7 +100,7 @@ Option 1): As ssh-keys might be "uncommon" to the client, we should support this
 
 1a) User enters on the installer UI the same username/password for all systems to log via ssh.
 
-This is the "easiest" option, for us as well as for the client. I would also refrain from creating additional ssh-key pairs, because this would add complexity, and not increase security. Username/passwords still exist on those systems, even after we install and delete the created ssh-keys. Therefore, we do not really need this extra step. 
+This is the "easiest" option, for us as well as for the client. I would also refrain from creating additional ssh-key pairs, because this would add complexity, and not increase security. Username/passwords still exist on those systems, even after we install and delete the created ssh-keys. Therefore, we do not really need this extra step.
 
 1b) User enters on the installer UI different username/password for each system to log via ssh.
 
@@ -108,7 +108,7 @@ This could be a client internal requirement, to not use the same username/passwo
 
 Option 2): As the client might have internal requirments forbbiding username/password via ssh, we should support this option. From an implement perspective we have similar cases as above, i.e 2a) one key-pair for all systems; 2b) different key-pair for each system. As the key-pair is, ideally must be only temporary as the username/password in 1), I would recommend to implement only 2a. This means that the client is responsible to delete/remove the keys from the systems after the installation is finished.
 
-As ssh-keys might be protected with a passphrase, due to internal requirements, it should be supported to enter this passphrase on the UI. If left blank, than installer assumes ssh-key has no phassphrase. In this case I would refrain from extracting the ssh-key from an ssh-agent, this only adds complexity, and it does not really increase security. If ssh-keys are uncommon, ssh-agents even more. Adding the passphrase once at the agent, or once more in the UI of the installer, it does not make a big difference. 
+As ssh-keys might be protected with a passphrase, due to internal requirements, it should be supported to enter this passphrase on the UI. If left blank, than installer assumes ssh-key has no phassphrase. In this case I would refrain from extracting the ssh-key from an ssh-agent, this only adds complexity, and it does not really increase security. If ssh-keys are uncommon, ssh-agents even more. Adding the passphrase once at the agent, or once more in the UI of the installer, it does not make a big difference.
 
 At the end we recommend to use temporary credentials, be those username/password, or ssh-key (with or without phassphrase), that should be removed/deleted by the client after installation is finished. Thus, we could implement a warning at the end of the intallation, like "Warning: Please make sure to remove/delete credentials used for the installation from the systems."
 

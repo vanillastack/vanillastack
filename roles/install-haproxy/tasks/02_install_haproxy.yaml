@@ -1,11 +1,11 @@
 ---
 - name: Install basic packages
-  package:
+  ansible.builtin.package:
     state: present
     name:
       - haproxy
 
-- name: create bridge traffic config
+- name: Create bridge traffic config
   sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
@@ -16,10 +16,10 @@
     sysctls:
       net.ipv4.ip_nonlocal_bind: 1
 
-#- name: Start reading wildcard certificate
+# - name: Start reading wildcard certificate
 #  include_vars: vars/wildcard_.pem.yml
 
-#- name: Copy wildcard certificate in /etc/ssl/private/
+# - name: Copy wildcard certificate in /etc/ssl/private/
 #  copy:
 #     content: "{{ private_key_content }}"
 #     dest: /etc/ssl/private/wildcard.pem
@@ -28,7 +28,7 @@
 #     mode: 0600
 
 - name: "Create haproxy config file"
-  template:
+  ansible.builtin.template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
     backup: true

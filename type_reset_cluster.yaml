@@ -10,7 +10,7 @@
     - role: reset-cluster
       action: remove-local-files
       when: reset_environment
-        
+
 - name: Reset OSDs
   hosts: storage
   become: true

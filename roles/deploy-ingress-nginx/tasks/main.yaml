@@ -9,5 +9,5 @@
     chart_version: "{{ ingress.chartVersion }}"
     values: "{{ lookup('template', 'ingress-nginx.yaml.j2') | from_yaml }}"
 
-- pause: 
+- pause:
     seconds: 15

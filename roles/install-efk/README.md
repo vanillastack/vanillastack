@@ -34,5 +34,5 @@ Example Playbook
 Author Information
 ------------------
 
-Kacper Pabian  
+Kacper Pabian
 kacper.pabian@cloudical.io

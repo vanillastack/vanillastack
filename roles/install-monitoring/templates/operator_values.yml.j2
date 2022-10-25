@@ -1438,7 +1438,7 @@ kube-state-metrics:
   prometheus:
     monitor:
       enabled: true
-      
+
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       ##
       interval: ""
@@ -2195,7 +2195,7 @@ prometheus:
     tlsSecretPerReplica:
       enabled: false
       ## Final form of the secret for each per replica ingress is
-{% raw %}      
+{% raw %}
       ## {{ tlsSecretPerReplica.prefix }}-{{ $replicaNumber }}
 {% endraw %}
       ##
