@@ -2,4 +2,8 @@
 # TODO: RHEL Repo on Cloudical Servers?
 
 - name: Configure RHEL Repos
-  ansible.buildin.msg: "[TODO] Configure Repos..."
+  ansible.buildin.copy:
+    mode: 0644
+    owner: root
+    src: etc/yum.repos.d/kubernetes.repo
+    dest: /etc/yum.repos.d/kubernetes.repo
