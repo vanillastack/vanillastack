@@ -10,9 +10,9 @@
     wait: true
 
 - name: Get Kube Dashboard ServiceAccount access token
-  shell: "kubectl get secrets -n kube-dashboard $(kubectl get secrets -n kube-dashboard | awk '/kubernetes-dashboard-token/ {print $1;exit}') -o jsonpath='{.data.token}'"
+  ansible.builtin.shell: "kubectl get secrets -n kube-dashboard $(kubectl get secrets -n kube-dashboard | awk '/kubernetes-dashboard-token/ {print $1;exit}') -o jsonpath='{.data.token}'"
   register: dashboardtoken
 
 - name: Print Kube Dashboard ServiceAccount access token
-  debug:
+  ansible.builtin.debug:
     msg: "{{ dashboardtoken.stdout | b64decode }}"

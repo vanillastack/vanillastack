@@ -1,5 +1,5 @@
 ---
-- name: create inventory for scaling
+- name: Create inventory for scaling
   hosts: master[0]
   roles:
     - role: deploy-kubernetes
@@ -19,7 +19,7 @@
   roles:
     - role: deploy-polyverse
       when: polyverse.enabled
- 
+
 - name: Configure Servers
   hosts: install_nodes,install_master
   become: true
@@ -80,7 +80,7 @@
     - role: deploy-kubernetes
       action: 03_deploy_kubernetes
 
-- name: generate secrets
+- name: Generate Secrets
   hosts: master[0]
   gather_facts: false
   roles:
@@ -109,7 +109,7 @@
     ansible_connection: local
   tasks:
     - name: Make sure local uuid directory exists
-      file:
+      ansible.builtin.file:
         state: directory
         path: "/tmp/ansible/{{ cluster_uuid }}"
         recurse: true
@@ -139,14 +139,14 @@
   become: false
   gather_facts: true
   roles:
-  - role: install-monitoring
-    action: operator
-    when: vanillaservices.monitoring_enabled
-  - role: install-monitoring
-    action: textile-exporters
-    when: vanillaservices.monitoring_enabled
-  - role: deploy-metrics-server
-    when: vanillaservices.metricsServer_enabled    
+    - role: install-monitoring
+      action: operator
+      when: vanillaservices.monitoring_enabled
+    - role: install-monitoring
+      action: textile-exporters
+      when: vanillaservices.monitoring_enabled
+    - role: deploy-metrics-server
+      when: vanillaservices.metricsServer_enabled
 
 - name: Deploy Ingress Nginx
   hosts: master[0]
@@ -246,12 +246,12 @@
   hosts: master[0]
   gather_facts: false
   roles:
-  - role: install-grafana
-    when: vanillaservices.grafana_enabled
+    - role: install-grafana
+      when: vanillaservices.grafana_enabled
 
 - name: Install Loki
   hosts: master[0]
   gather_facts: false
   roles:
-  - role: install-loki
-    when: 'vanillaservices.loki_enabled | default(false)'
+    - role: install-loki
+      when: 'vanillaservices.loki_enabled | default(false)'

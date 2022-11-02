@@ -1,17 +1,17 @@
 ---
 - name: Install packages
-  package: 
-    state: present 
+  ansible.builtin.package:
+    state: present
     name:
       - keepalived
 
 - name: Put configuration file for keepalived
-  template: 
-    src: keepalived.conf.j2 
-    dest: /etc/keepalived/keepalived.conf 
-    owner: root 
-    group: root 
+  ansible.builtin.template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
     mode: 0644
   notify:
-     - restart keepalived
+    - restart keepalived
   tags: config_keepalived

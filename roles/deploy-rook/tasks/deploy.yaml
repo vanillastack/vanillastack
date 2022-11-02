@@ -33,7 +33,7 @@
   pause:
     seconds: "{{item.delay}}"
 
-- name: wait for pods to come up
+- name: Wait for pods to come up
   shell: kubectl get pods -o json -n "{{rook.namespace}}" --field-selector=status.phase!=Succeeded
   register: kubectl_get_pods
   until: kubectl_get_pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
@@ -41,8 +41,8 @@
   delay: 10
   when: item.wait
 
-- name: "{{item.name}} | cleanup"
+- name: "{{ item.name }} | cleanup"
   file:
-    path: "/tmp/rook_{{item.name}}.yaml"
+    path: "/tmp/rook_{{ item.name }}.yaml"
     state: absent
   when: rook[item.name]['enabled']

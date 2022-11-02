@@ -1,5 +1,4 @@
 ---
 # tasks file for install_haproxy
 - name: "{{ action }}"
-  include_tasks: "{{ action }}.yaml"
-
+  ansible.builtin.include_tasks: "{{ action }}.yaml"

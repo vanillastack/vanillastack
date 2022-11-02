@@ -22,7 +22,7 @@ Steering committee members are added according the link:GOVERNANCE.adoc[GOVERNAN
 | Name                                                    | Represents  | Github
 
 | Karsten Samaschke <karsten.samaschke@cloudical.io>      | Cloudical   | [ksamaschke](https://github.com/ksamaschke)
-| Jurlind Budurushi <jurlind.budurushi@cloudical.io> | Cloudical   | 
+| Jurlind Budurushi <jurlind.budurushi@cloudical.io> | Cloudical   |
 | Ivo Mende <ivo.mende@cloudical.io> | Cloudical |
 | Patrick Scheel <patrick.scheel@cloudical.io       | Cloudical   |
 |===

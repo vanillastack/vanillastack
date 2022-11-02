@@ -19,7 +19,7 @@
   roles:
     - role: deploy-polyverse
       when: polyverse.enabled
- 
+
 - name: Configure Servers
   hosts: install_nodes,install_master
   become: true

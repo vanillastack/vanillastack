@@ -38,5 +38,5 @@
     create_namespace: true
     chart_version: "{{ velero.chartVersion }}"
     values: "{{ lookup('template', 'velero.yaml.j2') | from_yaml }}"
-    wait: true 
+    wait: true
     update_repo_cache: true

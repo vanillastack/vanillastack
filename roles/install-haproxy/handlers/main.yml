@@ -1,12 +1,12 @@
 ---
-- name: restart haproxy
-  systemd: 
-    name: haproxy 
+- name: Restart haproxy
+  systemd:
+    name: haproxy
     state: restarted
     enabled: true
 
-- name: restart keepalived
+- name: Restart keepalived
   systemd:
-    name: keepalived 
+    name: keepalived
     state: restarted
     enabled: true

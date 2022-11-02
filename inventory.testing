@@ -18,7 +18,7 @@ testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 master
 install_nodes
 
-#This group defines, where the private loadbalancer and virtual IP 
+#This group defines, where the private loadbalancer and virtual IP
 # should be installed. That can be changed to other systems as well
 [haproxy:children]
 master

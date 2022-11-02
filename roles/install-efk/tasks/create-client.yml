@@ -10,7 +10,7 @@
     - name: create kibanasecret password
       set_fact:
         kibana_client_secret: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
-    
+
     - name: Deploy kibanaclient
       kubernetes.core.k8s:
         definition: "{{ lookup('template', 'kibana-client-keycloack.yml.j2') | from_yaml }}"
@@ -98,8 +98,9 @@
             "protocol": "openid-connect",
             "protocolMapper": "oidc-usermodel-client-role-mapper"
           }'
-          
+
 - name: get kibana secret if not defined
+  when: kibana_client_secret is undefined or kibana_client_secret|length<1
   block:
     - name: get kibana client secret
       k8s_info:
@@ -108,10 +109,8 @@
         namespace: "{{ keycloak.namespace }}"
         name: kibana-client
       register: clientsecret
-    
     - set_fact:
         kibana_client_secret: "{{ clientsecret.resources[0].spec.client.secret }}"
-  when: kibana_client_secret is undefined or kibana_client_secret|length<1
 
 - name: get admin user id
   uri:
@@ -147,8 +146,8 @@
     method: POST
     body_format: json
     status_code: 204
-    body: '[ 
-      { 
+    body: '[
+      {
         "id": "{{ roleid }}",
         "name": "admin",
         "composite": false,
@@ -158,11 +157,11 @@
 
 - name: apply kibana configmaps
   kubernetes.core.k8s:
-    state: present     
+    state: present
     definition: "{{ lookup('template', 'gatekeeper-config.yml.j2') | from_yaml }}"
 - name: apply kibana configmaps
   kubernetes.core.k8s:
-    state: present     
+    state: present
     definition: "{{ lookup('template', 'gatekeeper-files.yml.j2') | from_yaml }}"
 
 - name: restart grafana to get latest configmap

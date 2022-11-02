@@ -192,11 +192,11 @@ action_cf_mwl = cloudflare[cfuser="%(cfemail)s", cftoken="%(cfapikey)s"]
                 %(mta)s-whois-lines[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s"]
 
 # Report block via blocklist.de fail2ban reporting service API
-# 
+#
 # See the IMPORTANT note in action.d/blocklist_de.conf for when to use this action.
 # Specify expected parameters in file action.d/blocklist_de.local or if the interpolation
 # `action_blocklist_de` used for the action, set value of `blocklist_de_apikey`
-# in your `jail.local` globally (section [DEFAULT]) or per specific jail section (resp. in 
+# in your `jail.local` globally (section [DEFAULT]) or per specific jail section (resp. in
 # corresponding jail.d/my-jail.local file).
 #
 action_blocklist_de  = blocklist_de[email="%(sender)s", service=%(filter)s, apikey="%(blocklist_de_apikey)s", agent="%(fail2ban_agent)s"]
@@ -339,7 +339,7 @@ logpath = /opt/openhab/logs/request.log
 port    = http,https
 logpath = %(nginx_error_log)s
 
-# To use 'nginx-limit-req' jail you should have `ngx_http_limit_req_module` 
+# To use 'nginx-limit-req' jail you should have `ngx_http_limit_req_module`
 # and define `limit_req` and `limit_req_zone` as described in nginx documentation
 # http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
 # or for example see in 'config/filter.d/nginx-limit-req.conf'

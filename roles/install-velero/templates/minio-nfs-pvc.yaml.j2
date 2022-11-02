@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minio-nfs-pvc 
+  name: minio-nfs-pvc
   namespace: {{ velero.namespace }}
 spec:
   storageClassName: nfs

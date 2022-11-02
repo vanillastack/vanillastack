@@ -208,6 +208,6 @@
   ansible.builtin.lineinfile:
     path: '/etc/hosts'
     line: "{{ hostvars[item]['ansible_host'] }} {{ item }}"
-  with_items: 
+  with_items:
     - "{{ groups['master'] }}"
     - "{{ groups['worker'] }}"
