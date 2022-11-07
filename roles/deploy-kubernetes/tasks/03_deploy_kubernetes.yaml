@@ -24,9 +24,9 @@
 - set_fact:
     certificate_key: "{{ generated_certificate_key.stdout }}"
 
-- name: define port, kubelet is listening on
+- name: Define port, kubelet is listening on
   set_fact:
-    apiport: "{% if create_extLB %}6443{% else %}8443{% endif %}"
+    apiport: "{% if install_haproxy %}6443{% else %}8443{% endif %}"
 
 - name: Create kubeadm config file
   template:
