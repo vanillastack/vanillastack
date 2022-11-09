@@ -1,10 +1,12 @@
 ---
 commercial:
   enabled: true
-# This Install keepalived if you dont have a LB defined needs an floating IP defined in 'locadbalancerIP'
+# This installs keepalived and HaProxy on the [haproxy:children] group defined in the inventory, needs an floating IP defined in 'locadbalancerIP'
+# Setting this to true acts like 'install_haproxy' is set to true
 make_ha: false
-# This Creates an external Load Balancer
-create_extLB: false
+# This installs HaProxy as Loadbalancing service to [haproxy:children] group defined in the inventory
+# Can be any machine you define in this group, e.g. an external machine
+install_haproxy: false
 cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 cluster_pod_cidr: "10.0.0.0/8"
 cluster_service_cidr: "10.96.0.0/12"

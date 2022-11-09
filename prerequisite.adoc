@@ -51,6 +51,6 @@ $ cp -r group_vars.orig group_vars
 ----
 # run haproxy installation:
 # if user needs to enter a sudo password, add "--ask-sudo-pass" to the end of the line
-$ ansible-playbook -i hosts type_haproxy_deploy.yaml
+$ ansible-playbook -i hosts type_install_loadbalancing.yaml
 $ ansible-playbook -i hosts type_kubernetes_deploy.yaml
 ----

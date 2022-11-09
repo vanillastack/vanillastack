@@ -8,18 +8,25 @@
     keepalived_priority: 110
   roles:
     - role: install-haproxy
-      action: 01_install_keepalived
+      action: 01_make_ha
+      when: make_ha
 
 - name: Install Keepalived
   hosts: haproxy[1:]
   become: true
+  gather_facts: true
   roles:
     - role: install-haproxy
-      action: 01_install_keepalived
+      action: 01_make_ha
+      when: make_ha
 
+# Install HaProxy as Loadbalancer on haproxy group
+# Install when external loadbalancer is wanted OR keepalived is enabled
 - name: Install HaProxy
   hosts: haproxy
   become: true
+  gather_facts: true
   roles:
     - role: install-haproxy
       action: 02_install_haproxy
+      when: install_haproxy or make_ha
