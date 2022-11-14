@@ -14,3 +14,11 @@
   - name: Install pip dependencies
     ansible.builtin.pip:
       requirements: "{{ playbook_dir }}/requirements.txt"
+    when: ansible_distribution == 'Debian'
+
+# RedHat pip apparently works a litttle different to "normal" pip
+  - name: Install pip dependencies
+    become: true
+    ansible.builtin.pip:
+      requirements: "{{ playbook_dir }}/requirements.txt"
+    when: ansible_distribution == 'RedHat'
