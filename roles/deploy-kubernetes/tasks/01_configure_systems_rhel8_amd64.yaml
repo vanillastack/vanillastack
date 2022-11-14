@@ -5,7 +5,7 @@
   when: ansible_distribution != 'RHEL'
 
 - name: Preinstall packages
-  apt:
+  yum:
     name:
       - gnupg
       - python3
@@ -13,7 +13,7 @@
 - include_tasks: configure_debian_repos.yaml
 
 - name: Install necessary packages
-  apt:
+  yum:
     name:
       - curl
       - fail2ban
@@ -33,6 +33,7 @@
       - systemd-timesyncd
       - tar
       - vim
+      - grubby
     autoclean: true
     update_cache: true
     autoremove: true
@@ -42,7 +43,7 @@
   delay: 10
 
 - name: Install packages to masters
-  apt:
+  yum:
     name:
       - helm
     autoclean: true
@@ -55,7 +56,7 @@
   when: "'master' in group_names"
 
 - name: Upgrade OS
-  apt:
+  yum:
     autoclean: true
     update_cache: true
     autoremove: true
@@ -66,7 +67,7 @@
   delay: 10
 
 - name: Upgrade all packages to the latest version
-  apt:
+  yum:
     autoclean: true
     update_cache: true
     autoremove: true
@@ -86,7 +87,7 @@
   when: ntp.manage_timesyncd
 
 - name: Uninstall ntp package
-  apt:
+  yum:
     name: ntp
     state: absent
   when: ntp.manage_timesyncd
@@ -213,13 +214,17 @@
     - "{{ groups['worker'] }}"
 
 - name: Install kube packages
-  apt:
-    pkg:
+  yum:
+    name:
       - "kubelet={{ kube_version }}"
       - "kubeadm={{ kube_version }}"
       - "kubectl={{ kube_version }}"
-    force_apt_get: true
   register: kube_apt_result
   until: kube_apt_result is not failed
   retries: 10
   delay: 10
+
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
+    update_kernel_param: yes

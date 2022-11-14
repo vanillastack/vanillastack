@@ -4,12 +4,13 @@
   connection: local
   tasks:
   - name: Install collections from Ansible galaxy
-    command: "ansible-galaxy collection install {{ item }}"
+    ansible.builtin.command: "ansible-galaxy collection install {{ item }}"
     loop:
       - community.general
       - kubernetes.core
       - cloud.common
+      - ansible.posix
 
   - name: Install pip dependencies
-    pip:
+    ansible.builtin.pip:
       requirements: "{{ playbook_dir }}/requirements.txt"

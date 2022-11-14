@@ -7,3 +7,8 @@
     owner: root
     src: etc/yum.repos.d/kubernetes.repo
     dest: /etc/yum.repos.d/kubernetes.repo
+
+- name: Configure Extra Packages for RHEL
+  yum:
+    list:
+      - 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm'
