@@ -26,14 +26,11 @@
   gather_facts: true
   roles:
     - role: deploy-kubernetes
-      action: 01_configure_systems
-      when: ansible_distribution != 'Debian'
-    - role: deploy-kubernetes
       action: 01_configure_systems_debian_amd64
       when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
     - role: deploy-kubernetes
-      action: 01_configure_systems_debian_ppc64le
-      when: ansible_distribution == 'Debian' and ansible_architecture == "ppc64le"
+      action: 01_configure_systems_rhel8_amd64
+      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
 
 - name: Install Loadbalancing
   ansible.builtin.import_playbook:  type_install_loadbalancing.yaml

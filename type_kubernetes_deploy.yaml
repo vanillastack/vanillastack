@@ -26,11 +26,11 @@
   gather_facts: true
   roles:
     - role: deploy-kubernetes
-      action: 01_configure_systems
-      when: ansible_distribution != 'Debian'
-    - role: deploy-kubernetes
       action: 01_configure_systems_debian_amd64
       when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+    - role: deploy-kubernetes
+      action: 01_configure_systems_rhel8_amd64
+      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
 
 - name: Configure Kube Systems
   hosts: install_nodes,install_master
