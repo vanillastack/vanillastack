@@ -27,7 +27,7 @@
     - name: Fail check
       ansible.builtin.fail:
         msg: Could not install python3 on target machine
-      when: python3_installed_debian.stdout_lines[0] != "True" and python3_installed_rhel.stdout_lines[0] != "True" 
+      when: python3_installed.stdout_lines[0] != "True" and python3_installed_debian.stdout_lines[0] != "True" and python3_installed_rhel.stdout_lines[0] != "True" 
 
 - name: Create inventory for scaling
   hosts: master[0]
