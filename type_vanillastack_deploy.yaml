@@ -19,6 +19,7 @@
               RHEL install succeeded: {{ python3_installed_rhel.stdout_lines }}"
 
 - name: Fail when Python3 could not be installed
+  connection: local
   tasks:
     - ansible.builtin.fail:
         msg: Could not install python3 on target machine
