@@ -1,6 +1,6 @@
 ---
 - name: Install Python if not available
-  host: master[0]
+  hosts: all
   roles:
     - role: deploy-kubernetes
       action: 00_install_python3.yaml
