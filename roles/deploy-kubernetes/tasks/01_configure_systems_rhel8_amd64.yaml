@@ -10,7 +10,7 @@
       - gnupg
       - python3
 
-- include_tasks: configure_debian_repos.yaml
+- include_tasks: configure_rhel_repos.yaml
 
 - name: Install necessary packages
   yum:
