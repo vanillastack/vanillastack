@@ -9,11 +9,11 @@
     - name: Try to install python3 Debian
       ansible.builtin.raw: "sudo apt-get install python3 -y 2>&1>/dev/null && echo True || echo False"
       register: python3_installed_debian
-      when: python3_installed.stdout_lines[0] != True
+      when: python3_installed.stdout_lines[0] != "True"
     - name: Try to install python3 RHEL
       ansible.builtin.raw: "sudo yum -y install python38 2>&1>/dev/null && echo True || echo False"
       register: python3_installed_rhel
-      when: python3_installed.stdout_lines[0] != True
+      when: python3_installed.stdout_lines[0] != "True"
     - name: Debug registered value
       ansible.builtin.debug:
         msg: "Python was installed: {{ python3_installed.stdout_lines }} \n
