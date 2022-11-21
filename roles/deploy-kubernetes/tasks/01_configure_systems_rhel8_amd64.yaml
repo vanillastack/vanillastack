@@ -5,7 +5,7 @@
   when: ansible_distribution != 'RedHat'
 
 - name: Preinstall packages
-  yum:
+  ansible.builtin.yum:
     name:
       - gnupg
       - python3
@@ -13,7 +13,7 @@
 - include_tasks: configure_rhel_repos.yaml
 
 - name: Install necessary packages
-  yum:
+  ansible.builtin.yum:
     name:
       - curl
       - fail2ban
@@ -43,7 +43,7 @@
   delay: 10
 
 - name: Install packages to masters
-  yum:
+  ansible.builtin.yum:
     name:
       - helm
     autoclean: true
@@ -56,7 +56,7 @@
   when: "'master' in group_names"
 
 - name: Upgrade OS
-  yum:
+  ansible.builtin.yum:
     autoclean: true
     update_cache: true
     autoremove: true
@@ -67,7 +67,7 @@
   delay: 10
 
 - name: Upgrade all packages to the latest version
-  yum:
+  ansible.builtin.yum:
     autoclean: true
     update_cache: true
     autoremove: true
@@ -87,7 +87,7 @@
   when: ntp.manage_timesyncd
 
 - name: Uninstall ntp package
-  yum:
+  ansible.builtin.yum:
     name: ntp
     state: absent
   when: ntp.manage_timesyncd
@@ -214,7 +214,7 @@
     - "{{ groups['worker'] }}"
 
 - name: Install kube packages
-  yum:
+  ansible.builtin.yum:
     name:
       - "kubelet={{ kube_version }}"
       - "kubeadm={{ kube_version }}"
