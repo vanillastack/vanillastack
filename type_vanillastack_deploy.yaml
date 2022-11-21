@@ -2,7 +2,7 @@
 - name: Install Python if not available
   hosts: all
   gather_facts: false
-  pre_tasks:
+  tasks:
     - name: Check if python3 is installed
       ansible.builtin.raw: "test -e /usr/bin/python3 && echo True || echo False"
       register: python3_installed
