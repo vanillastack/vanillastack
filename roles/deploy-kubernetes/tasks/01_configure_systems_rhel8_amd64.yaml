@@ -6,6 +6,7 @@
 
 - name: Preinstall packages
   ansible.builtin.yum:
+    update_cache: yes
     name:
       - gnupg
       - python3
@@ -14,6 +15,8 @@
 
 - name: Install necessary packages
   ansible.builtin.yum:
+    state: present
+    update_cache: yes
     name:
       - curl
       - fail2ban
@@ -34,9 +37,6 @@
       - tar
       - vim
       - grubby
-    autoclean: true
-    update_cache: true
-    autoremove: true
   register: result
   until: result is not failed
   retries: 10
@@ -44,11 +44,9 @@
 
 - name: Install packages to masters
   ansible.builtin.yum:
+    state: present
     name:
       - helm
-    autoclean: true
-    update_cache: true
-    autoremove: true
   register: result
   until: result is not failed
   retries: 10
@@ -57,21 +55,8 @@
 
 - name: Upgrade OS
   ansible.builtin.yum:
-    autoclean: true
-    update_cache: true
-    autoremove: true
-    upgrade: full
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
-
-- name: Upgrade all packages to the latest version
-  ansible.builtin.yum:
-    autoclean: true
-    update_cache: true
-    autoremove: true
-    name: "*"
+    update_cache: yes
+    name: '*'
     state: latest
   register: result
   until: result is not failed
@@ -109,7 +94,7 @@
     name: unattended-upgrades
     state: absent
 
-- include_tasks: deb_kube_crio_install.yaml
+- include_tasks: rhel_kube_crio_install.yaml
 
 - name: Save kubeversion to YAML file
   lineinfile:
@@ -215,6 +200,8 @@
 
 - name: Install kube packages
   ansible.builtin.yum:
+    state: present
+    update_cache: yes
     name:
       - "kubelet={{ kube_version }}"
       - "kubeadm={{ kube_version }}"

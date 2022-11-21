@@ -1,0 +1,4 @@
+---
+- name: Fail
+  fail:
+    msg: Stopping execution
