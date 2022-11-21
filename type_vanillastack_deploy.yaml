@@ -20,8 +20,10 @@
 
 - name: Fail when Python3 could not be installed
   connection: local
+  hosts: all
   tasks:
-    - ansible.builtin.fail:
+    - name: Fail check
+      ansible.builtin.fail:
         msg: Could not install python3 on target machine
       when: python3_installed_debian.stdout_lines[0] != "True" and python3_installed_rhel.stdout_lines[0] != "True" 
 
