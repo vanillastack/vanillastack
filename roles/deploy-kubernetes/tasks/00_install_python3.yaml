@@ -1,10 +1,2 @@
 ---
-- name: Check if python3 is installed
-  gather_facts: no
-  ansible.builtin.pre_tasks:
-    ansible.builtin.raw: "test -e /usr/bin/python3 && echo True || echo False"
-  ansible.builtin.register: python3_installed
 
-- name: Debug registered value
-  debug:
-    msg: "{{ python3_installed }}"

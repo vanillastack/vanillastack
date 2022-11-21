@@ -1,9 +1,13 @@
 ---
 - name: Install Python if not available
   hosts: all
-  roles:
-    - role: deploy-kubernetes
-      action: 00_install_python3.yaml
+  pre_tasks:
+    - name: Check if python3 is installed
+      ansible.builtin.raw: "test -e /usr/bin/python3 && echo True || echo False"
+      register: python3_installed
+    - name: Debug registered value
+      debug:
+        msg: "{{ python3_installed }}"
 
 - name: Create inventory for scaling
   hosts: master[0]
