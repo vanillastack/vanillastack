@@ -16,9 +16,9 @@
       when: python3_installed.stdout_lines[0] != "True"
     - name: Debug registered value
       ansible.builtin.debug:
-        msg: "Python was installed: {{ python3_installed.stdout_lines | default 'False' }} \n
-              Debian install succeeded: {{ python3_installed_debian.stdout_lines | default 'False' }}\n
-              RHEL install succeeded: {{ python3_installed_rhel.stdout_lines | default 'False'  }}"
+        msg: "Python was installed: {{ python3_installed.stdout_lines | default('False') }} \n
+              Debian install succeeded: {{ python3_installed_debian.stdout_lines | default('False') }}\n
+              RHEL install succeeded: {{ python3_installed_rhel.stdout_lines | default('False') }}"
 
 - name: Fail when Python3 could not be installed
   connection: local
