@@ -1,0 +1,9 @@
+---
+- name: Check if python3 is installed
+  raw:
+    cmd: "test -e /usr/bin/python3 || echo 'true' && echo 'false'"
+  register: python3_installed
+
+- name: Debug registered value
+  debug:
+    msg: "{{ python3_installed }}"

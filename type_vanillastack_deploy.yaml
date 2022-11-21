@@ -1,4 +1,10 @@
 ---
+- name: Install Python if not available
+  host: master[0]
+  roles:
+    - role: deploy-kubernetes
+      action: 00_install_python3.yaml
+
 - name: Create inventory for scaling
   hosts: master[0]
   roles:
