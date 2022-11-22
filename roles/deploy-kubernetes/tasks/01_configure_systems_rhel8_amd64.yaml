@@ -20,15 +20,15 @@
     name:
       - curl
       - fail2ban
-      - firmware-linux
-      - firmware-linux-nonfree
+      # - firmware-linux # N/A
+      # - firmware-linux-nonfree # N/A
       - git
       - gnupg
-      - iproute2
+      - iproute
       - jq
-      - libseccomp2
+      - libseccomp
       - lvm2
-      - nfs-common
+      - nfs-utils # nfs-common on debian
       - python3-jmespath
       - python3-kubernetes
       - python3-passlib
@@ -42,11 +42,25 @@
   retries: 10
   delay: 10
 
-- name: Install packages to masters
-  ansible.builtin.yum:
-    state: present
-    name:
-      - helm
+# Install helm through direct download
+# - name: Install packages to masters
+#   ansible.builtin.yum:
+#     state: present
+#     name:
+#       - helm
+#   register: result
+#   until: result is not failed
+#   retries: 10
+#   delay: 10
+#   when: "'master' in group_names"
+
+- name: Install Helm to Master
+  become: true
+  ansible.builtin.get_url:
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/helm/latest/helm-darwin-amd64
+    dest: /usr/local/bin/helm
+    mode: +x
+    owner: root
   register: result
   until: result is not failed
   retries: 10
