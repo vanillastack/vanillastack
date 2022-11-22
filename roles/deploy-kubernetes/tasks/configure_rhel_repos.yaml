@@ -8,7 +8,13 @@
     src: etc/yum.repos.d/kubernetes.repo
     dest: /etc/yum.repos.d/kubernetes.repo
 
-- name: Configure Extra Packages for RHEL
-  ansible.builtin.yum:
-    list:
-      - 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm'
+- name: Add EPEL Repo Key
+  rpm_key:
+    state: present
+    key: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
+
+- name: Install EPEL Repo.
+  yum:
+    state: present
+    update_cache: yes
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
