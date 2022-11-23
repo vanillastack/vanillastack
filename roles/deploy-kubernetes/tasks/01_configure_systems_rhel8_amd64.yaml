@@ -36,7 +36,7 @@
       - tar
       - vim
       - grubby
-  ansible.builtin.register: result
+  register: result
   until: result is not failed
   retries: 10
   delay: 10
@@ -60,7 +60,7 @@
     dest: /usr/local/bin/helm
     mode: +x
     owner: root
-  ansible.builtin.register: result
+  register: result
   until: result is not failed
   retries: 10
   delay: 10
@@ -76,7 +76,7 @@
       - "kubectl"
       - "cri-o"
     state: latest
-  ansible.builtin.register: result
+  register: result
   until: result is not failed
   retries: 10
   delay: 10
