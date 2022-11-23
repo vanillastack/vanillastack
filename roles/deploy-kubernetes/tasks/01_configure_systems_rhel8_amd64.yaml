@@ -36,7 +36,7 @@
       - tar
       - vim
       - grubby
-  register: result
+  ansible.builtin.register: result
   until: result is not failed
   retries: 10
   delay: 10
@@ -60,7 +60,7 @@
     dest: /usr/local/bin/helm
     mode: +x
     owner: root
-  register: result
+  ansible.builtin.register: result
   until: result is not failed
   retries: 10
   delay: 10
@@ -68,10 +68,15 @@
 
 - name: Upgrade OS
   ansible.builtin.yum:
-    update_cache: yes
+    update_cache: true
     name: '*'
+    exclude:
+      - "kubelet"
+      - "kubeadm"
+      - "kubectl"
+      - "cri-o"
     state: latest
-  register: result
+  ansible.builtin.register: result
   until: result is not failed
   retries: 10
   delay: 10
