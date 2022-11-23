@@ -213,6 +213,5 @@
 
 - name: Set SELinux to permissive
   ansible.posix.selinux:
-    policy: disabled
-    state: permissive
+    state: disabled
     update_kernel_param: yes
