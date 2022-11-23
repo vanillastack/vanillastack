@@ -4,8 +4,8 @@
   ignore_errors: true
 
 - name: Remove Packages
-  apt:
-    pkg:
+  ansible.builtin.package:
+    name:
       - "haproxy"
       - "keepalived"
       - "kubelet"
@@ -15,8 +15,6 @@
       - "runc"
       - "cri-o-runc"
     state: absent
-    autoremove: true
-    force: true
   register: result
   until: result is not failed
   retries: 10
