@@ -211,15 +211,3 @@
   with_items:
     - "{{ groups['master'] }}"
     - "{{ groups['worker'] }}"
-
-- name: Install kube packages
-  apt:
-    pkg:
-      - "kubelet={{ kube_version }}"
-      - "kubeadm={{ kube_version }}"
-      - "kubectl={{ kube_version }}"
-    force_apt_get: true
-  register: kube_apt_result
-  until: kube_apt_result is not failed
-  retries: 10
-  delay: 10

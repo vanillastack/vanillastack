@@ -5,11 +5,11 @@
 
 - name: Get available Kubernetes version
   ansible.builtin.shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
-  register: kubeversion_apt_output
+  register: kubeversion_pkg_output
 
 - name: Set Kubernetes version variable
   ansible.builtin.set_fact:
-    kube_version: "{{ kubeversion_apt_output.stdout }}"
+    kube_version: "{{ kubeversion_pkg_output.stdout }}"
 
 - name: Fail when kubernetes version is empty
   ansible.builtin.fail:
@@ -18,11 +18,11 @@
 
 - name: Get available CRI-O version
   ansible.builtin.shell: apt-cache madison cri-o | grep {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f4
-  register: crioversion_apt_output
+  register: crioversion_pkg_output
 
 - name: Set CRI-O Package version
   ansible.builtin.set_fact:
-    crio_package_version: "{{ crioversion_apt_output.stdout }}"
+    crio_package_version: "{{ crioversion_pkg_output.stdout }}"
 
 - name: Fail when CRI-O version is empty
   ansible.builtin.fail:
@@ -45,8 +45,8 @@
       - "kubeadm={{ kube_version }}"
       - "kubectl={{ kube_version }}"
     force_apt_get: true
-  register: kube_apt_result
-  until: kube_apt_result is not failed
+  register: kube_pkg_result
+  until: kube_pkg_result is not failed
   retries: 10
   delay: 10
 

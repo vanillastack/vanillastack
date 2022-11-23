@@ -18,3 +18,11 @@
     state: present
     update_cache: yes
     name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+
+- name: Add CRI-O repositories
+  become: true
+  ansible.builtin.shell: "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/devel:kubic:libcontainers:stable.repo"
+
+- name: Add CRI-O repositories
+  become: true
+  ansible.builtin.shell: "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}/CentOS_8/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}.repo"

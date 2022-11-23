@@ -20,8 +20,7 @@
     name:
       - curl
       - fail2ban
-      # - firmware-linux # N/A
-      # - firmware-linux-nonfree # N/A
+      - python3-dnf-plugin-versionlock # equivalent to "apt mark hold"
       - git
       - gnupg
       - iproute
@@ -42,7 +41,6 @@
   retries: 10
   delay: 10
 
-# Install helm through direct download
 # - name: Install packages to masters
 #   ansible.builtin.yum:
 #     state: present
@@ -54,6 +52,7 @@
 #   delay: 10
 #   when: "'master' in group_names"
 
+# Install helm through direct download
 - name: Install Helm to Master
   become: true
   ansible.builtin.get_url:
@@ -212,20 +211,7 @@
     - "{{ groups['master'] }}"
     - "{{ groups['worker'] }}"
 
-- name: Install kube packages
-  ansible.builtin.yum:
-    state: present
-    update_cache: yes
-    name:
-      - "kubelet={{ kube_version }}"
-      - "kubeadm={{ kube_version }}"
-      - "kubectl={{ kube_version }}"
-  register: kube_apt_result
-  until: kube_apt_result is not failed
-  retries: 10
-  delay: 10
-
-- name: Disable SELinux
+- name: Set SELinux to permissive
   ansible.posix.selinux:
-    state: disabled
+    state: permissive
     update_kernel_param: yes
