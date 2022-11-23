@@ -1,0 +1,12 @@
+---
+- name: Configure Servers
+  hosts: master,worker
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 01_configure_systems_debian_amd64
+      when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+    - role: deploy-kubernetes
+      action: 01_configure_systems_rhel8_amd64
+      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
