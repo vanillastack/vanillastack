@@ -36,7 +36,6 @@
     - "kubeadm"
     - "kubectl"
     - "cri-o"
-    - "cri-o-runc"
 
 - name: Install kube packages
   ansible.builtin.yum:
@@ -53,7 +52,6 @@
   ansible.builtin.yum:
     name:
       - "cri-o={{ crio_package_version }}"
-      - "cri-o-runc={{ kubernetes.crioRuncVersion }}"
   register: crio_apt_result
   until: crio_apt_result is not failed
   retries: 10
@@ -66,7 +64,6 @@
     - "kubeadm"
     - "kubectl"
     - "cri-o"
-    - "cri-o-runc"
 
 - include_tasks: kubeadm_version_check.yaml
 
