@@ -107,7 +107,7 @@
     name: unattended-upgrades
     state: absent
 
-- include_tasks: rhel_kube_crio_install.yaml
+- include_tasks: rhel8_kube_crio_install.yaml
 
 - name: Save kubeversion to YAML file
   lineinfile:
