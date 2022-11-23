@@ -102,11 +102,6 @@
     state: absent
     path: /etc/resolv.conf
 
-- name: make sure, unattended upgrades is removed
-  package:
-    name: unattended-upgrades
-    state: absent
-
 - include_tasks: rhel8_kube_crio_install.yaml
 
 - name: Save kubeversion to YAML file

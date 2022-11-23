@@ -1,6 +1,7 @@
 ---
 - name: Install kube packages
-  ansible.builtin.msg: "Installing cri-o RHEL8-Packages"
+  ansible.builtin.debug:
+    msg: "Installing cri-o RHEL8-Packages"
 
 - name: Get available Kubernetes version
   ansible.builtin.shell: yum list available --showduplicates | grep "kubeadm" | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f2
@@ -66,28 +67,6 @@
     - "kubectl"
     - "cri-o"
     - "cri-o-runc"
-
-# - name: Set restart-without-asking debconf flag to false
-#   ansible.builtin.debconf:
-#     name: "{{ item }}"
-#     question: libraries/restart-without-asking
-#     value: 'false'
-#     vtype: boolean
-#   loop:
-#     - kubelet
-#     - cri-o
-#     - cri-o-runc
-
-# - name: Set restart-services debconf flag to false
-#   ansible.builtin.debconf:
-#     name: "{{ item }}"
-#     question: libraries/restart-services
-#     value: 'false'
-#     vtype: boolean
-#   loop:
-#     - kubelet
-#     - cri-o
-#     - cri-o-runc
 
 - include_tasks: kubeadm_version_check.yaml
 
