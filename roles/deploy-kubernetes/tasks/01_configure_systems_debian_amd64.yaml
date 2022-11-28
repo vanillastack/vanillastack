@@ -185,7 +185,7 @@
     path: /etc/hosts
     state: present
     line: "{{ loadbalancerIP }} api.{{ clusterTLDomain }}"
-  when: loadbalancerIP is not defined or loadbalancerIP|trim == ""
+  when: loadbalancerIP is defined or loadbalancerIP|trim != ""
 
 - name: Copy disable transparent huge pages service unit file
   copy:
@@ -212,3 +212,6 @@
   with_items:
     - "{{ groups['master'] }}"
     - "{{ groups['worker'] }}"
+
+- name: Set Hostname as defined in inventory file
+  ansible.builtin.shell: "echo {{ inventory_hostname }} > /etc/hostname"
