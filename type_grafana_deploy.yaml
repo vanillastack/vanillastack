@@ -1,5 +1,5 @@
 ---
-- name: install monitoring
+- name: Install monitoring
   hosts: master[0]
   gather_facts: true
   roles:
