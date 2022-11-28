@@ -185,6 +185,7 @@
     path: /etc/hosts
     state: present
     line: "{{ loadbalancerIP }} api.{{ clusterTLDomain }}"
+  when: loadbalancerIP is not defined or loadbalancerIP|trim == ""
 
 - name: Copy disable transparent huge pages service unit file
   copy:
