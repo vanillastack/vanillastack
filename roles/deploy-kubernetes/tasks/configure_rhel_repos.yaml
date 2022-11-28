@@ -25,4 +25,4 @@
 
 - name: Add CRI-O repositories
   become: true
-  ansible.builtin.shell: "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}/CentOS_8/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}.repo"
+  ansible.builtin.shell: "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ kubernetes.crioVersion }}/CentOS_8/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}.repo"
