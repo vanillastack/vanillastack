@@ -36,6 +36,7 @@
       - tar
       - vim
       - grubby
+      - tc
   register: result
   until: result is not failed
   retries: 10
