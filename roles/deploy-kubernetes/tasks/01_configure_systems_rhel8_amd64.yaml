@@ -21,6 +21,7 @@
       - curl
       - fail2ban
       - python3-dnf-plugin-versionlock # equivalent to "apt mark hold"
+      - python3-jmespath
       - git
       - gnupg
       - iproute
