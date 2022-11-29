@@ -5,21 +5,6 @@
     - role: deploy-kubernetes
       action: 00_create_new_inventory
 
-#- name: Wait for nodes
-#  hosts: install_nodes,install_master,master[0]
-#  become: false
-#  gather_facts: false
-#  roles:
-#    - role: wait-for-nodes
-#
-#- name: Secure Servers (Installing Polyverse)
-#  hosts: install_nodes,install_master
-#  become: true
-#  gather_facts: true
-#  roles:
-#    - role: deploy-polyverse
-#      when: polyverse.enabled
-
 - name: Configure Servers
   hosts: install_nodes,install_master
   become: true

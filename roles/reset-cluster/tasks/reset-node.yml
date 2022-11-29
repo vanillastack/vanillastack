@@ -1,6 +1,6 @@
 ---
 - name: Reset the Kubernetes cluster using kubeadm
-  command: kubeadm reset --force
+  ansible.builtin.command: kubeadm reset --force
   ignore_errors: true
 
 - name: Remove Packages
@@ -21,7 +21,7 @@
   delay: 10
 
 - name: Remove Kubernetes dirs
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   loop:

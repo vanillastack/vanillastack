@@ -5,7 +5,7 @@
   gather_facts: false
   roles:
     - role: reset-cluster
-      action: reset-kubernetes
+      action: reset-node
       when: reset_environment
     - role: reset-cluster
       action: remove-local-files

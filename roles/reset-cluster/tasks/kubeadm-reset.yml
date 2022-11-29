@@ -1,0 +1,12 @@
+---
+- name: Reset the Kubernetes cluster using kubeadm
+  command: kubeadm reset --force
+  ignore_errors: true
+
+- name: Remove Kubernetes dirs
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/kubernetes
+    - /var/lib/kubernetes
