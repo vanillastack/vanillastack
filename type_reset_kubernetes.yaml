@@ -1,0 +1,21 @@
+---
+- name: Reset kubernetes cluster
+  hosts: master,worker
+  become: true
+  gather_facts: false
+  roles:
+    - role: reset-cluster
+      action: kubeadm-reset
+      when: reset_environment
+    - role: reset-cluster
+      action: remove-local-files
+      when: reset_environment
+
+- name: Reset OSDs
+  hosts: storage
+  become: true
+  gather_facts: false
+  roles:
+    - role: reset-cluster
+      action: reset-ceph
+      when: reset_environment
