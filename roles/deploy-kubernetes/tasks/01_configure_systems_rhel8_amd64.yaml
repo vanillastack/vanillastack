@@ -43,21 +43,10 @@
   retries: 10
   delay: 10
 
-# - name: Install packages to masters
-#   ansible.builtin.yum:
-#     state: present
-#     name:
-#       - helm
-#   register: result
-#   until: result is not failed
-#   retries: 10
-#   delay: 10
-#   when: "'master' in group_names"
-
 # Install helm through direct download
 - name: Install Helm to Master
   become: true
-  ansible.builtin.command: curl -L https://get.helm.sh/helm-{{ kubernetes.helm_version }}-linux-amd64.tar.gz | tar -Ozxf - > /usr/local/bin/helm && chmod +x /usr/local/bin/helm
+  ansible.builtin.shell: curl -L https://get.helm.sh/helm-{{ kubernetes.helm_version }}-linux-amd64.tar.gz | tar -Ozxf - > /usr/local/bin/helm && chmod +x /usr/local/bin/helm
   register: result
   until: result is not failed
   retries: 10
