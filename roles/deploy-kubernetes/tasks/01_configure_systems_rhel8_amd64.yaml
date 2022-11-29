@@ -57,11 +57,7 @@
 # Install helm through direct download
 - name: Install Helm to Master
   become: true
-  ansible.builtin.get_url:
-    url: https://mirror.openshift.com/pub/openshift-v4/clients/helm/latest/helm-darwin-amd64
-    dest: /usr/local/bin/helm
-    mode: +x
-    owner: root
+  ansible.builtin.command: curl -L https://get.helm.sh/helm-{{ kubernetes.helm_version }}-linux-amd64.tar.gz | tar -Ozxf - > /usr/local/bin/helm && chmod +x /usr/local/bin/helm
   register: result
   until: result is not failed
   retries: 10
