@@ -30,7 +30,7 @@
       - lvm2
       - nfs-utils # nfs-common on debian
       - python3-jmespath
-      - python3-kubernetes
+      - python3-kubernetes # also install via pip3 since the package is outdated in RHEL repos
       - python3-passlib
       - python3-pip
       - systemd-timesyncd
@@ -42,6 +42,12 @@
   until: result is not failed
   retries: 10
   delay: 10
+
+- name: Install pip3 kubernetes package
+  become: true
+  ansible.builtin.pip:
+    name:
+      - kubernetes==25.3.0
 
 # Install helm through direct download
 - name: Install Helm to Master
