@@ -18,6 +18,10 @@
   register: python3_installed
   when: python3_installed.stdout_lines[0] != "True"
 
+- name: Host has Python installed
+  ansible.builtin.debug:
+    msg: "{{ inventory_hostname }}: {{ python3_installed }}"
+
 - name: Fail check
   ansible.builtin.fail:
     msg: "Could not install python3 on target machine: {{ inventory_hostname }}"
