@@ -20,8 +20,9 @@ install_nodes
 
 #This group defines, where the private loadbalancer and virtual IP
 # should be installed. That can be changed to other systems as well
-[haproxy:children]
+[haproxy]
 master
+
 # These groups need to exist and be empty, as it is used to scale and update nodes
 [install_nodes]
 [install_master]
