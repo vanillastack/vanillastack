@@ -1,4 +1,11 @@
 ---
+- name: Install Python if not available
+  hosts: all
+  gather_facts: false
+  roles:
+    - role: deploy-kubernetes
+      action: 00_check_for_python
+
 - name: create inventory for scaling
   hosts: master[0]
   roles:

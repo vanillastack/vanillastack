@@ -2,27 +2,9 @@
 - name: Install Python if not available
   hosts: all
   gather_facts: false
-  tasks:
-    - name: Check if python3 is installed
-      ansible.builtin.raw: "test -e /usr/bin/python3 && echo True || echo False"
-      register: python3_installed
-    - name: Try to install python3 Debian
-      ansible.builtin.raw: "sudo apt-get install python3 -y 2>&1>/dev/null && echo True || echo False"
-      register: python3_installed_debian
-      when: python3_installed.stdout_lines[0] != "True"
-    - name: Try to install python3 RHEL
-      ansible.builtin.raw: "sudo yum -y install python38 2>&1>/dev/null && echo True || echo False"
-      register: python3_installed_rhel
-      when: python3_installed.stdout_lines[0] != "True"
-
-- name: Fail when Python3 could not be installed
-  connection: local
-  hosts: all
-  tasks:
-    - name: Fail check
-      ansible.builtin.fail:
-        msg: Could not install python3 on target machine
-      when: python3_installed.stdout_lines[0] != "True" and python3_installed_debian.stdout_lines[0] != "True" and python3_installed_rhel.stdout_lines[0] != "True" 
+  roles:
+    - role: deploy-kubernetes
+      action: 00_check_for_python
 
 - name: Create inventory for scaling
   hosts: master[0]
