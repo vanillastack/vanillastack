@@ -6,7 +6,6 @@
 
 - name: Preinstall packages
   ansible.builtin.yum:
-    update_cache: yes
     name:
       - gnupg
       - python3
@@ -16,7 +15,6 @@
 - name: Install necessary packages
   ansible.builtin.yum:
     state: present
-    update_cache: yes
     name:
       - curl
       - fail2ban
@@ -61,7 +59,6 @@
 
 - name: Upgrade OS
   ansible.builtin.yum:
-    update_cache: true
     name: '*'
     exclude:
       - "kubelet"
