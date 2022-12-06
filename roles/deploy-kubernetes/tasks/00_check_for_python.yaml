@@ -13,12 +13,11 @@
   register: python3_installed_rhel
   when: python3_installed.stdout_lines[0] != "True"
 
-- name: Check if python3 is installed after script
+- name: Check if python3 is installed
   ansible.builtin.raw: "test -e /usr/bin/python3 && echo True || echo False"
-  register: python3_installed_after_script
-  when: python3_installed.stdout_lines[0] != "True"
+  register: python3_installed
 
 - name: Fail check
   ansible.builtin.fail:
     msg: "Could not install python3 on target machine: {{ inventory_hostname }}"
-  when: python3_installed_after_script.stdout_lines[0] != "True"
+  when: python3_installed.stdout_lines[0] != "True" 
