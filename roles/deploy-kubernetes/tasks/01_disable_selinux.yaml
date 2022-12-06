@@ -1,0 +1,5 @@
+---
+- name: Set SELinux to disabled
+  ansible.posix.selinux:
+    state: disabled
+    update_kernel_param: yes

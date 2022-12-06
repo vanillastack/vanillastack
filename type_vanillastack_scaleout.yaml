@@ -1,5 +1,12 @@
 ---
-- name: create inventory for scaling
+- name: Install Python if not available
+  hosts: all
+  gather_facts: false
+  roles:
+    - role: deploy-kubernetes
+      action: 00_check_for_python
+
+- name: Create inventory for scaling
   hosts: master[0]
   roles:
     - role: deploy-kubernetes
@@ -19,6 +26,15 @@
   roles:
     - role: deploy-polyverse
       when: polyverse.enabled
+
+- name: Disable SELinux on RedHat distros
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 01_disable_selinux
+      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
 
 - name: Configure Servers
   hosts: install_nodes,install_master

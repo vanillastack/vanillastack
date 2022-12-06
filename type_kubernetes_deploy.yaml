@@ -12,6 +12,15 @@
     - role: deploy-kubernetes
       action: 00_create_new_inventory
 
+- name: Disable SELinux on RedHat distros
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 01_disable_selinux
+      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
+
 - name: Configure Servers
   hosts: install_nodes,install_master
   become: true
