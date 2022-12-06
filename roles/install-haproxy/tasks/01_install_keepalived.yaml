@@ -13,5 +13,5 @@
     group: root
     mode: 0644
   notify:
-    - restart keepalived
+    - Restart keepalived
   tags: config_keepalived

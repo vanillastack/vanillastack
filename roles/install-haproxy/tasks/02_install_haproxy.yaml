@@ -35,6 +35,6 @@
     owner: root
     mode: 0644
   notify:
-    - restart haproxy
+    - Restart haproxy
   tags:
     - haproxy_config
