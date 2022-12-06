@@ -3,20 +3,24 @@
   ansible.builtin.raw: "test -e /usr/bin/python3 && echo True || echo False"
   register: python3_installed
 
+- name: Host has Python installed
+  ansible.builtin.debug:
+    msg: "{{ inventory_hostname }}: {{ python3_installed }}"
+
 - name: Try to install python3 Debian
   ansible.builtin.raw: "sudo apt-get install python3 -y 2>&1>/dev/null && echo True || echo False"
   register: python3_installed_debian
-  when: python3_installed.stdout_lines[0] != "True"
+  when: python3_installed.stdout_lines[0] is not "True"
 
 - name: Try to install python3 RHEL
   ansible.builtin.raw: "sudo yum -y install python38 2>&1>/dev/null && echo True || echo False"
   register: python3_installed_rhel
-  when: python3_installed.stdout_lines[0] != "True"
+  when: python3_installed.stdout_lines[0] is not "True"
 
 - name: Check if python3 is installed after script
   ansible.builtin.raw: "test -e /usr/bin/python3 && echo True || echo False"
   register: python3_installed
-  when: python3_installed.stdout_lines[0] != "True"
+  when: python3_installed.stdout_lines[0] is not "True"
 
 - name: Host has Python installed
   ansible.builtin.debug:
