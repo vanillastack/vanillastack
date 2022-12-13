@@ -19,6 +19,7 @@
   until: result is not failed
   retries: 10
   delay: 10
+  when: not offline_install
 
 - name: Remove Kubernetes dirs
   ansible.builtin.file:

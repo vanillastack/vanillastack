@@ -36,3 +36,4 @@ vanillastorageprovider: "rook"
 polyverse:
   enabled: false
   key: "testKey"
+offline_install: false

@@ -1,4 +1,9 @@
 ---
+- name: Fail when offline_install is enabled
+  ansible.builtin.fail:
+    msg: Cannot upgrade nodes automatically in offline mode.
+  when: offline_install
+
 - include_tasks: configure_debian_repos.yaml
   when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
 

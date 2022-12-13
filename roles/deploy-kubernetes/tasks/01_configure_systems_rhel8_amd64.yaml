@@ -1,16 +1,18 @@
 ---
 - name: Check if distribution is supported
-  fail:
+  ansible.builtin.fail:
     msg: This disribution is currently not supported by VanillaStack
   when: ansible_distribution != 'RedHat'
 
 - name: Preinstall packages
   ansible.builtin.yum:
+    state: present
     name:
       - gnupg
       - python3
 
 - include_tasks: configure_rhel_repos.yaml
+  when: not offline_install
 
 - name: Install necessary packages
   ansible.builtin.yum:
@@ -44,8 +46,14 @@
 - name: Install pip3 kubernetes package
   become: true
   ansible.builtin.pip:
+    state: present
     name:
       - kubernetes==25.3.0
+
+- name: Check Helm Installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/helm
+  register: helm_installed
 
 # Install helm through direct download
 - name: Install Helm to Master
@@ -55,11 +63,11 @@
   until: result is not failed
   retries: 10
   delay: 10
-  when: "'master' in group_names"
+  when: "'master' in group_names and not helm_installed.stat.exists"
 
 - name: Upgrade OS
   ansible.builtin.yum:
-    name: '*'
+    name: "*"
     exclude:
       - "kubelet"
       - "kubeadm"
@@ -70,9 +78,10 @@
   until: result is not failed
   retries: 10
   delay: 10
+  when: not offline_install
 
 - name: configure timesyncd for ntp
-  template:
+  ansible.builtin.template:
     src: etc/systemd/timesyncd.conf.j2
     dest: /etc/systemd/timesyncd.conf
     mode: 0444
@@ -86,13 +95,13 @@
   when: ntp.manage_timesyncd
 
 - name: Enable fstrim.timer
-  systemd:
+  ansible.builtin.systemd:
     name: fstrim.timer
     state: started
     enabled: true
 
 - name: Make sure, domain search is not set
-  lineinfile:
+  ansible.builtin.lineinfile:
     regexp: "^(.*)search(.*)$"
     state: absent
     path: /etc/resolv.conf
@@ -100,7 +109,7 @@
 - include_tasks: rhel8_kube_crio_install.yaml
 
 - name: Save kubeversion to YAML file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /tmp/kubeversion.yml
     regexp: "^(.*)version(.*)$"
     line: "version: {{ kube_version | regex_replace('-[0-9]+', '') }}"
@@ -108,14 +117,14 @@
 
 - name: Fetch kubeversion.yml
   become: true
-  fetch:
+  ansible.builtin.fetch:
     src: "/tmp/kubeversion.yml"
     dest: "/tmp/kubeversion.yml"
     flat: true
   run_once: true
 
 - name: Configure kubelet
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/default/kubelet
     regexp: "^(.*)KUBELET_EXTRA_ARGS(.*)$"
     line: 'KUBELET_EXTRA_ARGS=--container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
@@ -124,11 +133,11 @@
 - include_tasks: configure_crio.yaml
 
 - name: "Check for installed packages"
-  package_facts:
+  ansible.builtin.package_facts:
     manager: "auto"
 
 - name: Disable Firewall
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item }}"
     masked: true
     enabled: false
@@ -139,18 +148,18 @@
     - "ufw"
 
 - name: Disable rpcbind
-  systemd:
+  ansible.builtin.systemd:
     name: "rpcbind"
     state: stopped
     enabled: false
 
 - name: Copy Fail2ban jail.conf
-  template:
+  ansible.builtin.template:
     src: etc/fail2ban/jail.conf.j2
     dest: /etc/fail2ban/jail.conf
 
 - name: Enable Fail2ban
-  systemd:
+  ansible.builtin.systemd:
     name: "fail2ban"
     enabled: true
     state: restarted
@@ -170,14 +179,14 @@
     domain: "*"
 
 - name: Add api name to hosts file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/hosts
     state: present
     line: "{{ loadbalancerIP }} api.{{ clusterTLDomain }}"
   when: loadbalancerIP is defined or loadbalancerIP|trim != ""
 
 - name: Copy disable transparent huge pages service unit file
-  copy:
+  ansible.builtin.copy:
     src: etc/systemd/system/disable-transparent-huge-pages.service
     dest: /etc/systemd/system/disable-transparent-huge-pages.service
     owner: root
@@ -185,24 +194,27 @@
     mode: 0644
 
 - name: Reload systemd
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
 
 - name: Enable and start disable transparent huge pages service
-  systemd:
+  ansible.builtin.systemd:
     name: disable-transparent-huge-pages
     state: restarted
     enabled: true
 
 - name: Create hosts file entry
   ansible.builtin.lineinfile:
-    path: '/etc/hosts'
+    path: "/etc/hosts"
     line: "{{ hostvars[item]['ansible_host'] }} {{ item }}"
-  with_items: 
+  with_items:
     - "{{ groups['master'] }}"
     - "{{ groups['worker'] }}"
 
-- name: Configure RHEL Repos
+- name: Set Hostname as defined in inventory file
+  ansible.builtin.shell: "echo {{ inventory_hostname }} > /etc/hostname"
+
+- name: Configure Container Policies
   ansible.builtin.copy:
     mode: 0644
     owner: root

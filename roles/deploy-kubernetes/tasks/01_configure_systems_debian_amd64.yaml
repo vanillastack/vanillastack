@@ -1,19 +1,20 @@
 ---
 - name: Check if distribution is supported
-  fail:
+  ansible.builtin.fail:
     msg: This disribution is currently not supported by VanillaStack
   when: ansible_distribution != 'Debian'
 
 - name: Preinstall packages
-  apt:
+  ansible.builtin.apt:
     name:
       - gnupg
       - python3
 
 - include_tasks: configure_debian_repos.yaml
+  when: not offline_install
 
 - name: Install necessary packages
-  apt:
+  ansible.builtin.apt:
     name:
       - curl
       - fail2ban
@@ -34,7 +35,6 @@
       - tar
       - vim
     autoclean: true
-    update_cache: true
     autoremove: true
   register: result
   until: result is not failed
@@ -42,7 +42,7 @@
   delay: 10
 
 - name: Install packages to masters
-  apt:
+  ansible.builtin.apt:
     name:
       - helm
     autoclean: true
@@ -52,10 +52,10 @@
   until: result is not failed
   retries: 10
   delay: 10
-  when: "'master' in group_names"
+  when: "'master' in group_names and not offline_install"
 
 - name: Upgrade OS
-  apt:
+  ansible.builtin.apt:
     autoclean: true
     update_cache: true
     autoremove: true
@@ -64,9 +64,10 @@
   until: result is not failed
   retries: 10
   delay: 10
+  when: not offline_install
 
 - name: Upgrade all packages to the latest version
-  apt:
+  ansible.builtin.apt:
     autoclean: true
     update_cache: true
     autoremove: true
@@ -76,9 +77,10 @@
   until: result is not failed
   retries: 10
   delay: 10
+  when: not offline_install
 
 - name: configure timesyncd for ntp
-  template:
+  ansible.builtin.template:
     src: etc/systemd/timesyncd.conf.j2
     dest: /etc/systemd/timesyncd.conf
     mode: 0444
@@ -86,32 +88,32 @@
   when: ntp.manage_timesyncd
 
 - name: Uninstall ntp package
-  apt:
+  ansible.builtin.apt:
     name: ntp
     state: absent
   when: ntp.manage_timesyncd
 
 - name: Enable fstrim.timer
-  systemd:
+  ansible.builtin.systemd:
     name: fstrim.timer
     state: started
     enabled: true
 
 - name: Make sure, domain search is not set
-  lineinfile:
+  ansible.builtin.lineinfile:
     regexp: "^(.*)search(.*)$"
     state: absent
     path: /etc/resolv.conf
 
 - name: make sure, unattended upgrades is removed
-  package:
+  ansible.builtin.package:
     name: unattended-upgrades
     state: absent
 
 - include_tasks: deb_kube_crio_install.yaml
 
 - name: Save kubeversion to YAML file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /tmp/kubeversion.yml
     regexp: "^(.*)version(.*)$"
     line: "version: {{ kube_version | regex_replace('-[0-9]+', '') }}"
@@ -119,14 +121,14 @@
 
 - name: Fetch kubeversion.yml
   become: true
-  fetch:
+  ansible.builtin.fetch:
     src: "/tmp/kubeversion.yml"
     dest: "/tmp/kubeversion.yml"
     flat: true
   run_once: true
 
 - name: Configure kubelet
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/default/kubelet
     regexp: "^(.*)KUBELET_EXTRA_ARGS(.*)$"
     line: 'KUBELET_EXTRA_ARGS=--container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
@@ -135,11 +137,11 @@
 - include_tasks: configure_crio.yaml
 
 - name: "Check for installed packages"
-  package_facts:
+  ansible.builtin.package_facts:
     manager: "auto"
 
 - name: Disable Firewall
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item }}"
     masked: true
     enabled: false
@@ -150,18 +152,18 @@
     - "ufw"
 
 - name: Disable rpcbind
-  systemd:
+  ansible.builtin.systemd:
     name: "rpcbind"
     state: stopped
     enabled: false
 
 - name: Copy Fail2ban jail.conf
-  template:
+  ansible.builtin.template:
     src: etc/fail2ban/jail.conf.j2
     dest: /etc/fail2ban/jail.conf
 
 - name: Enable Fail2ban
-  systemd:
+  ansible.builtin.systemd:
     name: "fail2ban"
     enabled: true
     state: restarted
@@ -181,14 +183,14 @@
     domain: "*"
 
 - name: Add api name to hosts file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/hosts
     state: present
     line: "{{ loadbalancerIP }} api.{{ clusterTLDomain }}"
   when: loadbalancerIP is defined or loadbalancerIP|trim != ""
 
 - name: Copy disable transparent huge pages service unit file
-  copy:
+  ansible.builtin.copy:
     src: etc/systemd/system/disable-transparent-huge-pages.service
     dest: /etc/systemd/system/disable-transparent-huge-pages.service
     owner: root
@@ -196,18 +198,18 @@
     mode: 0644
 
 - name: Reload systemd
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: true
 
 - name: Enable and start disable transparent huge pages service
-  systemd:
+  ansible.builtin.systemd:
     name: disable-transparent-huge-pages
     state: restarted
     enabled: true
 
 - name: Create hosts file entry
   ansible.builtin.lineinfile:
-    path: '/etc/hosts'
+    path: "/etc/hosts"
     line: "{{ hostvars[item]['ansible_host'] }} {{ item }}"
   with_items:
     - "{{ groups['master'] }}"

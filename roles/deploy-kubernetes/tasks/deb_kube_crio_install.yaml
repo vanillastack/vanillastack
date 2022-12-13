@@ -1,82 +1,87 @@
 ---
-- name: Install kube packages
-  apt:
-    update_cache: true
+- name: Install Kube Crio Packages
+  when: not offline_install
+  ansible.builtin.block:
+    - name: Install kube packages
+      apt:
+        update_cache: true
 
-- name: Get available Kubernetes version
-  ansible.builtin.shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
-  register: kubeversion_pkg_output
+    - name: Get available Kubernetes version
+      ansible.builtin.shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+      register: kubeversion_pkg_output
 
-- name: Set Kubernetes version variable
-  ansible.builtin.set_fact:
-    kube_version: "{{ kubeversion_pkg_output.stdout }}"
+    - name: Set Kubernetes version variable
+      ansible.builtin.set_fact:
+        kube_version: "{{ kubeversion_pkg_output.stdout }}"
 
-- name: Fail when kubernetes version is empty
-  ansible.builtin.fail:
-    msg: Unable to determine Kubernetes package version from apt-cache!
-  when: kube_version is not defined or kube_version|trim == ""
+    - name: Fail when kubernetes version is empty
+      ansible.builtin.fail:
+        msg: Unable to determine Kubernetes package version from apt-cache!
+      when: kube_version is not defined or kube_version|trim == ""
 
-- name: Get available CRI-O version
-  ansible.builtin.shell: apt-cache madison cri-o | grep {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f4
-  register: crioversion_pkg_output
+    - name: Get available CRI-O version
+      ansible.builtin.shell: apt-cache madison cri-o | grep {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+      register: crioversion_pkg_output
 
-- name: Set CRI-O Package version
-  ansible.builtin.set_fact:
-    crio_package_version: "{{ crioversion_pkg_output.stdout }}"
+    - name: Set CRI-O Package version
+      ansible.builtin.set_fact:
+        crio_package_version: "{{ crioversion_pkg_output.stdout }}"
 
-- name: Fail when CRI-O version is empty
-  ansible.builtin.fail:
-    msg: Unable to determine CRI-O package version from apt-cache!
-  when: crio_package_version is not defined or crio_package_version|trim == ""
+    - name: Fail when CRI-O version is empty
+      ansible.builtin.fail:
+        msg: Unable to determine CRI-O package version from apt-cache!
+      when: crio_package_version is not defined or crio_package_version|trim == ""
 
-- name: Unhold packages
-  ansible.builtin.command: apt-mark unhold {{ item }}
-  with_items:
-    - "kubelet"
-    - "kubeadm"
-    - "kubectl"
-    - "cri-o"
-    - "cri-o-runc"
+    - name: Unhold packages
+      ansible.builtin.command: apt-mark unhold {{ item }}
+      with_items:
+        - "kubelet"
+        - "kubeadm"
+        - "kubectl"
+        - "cri-o"
+        - "cri-o-runc"
 
-- name: Install kube packages
-  ansible.builtin.apt:
-    pkg:
-      - "kubelet={{ kube_version }}"
-      - "kubeadm={{ kube_version }}"
-      - "kubectl={{ kube_version }}"
-    force_apt_get: true
-  register: kube_pkg_result
-  until: kube_pkg_result is not failed
-  retries: 10
-  delay: 10
+    - name: Install kube packages
+      ansible.builtin.apt:
+        pkg:
+          - "kubelet={{ kube_version }}"
+          - "kubeadm={{ kube_version }}"
+          - "kubectl={{ kube_version }}"
+        force_apt_get: true
+      register: kube_pkg_result
+      until: kube_pkg_result is not failed
+      retries: 10
+      delay: 10
 
-- name: Install cri-o packages
-  ansible.builtin.apt:
-    pkg:
-      - "cri-o={{ crio_package_version }}"
-      - "cri-o-runc={{ kubernetes.crioRuncVersion }}"
-    force_apt_get: true
-  register: crio_apt_result
-  until: crio_apt_result is not failed
-  retries: 10
-  delay: 10
+    - name: Install cri-o packages
+      ansible.builtin.apt:
+        pkg:
+          - "cri-o={{ crio_package_version }}"
+          - "cri-o-runc={{ kubernetes.crioRuncVersion }}"
+        force_apt_get: true
+      register: crio_apt_result
+      until: crio_apt_result is not failed
+      retries: 10
+      delay: 10
 
-- name: Hold packages
-  ansible.builtin.dpkg_selections:
-    name: "{{ item }}"
-    selection: hold
-  with_items:
-    - "kubelet"
-    - "kubeadm"
-    - "kubectl"
-    - "cri-o"
-    - "cri-o-runc"
+    - name: Hold packages
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      with_items:
+        - "kubelet"
+        - "kubeadm"
+        - "kubectl"
+        - "cri-o"
+        - "cri-o-runc"
+
+- include_tasks: kubeadm_version_check.yaml
 
 - name: Set restart-without-asking debconf flag to false
   ansible.builtin.debconf:
     name: "{{ item }}"
     question: libraries/restart-without-asking
-    value: 'false'
+    value: "false"
     vtype: boolean
   loop:
     - kubelet
@@ -87,14 +92,12 @@
   ansible.builtin.debconf:
     name: "{{ item }}"
     question: libraries/restart-services
-    value: 'false'
+    value: "false"
     vtype: boolean
   loop:
     - kubelet
     - cri-o
     - cri-o-runc
-
-- include_tasks: kubeadm_version_check.yaml
 
 - name: Enable auto completion
   ansible.builtin.lineinfile:
