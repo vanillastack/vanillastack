@@ -1,0 +1,29 @@
+---
+- name: Install Python if not available
+  hosts: all
+  gather_facts: false
+  roles:
+    - role: deploy-kubernetes
+      action: 00_check_for_python
+
+- name: Create inventory for scaling
+  hosts: master[0]
+  roles:
+    - role: deploy-kubernetes
+      action: 00_create_new_inventory
+
+- name: Wait for nodes
+  hosts: install_nodes,install_master,master[0]
+  become: false
+  gather_facts: false
+  roles:
+    - role: wait-for-nodes
+
+- name: Installing packages to Master and Worker Nodes
+  hosts: install_nodes,install_master
+  roles:
+    - role: deploy-kubernetes
+      action: 00_install_packages_to_nodes.yaml
+
+- name: Install Packages to Loadbalancer
+  ansible.builtin.import_playbook:  type_install_loadbalancing.yaml
