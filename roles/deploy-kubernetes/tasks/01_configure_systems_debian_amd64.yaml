@@ -8,6 +8,11 @@
 - include_tasks: 00_install_packages_to_nodes.yaml
   when: not offline_install
 
+- name: Set kube_version if in offline mode
+  ansible.builtin.shell: sudo yum list --installed | grep kubeadm | tr -s ' ' |  cut -d ' ' -f2
+  register: kube_version
+  when: offline_install
+
 - name: configure timesyncd for ntp
   ansible.builtin.template:
     src: etc/systemd/timesyncd.conf.j2
