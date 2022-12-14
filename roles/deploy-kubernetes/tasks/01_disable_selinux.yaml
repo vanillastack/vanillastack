@@ -1,11 +1,4 @@
 ---
-- name: Preinstall packages
-  ansible.builtin.yum:
-    name:
-      - gnupg
-      - python3
-  state: present
-
 - name: Set SELinux to disabled
   ansible.posix.selinux:
     state: disabled
