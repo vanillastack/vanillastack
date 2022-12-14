@@ -1,7 +1,7 @@
 ---
 - name: Debian Install
   when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
-  ansible.builtin.block:
+  block:
     - include_tasks: configure_debian_repos.yaml
 
     - name: Install necessary packages
@@ -89,7 +89,7 @@
 
 - name: RHEL Install
   when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
-  ansible.builtin.block:
+  block:
     - include_tasks: configure_rhel_repos.yaml
 
     - name: Install necessary packages
