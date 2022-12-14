@@ -6,77 +6,13 @@
 
 - name: Preinstall packages
   ansible.builtin.apt:
+    state: present
     name:
       - gnupg
       - python3
 
-- include_tasks: configure_debian_repos.yaml
-  when: not offline_install
-
-- name: Install necessary packages
-  ansible.builtin.apt:
-    name:
-      - curl
-      - fail2ban
-      - firmware-linux
-      - firmware-linux-nonfree
-      - git
-      - gnupg
-      - iproute2
-      - jq
-      - libseccomp2
-      - lvm2
-      - nfs-common
-      - python3-jmespath
-      - python3-kubernetes
-      - python3-passlib
-      - python3-pip
-      - systemd-timesyncd
-      - tar
-      - vim
-    autoclean: true
-    autoremove: true
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
-
-- name: Install packages to masters
-  ansible.builtin.apt:
-    name:
-      - helm
-    autoclean: true
-    update_cache: true
-    autoremove: true
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
-  when: "'master' in group_names and not offline_install"
-
-- name: Upgrade OS
-  ansible.builtin.apt:
-    autoclean: true
-    update_cache: true
-    autoremove: true
-    upgrade: full
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
-  when: not offline_install
-
-- name: Upgrade all packages to the latest version
-  ansible.builtin.apt:
-    autoclean: true
-    update_cache: true
-    autoremove: true
-    name: "*"
-    state: latest
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
+# This task includes all Steps to install packages to the systems
+- include_tasks: 00_install_packages_to_nodes.yaml
   when: not offline_install
 
 - name: configure timesyncd for ntp
@@ -85,12 +21,6 @@
     dest: /etc/systemd/timesyncd.conf
     mode: 0444
   notify: restart timesyncd
-  when: ntp.manage_timesyncd
-
-- name: Uninstall ntp package
-  ansible.builtin.apt:
-    name: ntp
-    state: absent
   when: ntp.manage_timesyncd
 
 - name: Enable fstrim.timer
@@ -104,13 +34,6 @@
     regexp: "^(.*)search(.*)$"
     state: absent
     path: /etc/resolv.conf
-
-- name: make sure, unattended upgrades is removed
-  ansible.builtin.package:
-    name: unattended-upgrades
-    state: absent
-
-- include_tasks: deb_kube_crio_install.yaml
 
 - name: Save kubeversion to YAML file
   ansible.builtin.lineinfile:

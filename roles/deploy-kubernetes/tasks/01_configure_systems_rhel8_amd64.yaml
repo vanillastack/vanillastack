@@ -11,73 +11,8 @@
       - gnupg
       - python3
 
-- include_tasks: configure_rhel_repos.yaml
-  when: not offline_install
-
-- name: Install necessary packages
-  ansible.builtin.yum:
-    state: present
-    name:
-      - curl
-      - fail2ban
-      - python3-dnf-plugin-versionlock # equivalent to "apt mark hold"
-      - python3-jmespath
-      - git
-      - gnupg
-      - iproute
-      - jq
-      - libseccomp
-      - lvm2
-      - nfs-utils # nfs-common on debian
-      - python3-jmespath
-      - python3-kubernetes # also install via pip3 since the package is outdated in RHEL repos
-      - python3-passlib
-      - python3-pip
-      - systemd-timesyncd
-      - tar
-      - vim
-      - grubby
-      - tc
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
-
-- name: Install pip3 kubernetes package
-  become: true
-  ansible.builtin.pip:
-    state: present
-    name:
-      - kubernetes==25.3.0
-
-- name: Check Helm Installed
-  ansible.builtin.stat:
-    path: /usr/local/bin/helm
-  register: helm_installed
-
-# Install helm through direct download
-- name: Install Helm to Master
-  become: true
-  ansible.builtin.shell: curl -L https://get.helm.sh/helm-{{ kubernetes.helm_version }}-linux-amd64.tar.gz | tar -Ozxf - > /usr/local/bin/helm && chmod +x /usr/local/bin/helm
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
-  when: "'master' in group_names and not helm_installed.stat.exists"
-
-- name: Upgrade OS
-  ansible.builtin.yum:
-    name: "*"
-    exclude:
-      - "kubelet"
-      - "kubeadm"
-      - "kubectl"
-      - "cri-o"
-    state: latest
-  register: result
-  until: result is not failed
-  retries: 10
-  delay: 10
+# This task includes all Steps to install packages to the systems
+- include_tasks: 00_install_packages_to_nodes.yaml
   when: not offline_install
 
 - name: configure timesyncd for ntp
@@ -86,12 +21,6 @@
     dest: /etc/systemd/timesyncd.conf
     mode: 0444
   notify: restart timesyncd
-  when: ntp.manage_timesyncd
-
-- name: Uninstall ntp package
-  ansible.builtin.yum:
-    name: ntp
-    state: absent
   when: ntp.manage_timesyncd
 
 - name: Enable fstrim.timer
@@ -105,8 +34,6 @@
     regexp: "^(.*)search(.*)$"
     state: absent
     path: /etc/resolv.conf
-
-- include_tasks: rhel8_kube_crio_install.yaml
 
 - name: Save kubeversion to YAML file
   ansible.builtin.lineinfile:
