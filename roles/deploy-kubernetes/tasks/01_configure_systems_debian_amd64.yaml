@@ -9,9 +9,12 @@
   when: not offline_install
 
 - name: Set kube_version if in offline mode
-  ansible.builtin.shell: sudo yum list --installed | grep kubeadm | tr -s ' ' |  cut -d ' ' -f2
-  register: kube_version
   when: offline_install
+  block:
+    - ansible.builtin.shell: dpkg -l | grep kubeadm | head -n1 | tr -s ' ' | cut -d ' ' -f 3
+      register: kube_version_output
+    - ansible.builtin.set_fact:
+      kube_version: "{{ kube_version_output.stdout }}"
 
 - name: configure timesyncd for ntp
   ansible.builtin.template:
