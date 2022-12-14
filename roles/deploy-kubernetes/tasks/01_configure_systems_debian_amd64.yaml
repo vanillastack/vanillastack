@@ -14,7 +14,7 @@
     - ansible.builtin.shell: dpkg -l | grep kubeadm | head -n1 | tr -s ' ' | cut -d ' ' -f 3
       register: kube_version_output
     - ansible.builtin.set_fact:
-      kube_version: "{{ kube_version_output.stdout }}"
+        kube_version: "{{ kube_version_output.stdout }}"
 
 - name: configure timesyncd for ntp
   ansible.builtin.template:
