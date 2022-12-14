@@ -98,6 +98,7 @@
       ansible.builtin.yum:
         state: present
         name:
+          - python3
           - curl
           - fail2ban
           - python3-dnf-plugin-versionlock # equivalent to "apt mark hold"
