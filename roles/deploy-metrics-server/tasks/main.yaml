@@ -1,4 +1,10 @@
 ---
+- name: Create Metricserver Namespace
+  kubernetes.core.k8s:
+    name: "{{ metricsServer.namespace }}"
+    kind: Namespace
+    state: present
+
 - name: Install Metrics Server
   kubernetes.core.helm:
     name: metrics-server
