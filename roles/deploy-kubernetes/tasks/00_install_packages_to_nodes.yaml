@@ -4,10 +4,13 @@
   become: true
   block:
     - name: Preinstall necessary packages
-      ansible.builtin.package:
+      ansible.builtin.apt:
         name:
           - python3
           - gnupg
+        autoclean: true
+        update_cache: true
+        autoremove: true
 
     - include_tasks: configure_debian_repos.yaml
 
