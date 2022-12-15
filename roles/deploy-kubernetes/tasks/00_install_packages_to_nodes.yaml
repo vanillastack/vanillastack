@@ -15,7 +15,7 @@
     - include_tasks: configure_debian_repos.yaml
 
     - name: Install necessary packages
-      ansible.builtin.package:
+      ansible.builtin.apt:
         name:
           - python3
           - curl
@@ -37,6 +37,7 @@
           - tar
           - vim
         autoclean: true
+        update_cache: true
         autoremove: true
       register: result
       until: result is not failed
