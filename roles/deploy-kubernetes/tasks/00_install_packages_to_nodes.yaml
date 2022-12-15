@@ -3,6 +3,11 @@
   when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
   become: true
   block:
+    - name: Preinstall necessary packages
+      ansible.builtin.package:
+        - python3
+        - gnupg
+
     - include_tasks: configure_debian_repos.yaml
 
     - name: Install necessary packages
