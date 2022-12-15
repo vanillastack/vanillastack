@@ -5,8 +5,9 @@
   block:
     - name: Preinstall necessary packages
       ansible.builtin.package:
-        - python3
-        - gnupg
+        name:
+          - python3
+          - gnupg
 
     - include_tasks: configure_debian_repos.yaml
 
