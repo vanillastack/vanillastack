@@ -690,7 +690,7 @@ controller:
       # nodePort: ""
 
     serviceMonitor:
-      enabled: true
+      enabled: {{ vanillaservices.monitoring_enabled }}
       additionalLabels:
       ## The label to use to retrieve the job name from.
       ## jobLabel: "app.kubernetes.io/name"
