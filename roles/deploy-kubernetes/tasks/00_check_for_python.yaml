@@ -5,12 +5,10 @@
 
 - name: Try to install python3 Debian
   ansible.builtin.raw: "sudo apt-get install python3 -y 2>&1>/dev/null && echo True || echo False"
-  register: python3_installed_debian
   when: python3_installed.stdout_lines[0] != "True"
 
 - name: Try to install python3 RHEL
   ansible.builtin.raw: "sudo yum -y install python38 2>&1>/dev/null && echo True || echo False"
-  register: python3_installed_rhel
   when: python3_installed.stdout_lines[0] != "True"
 
 - name: Check if python3 is installed
@@ -20,4 +18,4 @@
 - name: Fail check
   ansible.builtin.fail:
     msg: "Could not install python3 on target machine: {{ inventory_hostname }}"
-  when: python3_installed.stdout_lines[0] != "True" 
+  when: python3_installed.stdout_lines[0] != "True"
