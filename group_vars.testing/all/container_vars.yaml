@@ -36,4 +36,9 @@ vanillastorageprovider: "rook"
 polyverse:
   enabled: false
   key: "testKey"
+# This will skip all install steps which normally require internet access
+# It requires you to have already prepared Debian or RHEL Machines. See the type_prepare_offline_install.yaml,
+# to prepare machines for the install while still online.
+# Also you have to have a Image Registry and Helm Chart Registry available in the network (in case you're working in a DMZ)
+# You can set your custom Repositories in the global.yaml
 offline_install: false
