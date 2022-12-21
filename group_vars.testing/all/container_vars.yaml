@@ -1,10 +1,10 @@
 ---
 commercial:
   enabled: true
-# This installs keepalived and HaProxy on the [haproxy:children] group defined in the inventory, needs an floating IP defined in 'locadbalancerIP'
+# This installs keepalived and HaProxy on the [haproxy] group defined in the inventory, needs an floating IP defined in 'locadbalancerIP'
 # Setting this to true acts like 'install_haproxy' is set to true
 make_ha: false
-# This installs HaProxy as Loadbalancing service to [haproxy:children] group defined in the inventory
+# This installs HaProxy as Loadbalancing service to [haproxy] group defined in the inventory
 # Can be any machine you define in this group, e.g. an external machine
 install_haproxy: false
 cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
@@ -36,3 +36,9 @@ vanillastorageprovider: "rook"
 polyverse:
   enabled: false
   key: "testKey"
+# This will skip all install steps which normally require internet access
+# It requires you to have already prepared Debian or RHEL Machines. See the type_prepare_offline_install.yaml,
+# to prepare machines for the install while still online.
+# Also you have to have a Image Registry and Helm Chart Registry available in the network (in case you're working in a DMZ)
+# You can set your custom Repositories in the global.yaml
+offline_install: false

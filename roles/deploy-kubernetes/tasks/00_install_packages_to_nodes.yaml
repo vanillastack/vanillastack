@@ -1,0 +1,182 @@
+---
+- name: Debian Install
+  when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+  become: true
+  block:
+    # This needs to be done since unwanted side effects from packages or ansible may occurr
+    # Also debian needs gnupg to add the custom repos
+    - name: Preinstall necessary packages
+      ansible.builtin.apt:
+        name:
+          - python3
+          - gnupg
+        autoclean: true
+        update_cache: true
+        autoremove: true
+
+    - include_tasks: configure_debian_repos.yaml
+
+    - name: Install necessary packages
+      ansible.builtin.apt:
+        name:
+          - python3
+          - curl
+          - fail2ban
+          - firmware-linux
+          - firmware-linux-nonfree
+          - git
+          - gnupg
+          - iproute2
+          - jq
+          - libseccomp2
+          - lvm2
+          - nfs-common
+          - python3-jmespath
+          - python3-kubernetes
+          - python3-passlib
+          - python3-pip
+          - systemd-timesyncd
+          - tar
+          - vim
+        autoclean: true
+        update_cache: true
+        autoremove: true
+      register: result
+      until: result is not failed
+      retries: 10
+      delay: 10
+
+    - name: Install packages to masters
+      ansible.builtin.apt:
+        name:
+          - helm
+        autoclean: true
+        update_cache: true
+        autoremove: true
+      register: result
+      until: result is not failed
+      retries: 10
+      delay: 10
+      when: "'master' in group_names"
+
+    - name: Upgrade OS
+      ansible.builtin.apt:
+        autoclean: true
+        update_cache: true
+        autoremove: true
+        upgrade: full
+      register: result
+      until: result is not failed
+      retries: 10
+      delay: 10
+      when: not offline_install
+
+    - name: Upgrade all packages to the latest version
+      ansible.builtin.apt:
+        autoclean: true
+        update_cache: true
+        autoremove: true
+        name: "*"
+        state: latest
+      register: result
+      until: result is not failed
+      retries: 10
+      delay: 10
+      when: not offline_install
+    - name: Install kube packages
+      apt:
+        update_cache: true
+
+    - name: make sure, unattended upgrades is removed
+      ansible.builtin.package:
+        name: unattended-upgrades
+        state: absent
+
+    - name: Uninstall ntp package
+      ansible.builtin.apt:
+        name: ntp
+        state: absent
+      when: ntp.manage_timesyncd
+
+    - include_tasks: deb_kube_crio_install.yaml
+
+- name: RHEL Install
+  when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
+  become: true
+  block:
+    - include_tasks: configure_rhel_repos.yaml
+
+    - name: Install necessary packages
+      ansible.builtin.yum:
+        state: present
+        name:
+          - python3
+          - curl
+          - fail2ban
+          - python3-dnf-plugin-versionlock # equivalent to "apt mark hold"
+          - python3-jmespath
+          - git
+          - gnupg
+          - iproute
+          - jq
+          - libseccomp
+          - lvm2
+          - nfs-utils # nfs-common on debian
+          - python3-jmespath
+          - python3-kubernetes # also install via pip3 since the package is outdated in RHEL repos
+          - python3-passlib
+          - python3-pip
+          - systemd-timesyncd
+          - tar
+          - vim
+          - grubby
+          - tc
+      register: result
+      until: result is not failed
+      retries: 10
+      delay: 10
+
+    - name: Install pip3 kubernetes package
+      become: true
+      ansible.builtin.pip:
+        state: present
+        name:
+          - kubernetes==25.3.0
+
+    - name: Check Helm Installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/helm
+      register: helm_installed
+
+    # Install helm through direct download
+    - name: Install Helm to Master
+      become: true
+      ansible.builtin.shell: curl -L https://get.helm.sh/helm-{{ kubernetes.helm_version }}-linux-amd64.tar.gz | tar -Ozxf - > /usr/local/bin/helm && chmod +x /usr/local/bin/helm
+      register: result
+      until: result is not failed
+      retries: 10
+      delay: 10
+      when: "'master' in group_names and not helm_installed.stat.exists"
+
+    - name: Upgrade OS
+      ansible.builtin.yum:
+        name: "*"
+        exclude:
+          - "kubelet"
+          - "kubeadm"
+          - "kubectl"
+          - "cri-o"
+        state: latest
+      register: result
+      until: result is not failed
+      retries: 10
+      delay: 10
+      when: not offline_install
+
+    - name: Uninstall ntp package
+      ansible.builtin.yum:
+        name: ntp
+        state: absent
+      when: ntp.manage_timesyncd
+
+    - include_tasks: rhel8_kube_crio_install.yaml

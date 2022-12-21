@@ -5,7 +5,7 @@
   gather_facts: false
   roles:
     - role: reset-cluster
-      action: reset-node
+      action: kubeadm-reset
       when: reset_environment
     - role: reset-cluster
       action: remove-local-files

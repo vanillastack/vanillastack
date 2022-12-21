@@ -1,0 +1,83 @@
+---
+- name: Install kube packages
+  ansible.builtin.debug:
+    msg: "Installing cri-o RHEL8-Packages"
+
+- name: Get available Kubernetes version
+  ansible.builtin.shell: yum list available --showduplicates | grep "kubeadm" | grep {{ kubernetes.version }} | tail -1 | tr -s ' ' | cut -d ' ' -f2
+  register: kubeversion_pkg_output
+
+- name: Set Kubernetes version variable
+  ansible.builtin.set_fact:
+    kube_version: "{{ kubeversion_pkg_output.stdout }}"
+
+- name: Fail when kubernetes version is empty
+  ansible.builtin.fail:
+    msg: Unable to determine Kubernetes package version from yum list!
+  when: kube_version is not defined or kube_version|trim == ""
+
+- name: Get available CRI-O version
+  ansible.builtin.shell: yum list available --showduplicates | grep "cri-o" | grep {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f2
+  register: crioversion_pkg_output
+
+- name: Set CRI-O Package version
+  ansible.builtin.set_fact:
+    crio_package_version: "{{ crioversion_pkg_output.stdout }}"
+
+- name: Fail when CRI-O version is empty
+  ansible.builtin.fail:
+    msg: Unable to determine CRI-O package version from apt-cache!
+  when: crio_package_version is not defined or crio_package_version|trim == ""
+
+- name: Unhold packages
+  ansible.builtin.command: yum -y versionlock delete {{ item }}
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o"
+
+- name: Install kube packages
+  ansible.builtin.yum:
+    name:
+      - "kubelet-{{ kube_version }}"
+      - "kubeadm-{{ kube_version }}"
+      - "kubectl-{{ kube_version }}"
+    state: present
+  register: kube_pkg_result
+  until: kube_pkg_result is not failed
+  retries: 10
+  delay: 10
+
+- name: Install cri-o packages
+  ansible.builtin.yum:
+    name:
+      - "cri-o-{{ crio_package_version }}"
+  register: crio_apt_result
+  until: crio_apt_result is not failed
+  retries: 10
+  delay: 10
+
+- name: Hold packages
+  ansible.builtin.command: yum -y versionlock add {{ item }}
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o"
+
+- include_tasks: kubeadm_version_check.yaml
+
+- name: Enable auto completion
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: "source <(kubectl completion bash)"
+    state: present
+
+- name: Set bash history timestamps for all users using pam
+  become: true
+  become_user: root
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: 'export HISTTIMEFORMAT="%F %T "'
+    state: present

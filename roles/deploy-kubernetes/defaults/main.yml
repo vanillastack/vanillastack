@@ -28,3 +28,5 @@ ntp:
   server: pool.ntp.org
 
 vanillastack_upload_cluster_config: false
+
+offline_install: false

@@ -2,7 +2,7 @@
 - name: Check if distribution is supported
   ansible.builtin.fail:
     msg: This disribution is currently not supported by VanillaStack
-  when: ansible_distribution != 'Debian'
+  when: ansible_distribution != 'RedHat'
 
 # This task includes all Steps to install packages to the systems
 - include_tasks: 00_install_packages_to_nodes.yaml
@@ -11,7 +11,7 @@
 - name: Set kube_version if in offline mode
   when: offline_install
   block:
-    - ansible.builtin.shell: dpkg -l | grep kubeadm | head -n1 | tr -s ' ' | cut -d ' ' -f 3
+    - ansible.builtin.shell: yum list --installed | grep kubeadm | head -1 | tr -s ' ' |  cut -d ' ' -f2
       register: kube_version_output
     - ansible.builtin.set_fact:
         kube_version: "{{ kube_version_output.stdout }}"
@@ -141,3 +141,10 @@
 
 - name: Set Hostname as defined in inventory file
   ansible.builtin.shell: "echo {{ inventory_hostname }} > /etc/hostname"
+
+- name: Configure Container Policies
+  ansible.builtin.copy:
+    mode: 0644
+    owner: root
+    src: etc/containers/policy.json
+    dest: /etc/containers/policy.json

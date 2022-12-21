@@ -1,7 +1,20 @@
 ---
-- include_tasks: configure_debian_repos.yaml
+- name: Fail when offline_install is enabled
+  ansible.builtin.fail:
+    msg: Cannot upgrade nodes automatically in offline mode.
+  when: offline_install
 
-- include_tasks: kube_crio_install.yaml
+- include_tasks: configure_debian_repos.yaml
+  when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+
+- include_tasks: deb_kube_crio_install.yaml
+  when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+
+- include_tasks: configure_rhel_repos.yaml
+  when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
+
+- include_tasks: rhel8_kube_crio_install.yaml
+  when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
 
 - name: Run kubeadm upgrade plan
   command: kubeadm upgrade plan

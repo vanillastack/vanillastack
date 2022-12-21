@@ -1,10 +1,10 @@
 ---
 - name: Get kubeadm version
-  command: kubeadm version
+  ansible.builtin.command: kubeadm version
   register: local_kubeadm_version
 
 - name: Fail when kubeadm version is not the expected version
-  fail:
+  ansible.builtin.fail:
     msg: "The host {{ inventory_hostname }} did not have the expected kubeadm version {{ kubernetes.version }} installed after the package update process!"
   when:
     - kubernetes.version not in local_kubeadm_version.stdout

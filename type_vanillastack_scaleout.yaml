@@ -1,5 +1,12 @@
 ---
-- name: create inventory for scaling
+- name: Install Python if not available
+  hosts: all
+  gather_facts: false
+  roles:
+    - role: deploy-kubernetes
+      action: 00_check_for_python
+
+- name: Create inventory for scaling
   hosts: master[0]
   roles:
     - role: deploy-kubernetes
@@ -20,20 +27,26 @@
     - role: deploy-polyverse
       when: polyverse.enabled
 
+- name: Disable SELinux on RedHat distros
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - role: deploy-kubernetes
+      action: 01_disable_selinux
+      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
+
 - name: Configure Servers
   hosts: install_nodes,install_master
   become: true
   gather_facts: true
   roles:
     - role: deploy-kubernetes
-      action: 01_configure_systems
-      when: ansible_distribution != 'Debian'
-    - role: deploy-kubernetes
       action: 01_configure_systems_debian_amd64
       when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
     - role: deploy-kubernetes
-      action: 01_configure_systems_debian_ppc64le
-      when: ansible_distribution == 'Debian' and ansible_architecture == "ppc64le"
+      action: 01_configure_systems_rhel8_amd64
+      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
 
 - name: Install Loadbalancing
   ansible.builtin.import_playbook:  type_install_loadbalancing.yaml

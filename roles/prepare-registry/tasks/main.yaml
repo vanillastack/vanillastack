@@ -2,13 +2,13 @@
 - name: Add Community Helm Registry
   kubernetes.core.helm_repository:
     name: vanillastack
-    repo_url: "https://{{ repositories.registry_community }}/chartrepo/vanillastack"
+    repo_url: "https://{{ repositories.registry_community_helm }}/chartrepo/vanillastack"
   when: not commercial.enabled
 
 - name: Add Vanillastack Commercial Helm Repository
   kubernetes.core.helm_repository:
     name: vanillastack
-    repo_url: "https://{{ repositories.registry_commercial }}/chartrepo/vanillastack"
+    repo_url: "https://{{ repositories.registry_commercial_helm }}/chartrepo/vanillastack"
   when: commercial.enabled
 
 - name: Update Repo

@@ -1,0 +1,28 @@
+---
+# TODO: RHEL Repo on Cloudical Servers?
+
+- name: Configure RHEL Repos
+  ansible.builtin.copy:
+    mode: 0644
+    owner: root
+    src: etc/yum.repos.d/kubernetes.repo
+    dest: /etc/yum.repos.d/kubernetes.repo
+
+- name: Add EPEL Repo Key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
+
+- name: Install EPEL Repo.
+  ansible.builtin.yum:
+    state: present
+    update_cache: yes
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+
+- name: Add CRI-O repositories
+  become: true
+  ansible.builtin.shell: "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/devel:kubic:libcontainers:stable.repo"
+
+- name: Add CRI-O repositories
+  become: true
+  ansible.builtin.shell: "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ kubernetes.crioVersion }}/CentOS_8/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes.crioVersion }}.repo"
