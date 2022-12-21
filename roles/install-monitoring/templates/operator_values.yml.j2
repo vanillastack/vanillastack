@@ -95,7 +95,7 @@ defaultRules:
 ##
 {% if monitoring.additionalRules is defined %}
 additionalPrometheusRulesMap:
-{{monitoring.additionalRules|to_nice_yaml(indent=2, width=1337)|trim|indent(width=2)}}
+{{ monitoring.additionalRules|to_nice_yaml(indent=2, width=1337)|trim|indent(width=2) }}
 {% endif %}
 #  rule-name:
 #    groups:

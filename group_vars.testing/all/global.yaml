@@ -4,7 +4,8 @@ repositories:
   registry_community_helm: harbor.cloudical.net
   registry_commercial: harbor.cloudical.net
   registry_commercial_helm: harbor.cloudical.net
-  package_repository: https://repo-new.vanillastack.cloudical.net
+  # only for debian installs:
+  package_repository: https://repo.vanillastack.cloudical.net
 ingress:
   namespace: nginx-ingress
   enabled: true

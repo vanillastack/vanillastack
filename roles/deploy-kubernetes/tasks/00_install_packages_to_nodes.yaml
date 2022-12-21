@@ -3,6 +3,8 @@
   when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
   become: true
   block:
+    # This needs to be done since unwanted side effects from packages or ansible may occurr
+    # Also debian needs gnupg to add the custom repos
     - name: Preinstall necessary packages
       ansible.builtin.apt:
         name:
