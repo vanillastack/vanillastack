@@ -29,9 +29,6 @@
       ansible.builtin.template:
         src: cilium_mtu_update.yaml
         dest: /tmp/mtu_update.yaml
-        owner: root
-        group: root
-        mode: 0644
     - name: Apply MTU Update
       command: kubectl apply -f /tmp/mtu_update.yaml
 
