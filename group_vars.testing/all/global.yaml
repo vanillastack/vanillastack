@@ -41,7 +41,7 @@ kubernetes:
     version: v1.11.2
     waitTimeout: 120s
     proxyReplacement: "strict" #possible values: "disabled", "probe", "partial", "strict"
-    manual_mtu: 0
+    manual_mtu: 0 # This Value Sets the MTU for cilium and applies it to a deamonset watching the mtu
   ignorePreflightErrors: []
 postgresOperator:
   chartName: "postgres-operator"
