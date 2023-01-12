@@ -26,7 +26,7 @@
 
 - name: Define port, kubelet is listening on
   set_fact:
-    apiport: "{% if install_haproxy or makeha %}8443{% else %}6443{% endif %}"
+    apiport: "{% if install_haproxy or make_ha %}8443{% else %}6443{% endif %}"
 
 - name: Create kubeadm config file
   template:

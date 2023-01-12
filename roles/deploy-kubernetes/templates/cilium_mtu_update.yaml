@@ -1,0 +1,62 @@
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: mtu-update
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: mtu-update
+      kubernetes.io/cluster-service: "true"
+  template:
+    metadata:
+      labels:
+        k8s-app: mtu-update
+        kubernetes.io/cluster-service: "true"
+      annotations:
+        scheduler.alpha.kubernetes.io/tolerations: >-
+          [{"key":"dedicated","operator":"Equal","value":"master","effect":"NoSchedule"}]
+    spec:
+      serviceAccountName: cilium
+      containers:
+        - image: docker.io/cilium/mtu-update:v1.1
+          imagePullPolicy: IfNotPresent
+          name: mtu-update
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - ./mtu-update --mtu {{ kubernetes.cilium.manual_mtu | default(1500) }} && touch /tmp/mtu-update.done && sleep 600
+          volumeMounts:
+            # To communicate with Cilium
+            - name: cilium-run
+              mountPath: /var/run/cilium
+              readOnly: true
+          securityContext:
+            capabilities:
+              add:
+                # Required to move into other namespaces
+                - "NET_ADMIN"
+            privileged: true
+          readinessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/mtu-update.done
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 60 # 300 seconds / 5 (period) = 60 attempts
+      # To update Cilium devices in host netns
+      hostNetwork: true
+      # To read /proc/pid/net/ns to iterate child netns
+      hostPID: true
+      volumes:
+        # To communicate with Cilium
+        - name: cilium-run
+          hostPath:
+            path: /var/run/cilium
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+        - effect: NoSchedule
+          key: node.cloudprovider.kubernetes.io/uninitialized
+          value: "true"

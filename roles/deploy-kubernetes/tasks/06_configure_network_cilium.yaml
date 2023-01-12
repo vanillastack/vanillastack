@@ -22,6 +22,19 @@
     wait_timeout: "{{ kubernetes.cilium.waitTimeout }}"
     update_repo_cache: true
 
+- name: Deploy Cilium MTU Manifest if non zero value provided
+  when: kubernetes.cilium.manual_mtu != 0
+  block:
+    - name: Copy file
+      ansible.builtin.template:
+        src: cilium_mtu_update.yaml
+        dest: /tmp/mtu_update.yaml
+        owner: root
+        group: root
+        mode: 0644
+    - name: Apply MTU Update
+      command: kubectl apply -f /tmp/mtu_update.yaml
+
 - name: Wait for control-plane pods become ready
   command: kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s
   retries: 180
