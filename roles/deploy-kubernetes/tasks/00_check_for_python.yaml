@@ -8,7 +8,7 @@
   when: python3_installed.stdout_lines[0] != "True"
 
 - name: Try to install python3 RHEL
-  ansible.builtin.raw: "sudo yum -y install python38 2>&1>/dev/null && echo True || echo False"
+  ansible.builtin.raw: "sudo yum -y install python3 2>&1>/dev/null && echo True || echo False"
   when: python3_installed.stdout_lines[0] != "True"
 
 - name: Check if python3 is installed
