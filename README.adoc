@@ -101,7 +101,7 @@ VanillaStack requirements::
 
 * Internet network access
   ** `https://harbor.vanillastack.io`
-* Debian 11
+* Debian 11 or RHEL 8 (tested with RHEL 8.6)
 
 == Installation Guide
 
