@@ -107,7 +107,7 @@ VanillaStack requirements::
 
 A detailed Installation Instruction can be found at link:https://docs.vanillastack.io[Vanillastack User Guide]
 
-== Update Vanillstack
+== Update Vanillastack
 
 An Update from Vanillastack Version 1.8.2 to 2.0.0 is not possible. The Vanillastack needs a new installation.
 
