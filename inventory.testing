@@ -15,13 +15,11 @@ testing-worker-2 ansible_host=95.217.63.253 ansible_user=testing
 testing-worker-3 ansible_host=95.217.63.254 ansible_user=testing
 
 [kube_cluster:children]
-master
 install_nodes
 
 #This group defines, where the private loadbalancer and virtual IP
 # should be installed. That can be changed to other systems as well
 [haproxy]
-master
 
 # These groups need to exist and be empty, as it is used to scale and update nodes
 [install_nodes]
