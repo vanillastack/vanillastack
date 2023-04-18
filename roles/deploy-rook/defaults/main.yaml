@@ -1,6 +1,8 @@
 rook:
   enabled: true
   namespace: rook-ceph
+  chartVersion: v1.11.3
+  pspEnable: false
   crds:
     enabled: true
   common:
@@ -10,6 +12,9 @@ rook:
     csiEnableCephFS: true
     csiEnableRBD: true
     csiEnableGRPC: true
+    provisionerReplicas: 2
+    monitoring:
+     enabled: false
   cluster:
     enabled: true
     name: rook-ceph
@@ -17,21 +22,74 @@ rook:
     mon:
       count: 3
       allowMultiplePerNode: false
+    mgr:
+      count: 2
+      allowMultiplePerNode: false
     dashboard:
-      enabled: false
+      enabled: true
       ssl: true
     monitoring:
       enabled: false
     storage:
       useAllNodes: true
       useAllDevices: true
-    resources: {}
+    resources:
+      mgr:
+        limits:
+          memory: "1024Mi"
+        requests:
+          cpu: "350m"
+          memory: "768Mi"
+      mon:
+        limits:
+          memory: "2048Mi"
+        requests:
+          cpu: "500m"
+          memory: "1536Mi"
+      osd:
+        limits:
+          memory: "4096Mi"
+        requests:
+          cpu: "500m"
+          memory: "3072Mi"
+      prepareosd:
+        limits:
+          memory: "4096Mi"
+        requests:
+          memory: "512Mi"
+      crashcollector:
+        limits:
+          memory: "128Mi"
+        requests:
+          cpu: 25m
+          memory: "64Mi"
+      mgr-sidecar:
+        limits:
+          cpu: "500m"
+          memory: "100Mi"
+        requests:
+          cpu: "100m"
+          memory: "40Mi"
+      logcollector:
+        limits:
+          cpu: "500m"
+          memory: "1Gi"
+        requests:
+          cpu: "100m"
+          memory: "100Mi"
+      cleanup:
+        limits:
+          cpu: "500m"
+          memory: "1Gi"
+        requests:
+          cpu: "500m"
+          memory: "100Mi"
   dashboard:
-    enabled: false
+    enabled: true
     ingress:
-      domain: ""
+      domain: "ceph.{{ clusterTLDomain }}"
       tls:
-        enabled: true
+        enabled: false
         issuerName: "{{ LE_issuer_name }}"
   storageClassRBD:
     enabled: true
@@ -50,7 +108,7 @@ rook:
   objectStorage:
     enabled: false
     ingress:
-      domain: ""
+      domain: s3.test.vanillastack.cloudical.net
       tls:
         enabled: true
         issuerName: "{{ LE_issuer_name }}"
@@ -59,15 +117,15 @@ rook:
     replicaLevel: 2
     minSize: 1
   filesystem:
-    enabled: false
+    enabled: true
     name: rook-cephfs
     replicaLevel: 2
     minSize: 1
     failureDomain: host
     resources:
       limits:
-        cpu: "1250m"
-        memory: "4352Mi"
+        cpu: "1500m"
+        memory: "4096Mi"
       requests:
-        cpu: "400m"
-        memory: "3328Mi"
+        cpu: "100m"
+        memory: "1024Mi"

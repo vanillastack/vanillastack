@@ -1,45 +1,28 @@
 ---
-- name: Deploy Rook
-  include_tasks: deploy.yaml
-  when: rook.enabled
-  with_items:
-    - { name: crds, wait: false, delay: 10}
-    - { name: common, wait: false, delay: 0}
-    - { name: operator, wait: false, delay: 10}
-    - { name: cluster, wait: false, delay: 10}
-    - { name: toolbox, wait: false, delay: 0}
-    - { name: objectStorage, wait: false, delay: 0}
-    - { name: filesystem, wait: false, delay: 0}
-    - { name: storageClassRBD, wait: false, delay: 0}
-    - { name: storageClassObject, wait: false, delay: 0}
-    - { name: storageClassFile, wait: false, delay: 0}
-    - { name: dashboard, wait: false, delay: 0}
-
-- name: Deploy Rook monitoring
-  when: rook.cluster.monitoring.enabled
+- name: Create rook-ceph Namespace
   kubernetes.core.k8s:
+    name: "{{ rook.namespace }}"
+    kind: Namespace
     state: present
-    definition: "{{ lookup('template','{{item}}')}}"
-  with_items:
-    - rbac.yaml.j2
-    - csi-metrics-service-monitor.yaml.j2
-    - service-monitor.yaml.j2
 
-- name: Deploy Rook monitoring
-  when: rook.cluster.monitoring.enabled
-  kubernetes.core.k8s:
-    state: present
-    definition: "{{ lookup('file','{{item}}')}}"
-  with_items:
-    - prometheus-ceph-v14-rules.yaml
+- name: Install Rook Operator
+  kubernetes.core.helm:
+    name: rook-ceph
+    chart_ref: vanillastack/rook-ceph
+    release_namespace: "{{ rook.namespace }}"
+    values: "{{ lookup('template', 'operator-values.yaml.j2') | from_yaml }}"
+    chart_version: "{{ rook.chartVersion }}"
 
-- name: Delay for upcoming Rook
-  wait_for:
-    timeout: 60
-  when: rook.enabled
+- name: Install Ceph Cluster
+  kubernetes.core.helm:
+    name: rook-ceph-cluster
+    chart_ref: vanillastack/rook-ceph-cluster
+    release_namespace: "{{ rook.namespace }}"
+    values: "{{ lookup('template', 'ceph-cluster-values.yaml.j2') | from_yaml }}"
+    chart_version: "{{ rook.chartVersion }}"
 
-- name: wait for CephCluster to come up
-  shell: kubectl get cephcluster "{{rook.cluster.name}}" -o json -n "{{rook.namespace}}"|egrep "(HEALTH_OK|HEALTH_WARN)"
+- name: Wait for CephCluster to come up
+  ansible.builtin.shell: kubectl get cephcluster "{{ rook.cluster.name }}" -o json -n "{{ rook.namespace }}"|egrep "(HEALTH_OK|HEALTH_WARN)"
   register: cephcluster
   until: cephcluster.rc==0
   retries: 120
@@ -47,5 +30,5 @@
   when: rook.enabled
 
 - name: Sleep 5 Minutes for letting rook be stable
-  pause:
+  ansible.builtin.pause:
     minutes: 5

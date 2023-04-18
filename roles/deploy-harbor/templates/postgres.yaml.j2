@@ -1,4 +1,4 @@
-apiVersion: acid.zalan.do/v1
+apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
   name: harbor-postgresql
@@ -24,10 +24,10 @@ spec:
       max_connections: "{{harbor.postgres.maxConnections}}"
   resources:
     requests:
-      cpu: "{{ harbor.postgres.resources.requests.cpu }}"
-      memory: "{{ harbor.postgres.resources.requests.memory }}"
+      cpu: "{{harbor.postgres.resources.requests.cpu}}"
+      memory: "{{harbor.postgres.resources.requests.memory}}"
     limits:
-      cpu: "{{ harbor.postgres.resources.limits.cpu }}"
-      memory: "{{ harbor.postgres.resources.limits.memory }}"
+      cpu: "{{harbor.postgres.resources.limits.cpu}}"
+      memory: "{{harbor.postgres.resources.limits.memory}}"
   enableLogicalBackup: {{harbor.postgres.backup.enabled}}
   logicalBackupSchedule: {{harbor.postgres.backup.cronjob}}

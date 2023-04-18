@@ -1,7 +1,7 @@
 velero:
   enabled: false
-  version: v1.8.1
-  chartVersion: 2.29.0
+  version: v1.10.2
+  chartVersion: 3.1.5
   namespace: velero
   backend: minio # minio|aws
   resources:
@@ -11,7 +11,7 @@ velero:
     limits:
       cpu: "1000m"
       memory: "6Gi"
-  restic:
+  nodeagent:
     resources:
       requests:
         cpu: "125m"
@@ -30,7 +30,7 @@ velero:
   #  secretKey: YOUR_SECRET_KEY
   minio:
     enabled: true
-    chartVersion: 8.0.2
+    chartVersion: 5.0.7
     nfs:
       size: 50Gi
       server: example.com

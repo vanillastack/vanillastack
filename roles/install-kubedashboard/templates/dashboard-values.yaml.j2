@@ -1,4 +1,4 @@
-# Copyright 2020 The Kubernetes Authors.
+# Copyright 2017 The Kubernetes Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ image:
 {% else %}
   repository: kubernetesui/dashboard
 {% endif %}
-
-  tag: v2.5.1
+  tag: "v2.7.0"  # If not defined, uses appVersion of Chart.yaml
   pullPolicy: IfNotPresent
   pullSecrets: []
 
@@ -71,6 +70,16 @@ extraVolumeMounts: []
 # - mountPath: /kubeconfig
 #   name: dashboard-kubeconfig
 #   readOnly: true
+
+## Array of extra K8s manifests to deploy
+##
+extraManifests: []
+# - apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: additional-configmap
+#   data:
+#     mykey: myvalue
 
 ## Annotations to be added to kubernetes dashboard pods
 # podAnnotations:
@@ -121,13 +130,12 @@ affinity: {}
 
 ## Pod resource requests & limits
 resources:
-  limits:
-    cpu: 2
-    memory: 1024Mi
   requests:
     cpu: 200m
     memory: 512Mi
-
+  limits:
+    cpu: 2
+    memory: 1024Mi
 
 ## Serve application over HTTP without TLS
 ##
@@ -142,6 +150,8 @@ service:
   ## LoadBalancerSourcesRange is a list of allowed CIDR values, which are combined with ServicePort to
   ## set allowed inbound rules on the security group assigned to the master load balancer
   # loadBalancerSourceRanges: []
+
+  # clusterIP: ""
 
   ## A user-specified IP address for load balancer to use as External IP (if supported)
   # loadBalancerIP:
@@ -203,6 +213,7 @@ ingress:
   #    backend:
   #      service:
   #        name: >-
+  ###!!! Import this to the any new dashboard-value.yaml.j2 or the deployment will fail !!!###
   #          {{ "{{" }} include "kubernetes-dashboard.fullname" . {{ "}}" }}
   #        port:
   #          # Don't use string here, use only integer value!
@@ -257,7 +268,7 @@ metricsScraper:
 {% else %}
     repository: kubernetesui/metrics-scraper
 {% endif %}
-    tag: v1.0.7
+    tag: v1.0.9
   resources: {}
   ## SecurityContext especially for the kubernetes dashboard metrics scraper container
   ## If not set, the global containterSecurityContext values will define these values
@@ -305,13 +316,19 @@ rbac:
   #
   # Independent from rbac.create parameter.
   clusterReadOnlyRole: true
+  # It is possible to add additional rules if read only role is enabled.
+  # This can be useful, for example, to show CRD resources.
+  # clusterReadOnlyRoleAdditionalRules: []
+
+  # If the default role permissions are not enough, it is possible to add additional permissions.
+  # roleAdditionalRules: []
 
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: null
+  name:
 
 livenessProbe:
   # Number of seconds to wait before sending first probe
@@ -337,7 +354,12 @@ networkPolicy:
   # Whether to create a network policy that allows/restricts access to the service
   enabled: false
 
+  # Whether to set network policy to deny all ingress traffic for the kubernetes-dashboard
+  ingressDenyAll: false
+
 ## podSecurityPolicy for fine-grained authorization of pod creation and updates
+## Note that PSP is deprecated and has been removed from kubernetes 1.25 onwards.
+## For 1.25+ consider enabling PodSecurityAdmission, refer to chart README.md.
 podSecurityPolicy:
   # Specifies whether a pod security policy should be created
   enabled: false
@@ -345,3 +367,12 @@ podSecurityPolicy:
 serviceMonitor:
   # Whether or not to create a Prometheus Operator service monitor.
   enabled: false
+  ## Here labels can be added to the serviceMonitor
+  labels: {}
+  ## Here annotations can be added to the serviceMonitor
+  annotations: {}
+
+## Optional containers, i.e. for auth addons.
+optionalContainers:
+  enabled: false
+  containers: []

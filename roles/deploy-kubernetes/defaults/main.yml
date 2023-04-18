@@ -5,10 +5,10 @@ kubernetes:
   init_opts: ""
   kubeadm_opts: ""
   clusterName: kubernetes
-  version: "1.23.14"
-  crioVersion: "1.23"
-  crioRuncVersion: "1.0.1~0"
-  helm_version: "v3.3.1"
+  version: "1.25.2"
+  crioVersion: "1.25"
+  crioRuncVersion: "1.0.1~2"
+  helm_version: "3.11.2"
   pod_cidr: "10.0.0.0/8"
   drainTimeout: "10m"
   updateSleepSeconds: 90

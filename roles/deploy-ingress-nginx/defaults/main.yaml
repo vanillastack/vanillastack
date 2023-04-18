@@ -2,6 +2,6 @@ ingress:
   enabled: false
   config: {}
   replicas: 3
-  chartVersion: "4.0.18"
+  chartVersion: "4.6.0"
   defaultBackend:
     replicas: 1

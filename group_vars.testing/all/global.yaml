@@ -11,7 +11,7 @@ ingress:
   enabled: true
   config: {}
   replicas: 3
-  chartVersion: "4.0.18"
+  chartVersion: "4.6.0"
   defaultBackend:
     replicas: 1
   ## check values yaml for resource recommendation
@@ -25,13 +25,14 @@ ingress:
 kubernetes:
   dashboard:
     coreDomain: "k8sboard.{{ clusterTLDomain }}"
-    chartVersion: "5.3.1"
+    chartVersion: "6.0.6"
     replicas: 2
   clusterName: kubernetes
-  version: "1.23.4"
-  crioVersion: "1.23"
-  crioRuncVersion: "1.0.1~0"
-  helm_version: "v3.5.3"
+  # if you define a version without a specific patch it will take the latest (for example: 1.25 results in 1.25.9)
+  version: "1.25"
+  crioVersion: "1.25"
+  crioRuncVersion: "1.0.1~2"
+  helm_version: "3.11.2"
   init_opts: ""
   kubeadm_opts: ""
   drainTimeout: "10m"
@@ -45,20 +46,22 @@ kubernetes:
   ignorePreflightErrors: []
 postgresOperator:
   chartName: "postgres-operator"
-  chartVersion: "1.7.1"
+  chartVersion: "v1.9.0"
   namespace: "postgres-operator"
   backup:
     enabled: false
     s3:
-      accessKey: nul
-      secretKey: nul
-      regionName: nul
-      endpoint: nul
-      bucketName: nul
+      accessKey: ""
+      secretKey: ""
+      regionName: ""
+      endpoint: ""
+      bucketName: ""
+      encryption: ""
+      retention: ""
     cron: "30 00 * * *"
 harbor:
   enabled: true
-  chartVersion: 1.8.1
+  chartVersion: 1.11.1
   namespace: harbor
   ingress:
     coreDomain: "harbor.{{ clusterTLDomain }}"
@@ -106,7 +109,7 @@ harbor:
     # secret lenght must be 16
     secret: p1zX2AazSCwtUfmv
   redis:
-    chartVersion: 10.8.1
+    chartVersion: 17.9.2
     password: zP7GPoCnFNa6XiVnsLVJ3jJgw
     persistence:
       storageClass: "rook-ceph-block"
@@ -114,7 +117,7 @@ harbor:
   postgres:
     size: "20Gi"
     replicas: 2
-    version: "12"
+    version: "15"
     maxConnections: 400
     resources:
       requests:
@@ -126,201 +129,10 @@ harbor:
     backup:
       enabled: false
       cronjob: "30 */2 * * *"
-efkstack:
-  kibana:
-    imageTag: "7.10.2"
-    chartVersion: "7.16.1"
-    user: kibana_test
-    password: secretlysecretpassword
-    replicas: 2
-    system_user: "{{ ansible_user }}"
-    system_group: "{{ ansible_user }}"
-    coreDomain: "kibana.{{ clusterTLDomain }}"
-    resources:
-      requests:
-        cpu: "200m"
-        memory: "1Gi"
-      limits:
-        cpu: "1000m"
-        memory: "2Gi"
-  es:
-    imageTag: "7.10.2"
-    chartVersion: "7.16.1"
-    replicas: 3
-    storage:
-      class_name: "rook-ceph-block"
-      size: "30Gi"
-    resources:
-      requests:
-        cpu: "200m"
-        memory: "2Gi"
-      limits:
-        cpu: "1000m"
-        memory: "2Gi"
-  logaggregator:
-    # Choice of filebeat and fluentd
-    name: filebeat
-    chartVersion: "7.16.1"
-    imageTag: "7.10.2"
-    resources:
-      limits:
-        cpu: "500m"
-        memory: "512Mi"
-      requests:
-        cpu: "100m"
-        memory: "200Mi"
-monitoring:
-  admin_user: admin
-  admin_password: prompassword
-  replicas: 2
-  chartVersion: 36.6.2
-  retention: 360h
-  ingress:
-    enabled: true
-    dns: "prometheus.{{ clusterTLDomain }}"
-  storage:
-    classname: "rook-ceph-block"
-    size: 30Gi
-  resources:
-    limits:
-      cpu: 2500m
-      memory: 2048Mi
-    requests:
-      cpu: 200m
-      memory: 512Mi
-  remoteWriteReceiver:
-    enabled: false #default false!
-  kubeApiServer:
-    enabled: true
-  kubelet:
-    enabled: true
-  kubeControllerManager:
-    enabled: true
-  coreDns:
-    enabled: true
-  kubeDns:
-    enabled: true
-  kubeEtcd:
-    enabled: true
-  kubeScheduler:
-    enabled: true
-  kubeProxy:
-    enabled: true
-  kubeStateMetrics:
-    enabled: true
-  additionalRules:
-    cloudical:
-      groups:
-        - name: Memory_CPU_Using
-          rules:
-            # reference URL see: https://medium.com/faun/how-much-is-too-much-the-linux-oomkiller-and-used-memory-d32186f29c9d
-            # - alert: ContainerCpuHighUtilization
-            #   expr: ((sum(rate(container_cpu_usage_seconds_total{name!=""}[5m])) BY (pod, namespace)) / (sum(kube_pod_container_resource_limits_cpu_cores) BY (pod, namespace))) * 100 > 80
-            #   for: 15m
-            #   labels:
-            #     severity: warning
-            #   annotations:
-            #     summary: 'High CPU Usage Warning for Pod {{"{{ $labels.pod }}"}} on {{"{{ $labels.namespace }}"}}'
-            #     description: 'Container CPU usage is above 80%\n  VALUE = {{"{{ $value }}"}}\n  LABELS = {{"{{ $labels.pod }}"}}'
-            - alert: ContainerMemoryUsage
-              expr: (sum by(container, pod, namespace) (container_memory_working_set_bytes{namespace!~"cert-manager|grafana~|harbor|kube.*|local-path-storage|monitoring|nginx-ingress|postgres-operator|redis|rook-ceph|vanillastack-system|velero"}) / sum by(container, pod, namespace) (kube_pod_container_resource_limits_memory_bytes{}) * 100) > 85
-              for: 15m
-              labels:
-                severity: warning
-              annotations:
-                summary: 'High Memory Usage Warning for {{"{{ $labels.pod }}"}}'
-                description: 'pod {{"{{ $labels.pod }}"}} is using high memory (over 85%)'
-            - alert: ContainerMemoryUsage95
-              expr: (sum by(container, pod, namespace) (container_memory_working_set_bytes{namespace!=""}) / sum by(container, pod, namespace) (kube_pod_container_resource_limits_memory_bytes{}) * 100) > 95
-              for: 15m
-              labels:
-                severity: warning
-              annotations:
-                summary: 'High Memory Usage Warning for {{"{{ $labels.pod }}"}}'
-                description: 'pod {{"{{ $labels.pod }}"}} is using high memory (over 95%)'
-            - alert: ContainerOOMKiller
-              expr: (kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}) > 0 and rate(kube_pod_container_status_restarts_total{namespace=~".*"}[5m]) * 60 * 5 > 1
-              for: 1m
-              labels:
-                severity: critical
-              annotations:
-                summary: 'Pod-killed (OOM) CRITICAL for {{"{{ $labels.pod }}"}}'
-                description: 'pod {{"{{ $labels.pod }}"}} was killed because OOM'
-            - alert: PodTerminating
-              expr: (sum by (container, pod, namespace) (kube_pod_container_status_terminated_reason{reason="Terminating"} offset 1m )) >= 1
-              for: 1m
-              labels:
-                severity: warning
-              annotations:
-                summary: 'Pod-terminted WARNING for {{"{{ $labels.pod }}"}}'
-                description: 'pod {{"{{ $labels.pod }}"}} is tarminated longer for 1 minute'
-alertmanager:
-  enabled: true
-  admin_user: admin
-  admin_password: ampassword
-  replicas: 2
-  ingress:
-    enabled: true
-    dns: "alertmanager.{{ clusterTLDomain }}"
-  storage:
-    classname: "rook-ceph-block"
-    size: 10Gi
-  resources:
-    limits:
-      cpu: 2500m
-      memory: 2048Mi
-    requests:
-      cpu: 200m
-      memory: 512Mi
-  config: |
-    global:
-      resolve_timeout: 5m
-    route:
-      group_by: ['job']
-      group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 12h
-      receiver: 'null'
-      routes:
-      - match:
-          alertname: Watchdog
-        receiver: 'null'
-    receivers:
-    - name: 'null'
 metricsServer:
   namespace: monitoring
   chartVersion: 3.8.2
   imageTag: 0.6.1
-grafana:
-  enabled: true
-  namespace: grafana
-  chartVersion: 6.24.1
-  replicas: 1
-  admin_user: admin
-  admin_password: grafanapassword
-  ingress:
-    enabled: true
-    dns: "grafana.{{ clusterTLDomain }}"
-  persistence:
-    type: pvc
-    enabled: false
-    storageClassName: rook-ceph-block
-    accessModes:
-      - ReadWriteOnce
-    size: 15Gi
-    # annotations: {}
-    finalizers:
-      - kubernetes.io/pvc-protection
-loki:
-  namespace: loki
-  chartVersion: 2.3.1
-  replicas: 1
-  monitoring:
-    enabled: true
-  persistence:
-    enabled: true
-    size: 30Gi
-    storageClass: rook-ceph-block
 keycloak:
   namespace: keycloak
   externalDatabase: false

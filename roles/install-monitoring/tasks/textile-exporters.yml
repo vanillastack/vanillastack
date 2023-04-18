@@ -1,6 +1,0 @@
----
-- name: "Deploy node-exporter Textfile scripts DaemonSet"
-  kubernetes.core.k8s:
-    definition: "{{ lookup('template', 'textfile-exporters.yml.j2') | from_yaml }}"
-    namespace: monitoring
-    state: present

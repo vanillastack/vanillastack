@@ -3,16 +3,27 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 global:
-  ## Reference to one or more secrets to be used when pulling images
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
+  # Reference to one or more secrets to be used when pulling images
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   imagePullSecrets: []
   # - name: "image-pull-secret"
+
+  # Labels to apply to all resources
+  # Please note that this does not add labels to the resources created dynamically by the controllers.
+  # For these resources, you have to add the labels in the template in the cert-manager custom resource:
+  # eg. podTemplate/ ingressTemplate in ACMEChallengeSolverHTTP01Ingress
+  #    ref: https://cert-manager.io/docs/reference/api-docs/#acme.cert-manager.io/v1.ACMEChallengeSolverHTTP01Ingress
+  # eg. secretTemplate in CertificateSpec
+  #    ref: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
+  commonLabels: {}
+  # team_name: dev
 
   # Optional priority class to be used for the cert-manager pods
   priorityClassName: ""
   rbac:
     create: true
+    # Aggregate ClusterRoles to Kubernetes default user-facing roles. Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
+    aggregateClusterRoles: true
 
   podSecurityPolicy:
     enabled: false
@@ -22,7 +33,7 @@ global:
   logLevel: 2
 
   leaderElection:
-    # Override the namespace used to store the ConfigMap for leader election
+    # Override the namespace used for the leader election lease
     namespace: "kube-system"
 
     # The duration that non-leader candidates will wait after observing a
@@ -51,8 +62,11 @@ strategy: {}
   #   maxUnavailable: 1
 
 # Comma separated list of feature gates that should be enabled on the
-# controller pod.
+# controller pod & webhook pod.
 featureGates: ""
+
+# The maximum number of challenges that can be scheduled as 'processing' at once
+maxConcurrentChallenges: 60
 
 image:
 {% if commercial.enabled %}
@@ -60,14 +74,13 @@ image:
 {% else %}
   repository: quay.io/jetstack/cert-manager-controller
 {% endif %}
-
   # You can manage a registry with
   # registry: quay.io
   # repository: jetstack/cert-manager-controller
 
   # Override the image tag to deploy by setting this variable.
   # If no value is set, the chart's appVersion will be used.
-  tag: v1.7.1
+  tag: v1.11.1
 
   # Setting a digest will override any tag
   # digest: sha256:0e072dddd1f7f8fc8909a2ca6f65e76c5f0d2fcfb8be47935ae3457e8bbceb20
@@ -78,6 +91,11 @@ image:
 # used. This namespace will not be automatically created by the Helm chart.
 clusterResourceNamespace: ""
 
+# This namespace allows you to define where the services will be installed into
+# if not set then they will use the namespace of the release
+# This is helpful when installing cert manager as a chart dependency (sub chart)
+namespace: ""
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -87,14 +105,19 @@ serviceAccount:
   # Optional additional annotations to add to the controller's ServiceAccount
   # annotations: {}
   # Automount API credentials for a Service Account.
+  # Optional additional labels to add to the controller's ServiceAccount
+  # labels: {}
   automountServiceAccountToken: true
+
+# Automounting API credentials for a particular pod
+# automountServiceAccountToken: true
 
 # Additional command line flags to pass to cert-manager controller binary.
 # To see all available flags run docker run quay.io/jetstack/cert-manager-controller:<version> --help
 extraArgs: []
   # When this flag is enabled, secrets will be automatically removed when the certificate resource is deleted
   # - --enable-certificate-owner-ref=true
-  # Use this flag to enabled or disable arbitrary controllers, for example, disable the CertificiateRequests approver
+  # Use this flag to enable or disable arbitrary controllers, for example, disable the CertificiateRequests approver
   # - --controllers=*,-certificaterequests-approver
 
 extraEnv: []
@@ -110,21 +133,13 @@ resources: {}
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 securityContext:
   runAsNonRoot: true
-# legacy securityContext parameter format: if enabled is set to true, only fsGroup and runAsUser are supported
-# securityContext:
-#   enabled: false
-#   fsGroup: 1001
-#   runAsUser: 1001
-# to support additional securityContext parameters, omit the `enabled` parameter and simply specify the parameters
-# you want to set, e.g.
-# securityContext:
-#   fsGroup: 1000
-#   runAsUser: 1000
-#   runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
 
 # Container Security Context to be set on the controller component container
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 containerSecurityContext: {}
+  # allowPrivilegeEscalation: false
   # capabilities:
   #   drop:
   #   - ALL
@@ -162,6 +177,7 @@ podLabels: {}
 #     - "8.8.8.8"
 
 nodeSelector: {}
+  # kubernetes.io/os: linux
 
 ingressShim: {}
   # defaultIssuerName: ""
@@ -178,6 +194,7 @@ prometheus:
     interval: 60s
     scrapeTimeout: 30s
     labels: {}
+    annotations: {}
     honorLabels: false
 
 # Use these variables to configure the HTTP_PROXY environment variables
@@ -206,6 +223,18 @@ affinity: {}
 #     value: master
 #     effect: NoSchedule
 tolerations: []
+
+# expects input structure as per specification https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#topologyspreadconstraint-v1-core
+# for example:
+#   topologySpreadConstraints:
+#   - maxSkew: 2
+#     topologyKey: topology.kubernetes.io/zone
+#     whenUnsatisfiable: ScheduleAnyway
+#     labelSelector:
+#       matchLabels:
+#         app.kubernetes.io/instance: cert-manager
+#         app.kubernetes.io/component: controller
+topologySpreadConstraints: []
 
 webhook:
   replicaCount: 1
@@ -238,10 +267,13 @@ webhook:
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext:
     runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
 
   # Container Security Context to be set on the webhook component container
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   containerSecurityContext: {}
+    # allowPrivilegeEscalation: false
     # capabilities:
     #   drop:
     #   - ALL
@@ -291,10 +323,13 @@ webhook:
     timeoutSeconds: 1
 
   nodeSelector: {}
+    # kubernetes.io/os: linux
 
   affinity: {}
 
   tolerations: []
+
+  topologySpreadConstraints: []
 
   # Optional additional labels to add to the Webhook Pods
   podLabels: {}
@@ -314,7 +349,7 @@ webhook:
 
     # Override the image tag to deploy by setting this variable.
     # If no value is set, the chart's appVersion will be used.
-    tag: v1.7.1
+    tag: v1.11.1
 
     # Setting a digest will override any tag
     # digest: sha256:0e072dddd1f7f8fc8909a2ca6f65e76c5f0d2fcfb8be47935ae3457e8bbceb20
@@ -329,8 +364,13 @@ webhook:
     # name: ""
     # Optional additional annotations to add to the controller's ServiceAccount
     # annotations: {}
+    # Optional additional labels to add to the webhook's ServiceAccount
+    # labels: {}
     # Automount API credentials for a Service Account.
     automountServiceAccountToken: true
+
+  # Automounting API credentials for a particular pod
+  # automountServiceAccountToken: true
 
   # The port that the webhook should listen on for requests.
   # In GKE private clusters, by default kubernetes apiservers are allowed to
@@ -361,6 +401,27 @@ webhook:
   url: {}
     # host:
 
+  # Enables default network policies for webhooks.
+  networkPolicy:
+    enabled: false
+    ingress:
+    - from:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+    egress:
+    - ports:
+      - port: 80
+        protocol: TCP
+      - port: 443
+        protocol: TCP
+      - port: 53
+        protocol: TCP
+      - port: 53
+        protocol: UDP
+      to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+
 cainjector:
   enabled: true
   replicaCount: 1
@@ -375,10 +436,13 @@ cainjector:
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext:
     runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
 
   # Container Security Context to be set on the cainjector component container
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   containerSecurityContext: {}
+    # allowPrivilegeEscalation: false
     # capabilities:
     #   drop:
     #   - ALL
@@ -404,10 +468,13 @@ cainjector:
     #   memory: 32Mi
 
   nodeSelector: {}
+    # kubernetes.io/os: linux
 
   affinity: {}
 
   tolerations: []
+
+  topologySpreadConstraints: []
 
   # Optional additional labels to add to the CA Injector Pods
   podLabels: {}
@@ -424,7 +491,7 @@ cainjector:
 
     # Override the image tag to deploy by setting this variable.
     # If no value is set, the chart's appVersion will be used.
-    tag: v1.7.1
+    tag: v1.11.1
 
     # Setting a digest will override any tag
     # digest: sha256:0e072dddd1f7f8fc8909a2ca6f65e76c5f0d2fcfb8be47935ae3457e8bbceb20
@@ -440,7 +507,30 @@ cainjector:
     # Optional additional annotations to add to the controller's ServiceAccount
     # annotations: {}
     # Automount API credentials for a Service Account.
+    # Optional additional labels to add to the cainjector's ServiceAccount
+    # labels: {}
     automountServiceAccountToken: true
+
+  # Automounting API credentials for a particular pod
+  # automountServiceAccountToken: true
+
+acmesolver:
+  image:
+{% if commercial.enabled %}
+    repository: {{repositories.registry_commercial}}/vanillastack/cert-manager-acmesolver
+{% else %}
+    repository: quay.io/jetstack/cert-manager-acmesolver
+{% endif %}
+    # You can manage a registry with
+    # registry: quay.io
+    # repository: jetstack/cert-manager-acmesolver
+
+    # Override the image tag to deploy by setting this variable.
+    # If no value is set, the chart's appVersion will be used.
+    tag: v1.11.1
+
+    # Setting a digest will override any tag
+    # digest: sha256:0e072dddd1f7f8fc8909a2ca6f65e76c5f0d2fcfb8be47935ae3457e8bbceb20
 
 # This startupapicheck is a Helm post-install hook that waits for the webhook
 # endpoints to become available.
@@ -448,7 +538,7 @@ cainjector:
 # sidecar proxies into cert-manager pods, you probably want to ensure that they
 # are not injected into this Job's pod. Otherwise the installation may time out
 # due to the Job never being completed because the sidecar proxy does not exit.
-# See https://github.com/jetstack/cert-manager/pull/4414 for context.
+# See https://github.com/cert-manager/cert-manager/pull/4414 for context.
 startupapicheck:
   enabled: true
 
@@ -456,6 +546,18 @@ startupapicheck:
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext:
     runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  # Container Security Context to be set on the controller component container
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  containerSecurityContext: {}
+    # allowPrivilegeEscalation: false
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
 
   # Timeout for 'kubectl check api' command
   timeout: 1m
@@ -482,6 +584,7 @@ startupapicheck:
     #   memory: 32Mi
 
   nodeSelector: {}
+    # kubernetes.io/os: linux
 
   affinity: {}
 
@@ -502,7 +605,7 @@ startupapicheck:
 
     # Override the image tag to deploy by setting this variable.
     # If no value is set, the chart's appVersion will be used.
-    tag: v1.7.1
+    tag: v1.11.1
 
     # Setting a digest will override any tag
     # digest: sha256:0e072dddd1f7f8fc8909a2ca6f65e76c5f0d2fcfb8be47935ae3457e8bbceb20
@@ -532,3 +635,6 @@ startupapicheck:
 
     # Automount API credentials for a Service Account.
     automountServiceAccountToken: true
+
+    # Optional additional labels to add to the startupapicheck's ServiceAccount
+    # labels: {}

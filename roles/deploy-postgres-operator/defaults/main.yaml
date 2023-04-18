@@ -1,14 +1,16 @@
 postgresOperator:
   enabled: false
   chartName: "postgres-operator"
-  chartVersion: "1.7.1"
+  chartVersion: "v1.9.0"
   namespace: "postgres-operator"
   backup:
     enabled: false
     s3:
-      accessKey: nul
-      secretKey: nul
-      regionName: nul
-      endpoint: nul
-      bucketName: nul
+      accessKey: ""
+      secretKey: ""
+      regionName: ""
+      endpoint: ""
+      bucketName: ""
+      encryption: ""
+      retention: ""
     cron: "30 00 * * *"

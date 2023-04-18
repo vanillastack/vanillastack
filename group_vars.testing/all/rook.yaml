@@ -1,6 +1,8 @@
 rook:
   enabled: true
   namespace: rook-ceph
+  chartVersion: v1.11.3
+  pspEnable: false
   crds:
     enabled: true
   common:
@@ -10,12 +12,18 @@ rook:
     csiEnableCephFS: true
     csiEnableRBD: true
     csiEnableGRPC: true
+    provisionerReplicas: 2
+    monitoring:
+     enabled: false
   cluster:
     enabled: true
     name: rook-ceph
     dataHostDir: /var/lib/rook
     mon:
       count: 3
+      allowMultiplePerNode: false
+    mgr:
+      count: 2
       allowMultiplePerNode: false
     dashboard:
       enabled: true
@@ -55,6 +63,27 @@ rook:
         requests:
           cpu: 25m
           memory: "64Mi"
+      mgr-sidecar:
+        limits:
+          cpu: "500m"
+          memory: "100Mi"
+        requests:
+          cpu: "100m"
+          memory: "40Mi"
+      logcollector:
+        limits:
+          cpu: "500m"
+          memory: "1Gi"
+        requests:
+          cpu: "100m"
+          memory: "100Mi"
+      cleanup:
+        limits:
+          cpu: "500m"
+          memory: "1Gi"
+        requests:
+          cpu: "500m"
+          memory: "100Mi"
   dashboard:
     enabled: true
     ingress:
@@ -79,7 +108,7 @@ rook:
   objectStorage:
     enabled: false
     ingress:
-      domain: s3.test.vanillastack.cloudical.net
+      domain: "s3.{{ clusterTLDomain }}"
       tls:
         enabled: true
         issuerName: "{{ LE_issuer_name }}"
