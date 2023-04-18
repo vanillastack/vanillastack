@@ -1,9 +1,0 @@
----
-- name: Install elasticsearch
-  kubernetes.core.helm:
-    name: elasticsearch
-    chart_ref: vanillastack/elasticsearch
-    release_namespace: kube-logging
-    values: "{{ lookup('template', 'elastic_values.yml.j2') | from_yaml }}"
-    chart_version: "{{ efkstack.es.chartVersion }}"
-    wait: true

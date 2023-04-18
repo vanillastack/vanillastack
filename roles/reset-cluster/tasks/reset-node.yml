@@ -3,6 +3,16 @@
   ansible.builtin.command: kubeadm reset --force
   ignore_errors: true
 
+- name: Unhold packages
+  when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+  ansible.builtin.command: "apt-mark unhold {{ item }}"
+  with_items:
+    - "kubelet"
+    - "kubeadm"
+    - "kubectl"
+    - "cri-o"
+    - "cri-o-runc"
+
 - name: Remove Packages
   ansible.builtin.package:
     name:

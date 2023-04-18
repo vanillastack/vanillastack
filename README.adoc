@@ -17,10 +17,7 @@ It offers a cloudstack installation of the following OpenSource projects:
 * Kubernetes
 * Rook Ceph
 * Prometheus
-* Promtail
-* Grafana
-* Loki
-* all including Monitoring, Metrics and alerting preconfigured.
+* Postgres Operator
 * ... and more
 
 
@@ -39,7 +36,6 @@ All from an easy to use installer, all working out-of-the-box.
 
 The best management and operations tools::
 With VanillaStack, the most commonly used management and operations tools, are just a click away.
-Install Prometheus, Grafana and the EFK-stack with ease.
 Enjoy operations.
 
 Commercial and Open-Source ecosystem::

@@ -1,4 +1,4 @@
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: kubeadm.k8s.io/v1beta3
 bootstrapTokens:
 - groups:
   - system:bootstrappers:kubeadm:default-node-token
@@ -13,7 +13,7 @@ localAPIEndpoint:
   bindPort: {{ apiport }}
 certificateKey: "{{ certificate_key }}"
 nodeRegistration:
-  criSocket: /var/run/crio/crio.sock
+  criSocket: unix://var/run/crio/crio.sock
   name: node
   taints: null
   ignorePreflightErrors: [ "Port-6443" ]
@@ -22,15 +22,13 @@ apiServer:
   timeoutForControlPlane: 4m0s
   extraArgs:
     authorization-mode: Node,RBAC
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: kubeadm.k8s.io/v1beta3
 certificatesDir: /etc/kubernetes/pki
 clusterName: {{ kubernetes.clusterName }}
 controlPlaneEndpoint: api.{{ clusterTLDomain }}:6443
 controllerManager:
   extraArgs:
     bind-address: 0.0.0.0
-dns:
-  type: CoreDNS
 etcd:
   local:
     dataDir: /var/lib/etcd
@@ -39,7 +37,7 @@ etcd:
 {% if commercial.enabled %}
 imageRepository: {{repositories.registry_commercial}}/vanillastack
 {% else %}
-imageRepository: k8s.gcr.io
+imageRepository: registry.k8s.io
 {% endif %}
 kind: ClusterConfiguration
 kubernetesVersion: {{ version }}

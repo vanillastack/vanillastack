@@ -26,11 +26,7 @@ vanillaservices:
   dashboard_enabled: true
   pgOperator_enabled: true
   harbor_enabled: true
-  loggingStack_enabled: true
-  monitoring_enabled: true
   keycloak_enabled: true
-  loki_enabled: true
-  grafana_enabled: true
   metricsServer_enabled: true
 vanillastorageprovider: "rook"
 polyverse:

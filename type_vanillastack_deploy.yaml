@@ -49,7 +49,7 @@
       when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
 
 - name: Install Loadbalancing
-  ansible.builtin.import_playbook:  type_install_loadbalancing.yaml
+  ansible.builtin.import_playbook: type_install_loadbalancing.yaml
 
 - name: Configure Kube Systems
   hosts: install_nodes,install_master
@@ -120,17 +120,11 @@
     - role: deploy-kubernetes
       action: 07_label_nodes
 
-- name: Install monitoring
+- name: Install Metrics Server
   hosts: master[0]
   become: false
   gather_facts: true
   roles:
-    - role: install-monitoring
-      action: operator
-      when: vanillaservices.monitoring_enabled
-    - role: install-monitoring
-      action: textile-exporters
-      when: vanillaservices.monitoring_enabled
     - role: deploy-metrics-server
       when: vanillaservices.metricsServer_enabled
 
@@ -197,28 +191,6 @@
     - role: install-kubedashboard
       when: vanillaservices.dashboard_enabled
 
-- name: Deploy efk
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: prepare-registry
-      when: vanillaservices.loggingStack_enabled
-    - role: install-efk
-      action: init
-      when: vanillaservices.loggingStack_enabled
-    - role: install-efk
-      action: es_deploy
-      when: vanillaservices.loggingStack_enabled
-    - role: install-efk
-      action: kibana_deploy
-      when: vanillaservices.loggingStack_enabled
-    - role: install-efk
-      action: "{{ efkstack.logaggregator.name }}_deploy"
-      when: vanillaservices.loggingStack_enabled
-    - role: install-efk
-      action: create-client
-      when: vanillaservices.loggingStack_enabled and vanillaservices.keycloak_enabled
-
 - name: Deploy Harbor
   hosts: master[0]
   gather_facts: true
@@ -228,16 +200,3 @@
     - role: deploy-harbor
       when: vanillaservices.harbor_enabled
 
-- name: Install Grafana
-  hosts: master[0]
-  gather_facts: false
-  roles:
-    - role: install-grafana
-      when: vanillaservices.grafana_enabled
-
-- name: Install Loki
-  hosts: master[0]
-  gather_facts: false
-  roles:
-    - role: install-loki
-      when: 'vanillaservices.loki_enabled | default(false)'

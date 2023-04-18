@@ -1,6 +1,6 @@
 harbor:
   enabled: false
-  chartVersion: 1.8.1
+  chartVersion: 1.11.1
   namespace: harbor
   ingress:
     coreDomain: ""
@@ -45,7 +45,7 @@ harbor:
     # secret lenght must be 16
     secret: ""
   redis:
-    chartVersion: 10.8.1
+    chartVersion: 17.9.2
     password: ""
     persistence:
       storageClass: rook-ceph-block
@@ -53,7 +53,7 @@ harbor:
   postgres:
     size: 20Gi
     replicas: 2
-    version: 12
+    version: "12"
     maxConnections: 400
     backup:
       enabled: false

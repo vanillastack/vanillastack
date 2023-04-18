@@ -1,7 +1,0 @@
----
-- name: Install Metrics Server
-  hosts: master[0]
-  gather_facts: true
-  roles:
-    - role: deploy-metrics-server
-      when: vanillaservices.metricsServer_enabled

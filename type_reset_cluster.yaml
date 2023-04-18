@@ -2,7 +2,7 @@
 - name: Reset kubernetes cluster
   hosts: master,worker
   become: true
-  gather_facts: false
+  gather_facts: true
   roles:
     - role: reset-cluster
       action: reset-node
