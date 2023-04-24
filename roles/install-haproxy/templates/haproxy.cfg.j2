@@ -76,7 +76,7 @@ backend master
 {% endfor %}
 
 frontend worker-http
-        bind {{ loadbalancerIP }}:80
+        bind *:80
         mode tcp
         # Default backend
         default_backend worker-http
@@ -91,7 +91,7 @@ backend worker-http
 {% endfor %}
 
 frontend worker-https
-        bind {{ loadbalancerIP }}:443
+        bind *:443
         mode tcp
         # Default backend
         default_backend worker-https
