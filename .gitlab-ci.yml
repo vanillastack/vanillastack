@@ -1,7 +1,3 @@
----
-
-
----
 image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20201211"
 services:
   - docker:18.09.7-dind
