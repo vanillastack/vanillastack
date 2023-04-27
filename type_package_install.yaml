@@ -6,7 +6,7 @@
   roles:
     - role: deploy-kubernetes
       action: 01_configure_systems_debian_amd64
-      when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+      when: ansible_os_family == 'Debian' and ansible_architecture == "x86_64"
     - role: deploy-kubernetes
       action: 01_configure_systems_rhel8_amd64
-      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
+      when: ansible_os_family == 'RedHat' and ansible_architecture == "x86_64"

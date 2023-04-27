@@ -12,7 +12,7 @@
   roles:
     - role: deploy-kubernetes
       action: 01_disable_selinux
-      when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
+      when: ansible_os_family == 'RedHat' and ansible_architecture == "x86_64"
 
 - name: Update first Master
   hosts: update_master[0]
