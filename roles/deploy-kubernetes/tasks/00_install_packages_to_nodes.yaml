@@ -130,7 +130,7 @@
           - tar
           - vim
           - grubby
-          - tc
+          #- tc
       register: result
       until: result is not failed
       retries: 10
