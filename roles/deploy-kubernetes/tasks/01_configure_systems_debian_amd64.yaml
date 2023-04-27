@@ -2,7 +2,7 @@
 - name: Check if distribution is supported
   ansible.builtin.fail:
     msg: This disribution is currently not supported by VanillaStack
-  when: ansible_distribution != 'Debian'
+  when: ansible_os_family != 'Debian'
 
 # This task includes all Steps to install packages to the systems
 - include_tasks: 00_install_packages_to_nodes.yaml

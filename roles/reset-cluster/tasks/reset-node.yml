@@ -4,7 +4,7 @@
   ignore_errors: true
 
 - name: Unhold packages
-  when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+  when: ansible_os_family == 'Debian' and ansible_architecture == "x86_64"
   ansible.builtin.command: "apt-mark unhold {{ item }}"
   with_items:
     - "kubelet"

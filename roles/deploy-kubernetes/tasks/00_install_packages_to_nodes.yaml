@@ -1,6 +1,6 @@
 ---
 - name: Debian Install
-  when: ansible_distribution == 'Debian' and ansible_architecture == "x86_64"
+  when: ansible_os_family == 'Debian' and ansible_architecture == "x86_64"
   become: true
   block:
     # This needs to be done since unwanted side effects from packages or ansible may occurr
@@ -101,7 +101,7 @@
     - include_tasks: deb_kube_crio_install.yaml
 
 - name: RHEL Install
-  when: ansible_distribution == 'RedHat' and ansible_architecture == "x86_64"
+  when: ansible_os_family == 'RedHat' and ansible_architecture == "x86_64"
   become: true
   block:
     - include_tasks: configure_rhel_repos.yaml

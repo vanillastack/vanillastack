@@ -3,22 +3,22 @@
   hosts: localhost
   connection: local
   tasks:
-  - name: Install collections from Ansible galaxy
-    ansible.builtin.command: "ansible-galaxy collection install {{ item }}"
-    loop:
-      - community.general
-      - kubernetes.core
-      - cloud.common
-      - ansible.posix
+    - name: Install collections from Ansible galaxy
+      ansible.builtin.command: "ansible-galaxy collection install {{ item }}"
+      loop:
+        - community.general
+        - kubernetes.core
+        - cloud.common
+        - ansible.posix
 
-  - name: Install pip dependencies
-    ansible.builtin.pip:
-      requirements: "{{ playbook_dir }}/requirements.txt"
-    when: ansible_distribution == 'Debian'
+    - name: Install pip dependencies
+      ansible.builtin.pip:
+        requirements: "{{ playbook_dir }}/requirements.txt"
+      when: ansible_os_family == 'Debian'
 
-# RedHat pip apparently works a litttle different to "normal" pip
-  - name: Install pip dependencies
-    become: true
-    ansible.builtin.pip:
-      requirements: "{{ playbook_dir }}/requirements.txt"
-    when: ansible_distribution == 'RedHat'
+    # RedHat pip apparently works a litttle different to "normal" pip
+    - name: Install pip dependencies
+      become: true
+      ansible.builtin.pip:
+        requirements: "{{ playbook_dir }}/requirements.txt"
+      when: ansible_os_family == 'RedHat'
