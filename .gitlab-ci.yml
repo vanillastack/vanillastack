@@ -1,47 +1,61 @@
-image: "harbor.vanillastack.io/vanillastack/vanilla-ubuntu-base:20201211"
-services:
-  - docker:18.09.7-dind
+image: "harbor.cloudical.net/vanillastack/ansible-base:e4e64396"
+
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  DOCKER_HOST: tcp://localhost:2375
   SAST_EXCLUDED_PATHS: "docs"
   SECRET_DETECTION_EXCLUDED_PATHS: "docs"
   SEARCH_MAX_DEPTH: 50
 
 stages:
   - test
-  - run_playbook_debian11
-  - release
+  - run_playbook
+#  - release
 
-run_playbook_debian11:
-  only:
-    refs:
-      - testing
-  stage: run_playbook_debian11
+reset_environment:
+  extends: .prepare_playbook
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_MERGE_REQUEST_ID'
+  stage: run_playbook
+  allow_failure: false
+  script:
+    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_reset_cluster.yaml
+
+run_playbook:
+  extends: .prepare_playbook
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_MERGE_REQUEST_ID'
+  stage: run_playbook
   interruptible: true
   allow_failure: true
   script:
-    - curl $WEBHOOK_REDEPLOY_DEBIAN11 && sleep 60
-    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-    - mv group_vars.testing group_vars
-    - sed -i "s/POLYVERSE_KEY/${POLYVERSE_KEY}/g" group_vars/all/additional.yaml
-    - sed -i "s/REGISTRY_KEY/${HARBOR_COMMERCIAL_KEY}/g" group_vars/all/container_vars.yaml
-    - if [ "$COMMUNITY" == true ]; then yq -Yi .commercial.enabled='false' group_vars/all/container_vars.yaml; fi
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_prepare_installnode.yaml
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
 
-release:
-  image: node:12-buster-slim
-  stage: release
-  before_script:
-    - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
-    - npm install -g semantic-release @semantic-release/gitlab
-  script:
-    - find .
-    - semantic-release
-  only:
-    - master
+# TODO: Needs rework
+# release:
+#   image: node:12-buster-slim
+#   stage: release
+#   before_script:
+#     - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
+#     - npm install -g semantic-release @semantic-release/gitlab
+#   script:
+#     - find .
+#     - semantic-release
+#   only:
+#     - master
 
 include:
   - template: Security/SAST.gitlab-ci.yml
 #  - template: Security/Secret-Detection.gitlab-ci.yml
+
+.prepare_playbook:
+  before_script:
+    - echo -e "TODO redeploy vm webhook \nPreparing environment"
+    - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+    - mv group_vars.testing group_vars
+    - cp $VANILLASTACK_INVENTORY "$(pwd)/inventory"
+    - export STAGING_VERSION=`yq ".kubernetes.version" group_vars/all/global.yaml | awk -v FS="." '{print $1"-"$2}'`
+    - yq -i '.reset_environment = true' group_vars/all/container_vars.yaml
+    - yq -i ".clusterTLDomain = \"$VANILLASTACK_CLUSTER_TLD\"" group_vars/all/container_vars.yaml
+    - yq -i ".loadbalancerIP = \"$VANILLASTACK_LOADBALANCER_IP\"" group_vars/all/container_vars.yaml
+    - yq -i ".staging_tag = \"$STAGING_VERSION\"" group_vars/all/container_vars.yaml
