@@ -61,3 +61,4 @@ include:
     - yq -i ".clusterTLDomain = \"$VANILLASTACK_CLUSTER_TLD\"" group_vars/all/container_vars.yaml
     - yq -i ".loadbalancerIP = \"$VANILLASTACK_LOADBALANCER_IP\"" group_vars/all/container_vars.yaml
     - yq -i ".staging_tag = \"$STAGING_VERSION\"" group_vars/all/container_vars.yaml
+    - yq -i e '.ansible_ssh_private_key_file += "~/.ssh/id_rsa"' group_vars/all/container_vars.yaml
