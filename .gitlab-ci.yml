@@ -16,7 +16,7 @@ reset_environment:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_MERGE_REQUEST_ID'
   stage: run_playbook
-  allow_failure: false
+  allow_failure: true
   script:
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_reset_cluster.yaml
 
