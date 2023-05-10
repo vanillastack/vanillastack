@@ -30,8 +30,8 @@ run_playbook:
   interruptible: true
   allow_failure: true
   script:
-    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_prepare_installnode.yaml
-    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory.testing type_vanillastack_deploy.yaml
+    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_prepare_installnode.yaml
+    - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_vanillastack_deploy.yaml
 
 # TODO: Needs rework
 # release:
