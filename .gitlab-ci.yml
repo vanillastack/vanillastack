@@ -1,4 +1,4 @@
-image: "harbor.cloudical.net/vanillastack/ansible-base:e4e64396"
+image: "harbor.cloudical.net/vanillastack/ansible-base:6ef964e3"
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -22,8 +22,8 @@ reset_environment:
 
 run_playbook:
   extends: .prepare_playbook
-  dependencies:
-    - reset_environment
+  needs:
+    - "reset_environment"
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_MERGE_REQUEST_ID'
   stage: run_playbook
