@@ -58,6 +58,7 @@ include:
     - cp $VANILLASTACK_INVENTORY "$(pwd)/inventory"
     - export STAGING_VERSION=`yq ".kubernetes.version" group_vars/all/global.yaml | awk -v FS="." '{print $1"-"$2}'`
     - yq -i '.reset_environment = true' group_vars/all/container_vars.yaml
+    - yq -i '.install_haproxy = true' group_vars/all/container_vars.yaml
     - yq -i ".clusterTLDomain = \"$VANILLASTACK_CLUSTER_TLD\"" group_vars/all/container_vars.yaml
     - yq -i ".loadbalancerIP = \"$VANILLASTACK_LOADBALANCER_IP\"" group_vars/all/container_vars.yaml
     - yq -i ".staging_tag = \"$STAGING_VERSION\"" group_vars/all/container_vars.yaml
