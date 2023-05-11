@@ -16,11 +16,6 @@ reset_environment:
   extends: .prepare_playbook
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      changes:
-        - "roles/deploy-kubernetes/**"
-        - "roles/deploy-rook/**"
-        - "samples/group_vars/all/kubernetes.yaml"
-      when: always
   allow_failure: true
   script:
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_reset_cluster.yaml
@@ -29,7 +24,7 @@ run_playbook:
   stage: run_playbook
   extends: .prepare_playbook
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_MERGE_REQUEST_ID'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
   interruptible: true
   allow_failure: true
   script:
