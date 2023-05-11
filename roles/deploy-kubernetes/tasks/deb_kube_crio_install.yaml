@@ -4,7 +4,7 @@
     update_cache: true
 
 - name: Get available Kubernetes version
-  ansible.builtin.shell: apt-cache madison kubeadm | grep {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  ansible.builtin.shell: apt-cache madison kubeadm | grep -F {{ kubernetes.version }} | head -1 | tr -s ' ' | cut -d ' ' -f4
   register: kubeversion_pkg_output
 
 - name: Set Kubernetes version variable
@@ -17,7 +17,7 @@
   when: kube_version is not defined or kube_version|trim == ""
 
 - name: Get available CRI-O version
-  ansible.builtin.shell: apt-cache madison cri-o | grep {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f4
+  ansible.builtin.shell: apt-cache madison cri-o | grep -F {{ kubernetes.crioVersion }} | head -1 | tr -s ' ' | cut -d ' ' -f4
   register: crioversion_pkg_output
 
 - name: Set CRI-O Package version
