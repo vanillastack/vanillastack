@@ -51,13 +51,6 @@
     flat: true
   run_once: true
 
-- name: Configure kubelet
-  ansible.builtin.lineinfile:
-    path: /etc/default/kubelet
-    regexp: "^(.*)KUBELET_EXTRA_ARGS(.*)$"
-    line: 'KUBELET_EXTRA_ARGS=--container-runtime=remote --container-runtime-endpoint="unix:///var/run/crio/crio.sock"'
-    create: true
-
 - include_tasks: configure_crio.yaml
 
 - name: "Check for installed packages"
