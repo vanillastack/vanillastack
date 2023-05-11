@@ -22,28 +22,6 @@ ingress:
     requests:
       cpu: "500m" #default "2000m"
       memory: "1Gi" #default "6Gi"
-kubernetes:
-  dashboard:
-    coreDomain: "k8sboard.{{ clusterTLDomain }}"
-    chartVersion: "6.0.6"
-    replicas: 2
-  clusterName: kubernetes
-  # if you define a version without a specific patch it will take the latest (for example: 1.25 results in 1.25.9)
-  version: "1.25"
-  crioVersion: "1.25"
-  crioRuncVersion: "1.0.1~2"
-  helm_version: "3.11.2"
-  init_opts: ""
-  kubeadm_opts: ""
-  drainTimeout: "10m"
-  updateSleepSeconds: 90
-  ignoreDrainErrors: true
-  cilium:
-    version: v1.11.2
-    waitTimeout: 120s
-    proxyReplacement: "strict" #possible values: "disabled", "probe", "partial", "strict"
-    manual_mtu: 0 # This Value Sets the MTU for cilium and applies it to a deamonset watching the mtu
-  ignorePreflightErrors: []
 postgresOperator:
   chartName: "postgres-operator"
   chartVersion: "v1.9.0"
