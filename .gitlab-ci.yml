@@ -8,58 +8,51 @@ variables:
 
 stages:
   - test
+  - reset_env
   - run_playbook
-#  - release
 
 reset_environment:
+  stage: reset_env
   extends: .prepare_playbook
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_MERGE_REQUEST_ID'
-  stage: run_playbook
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - "roles/deploy-kubernetes/**"
+        - "roles/deploy-rook/**"
+        - "samples/group_vars/all/kubernetes.yaml"
+      when: always
   allow_failure: true
   script:
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_reset_cluster.yaml
 
 run_playbook:
+  stage: run_playbook
   extends: .prepare_playbook
-  needs:
-    - "reset_environment"
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event" || $CI_MERGE_REQUEST_ID'
-  stage: run_playbook
   interruptible: true
   allow_failure: true
   script:
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_prepare_installnode.yaml
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_vanillastack_deploy.yaml
 
-# TODO: Needs rework
-# release:
-#   image: node:12-buster-slim
-#   stage: release
-#   before_script:
-#     - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
-#     - npm install -g semantic-release @semantic-release/gitlab
-#   script:
-#     - find .
-#     - semantic-release
-#   only:
-#     - master
-
 include:
   - template: Security/SAST.gitlab-ci.yml
-#  - template: Security/Secret-Detection.gitlab-ci.yml
 
 .prepare_playbook:
   before_script:
     - echo -e "TODO redeploy vm webhook \nPreparing environment"
+    - echo "Root Dir = $CI_PROJECT_DIR"
+    - echo "Pipeline Source = $CI_PIPELINE_SOURCE"
+    - ls -ahl
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-    - mv group_vars.testing group_vars
+    - mv samples/group_vars group_vars
     - cp $VANILLASTACK_INVENTORY "$(pwd)/inventory"
-    - export STAGING_VERSION=`yq ".kubernetes.version" group_vars/all/global.yaml | awk -v FS="." '{print $1"-"$2}'`
+    - export STAGING_VERSION=`yq ".kubernetes.version" group_vars/all/kubernetes.yaml | awk -v FS="." '{print $1"-"$2}'`
     - yq -i '.reset_environment = true' group_vars/all/container_vars.yaml
     - yq -i '.install_haproxy = true' group_vars/all/container_vars.yaml
     - yq -i ".clusterTLDomain = \"$VANILLASTACK_CLUSTER_TLD\"" group_vars/all/container_vars.yaml
     - yq -i ".loadbalancerIP = \"$VANILLASTACK_LOADBALANCER_IP\"" group_vars/all/container_vars.yaml
     - yq -i ".staging_tag = \"$STAGING_VERSION\"" group_vars/all/container_vars.yaml
     - yq -i e '.ansible_ssh_private_key_file += "~/.ssh/id_rsa"' group_vars/all/container_vars.yaml
+    - "sed -i 's/minutes: 5/minutes: 1/' roles/deploy-rook/tasks/main.yaml"

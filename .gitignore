@@ -1,4 +1,6 @@
 group_vars
+!samples/
+!samples/group_vars/
 hosts
 inventory
 inventory-smc1

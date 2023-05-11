@@ -11,7 +11,7 @@ cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 cluster_pod_cidr: "10.0.0.0/8"
 cluster_service_cidr: "10.96.0.0/12"
 cluster_sdn: cilium
-staging_tag: "1-26"
+staging_tag: "1-25"
 # possible issuer: "letsencrypt-staging", "letsencrypt-prod" or "certmanager-selfsigned"
 LE_issuer_name: "letsencrypt-staging"
 LE_issuer_mail: "testing@test.vanillastack.cloudical.net"
@@ -26,12 +26,9 @@ vanillaservices:
   dashboard_enabled: true
   pgOperator_enabled: true
   harbor_enabled: true
-  keycloak_enabled: true
+  keycloak_enabled: false
   metricsServer_enabled: true
 vanillastorageprovider: "rook"
-polyverse:
-  enabled: false
-  key: "testKey"
 # This will skip all install steps which normally require internet access
 # It requires you to have already prepared Debian or RHEL Machines. See the type_prepare_offline_install.yaml,
 # to prepare machines for the install while still online.

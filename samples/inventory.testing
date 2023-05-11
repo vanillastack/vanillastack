@@ -1,0 +1,29 @@
+[master]
+testing-master-1 ansible_host=1.2.3.4 ansible_user=testing
+testing-master-2 ansible_host=4.5.6.7 ansible_user=testing
+testing-master-3 ansible_host=8.9.10.11 ansible_user=testing
+
+[worker]
+testing-worker-1 ansible_host=11.12.13.14 ansible_user=testing
+testing-worker-2 ansible_host=22.23.24.25 ansible_user=testing
+testing-worker-3 ansible_host=33.34.35.36 ansible_user=testing
+
+# Ceph Storage Nodes
+[storage]
+testing-worker-1 ansible_host=11.12.13.14 ansible_user=testing
+testing-worker-2 ansible_host=22.23.24.25 ansible_user=testing
+testing-worker-3 ansible_host=33.34.35.36 ansible_user=testing
+
+[kube_cluster:children]
+install_nodes
+
+# This group defines, where the private loadbalancer and virtual IP
+# should be installed. That can be changed to other systems as well
+# Use [haproxy:children] if you want to include another group here
+[haproxy]
+
+# These groups need to exist and be empty, as it is used to scale and update nodes
+[install_nodes]
+[install_master]
+[update_nodes]
+[update_master]
