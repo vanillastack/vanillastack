@@ -1,0 +1,36 @@
+{% if rook.objectStorage.enabled | default(false) %}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: {{ rook.namespace }}
+  annotations:
+    ingress.kubernetes.io/proxy-body-size: "0"
+    ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    #nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8"
+{% if rook.objectStorage.ingress.tls.enabled|default(false) %}
+    cert-manager.io/cluster-issuer: "{{ rook.objectStorage.ingress.tls.issuerName }}"
+    kubernetes.io/tls-acme: "true"
+{% endif %}
+  labels:
+    app: rook-ceph-rgw
+  name: cephobjectn1-rgw-s3
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ rook.objectStorage.ingress.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: rook-ceph-rgw-cephobjectn1
+            port:
+              number: 8888
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+      - {{ rook.objectStorage.ingress.domain }}
+    secretName: tls-s3-endpoint
+{% endif %}

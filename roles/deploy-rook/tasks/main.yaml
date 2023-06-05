@@ -5,6 +5,19 @@
     kind: Namespace
     state: present
 
+- name: Template Ingress
+  template:
+    src: obejctStore-ingress.yaml.j2
+    dest: /tmp/obejctStore-ingress.yaml
+  when: rook.objectStorage.enabled
+
+- name: Apply RGW Ingress
+  kubernetes.core.k8s:
+    src: /tmp/obejctStore-ingress.yaml
+    state: present
+    namespace: "{{ rook.namespace }}"
+  when: rook.objectStorage.enabled
+
 - name: Install Rook Operator
   kubernetes.core.helm:
     name: rook-ceph

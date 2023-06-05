@@ -520,39 +520,43 @@ cephBlockPoolsVolumeSnapshotClass:
 
 # -- A list of CephObjectStore configurations to deploy
 # @default -- See [below](#ceph-object-stores)
-cephObjectStores: {} # not needed
-#  - name: ceph-objectstore
-#    # see https://github.com/rook/rook/blob/master/Documentation/CRDs/Object-Storage/ceph-object-store-crd.md#object-store-settings for available configuration
-#    spec:
-#      metadataPool:
-#        failureDomain: host
-#        replicated:
-#          size: 3
-#      dataPool:
-#        failureDomain: host
-#        erasureCoded:
-#          dataChunks: 2
-#          codingChunks: 1
-#      preservePoolsOnDelete: true
-#      gateway:
-#        port: 80
-#        resources:
-#          limits:
-#            cpu: "2000m"
-#            memory: "2Gi"
-#          requests:
-#            cpu: "1000m"
-#            memory: "1Gi"
-#        # securePort: 443
-#        # sslCertificateRef:
-#        instances: 1
-#        priorityClassName: system-cluster-critical
-#    storageClass:
-#      enabled: true
-#      name: ceph-bucket
-#      reclaimPolicy: Delete
-#      volumeBindingMode: "Immediate"
-#      # see https://github.com/rook/rook/blob/master/Documentation/ceph-object-bucket-claim.md#storageclass for available configuration
-#      parameters:
-#        # note: objectStoreNamespace and objectStoreName are configured by the chart
-#        region: us-east-1
+{% if rook.objectStorage.enabled | default(false) %}
+cephObjectStores:
+  - name: {{ rook.objectStorage.name }}
+    # see https://github.com/rook/rook/blob/master/Documentation/CRDs/Object-Storage/ceph-object-store-crd.md#object-store-settings for available configuration
+    spec:
+      metadataPool:
+        failureDomain: {{ rook.objectStorage.failureDomain }}
+        replicated:
+          size: {{ rook.objectStorage.replicaLevel }}
+      dataPool:
+        failureDomain: {{ rook.objectStorage.failureDomain }}
+        erasureCoded:
+          dataChunks: 2
+          codingChunks: 1
+      preservePoolsOnDelete: true
+      gateway:
+        port: 8888
+        resources:
+          limits:
+            cpu: "2000m"
+            memory: "2Gi"
+          requests:
+            cpu: "1000m"
+            memory: "1Gi"
+        # securePort: 443
+        # sslCertificateRef:
+        instances: 1
+        priorityClassName: system-cluster-critical
+    storageClass:
+      enabled: true
+      name: ceph-bucket
+      reclaimPolicy: Delete
+      volumeBindingMode: "Immediate"
+      # see https://github.com/rook/rook/blob/master/Documentation/ceph-object-bucket-claim.md#storageclass for available configuration
+      parameters:
+        # note: objectStoreNamespace and objectStoreName are configured by the chart
+        region: {{ rook.objectStorage.region }}
+{% else %}
+cephObjectStores: {}
+{% endif %}

@@ -14,7 +14,7 @@ rook:
     csiEnableGRPC: true
     provisionerReplicas: 2
     monitoring:
-     enabled: false
+      enabled: false
   cluster:
     enabled: true
     name: rook-ceph
@@ -113,9 +113,9 @@ rook:
         enabled: true
         issuerName: "{{ LE_issuer_name }}"
     name: cephobjectn1
+    region: eu-west-1
     failureDomain: host
     replicaLevel: 2
-    minSize: 1
   filesystem:
     enabled: true
     name: rook-cephfs
