@@ -24,7 +24,7 @@ spec:
       paths:
       - backend:
           service:
-            name: rook-ceph-rgw-cephobjectn1
+            name: "{{ rook.namespace }}-rgw-ceph-objectstore"
             port:
               number: 8888
         path: /
