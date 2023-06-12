@@ -1,9 +1,9 @@
 velero:
   enabled: false
-  version: v1.10.2
-  chartVersion: 3.1.5
+  version: v1.11.0
+  chartVersion: 4.0.3
   namespace: velero
-  backend: minio # minio|aws
+  backend: minio # aws|minio (aws for external Backups via S3, minio for internal Backups using PVC)
   resources:
     requests:
       cpu: "1000m"
@@ -30,20 +30,20 @@ velero:
   #  secretKey: YOUR_SECRET_KEY
   minio:
     enabled: true
-    chartVersion: 5.0.7
+    chartVersion: 5.0.9
     nfs:
       size: 50Gi
       server: example.com
       path: /srv/nfs
-    accessKey: NQhlZ2qu6Gi73f4AfTBbGyLob
-    secretKey: p7v1jHW8cW3BQNMknrTAJqpUX
+    accessKey: ""
+    secretKey: ""
     resources:
       requests:
         cpu: "50m"
-        memory: "128Mi"
+        memory: "16Gi" # defined in MinioChart
       limits:
         cpu: "500m"
-        memory: "1024Mi"
+        memory: "16Gi"
   schedules:
     k8s-cluster:
       schedule: 15 */6 * * *
