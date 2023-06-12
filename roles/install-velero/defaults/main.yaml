@@ -1,8 +1,8 @@
 ---
 velero:
   enabled: false
-  version: v1.10.2
-  chartVersion: 3.1.5
+  version: v1.11.0
+  chartVersion: 4.0.3
   namespace: velero
   backend: minio # minio|aws
   resources:
@@ -30,7 +30,7 @@ velero:
     secretKey: <secret key>
   minio:
     enabled: true
-    chartVersion: 5.0.7
+    chartVersion: 5.0.9
     nfs:
       size: 50Gi
       server: <NFS server ip>
@@ -40,10 +40,10 @@ velero:
     resources:
       requests:
         cpu: "50m"
-        memory: "128Mi"
+        memory: "16Gi" # defined in MinioChart
       limits:
         cpu: "500m"
-        memory: "1024Mi"
+        memory: "16Gi"
   schedules:
     k8s-cluster:
       schedule: 15 */4 * * *
