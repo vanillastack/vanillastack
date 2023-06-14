@@ -122,7 +122,7 @@ extraObjects: []
   #   metadata:
   #     name: velero-secrets-store
   #   spec:
-  #     provider: aws
+  #     provider: {{ velero.backend }}
   #     parameters:
   #       objects: |
   #         - objectName: "velero"
@@ -191,7 +191,7 @@ metrics:
     spec: []
     # - alert: VeleroBackupPartialFailures
     #   annotations:
-    #     message: Velero backup {{ $labels.schedule }} has {{ $value | humanizePercentage }} partialy failed backups.
+    #     message: Velero backup {{ "{{" }} $labels.schedule {{ "}}" }} has {{ "{{" }} $value | humanizePercentage {{ "}}" }} partialy failed backups.
     #   expr: |-
     #     velero_backup_partial_failure_total{schedule!=""} / velero_backup_attempt_total{schedule!=""} > 0.25
     #   for: 15m
@@ -199,7 +199,7 @@ metrics:
     #     severity: warning
     # - alert: VeleroBackupFailures
     #   annotations:
-    #     message: Velero backup {{ $labels.schedule }} has {{ $value | humanizePercentage }} failed backups.
+    #     message: Velero backup {{ "{{" }} $labels.schedule {{ "}}" }} has {{ "{{" }} $value | humanizePercentage {{ "}}" }} failed backups.
     #   expr: |-
     #     velero_backup_failure_total{schedule!=""} / velero_backup_attempt_total{schedule!=""} > 0.25
     #   for: 15m
@@ -242,15 +242,14 @@ cleanUpCRDs: false
 ##
 configuration:
 {% if velero.backend == "minio" %}
-  provider: aws
   # Parameters for the BackupStorageLocation(s). Configure multiple by adding other element(s) to the backupStorageLocation slice.
   # See https://velero.io/docs/v1.6/api-types/backupstoragelocation/
   backupStorageLocation:
     # name is the name of the backup storage location where backups should be stored. If a name is not provided,
     # a backup storage location will be created with the name "default". Optional.
-  - name:
+  - name: "default"
     # provider is the name for the backup storage location provider.
-    provider:
+    provider: {{ velero.backend }}
     # bucket is the name of the bucket to store backups in. Required.
     bucket: velero
     # caCert defines a base64 encoded CA bundle to use when verifying TLS connections to the provider. Optional.
@@ -291,9 +290,9 @@ configuration:
   # See https://velero.io/docs/v1.6/api-types/volumesnapshotlocation/
   volumeSnapshotLocation:
     # name is the name of the volume snapshot location where snapshots are being taken. Required.
-  - name: default
+  - name: "default"
     # provider is the name for the volume snapshot provider.
-    provider:
+    provider: {{ velero.backend }}
     bucket: kubernetes-pv
     # Additional provider-specific configuration. See link above
     # for details of required/optional fields for your provider.
@@ -311,28 +310,27 @@ configuration:
   #    snapshotLocation:
   #    project:
 {% elif velero.backend == "aws" %}
-  provider: aws
   backupStorageLocation:
-    name:
-    provider:
-    bucket: {{ velero.aws.bucketName }}
-    config:
-      region: {{ velero.aws.region }}
-      s3ForcePathStyle: true
-      publicUrl: "{{ velero.aws.publicURL }}"
-      s3Url: "{{ velero.aws.s3URL }}"
+    - name: "default"
+      provider: {{ velero.backend }}
+      bucket: {{ velero.aws.bucketName }}
+      config:
+        region: {{ velero.aws.region }}
+        s3ForcePathStyle: true
+        publicUrl: "{{ velero.aws.publicURL }}"
+        s3Url: "{{ velero.aws.s3URL }}"
   volumeSnapshotLocation:
-    name:
-    provider:
-    config: {}
-    #name: default-snap
-    #provider: aws
-    #bucket: {{ velero.aws.snapshotBucketName }}
-    #config:
-    #  region: {{ velero.aws.region }}
-    #  s3ForcePathStyle: true
-    #  publicUrl: "{{ velero.aws.publicURL }}"
-    #  s3Url: "{{ velero.aws.s3URL }}"
+    - name: "default"
+      provider: {{ velero.backend }}
+      config: {}
+      #name: default-snap
+      #provider: aws
+      #bucket: {{ velero.aws.snapshotBucketName }}
+      #config:
+      #  region: {{ velero.aws.region }}
+      #  s3ForcePathStyle: true
+      #  publicUrl: "{{ velero.aws.publicURL }}"
+      #  s3Url: "{{ velero.aws.s3URL }}"
 {% endif %}
 
   # These are server-level settings passed as CLI flags to the `velero server` command. Velero
