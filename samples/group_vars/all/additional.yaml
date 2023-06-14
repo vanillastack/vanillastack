@@ -49,11 +49,11 @@ velero:
       schedule: 15 */6 * * *
       template:
         excludedResources:
-        - persistentvolumeclaims
-        - peristentvolumes
+          - persistentvolumeclaims
+          - peristentvolumes
         hooks: {}
         includeClusterResources: true
         includedNamespaces:
-        - '*'
+          - "*"
         storageLocation: default
         ttl: 336h0m0s
