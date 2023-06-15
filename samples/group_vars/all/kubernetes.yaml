@@ -4,7 +4,7 @@ kubernetes:
     chartVersion: "6.0.6"
     replicas: 1
   clusterName: kubernetes
-  # if you define a version without a specific patch it will take the latest (for example: 1.25 results in 1.25.9)
+  # if you define a version without a specific patch it will take the latest (for example: 1.25 results in 1.25.10)
   version: "1.26"
   crioVersion: "1.26"
   crioRuncVersion: "1.0.1~2"

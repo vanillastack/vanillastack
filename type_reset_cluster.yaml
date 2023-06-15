@@ -1,4 +1,12 @@
 ---
+- name: Uninstall rook-ceph resources
+  hosts: master[0]
+  gather_facts: false
+  roles:
+    - role: reset-cluster
+      action: uninstall-ceph
+      when: reset_environment
+
 - name: Reset kubernetes cluster
   hosts: master,worker
   become: true
