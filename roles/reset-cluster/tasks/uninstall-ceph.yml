@@ -1,0 +1,30 @@
+---
+- name: Uninstall Ceph Cluster
+  kubernetes.core.helm:
+    name: rook-ceph-cluster
+    release_namespace: "{{ rook.namespace }}"
+    state: absent
+  ignore_errors: true
+
+- name: Delete CephBlockPool rook-ceph-block
+  kubernetes.core.k8s:
+    kind: CephBlockPool
+    name: rook-ceph-block
+    namespace: rook-ceph
+    state: absent
+  ignore_errors: true
+
+- name: Prepare running Ceph Cluster for removal
+  kubernetes.core.k8s:
+    kind: CephCluster
+    name: rook-ceph
+    namespace: "{{ rook.namespace }}"
+    state: patched
+    merge_type: merge
+    definition:
+      spec:
+        cleanupPolicy:
+          confirmation: "yes-really-destroy-data"
+    wait: true
+  ignore_errors: true
+  

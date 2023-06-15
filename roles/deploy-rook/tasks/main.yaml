@@ -35,13 +35,13 @@
     chart_version: "{{ rook.chartVersion }}"
 
 - name: Wait for CephCluster to come up
-  ansible.builtin.shell: kubectl get cephcluster "{{ rook.cluster.name }}" -o json -n "{{ rook.namespace }}"|egrep "(HEALTH_OK|HEALTH_WARN)"
+  ansible.builtin.shell: kubectl get cephcluster "{{ rook.cluster.name }}" -o json -n "{{ rook.namespace }}" | egrep "(HEALTH_OK|HEALTH_WARN)"
   register: cephcluster
   until: cephcluster.rc==0
   retries: 120
   delay: 10
   when: rook.enabled
 
-- name: Sleep 5 Minutes for letting rook be stable
+- name: Sleep 5 minutes for letting rook be stable
   ansible.builtin.pause:
     minutes: 5

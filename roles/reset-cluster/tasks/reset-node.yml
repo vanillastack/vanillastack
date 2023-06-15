@@ -1,4 +1,8 @@
 ---
+- name: Get list of Ceph storage devices
+  ansible.builtin.shell: "sudo blkid | grep ceph | awk '{print $1}' | sed 's/://g'"
+  register: ceph_storage_devices
+  
 - name: Reset the Kubernetes cluster using kubeadm
   ansible.builtin.command: kubeadm reset --force
   ignore_errors: true
