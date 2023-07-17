@@ -1,9 +1,9 @@
 ---
 repositories:
   registry_community: harbor.cloudical.net
-  registry_community_helm: harbor.cloudical.net
+  registry_community_helm: chartmuseum.cloudical.net
   registry_commercial: harbor.cloudical.net
-  registry_commercial_helm: harbor.cloudical.net
+  registry_commercial_helm: chartmuseum.cloudical.net
   # only for debian installs:
   package_repository: https://repo.vanillastack.cloudical.net
 ingress:
