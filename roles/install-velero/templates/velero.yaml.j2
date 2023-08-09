@@ -322,15 +322,8 @@ configuration:
   volumeSnapshotLocation:
     - name: "default"
       provider: {{ velero.backend }}
-      config: {}
-      #name: default-snap
-      #provider: aws
-      #bucket: {{ velero.aws.snapshotBucketName }}
-      #config:
-      #  region: {{ velero.aws.region }}
-      #  s3ForcePathStyle: true
-      #  publicUrl: "{{ velero.aws.publicURL }}"
-      #  s3Url: "{{ velero.aws.s3URL }}"
+      config:
+        region: {{ velero.aws.region }}
 {% endif %}
 
   # These are server-level settings passed as CLI flags to the `velero server` command. Velero
@@ -339,7 +332,7 @@ configuration:
   # comments below.
   # --------------------
   # `velero server` default: restic
-  uploaderType:
+  uploaderType: restic
   # `velero server` default: 1m
   backupSyncPeriod:
   # `velero server` default: 4h
@@ -355,7 +348,7 @@ configuration:
   # How long to wait by default before backups can be garbage collected. Default: 72h
   defaultBackupTTL:
   # Name of the default volume snapshot location.
-  defaultVolumeSnapshotLocations:
+  defaultVolumeSnapshotLocations: 
   # `velero server` default: empty
   disableControllers:
   # `velero server` default: 1h
@@ -459,7 +452,7 @@ credentials:
 # Whether to create backupstoragelocation crd, if false => do not create a default backup location
 backupsEnabled: true
 # Whether to create volumesnapshotlocation crd, if false => disable snapshot feature
-snapshotsEnabled: false
+snapshotsEnabled: true
 
 # Whether to deploy the node-agent daemonset.
 deployNodeAgent: true
