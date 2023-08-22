@@ -52,6 +52,7 @@
       action: 02_configure_cluster
 
 - name: Init Kubernetes Cluster
+  become: true
   hosts: install_master[0]
   gather_facts: true
   roles:
@@ -59,6 +60,7 @@
       action: 03_deploy_kubernetes
 
 - name: Generate Secrets
+  become: true
   hosts: master[0]
   gather_facts: false
   roles:
