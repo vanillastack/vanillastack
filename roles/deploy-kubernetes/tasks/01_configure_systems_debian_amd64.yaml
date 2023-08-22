@@ -134,3 +134,20 @@
 
 - name: Set Hostname as defined in inventory file
   ansible.builtin.shell: "echo {{ inventory_hostname }} > /etc/hostname"
+
+- name: Applying patches
+  when: repositories.apply_patches
+  block:
+    # This patch is needed because conmon is not available in versions >= 2.0.29 on debian 11
+    # It causes cilium to break on rollout as seen here https://github.com/cilium/cilium/issues/20024
+    # And is caused by https://github.com/containers/conmon/issues/244
+    - name: conmon regression patch
+      become: true
+      ansible.builtin.get_url:
+        mode: 755
+        backup: true
+        dest: /usr/bin/conmon
+        force: true
+        owner: root
+        group: root
+        url: "https://repo.vanillastack.cloudical.net/patches/conmon-2.0.32"

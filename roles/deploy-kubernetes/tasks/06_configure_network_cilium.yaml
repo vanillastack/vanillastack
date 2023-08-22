@@ -17,7 +17,7 @@
     chart_version: "{{ kubernetes.cilium.version }}"
     chart_ref: vanillastack/cilium
     release_namespace: kube-system
-    values: "{{ lookup('template', 'cilium-values.yaml.j2') | from_yaml }}"
+    values: "{{ lookup('template', 'cilium-values-{{ kubernetes.cilium.version }}.yaml.j2') | from_yaml }}"
     wait: true
     wait_timeout: "{{ kubernetes.cilium.waitTimeout }}"
     update_repo_cache: true
@@ -29,8 +29,10 @@
       ansible.builtin.template:
         src: cilium_mtu_update.yaml
         dest: /tmp/mtu_update.yaml
+    - name: Create cilium-mtu namespace
+      command: kubectl create namespace cilium-mtu
     - name: Apply MTU Update
-      command: kubectl apply -f /tmp/mtu_update.yaml
+      command: kubectl apply -n cilium-mtu -f /tmp/mtu_update.yaml
 
 - name: Wait for control-plane pods become ready
   command: kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s

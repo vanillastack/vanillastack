@@ -6,6 +6,7 @@ repositories:
   registry_commercial_helm: chartmuseum.cloudical.net
   # only for debian installs:
   package_repository: https://repo.vanillastack.cloudical.net
+  apply_patches: true
 ingress:
   namespace: nginx-ingress
   enabled: true

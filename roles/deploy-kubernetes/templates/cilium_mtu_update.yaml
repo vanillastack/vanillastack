@@ -2,7 +2,7 @@ kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: mtu-update
-  namespace: kube-system
+  namespace: cilium-mtu
 spec:
   selector:
     matchLabels:
