@@ -23,7 +23,7 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+**Underlaying OS:**
 - [ ] Debian 11
 - [ ] Debian 12
 - [ ] RHEL 8
