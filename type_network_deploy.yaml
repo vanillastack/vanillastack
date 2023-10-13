@@ -5,4 +5,4 @@
   roles:
     - role: prepare-registry
     - role: deploy-kubernetes
-      action: "06_configure_network_cilium"
+      action: "06_configure_network_{{cluster_sdn|default('cilium')}}"

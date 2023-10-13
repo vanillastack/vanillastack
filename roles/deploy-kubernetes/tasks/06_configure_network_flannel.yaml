@@ -11,28 +11,10 @@
   pause:
     seconds: 10
 
-- name: Deploy cilium chart
-  kubernetes.core.helm:
-    name: cilium
-    chart_version: "{{ cni.cilium.version }}"
-    chart_ref: vanillastack/cilium
-    release_namespace: kube-system
-    values: "{{ lookup('template', 'cilium-values-{{ cni.cilium.version }}.yaml.j2') | from_yaml }}"
-    wait: true
-    wait_timeout: "{{ cni.cilium.waitTimeout }}"
-    update_repo_cache: true
-
-- name: Deploy Cilium MTU Manifest if non zero value provided
-  when: cni.cilium.manual_mtu != 0
-  block:
-    - name: Copy file
-      ansible.builtin.template:
-        src: cilium_mtu_update.yaml
-        dest: /tmp/mtu_update.yaml
-    - name: Create cilium-mtu namespace
-      command: kubectl create namespace cilium-mtu
-    - name: Apply MTU Update
-      command: kubectl apply -n cilium-mtu -f /tmp/mtu_update.yaml
+- name: Deploy flannel cni
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template','flannel-values-{{ cni.flannel.version }}.yaml.j2') }}"
 
 - name: Wait for control-plane pods to become ready
   command: kubectl wait --namespace=kube-system --for=condition=Ready pods --all --timeout=10s

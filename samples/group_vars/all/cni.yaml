@@ -1,0 +1,32 @@
+cni:
+  cilium:
+    version: v1.12.13
+    waitTimeout: 120s
+    proxyReplacement: "strict" # possible values: "disabled", "probe", "partial", "strict"
+    manual_mtu: 0 # This Value Sets the MTU for cilium and applies it to a deamonset watching the mtu
+  flannel:
+    version: v0.22.3
+    backend:
+      type: "vxlan"
+      vni: 1
+      port: 8472
+    cni_conf: |
+      {
+        "name": "vxlan0",
+        "cniVersion": "0.3.1",
+        "plugins": [
+          {
+            "type": "flannel",
+            "delegate": {
+              "hairpinMode": true,
+              "isDefaultGateway": true
+            }
+          },
+          {
+            "type": "portmap",
+            "capabilities": {
+              "portMappings": true
+            }
+          }
+        ]
+      }

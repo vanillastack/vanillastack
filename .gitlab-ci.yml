@@ -38,7 +38,7 @@ include:
     - echo -e "TODO redeploy vm webhook \nPreparing environment"
     - echo "Root Dir = $CI_PROJECT_DIR"
     - echo "Pipeline Source = $CI_PIPELINE_SOURCE"
-    - ls -ahl
+    - ls -ahl samples/group_vars/all
     - mkdir ~/.ssh && echo "$SSH_KEY"|base64 -d>~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
     - mv samples/group_vars group_vars
     - cp $VANILLASTACK_INVENTORY "$(pwd)/inventory"
@@ -47,6 +47,6 @@ include:
     - yq -i ".clusterTLDomain = \"$VANILLASTACK_CLUSTER_TLD\"" group_vars/all/container_vars.yaml
     - yq -i ".loadbalancerIP = \"$VANILLASTACK_LOADBALANCER_IP\"" group_vars/all/container_vars.yaml
     - yq -i e '.ansible_ssh_private_key_file += "~/.ssh/id_rsa"' group_vars/all/container_vars.yaml
-    - yq -i e '.kubernetes.cilium.manual_mtu = 1400' group_vars/all/kubernetes.yaml
+    - yq -i e '.cni.cilium.manual_mtu = 1400' group_vars/all/cni.yaml
     - "sed -i 's/minutes: 5/minutes: 1/' roles/deploy-rook/tasks/main.yaml"
     - ANSIBLE_CONFIG=ansible.cfg ansible-playbook -i inventory type_prepare_installnode.yaml

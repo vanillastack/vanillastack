@@ -25,7 +25,7 @@ spec:
           command: ["/bin/sh"]
           args:
             - -c
-            - ./mtu-update --mtu {{ kubernetes.cilium.manual_mtu | default(1500) }} && touch /tmp/mtu-update.done && sleep 600
+            - ./mtu-update --mtu {{ cni.cilium.manual_mtu | default(1500) }} && touch /tmp/mtu-update.done && sleep 600
           volumeMounts:
             # To communicate with Cilium
             - name: cilium-run

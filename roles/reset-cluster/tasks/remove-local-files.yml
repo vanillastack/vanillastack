@@ -1,5 +1,5 @@
 ---
-- name: remove old installation files
+- name: Remove old installation files
   file:
     path: "/tmp/{{ item }}"
     state: absent
@@ -10,4 +10,9 @@
 - name: Remove kubeconfig
   file:
     path: ".kube"
+    state: absent
+
+- name: Remove old kubelet file
+  file:
+    path: "/etc/default/kubelet"
     state: absent

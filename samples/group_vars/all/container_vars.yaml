@@ -10,6 +10,7 @@ install_haproxy: false
 cluster_uuid: "ee582ffa-f6ba-11ea-adc1-0242ac120002"
 cluster_pod_cidr: "10.0.0.0/8"
 cluster_service_cidr: "10.96.0.0/12"
+# Possible CNIs: cilium, flannel
 cluster_sdn: cilium
 # Possible issuer: "letsencrypt-staging", "letsencrypt-prod" or "certmanager-selfsigned"
 LE_issuer_name: "letsencrypt-staging"

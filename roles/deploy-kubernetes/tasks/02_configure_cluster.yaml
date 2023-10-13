@@ -34,6 +34,7 @@
 
 # See https://github.com/cilium/cilium/issues/10645
 - name: Set net.ipv4.conf.*.rp_filter to 0 for systemd 245 workaround
+  when: cluster_sdn == "cilium"
   sysctl:
     name: "{{ item }}"
     value: "0"

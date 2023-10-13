@@ -2,23 +2,32 @@
 # defaults file for deploy-kubernetes
 
 kubernetes:
-  init_opts: ""
-  kubeadm_opts: ""
+  dashboard:
+    coreDomain: "k8sboard.{{ clusterTLDomain }}"
+    chartVersion: "6.0.6"
+    replicas: 1
   clusterName: kubernetes
-  version: "1.25.2"
-  crioVersion: "1.25"
+  # if the patch version is omitted, the latest available will be used (e.g., 1.23 -> 1.23.17).
+  version: "1.27"
+  crioVersion: "1.27"
   crioRuncVersion: "1.0.1~2"
   helm_version: "3.11.2"
-  pod_cidr: "10.0.0.0/8"
+  init_opts: ""
+  kubeadm_opts: ""
   drainTimeout: "10m"
   updateSleepSeconds: 90
   ignoreDrainErrors: true
-  cilium:
-    version: v1.11.2
-    waitTimeout: 10m
-    proxyReplacement: "strict" #possible values: "disabled", "probe", "partial", "strict"+
-    manual_mtu: 0 # if set rollout manual MTU Values for cilium < 1.13.0 comming soon tm
   ignorePreflightErrors: []
+
+cluster_pod_cidr: "10.0.0.0/8"
+cluster_service_cidr: "10.96.0.0/12"
+
+cni:
+  cilium:
+    version: v1.12.13
+    waitTimeout: 120s
+    proxyReplacement: "strict" # possible values: "disabled", "probe", "partial", "strict"
+    manual_mtu: 0 # This Value Sets the MTU for cilium and applies it to a deamonset watching the mtu
 
 ntp:
   manage_timesyncd: true

@@ -44,6 +44,9 @@ kubernetesVersion: {{ version }}
 networking:
   dnsDomain: cluster.local
   serviceSubnet: {{ cluster_service_cidr }}
+{% if cluster_sdn == "flannel" %}
+  podSubnet: {{ cluster_pod_cidr }}
+{% endif %}
 scheduler:
   extraArgs:
     bind-address: 0.0.0.0

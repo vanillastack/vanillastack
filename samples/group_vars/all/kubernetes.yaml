@@ -4,9 +4,9 @@ kubernetes:
     chartVersion: "6.0.6"
     replicas: 1
   clusterName: kubernetes
-  # if you define a version without a specific patch it will take the latest (for example: 1.25 results in 1.25.10)
-  version: "1.26"
-  crioVersion: "1.26"
+  # if the patch version is omitted, the latest available will be used (e.g., 1.23 -> 1.23.17).
+  version: "1.27"
+  crioVersion: "1.27"
   crioRuncVersion: "1.0.1~2"
   helm_version: "3.11.2"
   init_opts: ""
@@ -14,9 +14,4 @@ kubernetes:
   drainTimeout: "10m"
   updateSleepSeconds: 90
   ignoreDrainErrors: true
-  cilium:
-    version: v1.12.13
-    waitTimeout: 120s
-    proxyReplacement: "strict" #possible values: "disabled", "probe", "partial", "strict"
-    manual_mtu: 0 # This Value Sets the MTU for cilium and applies it to a deamonset watching the mtu
   ignorePreflightErrors: []

@@ -42,3 +42,5 @@
   loop:
     - /etc/kubernetes
     - /var/lib/kubernetes
+    - /var/lib/cni
+    - /etc/cni
